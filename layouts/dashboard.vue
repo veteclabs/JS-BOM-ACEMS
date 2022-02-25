@@ -4,21 +4,17 @@
             <div id="templateWrap">
                 <commonNav/>
                 <div id="content">
-                    <div :class="collapseState ?'dashboard-box-8' : 'dashboard-box-12'">
-                        <commonHeader/>
-                        <div id="subContent">
-                            <nuxt/>
-                        </div>
-                        <commonFooter/>
+                    <commonHeader/>
+                    <div id="subContent">
+                        <nuxt/>
                     </div>
-                    <DashboardCollapse/>
+                    <commonFooter/>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-    import DashboardCollapse from "~/components/DashboardCollapse.vue";
     import commonHeader from '~/components/commonHeader.vue';
     import commonNav from '~/components/commonNav.vue';
     import commonFooter from '~/components/commonFooter.vue';
@@ -28,7 +24,6 @@
             commonHeader,
             commonNav,
             commonFooter,
-            DashboardCollapse
         },
         computed: {
             collapseState: function () {
