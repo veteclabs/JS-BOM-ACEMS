@@ -40,8 +40,6 @@
 </template>
 <script>
     import allMenuArray from '~/assets/data/allMenuArray.json';
-    import depthlMenuArray from '~/assets/data/depthlMenuArray.json';
-    import axios from "axios";
 
     export default {
         name: 'commonNav',
@@ -53,71 +51,26 @@
             };
         },
         created() {
-            this.getDepth();
+            this.menuSetting();
         },
         methods: {
-            getDepth: async function () {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/common/departments',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.departments = res.data.result;
-                        vm.menuSetting();
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
             menuSetting() {
-                const vm = this;
+                this.menus = allMenuArray.list;
 
-                let teamId = vm.$store.getters.User.teamId;
-                let NavMenu;
-                if(teamId === 20) {
-                    NavMenu = allMenuArray.list;
-                }else {
-                    NavMenu = depthlMenuArray.list;
-                    vm.departments = [
-                        {
-                            id:vm.$store.getters.User.departmentId,
-                            name:vm.$store.getters.User.departmentName
-                        }
-                    ]
-                }
-
-                for (let i in NavMenu) {
-                    let iconName = NavMenu[i].class;
-                    NavMenu[i].icon = require(`@/assets/images/menu/icn_menu_${iconName}.svg`);
-                    NavMenu[i].iconNormal = require(`@/assets/images/menu/icn_menu_${iconName}.svg`);
-                    NavMenu[i].iconHover = require(`@/assets/images/menu/icn_menu_b_${iconName}.svg`);
-                    NavMenu[i].iconActive = require(`@/assets/images/menu/icn_menu_w_${iconName}.svg`);
-                    NavMenu[i].iconSelect = require(`@/assets/images/menu/icn_menu_w_${iconName}.svg`);
-                }
-                vm.menus = JSON.parse(JSON.stringify(NavMenu));
-                vm.menus.forEach(target => {
-                    if(target.class === 'dashboard') {
-                        vm.departments.forEach(item=> {
-                            target.subMenu.push({
-                                menuName: item.name,
-                                link: `/dashboard/departmentDashboard?depth=${item.id}`
-                            })
-                        });
-                    }
-                });
-
-                if(teamId !== 20) {
-                    vm.menus[0].link = `/dashboard/departmentDashboard?depth=${vm.$store.getters.User.departmentId}`;
-                    vm.menus[0].subMenu.shift();
+                for (let i in this.menus) {
+                    let iconName = this.menus[i].class;
+                    this.menus[i].icon = require(`@/assets/images/menu/icn_menu_${iconName}.svg`);
+                    this.menus[i].iconNormal = require(`@/assets/images/menu/icn_menu_${iconName}.svg`);
+                    this.menus[i].iconHover = require(`@/assets/images/menu/icn_menu_b_${iconName}.svg`);
+                    this.menus[i].iconActive = require(`@/assets/images/menu/icn_menu_w_${iconName}.svg`);
+                    this.menus[i].iconSelect = require(`@/assets/images/menu/icn_menu_w_${iconName}.svg`);
                 }
 
                 this.menuPathChk();
             },
             menuPathChk() {
                 this.path = this.$route.path;
-                if(this.path  === '/dashboard/departmentDashboard') {
+                if (this.path === '/dashboard/departmentDashboard') {
                     this.path = `${this.path}?depth=${this.$route.query.depth}`;
                 }
             },

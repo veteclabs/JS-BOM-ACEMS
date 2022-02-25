@@ -1,53 +1,98 @@
 <template>
     <div>
-        <b-modal v-model="propsdata.show" id="createmodal" title="계측기 관리" hide-footer>
+        <b-modal v-model="propsdata.show" id="createmodal" title="설비 관리" hide-footer>
             <table class="bom-table">
-                <caption>
-                    계측기관리 정보를 입력합니다.
-                </caption>
+                <caption>설비 정보를 입력합니다.</caption>
                 <colgroup>
-                    <col style="width: 100px"/>
-                    <col style="width: auto"/>
+                    <col style="width:100px;"/>
+                    <col style="width:auto;"/>
                 </colgroup>
                 <tbody>
                 <tr>
-                    <td>에너지</td>
-                    <td>
-                        <label class="radio-box" v-for="item in energyList" :key="item.id">
-                            <input type="radio" v-model="energy" v-bind:value="item.id"/>
-                            <div class="radio-circle">
-                                <div class="inner-circle"/>
-                            </div>
-                            <div class="radio-label">{{ item.name }}</div>
-                        </label>
-                        <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('energy') }}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>계측기장비명</td>
+                    <th>부서</th>
                     <td>
                         <label class="input-100">
-                            <select v-model="equipmentName" class="input-100">
-                                <option v-for="item in equipmentNameList" v-bind:value="item.name" :key="item.name">
-                                    {{ item.name }}
+                            <select v-model="department" class="input-100">
+                                <option v-for="list in departmentList" v-bind:value="list.id" :key="list.id">
+                                    {{list.name}}
                                 </option>
                             </select>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('equipmentName') }}
+                            {{ validation.firstError('department') }}
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>계측기명</td>
+                    <th>변전실</th>
                     <td>
                         <label class="input-100">
-                            <input type="text" v-model="name" placeholder="계측기 이름을 입력해주세요" class="input-100"/>
+                            <select v-model="subStation" class="input-100">
+                                <option v-for="list in subStationList" v-bind:value="list.id" :key="list.id">
+                                    {{list.name}}
+                                </option>
+                            </select>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('name') }}
+                            {{ validation.firstError('subStation') }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>판넨</th>
+                    <td>
+                        <label class="input-100">
+                            <select v-model="panelBoard" class="input-100">
+                                <option v-for="list in panelBoardList" v-bind:value="list.id" :key="list.id">
+                                    {{list.name}}
+                                </option>
+                            </select>
+                        </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('panelBoard') }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>스위치</th>
+                    <td>
+                        <label class="input-100">
+                            <select v-model="switchBoard" class="input-100">
+                                <option v-for="list in switchBoardList" v-bind:value="list.id" :key="list.id">
+                                    {{list.name}}
+                                </option>
+                            </select>
+                        </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('switchBoard') }}
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>공정</th>
+                    <td>
+                        <label class="input-100">
+                            <select v-model="process" class="input-100">
+                                <option v-for="list in processList" v-bind:value="list.id" :key="list.id">
+                                    {{list.name}}
+                                </option>
+                            </select>
+                        </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('process') }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>설비명</th>
+                    <td>
+                        <label class="input-100">
+                            <input type="text" v-model="description" class="input-100"
+                                   placeholder="설비명을 입력해주세요 "/>
+                        </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('description') }}
                         </div>
                     </td>
                 </tr>
@@ -58,13 +103,13 @@
                 <button type="button" class="button submit-button" @click="submit">등록</button>
             </div>
         </b-modal>
-        <flashModal v-bind:propsdata="MsgData"/>
+        <flashModal v-bind:propsdata="msgData"/>
     </div>
 </template>
 
 <script>
-    import axios from 'axios';
     import SimpleVueValidation from 'simple-vue-validator';
+    import axios from 'axios';
     import flashModal from '~/components/flashmodal.vue';
 
     const {Validator} = SimpleVueValidation;
@@ -78,6 +123,7 @@
     });
 
     export default {
+
         props: ['propsdata'],
         components: {
             axios,
@@ -86,105 +132,179 @@
         },
         data() {
             return {
-                MsgData: {
-                    // 알람모달
+                msgData: { // 알람모달
                     msg: '',
                     show: false,
                     e: '',
                 },
                 state: 'new',
-                id: '', //계측기 아이디
-                location: '',
-                locationList: [],
-                subLocation: '',
-                subLocationTempList: [],
-                subLocationList: [],
-                energy: '',
-                energyList: [],
-                equipmentName: '',
-                equipmentNameList: [],
-                energyPurpose: '',
-                energyPurposeList: [],
-                name: '',
+                id: '',
+                description: '',
+                subStation: '',
+                subStationList: [],
+                panelBoard: '',
+                panelBoardList: [],
+                switchBoard: '',
+                switchBoardList: [],
+                department: '',
+                departmentList: [],
+                process: '',
+                processList: [],
+
             };
         },
         validators: {
-            energy(value) {
+            description(value) {
                 return Validator.value(value).required();
             },
-            equipmentName(value) {
+            subStation(value) {
                 return Validator.value(value).required();
             },
-            name(value) {
+            panelBoard(value) {
+                return Validator.value(value).required();
+            },
+            switchBoard(value) {
+                return Validator.value(value).required();
+            },
+            department(value) {
+                return Validator.value(value).required();
+            },
+            process(value) {
                 return Validator.value(value).required();
             },
         },
         mounted() {
-            this.getEquipmentFilter();
+            this.initSetting();
         },
         methods: {
-            async getEquipmentFilter() {
+            initSetting() {
+                this.getSubStation();
+                this.getPanelBoard();
+                this.getSwitchBoard();
+                this.getDepartment();
+                this.getProcess();
+            },
+            getSubStation() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/common/getFilter',
+                    url: '/api/setting/substations',
                 }).then((res) => {
                     if (res.data.code === 1) {
-                        vm.energyList = res.data.energyValue;
-                        vm.equipmentNameList = res.data.equipmentValue;
-
-                        if (vm.energyList.length !== 0) {
-                            vm.energy = vm.energyList[0].id;
-                        }
-
-                        if (vm.equipmentNameList.length !== 0) {
-                            vm.equipmentName = vm.equipmentNameList[0].name;
-                        }
+                        vm.subStationList = res.data.value;
+                        vm.subStation = vm.subStationList[0].id;
                     }
                 }).catch((error) => {
-                    vm.MsgData.show = true;
-                    vm.MsgData.msg = error;
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
+            getPanelBoard() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/setting/panelBoards',
+                }).then((res) => {
+                    if (res.data.code === 1) {
+                        vm.panelBoardList = res.data.value;
+                        vm.panelBoard = vm.panelBoardList[0].id;
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
+            getSwitchBoard() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/setting/switchBoards',
+                }).then((res) => {
+                    if (res.data.code === 1) {
+                        vm.switchBoardList = res.data.value;
+                        vm.switchBoard = vm.switchBoardList[0].id;
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
+            getDepartment() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/setting/departments',
+                }).then((res) => {
+                    if (res.data.code === 1) {
+                        vm.departmentList = res.data.result;
+                        vm.department = vm.departmentList[0].id;
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
+            getProcess() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/setting/processes',
+                }).then((res) => {
+                    if (res.data.code === 1) {
+                        vm.processList = res.data.value;
+                        vm.process = vm.processList[0].id;
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
                 });
             },
             submit() {
                 const vm = this;
                 const modal = this.$bvModal;
                 const {state} = this;
-                let url;
-                const params = {
-                    id: vm.id,
-                    energyId: vm.energy,
-                    equipmentName: vm.equipmentName,
-                    name: vm.name,
-                };
+                let url, method;
+
                 if (state === 'new') {
-                    url = '/api/setting/equipment/create';
+                    url = `/api/setting/location`;
+                    method = 'post';
                 } else if (state === 'update') {
-                    url = '/api/setting/equipment/update';
+                    url = `/api/setting/location/${vm.id}`;
+                    method = 'put';
                     if (!vm.id) {
-                        vm.MsgData.show = true;
-                        vm.MsgData.msg = '오류가 발생했습니다. 새로고침 후 다시 시도해주세요';
+                        vm.msgData.show = true;
+                        vm.msgData.msg = '에러가 발생했습니다. 새로고침 후 다시 시도해주세요';
                         return;
                     }
                 }
+
+                const params = {
+                    description: this.description,
+                    substationId: this.subStation,
+                    panelBoardId: this.panelBoard,
+                    switchBoardId: this.switchBoard,
+                    departmentId: this.department,
+                    manufacturingProcessId: this.process
+                };
+
                 this.$validate()
                     .then((success) => {
                         if (success) {
-                            axios
-                                .post(url, params)
+                            // form 입력완료
+                            axios.post(url, params)
                                 .then((res) => {
                                     if (res.data.code === 1) {
-                                        // 등록완료시 모달 닫고 초기화 안내메시지 보여주기
+                                        // 등록완료시 모달 닫고 초기화 안내메시지 일여주기
                                         modal.hide('createmodal');
-                                        vm.Reset();
+                                        vm.msgData.show = true;
+                                        vm.msgData.msg = res.data.message;
                                         vm.$emit('send-message', 1);
                                         vm.$emit('callSearch');
+                                        vm.getLocationList();
                                     }
-                                    vm.MsgData.show = true;
-                                    vm.MsgData.msg = res.data.message;
                                 }).catch((error) => {
-                                vm.MsgData.show = true;
-                                vm.MsgData.msg = error;
+                                vm.msgData.show = true;
+                                vm.msgData.msg = error;
                             });
                         }
                     });
@@ -192,30 +312,30 @@
             cancel() {
                 this.$bvModal.hide('createmodal');
             },
-            Reset() {
-                if (this.energyList.length !== 0) {
-                    this.energy = this.energyList[0].id;
-                } else {
-                    this.energy = '';
-                }
-                if (this.equipmentNameList.length !== 0) {
-                    this.equipmentName = this.equipmentNameList[0].name;
-                } else {
-                    this.equipmentName = '';
-                }
+            reset() {
                 this.id = '';
-                this.name = '';
+                this.description = '';
+                this.subStation = this.subStationList[0].id;
+                this.panelBoard = this.panelBoardList[0].id;
+                this.switchBoard = this.switchBoardList[0].id;
+                this.department = this.departmentList[0].id;
+                this.process = this.processList[0].id;
+                this.validation.reset();
             },
             createdModal() {
                 this.state = 'new';
-                this.Reset();
+                this.reset();
             },
-            updateModal(target) {
+            updateModal(e) {
+                this.validation.reset();
                 this.state = 'update';
-                this.id = target.id;
-                this.equipmentName = target.equipmentName;
-                this.energy = target.energy;
-                this.name = target.name;
+                this.id = e.id;
+                this.description = e.description;
+                this.subStation = e.substationId;
+                this.panelBoard = e.panelBoardId;
+                this.switchBoard = e.switchBoardId;
+                this.department = e.departmentId;
+                this.process = e.manufacturingProcessId;
             },
         },
     };

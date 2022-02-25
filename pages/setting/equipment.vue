@@ -3,24 +3,24 @@
         <div class="wrapper animated fadeInRight">
             <div class="ibox">
                 <div class="ibox-title ibox-noborder-title">
-                    시설 관리
+                    설비 관리
                 </div>
                 <div class="grid-header">
-                    <button id="createLocation" class="button add-button" @click="createLocation">
+                    <button id="createEquipment" class="button add-button" @click="createEquipment">
                         <img src="~assets/images/setting/icn_setting_add.svg" alt="등록"/>
                     </button>
                 </div>
                 <div id="gridBox">
                     <DxDataGrid
-                            id="locationListGrid"
-                            :data-source="locationList"
+                            id="equipmentListGrid"
+                            :data-source="equipmentList"
                             :show-borders="false"
-                            :onCellClick="updateLocation"
+                            :onCellClick="updateEquipment"
                             key-expr="id"
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
-                        <DxColumn data-field="description" caption="시설명" alignment="center"
+                        <DxColumn data-field="description" caption="설비명" alignment="center"
                                   cell-template="blockGridTemplate" />
                         <DxColumn data-field="departmentName" caption="부서" alignment="center"/>
                         <DxColumn data-field="substationName" caption="변전실" alignment="center"/>
@@ -47,7 +47,7 @@
                     </DxDataGrid>
                 </div>
             </div>
-            <createLocationModal v-bind:propsdata="modalData" v-on:callSearch="getLocation" ref="locationModal"/>
+            <createEquipmentModal v-bind:propsdata="modalData" v-on:callSearch="getEquipment" ref="equipmentModal"/>
             <flashModal v-bind:propsdata="msgData"/>
         </div>
     </div>
@@ -65,8 +65,7 @@
         DxSearchPanel,
     } from 'devextreme-vue/data-grid';
     import {DxButton} from 'devextreme-vue/button';
-    import createLocationModal from '~/components/settingModal/createLocationModal.vue';
-    import createSubLocationModal from '~/components/settingModal/createSubLocationModal.vue';
+    import createEquipmentModal from '~/components/settingModal/createEquipmentModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
@@ -82,8 +81,7 @@
         components: {
             axios,
             flashModal,
-            createLocationModal,
-            createSubLocationModal,
+            createEquipmentModal,
             DxDataGrid,
             DxColumn,
             DxPaging,
@@ -107,7 +105,7 @@
                 modalData: {
                     show: false,
                 },
-                locationList: [],
+                equipmentList: [],
                 pageSizes: [5, 10, 20], // 페이지사이즈
             };
         },
@@ -115,30 +113,30 @@
             this.id = this.$store.getters.ID;
         },
         mounted() {
-            this.getLocation();
+            this.getEquipment();
         },
         methods: {
-            async getLocation() {
+            async getEquipment() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/locations',
+                    url: '/api/setting/equipments',
                 }).then((res) => {
                     if (res.data.code === 1) {
-                        vm.locationList = res.data.value;
+                        vm.equipmentList = res.data.value;
                     }
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
                 });
             },
-            createLocation() {
-                this.$refs.locationModal.createdModal();
+            createEquipment() {
+                this.$refs.equipmentModal.createdModal();
                 this.modalData.show = true;
             },
-            updateLocation(e) {
+            updateEquipment(e) {
                 if (e.columnIndex !== 0) {
-                    this.$refs.locationModal.updateModal(e.data);
+                    this.$refs.equipmentModal.updateModal(e.data);
                     this.modalData.show = true;
                 }
             },
