@@ -70,9 +70,6 @@
             },
             menuPathChk() {
                 this.path = this.$route.path;
-                if (this.path === '/dashboard/departmentDashboard') {
-                    this.path = `${this.path}?depth=${this.$route.query.depth}`;
-                }
             },
             hoverEvent(index) {
                 this.menus[index].icon = this.menus[index].iconHover;

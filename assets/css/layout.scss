@@ -479,95 +479,28 @@ h3 {
 #header {
   position: relative;
   width: 100%;
-  height: 64px;
-  background: $bomblue-0;
   padding: 16px $content-margin;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  a {
-    display: inline-block;
-    position:relative;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.16);
-    }
+  .user {
+    @extend .font-24;
+    display: block;
+    width: 40px;
+    height: 40px;
+    line-height: 1.4;
+    background: $red-0;
+    border-radius: 100%;
+    padding: 4px;
+    text-align: center;
+    color: #fff;
   }
 
-  #eventDownMenu {
-    position: absolute;
-    top: 50px;
-    right: 50px;
-    width: 250px;
-    height:500px;
-    overflow:auto;
-    z-index: 999;
-    border-radius: 4px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.2);
-    li {
-      padding: 24px;
-      cursor: pointer;
-      font-weight: 500;
-      border-bottom:1px solid $gray-1;
 
-      &:hover {
-        background-color: $gray-0;
-      }
-      .event-time {
-        display:flex;
-        justify-content: space-between;
-        margin:0 0 16px 0;
-        .date {
-          color:$gray-6;
-        }
-        .bom-badge {
-          font-size:10px;
-        }
-      }
-      .event-action {
-        margin:0 0 16px 0;
-      }
-    }
-    li.event-link {
-      padding:6px 24px;
-      a {
-        display:block;
-        width:100%;
-        height:auto;
-      }
-      img {
-        transform: rotate(270deg);
-      }
-
-    }
-    li.unconfirmed-li {
-      background:$red-3;
-      border-bottom:1px solid $gray-3;
-    }
-  }
-  .event-unconfirmed-state {
-    position:relative;
-    &:before {
-      content:"";
-      display:block;
-      position:absolute;
-      width:6px;
-      height:6px;
-      border-radius:50%;
-      background:$red-0;
-      top:5px;
-      right:5px;
-    }
-  }
   #downMenu {
     position: absolute;
-    top: 50px;
-    right: 5px;
+    top: 120px;
     width: 120px;
     z-index: 999;
     border-radius: 4px;
@@ -581,7 +514,9 @@ h3 {
       font-size: 12px;
       font-weight: 500;
       color: $gray-5;
-
+      a {
+        color:$gray-5;
+      }
       &:hover {
         background-color: $gray-1;
       }
@@ -589,14 +524,56 @@ h3 {
   }
 
 }
+
 .header-title {
-  margin:0 0 24px 0;
-  h2 {
-    font-weight:800;
-    margin:0 0 8px 0;
+  .header-nav {
+    list-style: none;
+    display: flex;
+
+    li {
+      @extend .font-16;
+      color: $gray-6;
+      background-image: url("~assets/images/common/icn_common_more-g6.svg");
+      background-repeat: no-repeat;
+      background-position: top 2px right;
+      padding: 0 20px 0 0;
+
+      &:last-child {
+        background-image: none;
+      }
+
+      img {
+        vertical-align: middle;
+      }
+    }
   }
-  p {
-    color:$gray-6;
+
+  .tool-title {
+    margin: 48px 0 0 0;
+    display: flex;
+    align-items: center;
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      background: $gray-5;
+      border-radius: 8px;
+      margin: 0 12px 0 0;
+    }
+
+    h2 {
+      margin: 0;
+
+      a {
+
+        color: $gray-2;
+        font-weight: 500;
+
+        span {
+          color: #fff;
+        }
+      }
+    }
   }
 }
 
