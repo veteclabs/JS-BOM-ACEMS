@@ -1,0 +1,233 @@
+#analysisEnergyChart {
+  height: 250px;
+}
+
+#analysisEnergyChart, #analysisEnergyGrid,
+#analysisLocationChart, #analysisLocationGrid,
+#analysisPerAreaChart, #analysisPerPersonChart,
+#analysisPerAreaGrid, #analysisPerPersonGrid,
+#analysisVariationChart, #analysisVariationGrid,
+#reportEnergyUsageGrid {
+  width: 100%;
+  margin: -55px 0 0 0;
+}
+
+#analysisLocationGrid {
+  max-height: 700px;
+  @include tabletAndMobile() {
+    max-height: inherit;
+  }
+}
+
+.temp-box, .summary, .standard-box {
+  > .ibox-content {
+    padding: 24px 0 0 0;
+  }
+}
+
+.temp-box, .standard-box {
+  .flex-box {
+    > div {
+      flex: 0 0 50%;
+      padding: 0 16px 0 0;
+
+      &:last-child {
+        padding: 0;
+      }
+    }
+  }
+}
+
+.standard-box {
+  .warning {
+    @extend .red-bg;
+
+    .bom-badge {
+      background: $red-2;
+      color: $red-0;
+      flex: 0 0 50px;
+    }
+  }
+
+  .normal {
+    @extend .green-bg;
+
+    .bom-badge {
+      background: $green-2;
+      color: $green-0;
+      flex: 0 0 50px;
+    }
+  }
+
+  .standard-chart {
+    height: 100px;
+  }
+
+  .ibox-2Depth {
+    .flex-box {
+      flex-wrap: wrap;
+    }
+  }
+
+  h1 {
+    margin: 0;
+    padding: 0 4px 0 0;
+  }
+}
+
+.temp-box {
+  .flex-box {
+    .icon-box {
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      padding: 0;
+    }
+  }
+}
+
+
+.pricing-summary {
+  .flex-box {
+    p {
+      padding: 0 0 0 10px;
+      background-repeat: no-repeat;
+      background-position: left center;
+    }
+
+    > div {
+      font-weight: 500;
+      display: flex;
+
+      p {
+        margin: 0 4px 0 0;
+      }
+    }
+
+    flex-wrap: wrap;
+  }
+
+  .warning {
+    p {
+      @extend .red;
+      background-image: url("~assets/images/common/icn_monitoring_arrow_r.svg");
+    }
+
+    .bom-badge {
+      @extend .red-badge;
+      @extend .red;
+    }
+  }
+
+  .normal {
+    p {
+      @extend .green;
+      background-image: url("~assets/images/common/icn_monitoring_arrow_g.svg");
+    }
+
+    .bom-badge {
+      @extend .green-badge;
+      @extend .green;
+    }
+  }
+
+  h1 {
+    > span {
+      display: inline-block;
+      border-right: 1px solid $gray-2;
+      padding: 0 8px 0 0;
+      margin: 0 8px 0 0;
+    }
+  }
+}
+
+.summary {
+  @extend .pricing-summary;
+
+  .ibox-2Depth {
+    .flex-box {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+/***Location***/
+#analysisLocationPieChart {
+  height: 150px;
+}
+
+.location-rate-box {
+  .ibox-content {
+    padding: 24px 0 0 0;
+  }
+}
+
+.location-piechart-ul {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 24px 0 0 0;
+
+  li {
+    flex: 0 0 50%;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    color: $gray-6;
+
+    span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin: 0 4px 0 0;
+    }
+  }
+}
+
+.location-minmax-box {
+  > div {
+    margin: 0;
+    padding: 0 8px 0 0;
+    width: 50%;
+
+    &:last-child {
+      margin: 0;
+      padding: 0 0 0 8px;
+    }
+
+    .location-min-box, .location-max-box {
+      @extend .font1-1;
+      background-repeat: no-repeat;
+      background-position: center right 10px;
+      background-size: 80px;
+
+      p {
+        span {
+          @extend .font18;
+        }
+      }
+    }
+  }
+
+  .location-min-box {
+    padding: 16px;
+    background-color: $green-3;
+    background-image: url("~assets/images/analysis/img_analysis_good@2x.png");
+  }
+
+  .location-max-box {
+    padding: 16px;
+    background-color: $red-3;
+    background-image: url("~assets/images/analysis/img_analysis_bad@2x.png");
+  }
+}
+
+
+#analysisPerAreaChart, #analysisPerPersonChart {
+  height: 250px;
+}

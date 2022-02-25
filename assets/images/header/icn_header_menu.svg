@@ -1,0 +1,22 @@
+<svg id="icn_header_menu" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        opacity: 0.16;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="구성_요소_5_53" data-name="구성 요소 5 – 53">
+    <rect id="사각형_5634" data-name="사각형 5634" class="cls-1" width="32" height="32" rx="8"/>
+    <g id="그룹_8" data-name="그룹 8" transform="translate(-98 -22)">
+      <rect id="사각형_5635" data-name="사각형 5635" class="cls-2" width="16" height="2" rx="1" transform="translate(106 32)"/>
+      <rect id="사각형_5636" data-name="사각형 5636" class="cls-2" width="16" height="2" rx="1" transform="translate(106 37)"/>
+      <rect id="사각형_5637" data-name="사각형 5637" class="cls-2" width="16" height="2" rx="1" transform="translate(106 42)"/>
+    </g>
+  </g>
+</svg>

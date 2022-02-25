@@ -1,0 +1,24 @@
+<svg id="icn_common_download" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #8c96a5;
+      }
+    </style>
+  </defs>
+  <g id="구성_요소_37_22" data-name="구성 요소 37 – 22">
+    <rect id="사각형_5810" data-name="사각형 5810" class="cls-1" width="32" height="32" rx="8"/>
+    <g id="file_download_black_24dp" transform="translate(10.338 6.338)">
+      <g id="그룹_582" data-name="그룹 582" transform="translate(-4)">
+        <rect id="사각형_8112" data-name="사각형 8112" class="cls-1" width="20" height="20" transform="translate(-0.338 -0.338)"/>
+      </g>
+      <g id="그룹_583" data-name="그룹 583" transform="translate(0.026 2.416)">
+        <path id="패스_777" data-name="패스 777" class="cls-2" d="M14.332,7.831h-1.28V3.805A.808.808,0,0,0,12.247,3H9.026a.808.808,0,0,0-.805.805V7.831H6.94a.808.808,0,0,0-.572,1.377l3.7,3.7a.8.8,0,0,0,1.135,0l3.7-3.7A.805.805,0,0,0,14.332,7.831ZM5,15.883a.808.808,0,0,0,.805.805h9.662a.805.805,0,0,0,0-1.61H5.805A.808.808,0,0,0,5,15.883Z" transform="translate(-5 -3)"/>
+      </g>
+    </g>
+  </g>
+</svg>

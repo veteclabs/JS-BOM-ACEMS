@@ -1,0 +1,20 @@
+{
+  "tagArray": {
+    "18": {
+      "instantaneousValue": "GAS_Flow" ,
+      "totalUsage": "GAS_Tot"
+    } ,
+    "27": {
+      "instantaneousValue": "PWR_kW" ,
+      "totalUsage": "PWR_kWh"
+    } ,
+    "28": {
+      "instantaneousValue": "PWR_kW" ,
+      "totalUsage": "PWR_kWh"
+    } ,
+    "30": {
+      "instantaneousValue" : "WAR_Flow",
+      "totalUsage": "WAR_Tot"
+    }
+  }
+}

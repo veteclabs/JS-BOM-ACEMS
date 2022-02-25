@@ -1,0 +1,78 @@
+{
+  "colorArray": {
+    "beforeUsageColorArray": {
+      "beforeDayUsage": "#e4e9f1" ,
+      "beforeMonthUsage": "#e4e9f1" ,
+      "beforeYearMonthUsage":"#e4e9f1",
+      "beforeYearUsage": "#e4e9f1" ,
+      "beforeDayPF": "#e4e9f1" ,
+      "beforeMonthPF": "#e4e9f1" ,
+      "beforeYearMonthPF":"#e4e9f1",
+      "beforeYearPF": "#e4e9f1" ,
+      "beforeDayTOE": "#e4e9f1" ,
+      "beforeMonthTOE": "#e4e9f1" ,
+      "beforeYearTOE": "#e4e9f1" ,
+      "beforeDaytCo2": "#e4e9f1" ,
+      "beforeMonthtCo2": "#e4e9f1" ,
+      "beforeYeartCo2": "#e4e9f1" ,
+      "beforeDayCOP": "#e4e9f1",
+      "beforeYearMonthtCo2":  "#e4e9f1",
+      "beforeYearMonthTOE":  "#e4e9f1"
+    } ,
+    "rankColorArray": [
+      "#ff3a55" ,
+      "#ffa100" ,
+      "#ffd514" ,
+      "#81e400" ,
+      "#09c488" ,
+      "#27aef3" ,
+      "#3363ff",
+      "#EB3673",
+      "#C93A96",
+      "#A63EB8"
+    ] ,
+    "usageColorArray": {
+      "전력": "#09c488" ,
+      "28": "#09c488" ,
+      "27": "#09c488" ,
+      "전력(소비기준)": "#09c488" ,
+      "도시가스(LNG)": "#ff3a55" ,
+      "18": "#ff3a55" ,
+      "가스": "#ff3a55" ,
+      "수도": "#27aef3" ,
+      "30": "#27aef3" ,
+      "Usage": "#09c488" ,
+      "PF": "#FFA100" ,
+      "kW":"#ff3a55",
+      "TOE": "#3363ff" ,
+      "energyCharge": "#3363ff" ,
+      "경부하": "#09c488" ,
+      "중간부하": "#ffa100" ,
+      "최대부하": "#ff3a55" ,
+      "COP": "#09c488"
+    } ,
+    "colorGradient": {
+      "18": [
+        "#ff909f" ,
+        "#ff3a55"
+      ] ,
+      "28": [
+        "#75debc" ,
+        "#09c488"
+      ] ,
+      "27": [
+        "#75debc" ,
+        "#09c488"
+      ] ,
+      "30": [
+        "#85d1f8" ,
+        "#27aef3"
+      ]
+    } ,
+    "colorDefault": {
+      "red": "#ff3a55" ,
+      "skyblue": "#85d1f8" ,
+      "green": "#09c488"
+    }
+  }
+}

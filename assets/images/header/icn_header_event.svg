@@ -1,0 +1,26 @@
+<svg id="icn_header_event" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-1 {
+        opacity: 0.16;
+      }
+
+      .cls-3 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="구성_요소_15_55" data-name="구성 요소 15 – 55">
+    <g id="그룹_9" data-name="그룹 9" transform="translate(-0.283 -0.283)">
+      <rect id="사각형_5634" data-name="사각형 5634" class="cls-1" width="32" height="32" rx="8" transform="translate(0.283 0.283)"/>
+    </g>
+    <g id="notifications_none_white_24dp" transform="translate(4 4)">
+      <path id="패스_621" data-name="패스 621" class="cls-2" d="M0,0H24V24H0Z"/>
+      <path id="패스_622" data-name="패스 622" class="cls-3" d="M12,22a2.006,2.006,0,0,0,2-2H10A2.006,2.006,0,0,0,12,22Zm6-6V11c0-3.07-1.63-5.64-4.5-6.32V4a1.5,1.5,0,0,0-3,0v.68C7.64,5.36,6,7.92,6,11v5L4,18v1H20V18Zm-2,1H8V11c0-2.48,1.51-4.5,4-4.5s4,2.02,4,4.5Z"/>
+    </g>
+  </g>
+</svg>

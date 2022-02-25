@@ -1,0 +1,21 @@
+<svg id="icn_table_first-page" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #8c96a5;
+      }
+    </style>
+  </defs>
+  <rect id="사각형_8544" data-name="사각형 8544" class="cls-1" width="24" height="24" rx="8"/>
+  <g id="chevron_right_black_24dp" transform="translate(20 20) rotate(180)">
+    <path id="패스_764" data-name="패스 764" class="cls-1" d="M0,0H16V16H0Z"/>
+    <g id="그룹_601" data-name="그룹 601" transform="translate(0.608 -0.2)">
+      <path id="패스_765" data-name="패스 765" class="cls-2" d="M9.2,6.616a.677.677,0,0,0,0,.959l2.639,2.639L9.2,12.854a.678.678,0,1,0,.959.959l3.122-3.122a.677.677,0,0,0,0-.959L10.156,6.609A.684.684,0,0,0,9.2,6.616Z" transform="translate(-5.045 -2.012)"/>
+      <rect id="사각형_8545" data-name="사각형 8545" class="cls-2" width="1.4" height="7.6" rx="0.7" transform="translate(9.431 4.4)"/>
+    </g>
+  </g>
+</svg>

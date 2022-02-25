@@ -1,0 +1,18 @@
+<svg id="icn_header_fullscreen-exit" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <rect id="사각형_9529" data-name="사각형 9529" class="cls-1" width="32" height="32"/>
+  <g id="fullscreen_exit_black_24dp_1_" data-name="fullscreen_exit_black_24dp (1)" transform="translate(4 4)">
+    <path id="패스_816" data-name="패스 816" class="cls-1" d="M0,0H24V24H0Z"/>
+    <path id="패스_817" data-name="패스 817" class="cls-2" d="M6,16H8v2a1,1,0,0,0,2,0V15a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2ZM8,8H6a1,1,0,0,0,0,2H9a1,1,0,0,0,1-1V6A1,1,0,0,0,8,6Zm7,11a1,1,0,0,0,1-1V16h2a1,1,0,0,0,0-2H15a1,1,0,0,0-1,1v3A1,1,0,0,0,15,19ZM16,8V6a1,1,0,0,0-2,0V9a1,1,0,0,0,1,1h3a1,1,0,0,0,0-2Z"/>
+  </g>
+</svg>

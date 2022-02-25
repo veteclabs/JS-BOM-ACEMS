@@ -1,0 +1,119 @@
+/*Setting*/
+
+#settingContent {
+  width: 100%;
+  padding: 20px $content-margin;
+  background: $gray-0;
+  margin:0;
+  min-height: calc(100% - 135px);
+  @include mobile() {
+    padding: 20px;
+  }
+}
+
+#settingContent {
+  >.row {
+    display: flex;
+
+    > div {
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .setting-space-box {
+      width: 16.66666666666666666%;
+    }
+
+    .setting-nav-box {
+      width: 16.66666666666666666%;
+    }
+
+    .setting-content-box {
+      width: 50%;
+    }
+
+    @include desktop() {
+      .setting-space-box {
+        width: 0;
+        padding: 0;
+      }
+      .setting-nav-box {
+        width: 25%;
+      }
+      .setting-content-box {
+        width: 75%;
+      }
+      .filter-show-box {
+        @include desktop() {
+          transition: padding .3s ease;
+          padding: 0 276px 0 0;
+        }
+      }
+    }
+    @include tabletAndMobile() {
+      flex-wrap: wrap;
+      .setting-space-box {
+        width: 0;
+        padding: 0;
+      }
+      .setting-nav-box {
+        width: 100%;
+      }
+      .setting-content-box {
+        width: 100%;
+      }
+    }
+  }
+}
+
+#settingNav {
+  >ul {
+    width:100%;
+    padding:8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px 0 rgba(59, 70, 86, 0.08);
+    background-color: #ffffff;
+    > li {
+      @include tabletAndMobile() {
+        display:inline-block;
+        width:50%;
+      }
+    }
+    a {
+      display:block;
+      width:100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition:background .3s ease;
+      &:hover {
+        background-color:$gray-1;
+      }
+    }
+    a.nuxt-link-active  {
+      background-color: $bomblue-1;
+      font-weight:bold;
+    }
+  }
+}
+
+
+/**알람설정**/
+.ibox-disable-content, .disable-table{
+  opacity:0.3;
+}
+
+.label-box {
+  display: inline-block;
+  min-width: 82px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 8px;
+  padding: 0 18px;
+  font-weight: 800;
+  background-color: $gray-1;
+}
+
+.target-box {
+  padding:16px;
+  border-bottom:1px solid $gray-1;
+}

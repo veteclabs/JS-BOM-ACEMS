@@ -1,0 +1,15 @@
+<svg id="icn_header_home" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #667082;
+      }
+    </style>
+  </defs>
+  <path id="패스_753" data-name="패스 753" class="cls-1" d="M0,0H16V16H0Z"/>
+  <path id="패스_754" data-name="패스 754" class="cls-2" d="M7.61,13.81V10.467h2.672V13.81a.67.67,0,0,0,.668.668h2a.67.67,0,0,0,.668-.668V9.131h1.135a.332.332,0,0,0,.22-.582L9.393,3.515a.673.673,0,0,0-.895,0L2.914,8.549a.333.333,0,0,0,.22.582H4.27V13.81a.67.67,0,0,0,.668.668h2A.67.67,0,0,0,7.61,13.81Z" transform="translate(-0.946 -1.128)"/>
+</svg>

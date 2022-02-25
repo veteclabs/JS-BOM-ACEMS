@@ -1,0 +1,21 @@
+{
+  "unitArray": {
+    "18": "L",
+    "27": "kWh",
+    "28": "kWh",
+    "30": "L",
+    "전력(소비기준)": "kWh",
+    "전력(발전기준)": "kWh",
+    "도시가스(LNG)": "L",
+    "수도": "L",
+    "TOE": "TOE",
+    "tCo2":"tCo2",
+    "Usage":"kWh",
+    "kW" : "kW",
+    "PF" : "%",
+    "instantaneous_18": "L/min",
+    "instantaneous_27": "kW",
+    "instantaneous_28": "kW",
+    "instantaneous_30": "L/min"
+  }
+}

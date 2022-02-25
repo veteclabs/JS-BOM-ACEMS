@@ -1,0 +1,18 @@
+<svg id="icn_modal_close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #8c96a5;
+      }
+    </style>
+  </defs>
+  <rect id="사각형_8834" data-name="사각형 8834" class="cls-1" width="24" height="24" rx="8"/>
+  <g id="close_black_24dp" transform="translate(2 2)">
+    <path id="패스_800" data-name="패스 800" class="cls-1" d="M0,0H20V20H0Z"/>
+    <path id="패스_801" data-name="패스 801" class="cls-2" d="M16.106,5.659a.826.826,0,0,0-1.17,0L10.878,9.708,6.82,5.65A.827.827,0,0,0,5.65,6.82l4.058,4.058L5.65,14.936a.827.827,0,0,0,1.17,1.17l4.058-4.058,4.058,4.058a.827.827,0,0,0,1.17-1.17l-4.058-4.058L16.106,6.82A.832.832,0,0,0,16.106,5.659Z" transform="translate(-0.878 -0.878)"/>
+  </g>
+</svg>

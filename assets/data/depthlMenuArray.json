@@ -1,0 +1,20 @@
+{
+  "list": [
+    {
+      "title": "전체",
+      "class": "dashboard",
+      "link": "/dashboard/departmentDashboard",
+      "icon": "",
+      "iconNormal": "",
+      "iconHover": "",
+      "iconActive": "",
+      "iconSelect": "",
+      "subMenu": [
+        {
+          "menuName": "전체",
+          "link": "/dashboard/departmentDashboard"
+        }
+      ]
+    }
+  ]
+}

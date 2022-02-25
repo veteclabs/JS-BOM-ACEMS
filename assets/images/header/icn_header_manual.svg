@@ -1,0 +1,28 @@
+<svg id="icn_header_manual" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="그룹_5966" data-name="그룹 5966" transform="translate(-3983 -103)">
+    <g id="upload_file_black_24dp" transform="translate(3987 107)">
+      <g id="그룹_5960" data-name="그룹 5960">
+        <rect id="사각형_15233" data-name="사각형 15233" class="cls-1" width="24" height="24"/>
+      </g>
+      <g id="그룹_5961" data-name="그룹 5961" transform="translate(9.043 10.595)">
+        <path id="패스_29740" data-name="패스 29740" class="cls-2" d="M14.182,14.812H12.565v-2.7a.9.9,0,1,0-1.8,0v2.7H9.159a.445.445,0,0,0-.315.764l2.516,2.507a.461.461,0,0,0,.638,0l2.507-2.507A.453.453,0,0,0,14.182,14.812Z" transform="translate(-8.708 -11.217)"/>
+      </g>
+    </g>
+    <rect id="사각형_15236" data-name="사각형 15236" class="cls-1" width="24" height="24" transform="translate(3987 107)"/>
+    <path id="합치기_68" data-name="합치기 68" class="cls-2" d="M1.99,20A2,2,0,0,1,0,18L.01,2A2,2,0,0,1,2,0H9.17a2,2,0,0,1,1.377.547L15.41,5.41A2.007,2.007,0,0,1,16,6.83V18a2.006,2.006,0,0,1-2,2ZM2,18H14V7H10A1,1,0,0,1,9,6V1.5L14.5,7,9,1.5V2H2Z" transform="translate(3991 109)"/>
+    <rect id="사각형_15233-2" data-name="사각형 15233" class="cls-1" width="24" height="24" transform="translate(3987 107)"/>
+    <rect id="사각형_15234" data-name="사각형 15234" class="cls-1" width="24" height="24" transform="translate(3987 107)"/>
+  </g>
+  <rect id="사각형_15237" data-name="사각형 15237" class="cls-1" width="32" height="32"/>
+</svg>

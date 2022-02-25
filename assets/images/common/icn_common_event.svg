@@ -1,0 +1,17 @@
+<svg id="icn_common_event" xmlns="http://www.w3.org/2000/svg" width="80" height="64" viewBox="0 0 80 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ff3a55;
+      }
+
+      .cls-2 {
+        fill: #fff;
+        font-size: 40px;
+        font-family: Roboto-Regular, Roboto;
+      }
+    </style>
+  </defs>
+  <path id="다각형_3" data-name="다각형 3" class="cls-1" d="M33.216,10.854a8,8,0,0,1,13.568,0L72.35,51.76A8,8,0,0,1,65.566,64H14.434A8,8,0,0,1,7.65,51.76Z"/>
+  <text id="_" data-name="!" class="cls-2" transform="translate(40 53)"><tspan x="-5.264" y="0">!</tspan></text>
+</svg>

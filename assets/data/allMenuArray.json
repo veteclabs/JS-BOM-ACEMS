@@ -1,0 +1,99 @@
+{
+  "list": [
+    {
+      "title": "전체",
+      "class": "dashboard",
+      "link": "/dashboard",
+      "icon": "",
+      "iconNormal": "",
+      "iconHover": "",
+      "iconActive": "",
+      "iconSelect": "",
+      "subMenu": [
+        {
+          "menuName": "전체",
+          "link": "/dashboard"
+        }
+      ]
+    },
+    {
+      "title": "분석",
+      "class": "analysis",
+      "link": "/analysis",
+      "icon": "",
+      "iconNormal": "",
+      "iconHover": "",
+      "iconActive": "",
+      "iconSelect": "",
+      "subMenu": [
+        {
+          "menuName": "데이터 조회",
+          "link": "/analysis"
+        },
+        {
+          "menuName": "부서별 분석",
+          "link": "/analysis/department"
+        },
+        {
+          "menuName": "공정별 분석",
+          "link": "/analysis/process"
+        },
+        {
+          "menuName": "시설별 분석",
+          "link": "/analysis/location"
+        }
+      ]
+    },
+    {
+      "title": "알람",
+      "class": "alarm",
+      "link": "/alarm",
+      "icon": "",
+      "iconNormal": "",
+      "iconHover": "",
+      "subMenu": [
+        {
+          "menuName": "알람",
+          "link": "/alarm"
+        }
+      ]
+    },
+    {
+      "title": "설정",
+      "class": "setting",
+      "link": "/setting/location",
+      "icon": "",
+      "iconNormal": "",
+      "iconHover": "",
+      "iconActive": "",
+      "iconSelect": "",
+      "subMenu": [
+        {
+          "menuName": "시설관리",
+          "link": "/setting/location",
+          "icon": "icn_setting_factory"
+        },
+        {
+          "menuName": "기준정보",
+          "link": "/setting/energystandard",
+          "icon": "icn_setting_note"
+        },
+        {
+          "menuName": "공정관리",
+          "link": "/setting/process",
+          "icon": "icn_setting_tool"
+        },
+        {
+          "menuName": "부서관리",
+          "link": "/setting/department",
+          "icon": "icn_setting_folder"
+        },
+        {
+          "menuName": "구성원관리",
+          "link": "/setting/user",
+          "icon": "icn_setting_handshake"
+        }
+      ]
+    }
+  ]
+}

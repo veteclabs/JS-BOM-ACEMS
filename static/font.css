@@ -1,0 +1,67 @@
+@charset "utf-8";
+
+
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 100;
+  src: local(※), url("/fonts/AppleSDGothicNeoT.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoT.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 200;
+  src: local(※), url("/fonts/AppleSDGothicNeoL.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoL.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 300;
+  src: local(※), url("/fonts/AppleSDGothicNeoUL.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoUL.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 400;
+  src: local(※), url("/fonts/AppleSDGothicNeoR.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoR.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 500;
+  src: local(※), url("/fonts/AppleSDGothicNeoM.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoM.woff") format("woff");
+}
+
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 600;
+  src: local(※), url("/fonts/AppleSDGothicNeoSB.woff2") format("woff2"),
+    url("/fonts/AppleSDGothicNeoSB.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 700;
+  src: local(※), url("/fonts/AppleSDGothicNeoEB.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoEB.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 800;
+  src: local(※), url("/fonts/AppleSDGothicNeoB.woff2") format("woff2"),
+    url("/fonts/AppleSDGothicNeoB.woff") format("woff");
+}
+@font-face {
+  font-family: "BOM-font";
+  font-style: normal;
+  font-weight: 900;
+  src: local(※), url("/fonts/AppleSDGothicNeoH.woff2") format("woff2"),
+  url("/fonts/AppleSDGothicNeoH.woff") format("woff");
+}
