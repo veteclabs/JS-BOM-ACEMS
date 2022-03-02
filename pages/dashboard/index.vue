@@ -9,9 +9,16 @@
         <div class="row">
             <div v-for="item in airCompressorList" :key="item.id" class="col-lg-3">
                 <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">
-                        <h3>{{item.name}}</h3>
-                        <a><img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"/></a>
+                    <div class="ibox-title aircompressor-ibox-title">
+                        <nuxt-link  :to="`/dashboard/${item.id}`" class="flex-ibox-title">
+                            <h3>
+                                <div class="img-box">
+
+                                </div>
+                                {{item.name}}
+                            </h3>
+                            <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"/>
+                        </nuxt-link>
                     </div>
                     <div class="ibox-content">
                         <ul class="state-box">
@@ -136,8 +143,16 @@
                 ],
                 thermometerList: [
                     {id: 1, name: '흡착식 온도계', tag: [{name: '온도', tagName: 'temp', unit: '℃'}]},
-                    {id: 2, name: '온도계#1', tag: [{name: 'In', tagName: 'temp', unit: '℃'}, {name: 'Out', tagName: 'temp', unit: '℃'}]},
-                    {id: 3, name: '온도계#2', tag: [{name: 'In', tagName: 'temp', unit: '℃'}, {name: 'Out', tagName: 'temp', unit: '℃'}]},
+                    {
+                        id: 2,
+                        name: '온도계#1',
+                        tag: [{name: 'In', tagName: 'temp', unit: '℃'}, {name: 'Out', tagName: 'temp', unit: '℃'}]
+                    },
+                    {
+                        id: 3,
+                        name: '온도계#2',
+                        tag: [{name: 'In', tagName: 'temp', unit: '℃'}, {name: 'Out', tagName: 'temp', unit: '℃'}]
+                    },
                 ],
                 Interval1M: '',
                 interval: '',

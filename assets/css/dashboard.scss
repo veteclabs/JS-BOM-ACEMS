@@ -1,89 +1,145 @@
 /*dashboard*/
-.state-box{
-  display:flex;
-  justify-content: space-between;
-  align-items: center;
-  width:100%;
-  border-radius: 4px;
-  border: solid 1px $gray-2;
-  margin:0 0 16px 0;
-  li {
-    @extend .font-16;
-    width:25%;
+.aircompressor-ibox-title {
+  h3 {
+    display: flex;
+    align-items: center;
+  }
+
+  .img-box {
+    width: 40px;
+    height: 40px;
+    border: solid 1px $gray-2;
+    border-radius: 50%;
+    margin: 0 8px 0 0;
+    overflow: hidden;
     text-align: center;
-    padding:11px 0;
-    color:$gray-4;
-    border-right: solid 1px $gray-2;
-    &:last-child {
-      border-right:0;
+  }
+
+  a {
+    transition: color .5s ease;
+
+    &:hover {
+      color: $red-0;
     }
   }
+}
+
+.state-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-radius: 4px;
+  border: solid 1px $gray-2;
+  margin: 0 0 16px 0;
+
+  li {
+    @extend .font-16;
+    width: 25%;
+    text-align: center;
+    padding: 11px 0;
+    color: $gray-4;
+    border-right: solid 1px $gray-2;
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+
   li.run {
     @extend .blue-bg-gradient;
-    color:#fff;
+    color: #fff;
     font-weight: 600;
   }
+
   li.load {
     @extend .green-bg-gradient;
-    color:#fff;
+    color: #fff;
     font-weight: 600;
   }
+
   li.unload {
     @extend .orange-bg-gradient;
-    color:#fff;
+    color: #fff;
     font-weight: 600;
   }
+
   li.stop {
     @extend .red-bg-gradient;
-    color:#fff;
+    color: #fff;
     font-weight: 600;
   }
 }
 
-.noti-box{
-  width:100%;
-  padding:16px;
-  margin:0 0 16px 0;
-  background:$green-3;
+.noti-box {
+  width: 100%;
+  padding: 16px;
+  margin: 0 0 16px 0;
+  background: $green-3;
   @extend .font-18;
-  .normal{
-    color:$green-0;
-    font-weight:bold;
-    padding:0 0 0 25px;
-    background:url("~assets/images/dashboard/icn_dashboard_seeding.png")no-repeat left;
-    background-size:18px;
+
+  .normal {
+    color: $green-0;
+    font-weight: bold;
+    padding: 0 0 0 25px;
+    background: url("~assets/images/dashboard/icn_dashboard_seeding.png") no-repeat left;
+    background-size: 18px;
   }
-  .alarm{
-    color:$red-0;
-    font-weight:bold;
-    padding:0 0 0 25px;
-    background:url("~assets/images/dashboard/icn_dashboard_alert.png")no-repeat left;
-    background-size:18px;
+
+  .alarm {
+    color: $red-0;
+    font-weight: bold;
+    padding: 0 0 0 25px;
+    background: url("~assets/images/dashboard/icn_dashboard_alert.png") no-repeat left;
+    background-size: 18px;
   }
+
   .text {
-    margin:8px 0 0 0;
+    margin: 8px 0 0 0;
   }
 }
 
 .noti-box.alarm-box {
-  background:$red-3;
+  background: $red-3;
 }
 
-.tag-box{
-  background:$gray-0;
-  padding:16px;
+.tag-box {
+  background: $gray-0;
+  padding: 16px;
+  border-radius: 8px;
+
   li {
     @extend .font-18;
-    display:flex;
+    display: flex;
     justify-content: space-between;
-    margin:0 0 8px 0;
+    margin: 0 0 8px 0;
     font-weight: 600;
+
     &:last-child {
-      margin:0;
+      margin: 0;
     }
 
     .tagname {
-      color:$gray-5;
+      color: $gray-5;
     }
   }
+}
+
+.modal-info-box {
+  padding:24px 0 0 0;
+  li {
+    @extend .font-18;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 8px 0;
+
+    .title {
+      background:$gray-0;
+      color: $gray-5;
+      font-weight:500;
+    }
+  }
+
 }

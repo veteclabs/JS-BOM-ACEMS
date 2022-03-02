@@ -2,16 +2,16 @@
 .ibox {
   width: 100%;
   padding: 24px;
+  margin:0 0 24px 0;
   border-radius: 16px;
   box-shadow: 0 4px 8px 0 rgba(81, 81, 81, 0.08);
   background-color: #fff;
-  margin: 0 0 $content-margin 0;
 
   .ibox-title {
-    font-size: 14px;
+    @extend h3;
     font-weight: 700;
-    color: $gray-6;
-    padding: 0 0 16px 0;
+    color: $gray-7;
+    padding: 0 0 24px 0;
     border-bottom: 1px solid $gray-2;
   }
 
