@@ -19,7 +19,8 @@ body {
   font-size: 14px;
   font-family: "BOM-font", sans-serif;
   font-weight: 500;
-  color: $gray-9;
+  color: $gray-7;
+  background:$gray-0;
   line-height: 1.6em;
   word-break: break-all;
   width: 100%;
@@ -47,7 +48,7 @@ button {
 
 a {
   text-decoration: none;
-  color: $gray-9;
+  color: $gray-7;
   cursor: pointer;
   outline: 0 !important;
 }
@@ -55,7 +56,7 @@ a {
 a:hover,
 a:active,
 a:focus {
-  color: $gray-9;
+  color: $gray-7;
   text-decoration: none;
 }
 
@@ -285,11 +286,11 @@ summary {
 }
 
 .g8 {
-  color: $gray-8 !important;
+  color: $gray-7 !important;
 }
 
 .g9 {
-  color: $gray-9 !important;
+  color: $gray-7 !important;
 }
 
 
@@ -352,7 +353,7 @@ summary {
 }
 
 .red-bg-gradient {
-  background-image: linear-gradient(to bottom, #ff909f, #ff3a55);
+  background-image: linear-gradient(to bottom, #ffa7a1, #ee3224);
 }
 
 .orange-bg-gradient {
@@ -367,12 +368,12 @@ h1 {
 }
 
 h2 {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
 }
 
 h3 {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
 }
 
@@ -399,7 +400,7 @@ h3 {
 }
 
 .font-16 {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .font-14 {
@@ -500,7 +501,7 @@ h3 {
 
   #downMenu {
     position: absolute;
-    top: 120px;
+    top: 100px;
     width: 120px;
     z-index: 999;
     border-radius: 4px;
@@ -584,16 +585,13 @@ h3 {
   width: $mini-nav-width;
   min-width: $mini-nav-width;
   background: #fff;
-  box-shadow: 4px 0 8px 0 rgba(59, 70, 86, 0.08);
   min-height:100vh;
+  padding:40px 0;
 
   @include mobile() {
     display: block;
   }
 
-  .nav-info {
-    box-shadow: 4px 0 8px 0 rgba(59, 70, 86, 0.08);
-  }
 
   .nav-header {
     text-align: center;
@@ -678,7 +676,7 @@ h3 {
             line-height: auto;
             padding: 2px 5px;
             text-align: left;
-            color: $gray-9;
+            color: $gray-7;
 
             &:hover, &:focus {
               background-color: transparent;
@@ -723,6 +721,7 @@ body.full-navbar {
   #LeftMenu {
     width: $nav-width;
     flex: 0 0 $nav-width;
+
 
     .nav-info {
       box-shadow: none;

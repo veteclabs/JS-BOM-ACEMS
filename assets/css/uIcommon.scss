@@ -2,9 +2,9 @@
 .ibox {
   width: 100%;
   padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px 0 rgba(59, 70, 86, 0.08);
-  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px 0 rgba(81, 81, 81, 0.08);
+  background-color: #fff;
   margin: 0 0 $content-margin 0;
 
   .ibox-title {
@@ -82,6 +82,21 @@
 
 .flex-box.flex-center-box {
   justify-content: center;
+}
+
+.title-box {
+  width:100%;
+  padding: 20px 16px;
+  border-radius: 8px;
+  background-color:rgba(217,217,217, 0.4);
+  margin:0 0 40px 0;
+  img {
+    width:24px;
+    margin:0 12px 0 0;
+  }
+  h2 {
+    margin:0;
+  }
 }
 
 .tab-box {
@@ -192,7 +207,7 @@ input[type="text"], input[type="password"], input[type="number"] {
   border-radius: 17px;
   border: solid 1px $gray-2;
   background-color: $gray-0;
-  color: $gray_9;
+  color: $gray-7;
   font-weight: 500;
 
   &:focus {
@@ -211,7 +226,6 @@ select {
   background-size: 16px;
   background-position: right 12px center;
   background-repeat: no-repeat;
-  color: $gray_9;
   font-weight: 500;
 }
 
@@ -268,7 +282,6 @@ input[type="text"].datepicker {
   .radio-label {
     display: inline-block;
     padding: 0 0 0 4px;
-    color: $gray_9;
     font-weight: 500;
   }
 
@@ -311,7 +324,6 @@ input[type="text"].datepicker {
   .check-label {
     display: inline-block;
     padding: 0 0 0 4px;
-    color: $gray_9;
     font-weight: 500;
   }
 
@@ -438,7 +450,7 @@ textarea.form-control {
 .bom-badge {
   display: inline-block;
   font-size: 14px;
-  color: $gray-9;
+  color: $gray-7;
   padding: 0 5px;
   border-radius: 4px;
   font-weight: 600;
@@ -619,7 +631,7 @@ textarea.form-control {
       .dx-row > td {
         border: 0;
         padding: 16px 8px;
-        color: $gray-9;
+        color: $gray-7;
         font-size: 14px;
         font-weight: 500;
         border-bottom: 1px solid $gray-2;
@@ -892,7 +904,7 @@ textarea.form-control {
   -moz-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
   transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
 
-  background-color: $gray-8;
+  background-color: $gray-7;
   color: #FFFFFF;
   font-size: 12px;
   margin-bottom: 10px;

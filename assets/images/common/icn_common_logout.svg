@@ -1,0 +1,25 @@
+<svg id="icn_common_logout" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #a3a3a3;
+      }
+    </style>
+  </defs>
+  <g id="logout_black_24dp_1_" data-name="logout_black_24dp (1)" transform="translate(2 2)">
+    <g id="그룹_669" data-name="그룹 669">
+      <path id="패스_29748" data-name="패스 29748" class="cls-1" d="M0,0H20V20H0Z"/>
+    </g>
+    <g id="그룹_671" data-name="그룹 671" transform="translate(2.5 2.5)">
+      <g id="그룹_670" data-name="그룹 670">
+        <path id="패스_29749" data-name="패스 29749" class="cls-2" d="M4.667,4.667h5a.836.836,0,0,0,.833-.833h0A.836.836,0,0,0,9.667,3h-5A1.672,1.672,0,0,0,3,4.667V16.333A1.672,1.672,0,0,0,4.667,18h5a.836.836,0,0,0,.833-.833h0a.836.836,0,0,0-.833-.833h-5Z" transform="translate(-3 -3)"/>
+        <path id="패스_29750" data-name="패스 29750" class="cls-2" d="M18.708,11.16,16.383,8.835a.417.417,0,0,0-.717.292v1.492H9.833A.836.836,0,0,0,9,11.451H9a.836.836,0,0,0,.833.833h5.833v1.492a.412.412,0,0,0,.708.292L18.7,11.743A.41.41,0,0,0,18.708,11.16Z" transform="translate(-4 -3.951)"/>
+      </g>
+    </g>
+  </g>
+  <rect id="사각형_16851" data-name="사각형 16851" class="cls-1" width="24" height="24"/>
+</svg>

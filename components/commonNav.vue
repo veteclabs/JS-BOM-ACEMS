@@ -8,8 +8,7 @@
                     </div>
                     <div class="profile-element-detail detail-info">
                         <p class="profile-title">BOM-ACEMS</p>
-                        <p class="profile-subtitle">정석엔지니어링
-                            <img src="~assets/images/common/icn_menu_factory.png" alt="공장" width="16"/></p>
+                        <p class="profile-subtitle">정석엔지니어링</p>
                     </div>
                 </li>
                 <li v-for="(item, index) in menus" :key="index"
