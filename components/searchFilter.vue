@@ -180,7 +180,11 @@
                 usageTypeDefaultOption: [
                     {
                         id: 'Usage',
-                        name: '사용량',
+                        name: '전력사용량',
+                    },
+                    {
+                        id: 'flow',
+                        name: '유량',
                     },
                     {
                         id: 'TOE',

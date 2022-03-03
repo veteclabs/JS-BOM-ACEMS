@@ -1,8 +1,5 @@
 <template>
     <div class="analysisEnergy">
-        <div class="header-title">
-            <h2>데이터 조회</h2>
-        </div>
         <div class="wrapper animated fadeInRight">
             <div class="row">
                 <div class="col-lg-7">

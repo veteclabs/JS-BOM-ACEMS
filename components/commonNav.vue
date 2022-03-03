@@ -4,7 +4,7 @@
             <ul class="nav" id="side-menu">
                 <li class="nav-header">
                     <div class="profile-element mini-info">
-                        <img src="~assets/images/menu/icn_menu_bom-logo.svg" alt="Logo" width="32"/>
+                        <img src="~assets/images/common/icn_common_logo.png" alt="Logo" width="40"/>
                     </div>
                     <div class="profile-element-detail detail-info">
                         <p class="profile-title">BOM-ACEMS</p>
@@ -13,11 +13,9 @@
                 </li>
                 <li v-for="(item, index) in menus" :key="index"
                     :class="[ path.split('/')[1] === item.class ? 'active ' + item.class : item.class, ]"
-                    @mouseover="hoverEvent(index)" @mouseleave="leaveEvent(index)"
                 >
                     <nuxt-link :to="item.link">
-                        <img v-if="path.split('/')[1] === item.class" :src="item.iconSelect" :alt="item.class"/>
-                        <img v-if="path.split('/')[1] !== item.class" :src="item.icon" :alt="item.class"/>
+                        <img :src="item.icon" :alt="item.class" :width="26"/>
                     </nuxt-link>
                     <ul class="nav nav-second-level" v-if="item.subMenu">
                         <li class="title-li">
@@ -58,25 +56,13 @@
 
                 for (let i in this.menus) {
                     let iconName = this.menus[i].class;
-                    this.menus[i].icon = require(`@/assets/images/menu/icn_menu_${iconName}.svg`);
-                    this.menus[i].iconNormal = require(`@/assets/images/menu/icn_menu_${iconName}.svg`);
-                    this.menus[i].iconHover = require(`@/assets/images/menu/icn_menu_b_${iconName}.svg`);
-                    this.menus[i].iconActive = require(`@/assets/images/menu/icn_menu_w_${iconName}.svg`);
-                    this.menus[i].iconSelect = require(`@/assets/images/menu/icn_menu_w_${iconName}.svg`);
+                    this.menus[i].icon = require(`@/assets/images/common/icn_common_${iconName}.png`);
                 }
 
                 this.menuPathChk();
             },
             menuPathChk() {
                 this.path = this.$route.path;
-            },
-            hoverEvent(index) {
-                this.menus[index].icon = this.menus[index].iconHover;
-                this.menus[index].iconSelect = this.menus[index].iconActive;
-            },
-            leaveEvent(index) {
-                this.menus[index].icon = this.menus[index].iconNormal;
-                this.menus[index].iconSelect = this.menus[index].iconActive;
             },
         },
         watch: {

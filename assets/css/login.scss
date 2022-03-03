@@ -81,7 +81,6 @@
       background-size: 20px;
       background-repeat: no-repeat;
       background-position: center left 18px;
-      background-color:$gray-2;
     }
 
     input::placeholder {
@@ -101,7 +100,6 @@
       height: 48px;
       line-height: 48px;
       text-align: center;
-      color: #fff;
       @extend .font-18;
       background-color: $blue-0;
       transition: all .3s ease;

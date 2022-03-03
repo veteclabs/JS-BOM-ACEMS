@@ -533,6 +533,7 @@ h3 {
   .header-nav {
     list-style: none;
     display: flex;
+    margin:16px 0 0 0;
 
     li {
       @extend .font-16;
@@ -604,9 +605,25 @@ h3 {
       display: none
     }
   }
+  ul#side-menu {
+    > li.active {
+      position:relative;
+      &::before {
+        content:"";
+        position:absolute;
+        top:18px;
+        display:block;
+        width:4px;
+        height:24px;
+        background:$red-0;
+
+      }
+    }
+  }
 
   ul {
     width: 100%;
+
 
     li {
       position: relative;
@@ -629,7 +646,7 @@ h3 {
         padding: 0;
 
         &:hover {
-          background: transparent;
+          background-color: $gray-1;
         }
       }
 
@@ -691,11 +708,7 @@ h3 {
     }
 
     li.active {
-      > a {
-        background-color: $bomblue-0;
-      }
-
-      ul {
+      >ul {
         li.nuxt-link-active, li.active {
           background: $blue-0;
           border-radius: 4px;

@@ -33,20 +33,6 @@
       ]
     },
     {
-      "title": "알람",
-      "class": "alarm",
-      "link": "/alarm",
-      "icon": "",
-      "iconNormal": "",
-      "iconHover": "",
-      "subMenu": [
-        {
-          "menuName": "알람",
-          "link": "/alarm"
-        }
-      ]
-    },
-    {
       "title": "설정",
       "class": "setting",
       "link": "/setting/equipment",
