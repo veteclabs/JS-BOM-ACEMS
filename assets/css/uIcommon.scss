@@ -592,8 +592,9 @@ textarea.form-control {
   }
 
   .dx-datagrid-headers {
-    background: #fff;
-    border: 1px solid $gray-3;
+    background: $gray-0;
+    border-radius:8px 8px 0 0;
+    border: none;
     border-left: 0;
     border-right: 0;
 
@@ -602,11 +603,11 @@ textarea.form-control {
 
       .dx-row {
         > td {
-          font-size: 14px;
+          font-size: 16px;
           padding: 16px;
           color: $gray-5;
           border: 0;
-          font-weight: 800;
+          font-weight: 500;
         }
       }
     }
@@ -632,7 +633,7 @@ textarea.form-control {
         border: 0;
         padding: 16px 8px;
         color: $gray-7;
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 500;
         border-bottom: 1px solid $gray-2;
       }

@@ -141,5 +141,17 @@
       font-weight:500;
     }
   }
-
 }
+
+.grid-data{
+  color: $gray-5;
+  display:flex;
+  strong {
+    color:$gray-7;
+    span {
+      color:$gray-2;
+      padding:0 10px;
+    }
+  }
+}
+

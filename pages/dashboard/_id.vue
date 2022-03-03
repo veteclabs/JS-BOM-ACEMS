@@ -82,6 +82,20 @@
                         알람 정보
                     </div>
                     <div class="ibox-content">
+                        <DxDataGrid :data-source="alarmList" :show-borders="false" key-expr="id"
+                                    :column-min-width="100"
+                                    :column-auto-width="true">
+                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
+                            <DxColumn data-field="id" caption="No" alignment="center"/>
+                            <DxColumn data-field="msg" caption="Message"/>
+                            <DxColumn data-field="temp" caption="Data" cell-template="dataGridTemplate"/>
+                            <DxColumn data-field="state" caption="State"/>
+                            <DxPaging :enabled="true" :page-size="5"/>
+                            <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
+                            <template #dataGridTemplate="{ data: cellData }">
+                                <dataGridTemplate :cell-data="cellData"/>
+                            </template>
+                        </DxDataGrid>
 
                     </div>
                 </div>
@@ -94,14 +108,15 @@
     import dayjs from 'dayjs';
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
-    import DxPieChart, {
-        DxLabel,
-        DxLegend,
-        DxSeries,
-        DxTooltip,
-        DxMargin,
-        DxSize, DxConnector
-    } from 'devextreme-vue/pie-chart';
+    import dataGridTemplate from '~/components/gridTemplate/dataGridTemplate.vue';
+    import {
+        DxDataGrid,
+        DxColumn,
+        DxPaging,
+        DxPager,
+        DxSearchPanel,
+    } from 'devextreme-vue/data-grid';
+
 
     export default {
         fetch({store, redirect}) {
@@ -114,13 +129,12 @@
         components: {
             dayjs,
             Loading,
-            DxPieChart,
-            DxLabel,
-            DxLegend,
-            DxSeries,
-            DxTooltip,
-            DxMargin,
-            DxSize, DxConnector
+            dataGridTemplate,
+            DxDataGrid,
+            DxColumn,
+            DxPaging,
+            DxPager,
+            DxSearchPanel,
         },
         data() {
             return {
@@ -277,7 +291,14 @@
                     },
                     labels: ['bar'],
                 },
-
+                alarmList: [
+                    {id: 1, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 2, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 3, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 4, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 5, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                ],
+                pageSizes: [5, 10, 20], // 페이지사이즈
                 Interval1M: '',
                 interval: '',
                 intervalTime: 5 * 1000,
