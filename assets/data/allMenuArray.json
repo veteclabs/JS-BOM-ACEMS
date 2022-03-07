@@ -48,8 +48,8 @@
           "icon": "icn_setting_factory"
         },
         {
-          "menuName": "기준정보 관리",
-          "link": "/setting/standard",
+          "menuName": "공기압축기 관리",
+          "link": "/setting/aircompressor",
           "icon": "icn_setting_note"
         }
       ]

@@ -4,7 +4,7 @@
   width: 100%;
   padding: 20px $content-margin;
   background: $gray-0;
-  margin:0;
+  margin: 0;
   min-height: calc(100% - 135px);
   @include mobile() {
     padding: 20px;
@@ -12,7 +12,7 @@
 }
 
 #settingContent {
-  >.row {
+  > .row {
     display: flex;
 
     > div {
@@ -67,39 +67,43 @@
 }
 
 #settingNav {
-  >ul {
-    width:100%;
-    padding:8px;
+  > ul {
+    width: 100%;
+    padding: 8px;
     border-radius: 8px;
     box-shadow: 0 4px 8px 0 rgba(59, 70, 86, 0.08);
     background-color: #ffffff;
+
     > li {
       @include tabletAndMobile() {
-        display:inline-block;
-        width:50%;
+        display: inline-block;
+        width: 50%;
       }
     }
+
     a {
-      display:block;
-      width:100%;
+      display: block;
+      width: 100%;
       padding: 8px 12px;
       border-radius: 8px;
-      transition:background .3s ease;
+      transition: background .3s ease;
+
       &:hover {
-        background-color:$gray-1;
+        background-color: $gray-1;
       }
     }
-    a.nuxt-link-active  {
+
+    a.nuxt-link-active {
       background-color: $bomblue-1;
-      font-weight:bold;
+      font-weight: bold;
     }
   }
 }
 
 
 /**알람설정**/
-.ibox-disable-content, .disable-table{
-  opacity:0.3;
+.ibox-disable-content, .disable-table {
+  opacity: 0.3;
 }
 
 .label-box {
@@ -114,78 +118,122 @@
 }
 
 .target-box {
-  padding:16px;
-  border-bottom:1px solid $gray-1;
+  padding: 16px;
+  border-bottom: 1px solid $gray-1;
 }
 
 
 /***setting Modal***/
+
+
 .td-label {
-  font-size:14px;
-  color:$gray-5;
-  margin:0 0 8px 0;
+  font-size: 14px;
+  color: $gray-5;
+  margin: 0 0 8px 0;
 }
 
 
-.modal-h4-title{
+.modal-h4-title {
   @extend .font-18;
-  font-weight:800;
-  margin:24px 0;
+  font-weight: 800;
+  margin: 40px 0 24px 0;
+}
 
+.first.modal-h4-title {
+  margin: 24px 0;
 }
 
 #bar-range.simple-range-slider {
-  width:100%;
-  .simple-range-slider-bg-bar{
-    height:8px;
+  width: 100%;
+
+  .simple-range-slider-bg-bar {
+    height: 8px;
     border-radius: 4px;
-    background:$gray-1;
+    background: $gray-1;
   }
+
   .simple-range-slider-bar {
-    height:8px;
+    height: 8px;
     border-radius: 4px;
     background-image: linear-gradient(to right, #3363ff, #c24285);
   }
-  .simple-range-slider-popover{
-    height:25px;
-    padding:0 3px;
+
+  .simple-range-slider-popover {
+    height: 25px;
+    padding: 0 3px;
   }
+
   input, label {
-    background:none;
-    font-size:12px;
-    height:20px;
-    margin:0;
+    background: none;
+    font-size: 12px;
+    height: 20px;
+    margin: 0;
   }
 }
 
-.date-ul{
-  display:flex;
+.date-ul {
+  display: flex;
+  margin: 0;
+
   li {
     text-align: center;
-    margin:0 4px 0 0;
+    margin: 0 4px 0 0;
 
     input[type=checkbox] {
-      display:none;
+      display: none;
     }
 
     div {
       @extend .font-18;
-      width:40px;
-      height:40px;
-      line-height:36px;
-      background:$gray-0;
-      border:1px solid $gray-0;
-      color:$gray-5;
+      width: 40px;
+      height: 40px;
+      line-height: 36px;
+      background: $gray-0;
+      border: 1px solid $gray-0;
+      color: $gray-5;
       border-radius: 4px;
-      cursor:pointer;
-      font-weight:400;
+      cursor: pointer;
+      font-weight: 400;
 
     }
+
     input[type=checkbox]:checked + div {
-      background:$blue-3;
-      border:1px solid $blue-0;
-      color:$blue-0;
-      font-weight:600;
+      background: $blue-3;
+      border: 1px solid $blue-0;
+      color: $blue-0;
+      font-weight: 600;
     }
   }
+}
+
+#createmodal {
+  .bootstrap-datetimepicker-widget table td,
+  .bootstrap-datetimepicker-widget table td i {
+    height: auto;
+    line-height: 1;
+  }
+  .bootstrap-datetimepicker-widget table td i.fa-chevron-up {
+    height:30px;
+    background-image:url('~assets/images/common/icn_common_more-g4.svg');
+    background-repeat : no-repeat;
+    background-position:center;
+    transition: background ease .5s;
+    transform: rotate(-90deg);
+    &:hover {
+      background-image:url('~assets/images/common/icn_common_more.svg');
+    }
+  }
+
+  .bootstrap-datetimepicker-widget table td i.fa-chevron-down {
+    height:30px;
+    background-image:url('~assets/images/common/icn_common_more-g4.svg');
+    background-repeat : no-repeat;
+    background-position:center;
+    transition: background ease .5s;
+    transform: rotate(90deg);
+    &:hover {
+      background-image:url('~assets/images/common/icn_common_more.svg');
+    }
+  }
+
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal v-model="propsdata.show" id="createmodal" title="Setting" hide-footer hide-header>
+        <b-modal v-model="propsdata.show" id="createmodal"  title="Setting" hide-footer hide-header>
             <div class="modal-header">
                 <h5 class="font-20" style="margin:0;">
                     <img src="~assets/images/dashboard/icn_dashboard-modal_setting.png" alt="setting-icon" width="24"/>
@@ -10,7 +10,18 @@
                     <img src="~assets/images/dashboard/icn_dashboard-modal_close.svg" alt="close" width="24"/>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding:0;">
+                <h4 class="modal-h4-title first">공기압축기 정보</h4>
+                <table class="bom-table">
+                    <tr>
+                        <td>
+                            <div class="td-label">공기압축기명</div>
+                            <label class="input-100">
+                                <input type="text" v-model="name" class="input-100" placeholder="공기압축기명을 입력하세요"/>
+                            </label>
+                        </td>
+                    </tr>
+                </table>
                 <h4 class="modal-h4-title">공기압축기 압력</h4>
                 <table class="bom-table">
                     <tr>
@@ -51,24 +62,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td style="position:relative;">
                             <div class="td-label">Time</div>
-                            <label class="input-100">
-                                <input type="number" v-model="time.start" class="input-100" placeholder="시작시간"/>
-                            </label>
-                            <div class="err-message" v-if="validation !== undefined">
-                                {{ validation.firstError('time.start') }}
-                            </div>
+                            <date-picker v-model="time.start" :config="timeOptions"/>
                         </td>
-                        <td>~</td>
-                        <td>
-                            <div class="td-label">Max</div>
-                            <label class="input-100">
-                                <input type="number" v-model="time.end" class="input-100" placeholder="최대압력"/>
-                            </label>
-                            <div class="err-message" v-if="validation !== undefined">
-                                {{ validation.firstError('time.end') }}
-                            </div>
+                        <td style="vertical-align: bottom">~</td>
+                        <td style="vertical-align: bottom; position:relative;">
+                            <date-picker v-model="time.end" :config="timeOptions"/>
                         </td>
                     </tr>
                 </table>
@@ -117,10 +117,7 @@
                 },
                 state: 'new',
                 id: '',
-                bar: {
-                    min: 0,
-                    max: 0
-                },
+                name:'',
                 barRange: [30, 80],
                 dateList: [
                     {id: 1, name: '월'},
@@ -133,14 +130,17 @@
                 ],
                 date: [],
                 time: {
-                    start: 0,
-                    end: 0
+                    start:'00:00',
+                    end: '00:00'
+                },
+                timeOptions: {
+                    format: 'HH:mm',
                 }
 
             };
         },
         validators: {
-            barRange(value) {
+            name(value) {
                 return Validator.value(value).required();
             },
         },
@@ -217,11 +217,11 @@
             },
             reset() {
                 this.id = '';
-                this.barRange = [0,0];
+                this.barRange = [30,80];
                 this.date = [];
-                this.time ={
-                    start: 0,
-                    end: 0
+                this.time = {
+                    start:'00:00',
+                    end: '00:00'
                 };
                 this.validation.reset();
             },
