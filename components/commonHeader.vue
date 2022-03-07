@@ -16,15 +16,16 @@
             </div>
             <div class="right-header-menu">
                 <a class="user" title="계정" @click="downMenu()">I</a>
-                <ul id="downMenu" v-show="viewDownMenu">
-                    <li>
-                        <a title="매뉴얼" href="/manual.pdf" data-tooltip-text="매뉴얼" target="_blank">
-                            매뉴얼
-                        </a>
-                    </li>
-                    <li @click="changePasswordModal()">비밀번호변경</li>
-                    <li @click="logout()">Logout</li>
-                </ul>
+                <div id="downMenu" v-show="viewDownMenu">
+                    <div class="user-info">
+                        <div class="user">I</div>
+                        <div>
+                            <p class="user-name">{{user.name}}</p>
+                            <p class="email">{{user.email}}</p>
+                        </div>
+                    </div>
+                    <button class="logout-btn" @click="logout()">Logout</button>
+                </div>
             </div>
         </div>
         <passwordChangeModal v-bind:propsdata='passwordModalData' ref="passwordModal"/>
@@ -53,6 +54,7 @@
                 passwordModalData: {
                     show: false,
                 },
+                user: '',
                 viewDownMenu: false,
                 routeName:'',
                 routeList:[],
@@ -61,6 +63,7 @@
             };
         },
         mounted() {
+            this.user = this.$store.getters.User;
             this.routeSetting();
         },
         filters: {

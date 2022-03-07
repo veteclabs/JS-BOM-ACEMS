@@ -31,7 +31,7 @@ $breakpoint-desktop: 1440px;
 
 
 @mixin desktop {
-  @media (min-width:#{$breakpoint-tablet}) and (max-width: #{$breakpoint-desktop - 1px}) {
+  @media (min-width:#{$breakpoint-desktop-mid}) and (max-width: #{$breakpoint-desktop - 1px}) {
     @content;
   }
 }

@@ -6,7 +6,7 @@
                 Air Compressor
             </h2>
         </div>
-        <div class="row">
+        <div class="row dashboard-item-box">
             <div v-for="item in airCompressorList" :key="item.id" class="col-lg-3">
                 <div class="ibox">
                     <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
@@ -60,7 +60,7 @@
             </h2>
         </div>
 
-        <div class="row">
+        <div class="row dashboard-item-box">
             <div v-for="item in thermometerList" :key="item.id" class="col-lg-3">
                 <div class="ibox">
                     <div class="ibox-title">
