@@ -9,16 +9,18 @@
         <div class="row">
             <div v-for="item in airCompressorList" :key="item.id" class="col-lg-3">
                 <div class="ibox">
-                    <div class="ibox-title aircompressor-ibox-title">
-                        <nuxt-link  :to="`/dashboard/${item.id}`" class="flex-ibox-title">
+                    <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
+                        <nuxt-link :to="`/dashboard/${item.id}`">
                             <h3>
                                 <div class="img-box">
 
                                 </div>
                                 {{item.name}}
                             </h3>
-                            <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"/>
                         </nuxt-link>
+                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                             class="setting-btn"
+                             @click="settingModalOpen(item.id)"/>
                     </div>
                     <div class="ibox-content">
                         <ul class="state-box">
@@ -58,7 +60,6 @@
             </h2>
         </div>
 
-
         <div class="row">
             <div v-for="item in thermometerList" :key="item.id" class="col-lg-3">
                 <div class="ibox">
@@ -77,6 +78,7 @@
             </div>
         </div>
 
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -84,14 +86,7 @@
     import dayjs from 'dayjs';
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
-    import DxPieChart, {
-        DxLabel,
-        DxLegend,
-        DxSeries,
-        DxTooltip,
-        DxMargin,
-        DxSize, DxConnector
-    } from 'devextreme-vue/pie-chart';
+    import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -104,13 +99,7 @@
         components: {
             dayjs,
             Loading,
-            DxPieChart,
-            DxLabel,
-            DxLegend,
-            DxSeries,
-            DxTooltip,
-            DxMargin,
-            DxSize, DxConnector
+            settingEquipmentModal
         },
         data() {
             return {
@@ -121,6 +110,9 @@
                     e: '',
                 },
                 loadingData: {
+                    show: false,
+                },
+                settingModalData: {
                     show: false,
                 },
                 tagVal: '',
@@ -216,6 +208,10 @@
                     vm.loadingData.show = false;
                 });
             },
+            settingModalOpen (id) {
+                this.$refs.settingEquipmentModal.createdModal(id);
+                this.settingModalData.show = true;
+            },
             resetInterval() {
                 const vm = this;
                 clearInterval(this.interval);
@@ -234,18 +230,6 @@
                 value = parseFloat(value);
                 if (!value) return '0';
                 return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
-            },
-            pickTagValue: function (object, tag) {
-                if (object === undefined || object === null || object === "") {
-                    return -1;
-                } else {
-                    let target = object.filter(object => object.Name === tag);
-                    if (target.length === 0) {
-                        return -100;
-                    } else {
-                        return target[0].Value;
-                    }
-                }
             },
             pickValue: function (object, property, value, returnValue) {
                 if (object === undefined || object === null || object === "") {

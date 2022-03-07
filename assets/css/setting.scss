@@ -117,3 +117,75 @@
   padding:16px;
   border-bottom:1px solid $gray-1;
 }
+
+
+/***setting Modal***/
+.td-label {
+  font-size:14px;
+  color:$gray-5;
+  margin:0 0 8px 0;
+}
+
+
+.modal-h4-title{
+  @extend .font-18;
+  font-weight:800;
+  margin:24px 0;
+
+}
+
+#bar-range.simple-range-slider {
+  width:100%;
+  .simple-range-slider-bg-bar{
+    height:8px;
+    border-radius: 4px;
+    background:$gray-1;
+  }
+  .simple-range-slider-bar {
+    height:8px;
+    border-radius: 4px;
+    background-image: linear-gradient(to right, #3363ff, #c24285);
+  }
+  .simple-range-slider-popover{
+    height:25px;
+    padding:0 3px;
+  }
+  input, label {
+    background:none;
+    font-size:12px;
+    height:20px;
+    margin:0;
+  }
+}
+
+.date-ul{
+  display:flex;
+  li {
+    text-align: center;
+    margin:0 4px 0 0;
+
+    input[type=checkbox] {
+      display:none;
+    }
+
+    div {
+      @extend .font-18;
+      width:40px;
+      height:40px;
+      line-height:36px;
+      background:$gray-0;
+      border:1px solid $gray-0;
+      color:$gray-5;
+      border-radius: 4px;
+      cursor:pointer;
+      font-weight:400;
+
+    }
+    input[type=checkbox]:checked + div {
+      background:$blue-3;
+      border:1px solid $blue-0;
+      color:$blue-0;
+      font-weight:600;
+    }
+  }
+}
