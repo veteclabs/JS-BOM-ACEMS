@@ -90,7 +90,7 @@
                     e: '',
                 },
                 modalData: {
-                    show: true,
+                    show: false,
                 },
                 airCompressorList: [
                     {id: 1, barMin:30, barMax:80, schedule: '월, 화', start:'18:00', end:'07:00', name:'Ingersoll Rand 100'},

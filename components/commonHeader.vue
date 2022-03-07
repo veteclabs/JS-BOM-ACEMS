@@ -15,6 +15,10 @@
                 </div>
             </div>
             <div class="right-header-menu">
+                <div class="nowTime">
+                    {{nowTime  | dateFormat('YYYY-MM-DD ddd')}}
+                    <span>{{nowTime | dateFormat('HH:mm:ss')}}</span>
+                </div>
                 <a class="user" title="계정" @click="downMenu()">I</a>
                 <div id="downMenu" v-show="viewDownMenu">
                     <div class="user-info">
@@ -54,17 +58,22 @@
                 passwordModalData: {
                     show: false,
                 },
+                nowTime:new Date(),
                 user: '',
                 viewDownMenu: false,
                 routeName:'',
                 routeList:[],
                 interval: '',
-                intervalTime: 20 * 1000,
+                intervalTime: 1 * 1000,
             };
         },
         mounted() {
             this.user = this.$store.getters.User;
+            this.resetInterval();
             this.routeSetting();
+        },
+        beforeDestroy() {
+            this.removeInterval();
         },
         filters: {
             dateFormat: function (value, format) {
@@ -91,6 +100,22 @@
                     .then(() => {
                         this.$router.push('/login');
                     });
+            },
+            settingTime() {
+                this.nowTime = new Date();
+
+            },
+            resetInterval() {
+                const vm = this;
+                clearInterval(this.interval);
+                vm.interval = null;
+                vm.interval = setInterval(() => {
+                    vm.settingTime();
+                }, vm.intervalTime);
+            },
+            removeInterval() {
+                const vm = this;
+                clearInterval(vm.interval);
             },
         },
         watch: {

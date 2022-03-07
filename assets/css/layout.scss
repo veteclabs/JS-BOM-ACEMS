@@ -487,8 +487,9 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @include mobile() {
+  @include tabletAndMobile() {
     padding: 20px;
+    display:block;
   }
 
   .user {
@@ -506,6 +507,45 @@ h3 {
 
   .right-header-menu{
     position:relative;
+    display:flex;
+    align-items: center;
+
+    @include tabletAndMobile() {
+      padding: 20px 0;
+      justify-content: end;
+    }
+  }
+
+  .nowTime{
+    @include mobile-mini() {
+      display:none;
+    }
+    @extend .font-20;
+    position:relative;
+    display:flex;
+    background:url("~assets/images/common/icn_common_calendar.svg") no-repeat center left;
+    color:$gray-5;
+    padding:0 24px 0 30px;
+    margin:0 24px 0 0;
+    font-weight:500;
+    &:after {
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      right:0;
+      content:'';
+      display:block;
+      width:1px;
+      height:24px;
+      background:$gray-2;
+    }
+    span{
+      @extend .font-24;
+      color:$gray-7;
+      font-weight:600;
+      padding:0 0 0 8px;
+    }
+
   }
   #downMenu {
     position: absolute;
