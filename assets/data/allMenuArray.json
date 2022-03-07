@@ -48,8 +48,8 @@
           "icon": "icn_setting_factory"
         },
         {
-          "menuName": "기준정보",
-          "link": "/setting/energystandard",
+          "menuName": "기준정보 관리",
+          "link": "/setting/standard",
           "icon": "icn_setting_note"
         }
       ]

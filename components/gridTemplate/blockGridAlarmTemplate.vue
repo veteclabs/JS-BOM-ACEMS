@@ -20,7 +20,7 @@
             };
         },
         mounted() {
-            if(this.cellData.value === 1) {
+            if(this.cellData.value === true) {
                 this.colorType = 'blue-badge blue';
                 this.text = 'ON'
             }else {

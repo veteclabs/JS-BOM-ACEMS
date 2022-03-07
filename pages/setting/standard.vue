@@ -3,7 +3,7 @@
         <div class="wrapper animated fadeInRight">
             <div class="ibox">
                 <div class="ibox-title ibox-noborder-title">
-                    장비 관리
+                    기준정보 관리
                 </div>
                 <div class="grid-header">
                     <button id="createEquipment" class="button add-button" @click="createEquipment">
@@ -13,26 +13,31 @@
                 <div id="gridBox">
                     <DxDataGrid
                             id="equipmentListGrid"
-                            :data-source="equipmentList"
+                            :data-source="airCompressorList"
                             :show-borders="false"
                             :onCellClick="updateEquipment"
                             key-expr="id"
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
-                        <DxColumn data-field="type" caption="Type" alignment="center"/>
-                        <DxColumn data-field="type" caption="Model" alignment="center"/>
-                        <DxColumn data-field="description" caption="장비명" alignment="center"
-                                  cell-template="blockGridTemplate" />
+                        <DxColumn data-field="name" caption="장비명" alignment="center"
+                                  cell-template="blockGridTemplate"/>
+                        <DxColumn data-field="barMin" caption="최소압력" alignment="center"/>
+                        <DxColumn data-field="barMax" caption="최대압력" alignment="center"/>
+                        <DxColumn data-field="schedule" caption="스케줄" alignment="center"
+                                  cell-template="blockGridAlarmTemplate"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
+                        <template #blockGridAlarmTemplate="{ data: cellData }">
+                            <blockGridAlarmTemplate :cell-data="cellData"/>
+                        </template>
                         <template #blockGridTemplate="{ data: cellData }">
                             <blockGridTemplate :cell-data="cellData"/>
                         </template>
                     </DxDataGrid>
                 </div>
             </div>
-            <createEquipmentModal v-bind:propsdata="modalData" v-on:callSearch="getEquipment" ref="equipmentModal"/>
+            <settingEquipmentModal ref="equipmentModal" v-bind:propsdata="modalData"/>
             <flashModal v-bind:propsdata="msgData"/>
         </div>
     </div>
@@ -49,8 +54,7 @@
         DxPager,
         DxSearchPanel,
     } from 'devextreme-vue/data-grid';
-    import {DxButton} from 'devextreme-vue/button';
-    import createEquipmentModal from '~/components/settingModal/createEquipmentModal.vue';
+    import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
@@ -66,7 +70,7 @@
         components: {
             axios,
             flashModal,
-            createEquipmentModal,
+            settingEquipmentModal,
             DxDataGrid,
             DxColumn,
             DxPaging,
@@ -75,7 +79,6 @@
             DxLookup,
             DxPager,
             DxSearchPanel,
-            DxButton,
             blockGridAlarmTemplate,
             blockGridTemplate
         },
@@ -90,7 +93,12 @@
                 modalData: {
                     show: false,
                 },
-                equipmentList: [],
+                airCompressorList: [
+                    {id: 1, barMin:30, barMax:80, schedule: true, start:'18:00', end:'07:00', name:'Ingersoll Rand 100'},
+                    {id: 2, barMin:30, barMax:80, schedule: true, start:'18:00', end:'07:00', name: 'Ingersoll Rand 200'},
+                    {id: 3, barMin:30, barMax:80, schedule: true, start:'18:00', end:'07:00', name: 'Ingersoll Rand 150'},
+                    {id: 4, barMin:30, barMax:80, schedule: true, start:'18:00', end:'07:00', name: 'YUJIN 100'},
+                ],
                 pageSizes: [5, 10, 20], // 페이지사이즈
             };
         },

@@ -1,95 +1,87 @@
 <template>
     <div>
-        <b-modal v-model="propsdata.show" id="createmodal" title="설비 관리" hide-footer>
+        <b-modal v-model="propsdata.show" id="createmodal" title="장비 관리" hide-footer>
             <table class="bom-table">
-                <caption>설비 정보를 입력합니다.</caption>
+                <caption>장비 정보를 입력합니다.</caption>
                 <colgroup>
                     <col style="width:100px;"/>
                     <col style="width:auto;"/>
                 </colgroup>
-                <tbody>
+                <tbody><!--
                 <tr>
-                    <th>부서</th>
-                    <td>
+                    <th>Type</th>
+                    <td colspan="2">
                         <label class="input-100">
-                            <select v-model="department" class="input-100">
-                                <option v-for="list in departmentList" v-bind:value="list.id" :key="list.id">
+                            <select v-model="type" class="input-100">
+                                <option v-for="list in typeList" v-bind:value="list.id" :key="list.id"
+                                @change = "">
                                     {{list.name}}
                                 </option>
                             </select>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('department') }}
+                            {{ validation.firstError('type') }}
                         </div>
                     </td>
-                </tr>
+                </tr>-->
                 <tr>
-                    <th>변전실</th>
-                    <td>
+                    <th>Model</th>
+                    <td colspan="2">
                         <label class="input-100">
-                            <select v-model="subStation" class="input-100">
-                                <option v-for="list in subStationList" v-bind:value="list.id" :key="list.id">
+                            <select v-model="model" class="input-100">
+                                <option v-for="list in modelList" v-bind:value="list.id" :key="list.id"
+                                v-if="list.type === type">
                                     {{list.name}}
                                 </option>
                             </select>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('subStation') }}
+                            {{ validation.firstError('model') }}
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <th>판넨</th>
-                    <td>
-                        <label class="input-100">
-                            <select v-model="panelBoard" class="input-100">
-                                <option v-for="list in panelBoardList" v-bind:value="list.id" :key="list.id">
-                                    {{list.name}}
-                                </option>
-                            </select>
+                <tr v-if="model===1">
+                    <th>전압</th>
+                    <td colspan="2">
+                        <label class="radio-box" v-for="list in voltageList" :key="list.id">
+                            <input type="radio" v-model="voltage" :value="list.id"/>
+                            <div class="radio-circle">
+                                <div class="inner-circle"/>
+                            </div>
+                            <div class="radio-label">{{ list.name }}</div>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('panelBoard') }}
+                            {{ validation.firstError('voltage') }}
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <th>스위치</th>
+                <tr v-if="model===1">
+                    <th>비율</th>
                     <td>
+                        <div class="td-label">CT비</div>
                         <label class="input-100">
-                            <select v-model="switchBoard" class="input-100">
-                                <option v-for="list in switchBoardList" v-bind:value="list.id" :key="list.id">
-                                    {{list.name}}
-                                </option>
-                            </select>
+                            <input type="number" v-model="CT" class="input-100" placeholder="CT비"/>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('switchBoard') }}
+                            {{ validation.firstError('CT') }}
                         </div>
                     </td>
-                </tr>
-
-                <tr>
-                    <th>공정</th>
                     <td>
+                        <div class="td-label">PT비</div>
                         <label class="input-100">
-                            <select v-model="process" class="input-100">
-                                <option v-for="list in processList" v-bind:value="list.id" :key="list.id">
-                                    {{list.name}}
-                                </option>
-                            </select>
+                            <input type="number" v-model="PT" class="input-100" placeholder="PT비"/>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('process') }}
+                            {{ validation.firstError('PT') }}
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th>설비명</th>
-                    <td>
+                    <th>장비명</th>
+                    <td colspan="2">
                         <label class="input-100">
                             <input type="text" v-model="description" class="input-100"
-                                   placeholder="설비명을 입력해주세요 "/>
+                                   placeholder="장비명을 입력해주세요 "/>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
                             {{ validation.firstError('description') }}
@@ -130,7 +122,7 @@
             flashModal,
             SimpleVueValidation,
         },
-        data() {
+        data: function () {
             return {
                 msgData: { // 알람모달
                     msg: '',
@@ -140,125 +132,43 @@
                 state: 'new',
                 id: '',
                 description: '',
-                subStation: '',
-                subStationList: [],
-                panelBoard: '',
-                panelBoardList: [],
-                switchBoard: '',
-                switchBoardList: [],
-                department: '',
-                departmentList: [],
-                process: '',
-                processList: [],
-
-            };
+                type: '',
+                typeList: [
+                    {id: 1, name: '전력'},
+                    {id: 2, name: '공기압축기'}
+                ],
+                model: '',
+                modelList: [
+                    {id: 1, type: 1, name: 'Accura'},
+                    {id: 2, type: 1, name: '남전사'},/*
+                    {id: 3, type: 2, name: 'Ingersoll Rand 100'},
+                    {id: 4, type: 2, name: 'Ingersoll Rand 200'},
+                    {id: 5, type: 2, name: 'Ingersoll Rand 150'},
+                    {id: 6, type: 2, name: 'YUJIN 100'},*/
+                ],
+                voltage: 1,
+                voltageList: [
+                    {id: 1, name: '고압'},
+                    {id: 2, name: '저압'}
+                ],
+                CT:0,
+                PT:0,
+            }
         },
         validators: {
             description(value) {
                 return Validator.value(value).required();
             },
-            subStation(value) {
+            model(value) {
                 return Validator.value(value).required();
             },
-            panelBoard(value) {
-                return Validator.value(value).required();
-            },
-            switchBoard(value) {
-                return Validator.value(value).required();
-            },
-            department(value) {
-                return Validator.value(value).required();
-            },
-            process(value) {
+            type(value) {
                 return Validator.value(value).required();
             },
         },
         mounted() {
-            this.initSetting();
         },
         methods: {
-            initSetting() {
-                this.getSubStation();
-                this.getPanelBoard();
-                this.getSwitchBoard();
-                this.getDepartment();
-                this.getProcess();
-            },
-            getSubStation() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/substations',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.subStationList = res.data.value;
-                        vm.subStation = vm.subStationList[0].id;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
-            getPanelBoard() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/panelBoards',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.panelBoardList = res.data.value;
-                        vm.panelBoard = vm.panelBoardList[0].id;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
-            getSwitchBoard() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/switchBoards',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.switchBoardList = res.data.value;
-                        vm.switchBoard = vm.switchBoardList[0].id;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
-            getDepartment() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/departments',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.departmentList = res.data.result;
-                        vm.department = vm.departmentList[0].id;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
-            getProcess() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/processes',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.processList = res.data.value;
-                        vm.process = vm.processList[0].id;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
             submit() {
                 const vm = this;
                 const modal = this.$bvModal;
@@ -280,11 +190,8 @@
 
                 const params = {
                     description: this.description,
-                    substationId: this.subStation,
-                    panelBoardId: this.panelBoard,
-                    switchBoardId: this.switchBoard,
-                    departmentId: this.department,
-                    manufacturingProcessId: this.process
+                    modelId: this.model,
+                    typeId: this.type,
                 };
 
                 this.$validate()
@@ -315,11 +222,8 @@
             reset() {
                 this.id = '';
                 this.description = '';
-                this.subStation = this.subStationList[0].id;
-                this.panelBoard = this.panelBoardList[0].id;
-                this.switchBoard = this.switchBoardList[0].id;
-                this.department = this.departmentList[0].id;
-                this.process = this.processList[0].id;
+                this.model = this.modelList[0].id;
+                this.type = this.typeList[0].id;
                 this.validation.reset();
             },
             createdModal() {
@@ -330,12 +234,8 @@
                 this.validation.reset();
                 this.state = 'update';
                 this.id = e.id;
-                this.description = e.description;
-                this.subStation = e.substationId;
-                this.panelBoard = e.panelBoardId;
-                this.switchBoard = e.switchBoardId;
-                this.department = e.departmentId;
-                this.process = e.manufacturingProcessId;
+                this.model = e.modelId;
+                this.type = e.typeId;
             },
         },
     };

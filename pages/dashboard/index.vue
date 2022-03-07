@@ -77,7 +77,6 @@
                 </div>
             </div>
         </div>
-
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>

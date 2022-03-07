@@ -261,7 +261,8 @@ input[type="text"].datepicker {
 
   .radio-circle {
     position: absolute;
-    top: 2px;
+    top: 50%;
+    transform:translateY(-50%);
     width: 16px;
     height: 16px;
     background: $gray-0;
@@ -275,7 +276,7 @@ input[type="text"].datepicker {
       background-color: #fff;
       border-radius: 50%;
       margin: 3px auto;
-      transform: translateY(-50%);
+      transform: translateY(-150%);
     }
   }
 
