@@ -7,33 +7,33 @@
             </h2>
         </div>
         <div class="row dashboard-item-box">
-            <div v-for="item in airCompressorList" :key="item.id" class="col-lg-3">
+            <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
                 <div class="ibox">
                     <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
-                        <nuxt-link :to="`/dashboard/${item.id}`">
+                        <nuxt-link :to="`/dashboard/${device.id}`">
                             <h3>
                                 <div class="img-box">
 
                                 </div>
-                                {{item.name}}
+                                {{device.name}}
                             </h3>
                         </nuxt-link>
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(item.id)"/>
+                             @click="settingModalOpen(device.id)"/>
                     </div>
                     <div class="ibox-content">
                         <ul class="state-box">
-                            <li :class="{'run' : item.state === 'RUN'}">RUN</li>
-                            <li :class="{'load' : item.state === 'LOAD'}">LOAD</li>
-                            <li :class="{'unload' : item.state === 'UNLOAD'}">UNLOAD</li>
-                            <li :class="{'stop' : item.state === 'STOP'}">STOP</li>
+                            <li :class="{'run' : device.state === 'RUN'}">RUN</li>
+                            <li :class="{'load' : device.state === 'LOAD'}">LOAD</li>
+                            <li :class="{'unload' : device.state === 'UNLOAD'}">UNLOAD</li>
+                            <li :class="{'stop' : device.state === 'STOP'}">STOP</li>
                         </ul>
-                        <div :class="{'noti-box':true, 'alarm-box': item.alarm !== ''}">
-                            <div v-if="item.alarm ===''" class="normal">Normal</div>
+                        <div :class="{'noti-box':true, 'alarm-box': device.alarm !== ''}">
+                            <div v-if="device.alarm ===''" class="normal">Normal</div>
                             <div v-else class="alarm">Alarm</div>
-                            <div class="text" v-if="item.alarm !==''">
-                                {{item.alarm}}
+                            <div class="text" v-if="device.alarm !==''">
+                                {{device.alarm}}
                             </div>
                         </div>
                         <ul class="tag-box">

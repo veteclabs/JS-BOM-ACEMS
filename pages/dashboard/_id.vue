@@ -9,7 +9,9 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="ibox">
-                    <div class="ibox-title">
+                    <div class="ibox-title center">
+                        <img src="~assets/images/equipment/ingersollrand100.jpg" alt="inersollrand100"
+                        style="max-width:100%;"/>
                     </div>
                     <div class="ibox-title">
                         <ul class="modal-info-box">

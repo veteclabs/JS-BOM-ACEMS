@@ -22,7 +22,7 @@
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
                         <DxColumn data-field="type" caption="Type" alignment="center"/>
                         <DxColumn data-field="type" caption="Model" alignment="center"/>
-                        <DxColumn data-field="description" caption="장비명" alignment="center"
+                        <DxColumn data-field="name" caption="장비명" alignment="center"
                                   cell-template="blockGridTemplate" />
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>

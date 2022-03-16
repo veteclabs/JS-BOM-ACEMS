@@ -147,7 +147,6 @@
 
 .modal-info-box {
   padding: 24px 0 0 0;
-
   li {
     @extend .font-18;
     width: 100%;
@@ -155,6 +154,10 @@
     justify-content: space-between;
     align-items: center;
     margin: 0 0 8px 0;
+
+    @include mobile() {
+      display:block;
+    }
 
     .title {
       background: $gray-0;
