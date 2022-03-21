@@ -72,6 +72,7 @@
     "vue-simple-range-slider": "^0.1.10",
     "vue-template-compiler": "^2.6.14",
     "vuebar": "0.0.20",
+    "vuedraggable": "^2.24.3",
     "vuelendar": "^1.0.0",
     "vuex": "^3.6.2",
     "webpack": "^4.43.0",

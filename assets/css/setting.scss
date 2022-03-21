@@ -194,6 +194,10 @@
       border-radius: 4px;
       cursor: pointer;
       font-weight: 400;
+      transition: all .3s ease;
+      &:hover {
+        background:$gray-1;
+      }
 
     }
 
@@ -203,6 +207,13 @@
       color: $blue-0;
       font-weight: 600;
     }
+  }
+}
+
+.date-ul.week-ul {
+  li div {
+    width:auto;
+    padding:0 12px;
   }
 }
 

@@ -10,8 +10,9 @@
             <div class="col-lg-4">
                 <div class="ibox">
                     <div class="ibox-title center">
-                        <img src="~assets/images/equipment/ingersollrand100.jpg" alt="inersollrand100"
-                        style="max-width:100%;"/>
+                        <img :src="require(`~/assets/images/equipment/${airCompressor[0].equipmentId}.jpg`)"
+                             :alt="airCompressor[0].equipmentId"
+                             style="max-width:100%;"/>
                     </div>
                     <div class="ibox-title">
                         <ul class="modal-info-box">
@@ -152,7 +153,7 @@
                 tagVal: '',
                 todayTime: '',
                 airCompressor: [
-                    {id: 1, state: 'RUN', alarm: '', name: 'Ingersoll Rand 100'},
+                    {id: 1, state: 'RUN', alarm: '', equipmentId:'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1'},
                 ],
                 airTagList: [
                     {id: 1, name: '유량', tagName: 'PWR_KWh', unit: '㎥/min'},

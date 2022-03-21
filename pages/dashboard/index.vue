@@ -1,10 +1,11 @@
 <template>
     <div id="SubContentWrap">
-        <div class="title-box">
+        <div class="title-box flex-box">
             <h2>
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
                 Air Compressor
             </h2>
+            <button class="button setting-button" @click="settingAirCompressorModalOpen()">TP</button>
         </div>
         <div class="row dashboard-item-box">
             <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
@@ -13,7 +14,9 @@
                         <nuxt-link :to="`/dashboard/${device.id}`">
                             <h3>
                                 <div class="img-box">
-
+                                    <img :src="require(`~/assets/images/equipment/${device.equipmentId}.jpg`)"
+                                         :alt="device.equipmentId"
+                                         style="max-width:100%;"/>
                                 </div>
                                 {{device.name}}
                             </h3>
@@ -36,6 +39,17 @@
                                 {{device.alarm}}
                             </div>
                         </div>
+                        <ul class="tag-box">
+                            <li>
+                                <div class="tagname">부하율</div>
+                                <div><h3>68%</h3></div>
+                            </li>
+                            <li v-if="device.alarm !== ''">
+                                <div class="bom-badge red-bg-badge"
+                                     style="margin:0 8px 0 0;">Trip</div>
+                                <div>High VSD Temperature</div>
+                            </li>
+                        </ul>
                         <ul class="tag-box">
                             <li v-for="tag in airTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
@@ -77,6 +91,7 @@
                 </div>
             </div>
         </div>
+        <settingAirCompressorModal ref="settingAirCompressorModal" v-bind:propsdata="TPModalData"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
@@ -86,6 +101,7 @@
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
+    import settingAirCompressorModal from '~/components/settingModal/settingAirCompressorModal.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -98,7 +114,8 @@
         components: {
             dayjs,
             Loading,
-            settingEquipmentModal
+            settingEquipmentModal,
+            settingAirCompressorModal
         },
         data() {
             return {
@@ -114,13 +131,34 @@
                 settingModalData: {
                     show: false,
                 },
+                TPModalData: {
+                    show: false,
+                },
                 tagVal: '',
                 todayTime: '',
                 airCompressorList: [
-                    {id: 1, state: 'RUN', alarm: '', name: 'Ingersoll Rand 100'},
-                    {id: 2, state: 'STOP', alarm: '', name: 'Ingersoll Rand 200'},
-                    {id: 3, state: 'LOAD', alarm: '', name: 'Ingersoll Rand 150'},
-                    {id: 4, state: 'UNLOAD', alarm: '온도 2단계 알람이 발생했습니다.', name: 'YUJIN 100'},
+                    {id: 1, state: 'RUN', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1'},
+                    {
+                        id: 2,
+                        state: 'STOP',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -2'
+                    },
+                    {
+                        id: 3,
+                        state: 'LOAD',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -3'
+                    },
+                    {
+                        id: 4,
+                        state: 'UNLOAD',
+                        alarm: '온도 2단계 알람이 발생했습니다.',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -4'
+                    },
                 ],
                 airTagList: [
                     {id: 1, name: '전류', tagName: 'PWR_KWh', unit: 'A'},
@@ -207,9 +245,13 @@
                     vm.loadingData.show = false;
                 });
             },
-            settingModalOpen (id) {
+            settingModalOpen(id) {
                 this.$refs.settingEquipmentModal.createdModal(id);
                 this.settingModalData.show = true;
+            },
+            settingAirCompressorModalOpen(id) {
+                this.$refs.settingAirCompressorModal.createdModal(id);
+                this.TPModalData.show = true;
             },
             resetInterval() {
                 const vm = this;

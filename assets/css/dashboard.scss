@@ -37,9 +37,11 @@
   opacity: .5;
   cursor: pointer;
   transition: opacity .3s ease;
+  border-radius:8px;
 
   &:hover, &:after, &:focus {
     opacity: 1;
+    background:$gray-0;
   }
 }
 
@@ -181,3 +183,31 @@
   }
 }
 
+.all-schedule-list {
+  li {
+    margin: 24px 0 0 0;
+    .td-label {
+      margin:0;
+    }
+    .equipment-box {
+      background:$blue-3;
+      border:1px solid $blue-0;
+      color:$blue-0;
+      border-radius:4px;
+      padding:8px 12px;
+      margin:0 0 8px 0;
+      cursor:grab;
+      &:last-child {
+        margin:0;
+      }
+    }
+  }
+  .noWeek {
+    margin:48px 0 0 0;
+    .equipment-box {
+      background: $gray-0;
+      border: 1px solid $gray-0;
+      color: $gray-5;
+    }
+  }
+}

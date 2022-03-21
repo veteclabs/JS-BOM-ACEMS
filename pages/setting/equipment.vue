@@ -63,6 +63,7 @@
             return false;
         },
         layout: 'settingTemplate',
+
         components: {
             axios,
             flashModal,
