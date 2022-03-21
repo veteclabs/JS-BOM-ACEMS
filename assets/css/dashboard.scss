@@ -34,7 +34,7 @@
 
 
 .setting-btn {
-  opacity: .5;
+  opacity: .8;
   cursor: pointer;
   transition: opacity .3s ease;
   border-radius:8px;
@@ -61,34 +61,57 @@
     padding: 11px 0;
     color: $gray-4;
     border-right: solid 1px $gray-2;
+    transition: all .3s ease;
 
     &:last-child {
       border-right: 0;
     }
   }
 
-  li.run {
+  li.set-btn {
+    cursor:pointer;
+  }
+
+  li.set-btn.run {
+    &:hover {
+      color:$blue-0;
+    }
+  }
+
+  li.set-btn.stop {
+    &:hover {
+      color:$red-0;
+    }
+  }
+  li.run.active {
     @extend .blue-bg-gradient;
     color: #fff;
     font-weight: 600;
+
+    &:hover {
+      color:$blue-2;
+    }
   }
 
-  li.load {
+  li.load.active {
     @extend .green-bg-gradient;
     color: #fff;
     font-weight: 600;
   }
 
-  li.unload {
+  li.unload.active {
     @extend .orange-bg-gradient;
     color: #fff;
     font-weight: 600;
   }
 
-  li.stop {
+  li.stop.active {
     @extend .red-bg-gradient;
     color: #fff;
     font-weight: 600;
+    &:hover {
+      color:$red-2;
+    }
   }
 }
 

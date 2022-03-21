@@ -27,20 +27,17 @@
                         </ul>
                     </div>
                     <div class="ibox-content">
-
-                        <ul class="state-box">
-                            <li :class="{'run' : airCompressor[0].state === 'RUN'}">RUN</li>
-                            <li :class="{'load' : airCompressor[0].state === 'LOAD'}">LOAD</li>
-                            <li :class="{'unload' : airCompressor[0].state === 'UNLOAD'}">UNLOAD</li>
-                            <li :class="{'stop' : airCompressor[0].state === 'STOP'}">STOP</li>
-                        </ul>
+                        <airCompressorState v-bind:propsdata="airCompressor[0]"/>
                     </div>
                 </div>
             </div>
             <div class="col-lg-8">
                 <div class="ibox">
-                    <div class="ibox-title">
+                    <div class="ibox-title flex-ibox-title">
                         실시간 공기압축기 압력 Chart
+                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                             class="setting-btn"
+                             @click="settingModalOpen(airCompressor[0].id)"/>
                     </div>
                     <div class="ibox-content">
                         <client-only>
@@ -90,11 +87,14 @@
                                     :column-auto-width="true">
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                             <DxColumn data-field="id" caption="No" alignment="center"/>
-                            <DxColumn data-field="msg" caption="Message"/>
+                            <DxColumn data-field="msg" caption="Message" cell-template="blockGridAlarmTemplate"/>
                             <DxColumn data-field="temp" caption="Data" cell-template="dataGridTemplate"/>
-                            <DxColumn data-field="state" caption="State"/>
+                            <DxColumn data-field="state" caption="State" cell-template="blockGridAlarmTemplate" :width="100"/>
                             <DxPaging :enabled="true" :page-size="5"/>
                             <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
+                            <template #blockGridAlarmTemplate="{ data: cellData }">
+                                <blockGridAlarmTemplate :cell-data="cellData"/>
+                            </template>
                             <template #dataGridTemplate="{ data: cellData }">
                                 <dataGridTemplate :cell-data="cellData"/>
                             </template>
@@ -104,6 +104,7 @@
                 </div>
             </div>
         </div>
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -111,7 +112,10 @@
     import dayjs from 'dayjs';
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
+    import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import dataGridTemplate from '~/components/gridTemplate/dataGridTemplate.vue';
+    import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
+    import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import {
         DxDataGrid,
         DxColumn,
@@ -132,7 +136,10 @@
         components: {
             dayjs,
             Loading,
+            settingEquipmentModal,
             dataGridTemplate,
+            blockGridAlarmTemplate,
+            airCompressorState,
             DxDataGrid,
             DxColumn,
             DxPaging,
@@ -148,6 +155,9 @@
                     e: '',
                 },
                 loadingData: {
+                    show: false,
+                },
+                settingModalData: {
                     show: false,
                 },
                 tagVal: '',
@@ -367,6 +377,10 @@
 
             getNowTime: function () {
                 this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
+            },
+            settingModalOpen(id) {
+                this.$refs.settingEquipmentModal.createdModal(id);
+                this.settingModalData.show = true;
             },
             setLiveChart: function () {
                 const vm = this;

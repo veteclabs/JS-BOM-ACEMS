@@ -130,6 +130,67 @@ router.post('/dashboard/tag/getTagValue', async (req, res) => {
 });
 
 
+
+router.post('/setAirCompressor', async (req, res) => {
+    try {
+        const unit = req.body.unit;
+        const stateValue = req.body.stateValue;
+        const UserName = process.env.WA_ID;
+        const Password = process.env.WA_PASSWORD;
+        const userPass = btoa(`${UserName}:${Password}`);
+        const url = `${process.env.WA_IP}/WaWebService/Json/SetTagValue/${process.env.WA_PROJECT}`;
+        const tagObject = {};
+        let data;
+
+        if (req.body.reSetting) {
+            if (stateValue === 'OFF') {
+                data = [{
+                    Name: `GM_${unit}_DO_OFF`,
+                    Value: 0,
+                }];
+            } else if (stateValue === 'ON') {
+                data = [{
+                    Name: `GM_${unit}_DO_ON`,
+                    Value: 0,
+                }];
+            }
+        } else if (stateValue === 'OFF') {
+            data = [{
+                Name: `GM_${unit}_DO_OFF`,
+                Value: 1,
+            }];
+        } else if (stateValue === 'ON') {
+            data = [{
+                Name: `GM_${unit}_DO_ON`,
+                Value: 1,
+            }];
+        }
+
+        tagObject.Tags = data;
+
+        request({
+            url,
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${userPass}`,
+                Accept: 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
+                LoginType: 'View',
+            },
+            body: tagObject,
+            json: true,
+        }, (error, response, body) => {
+            res.json(body);
+        });
+    } catch (e) {
+        res.json({
+            code: 2,
+            message: process.env.DB_ERROR_MSG,
+        });
+    }
+});
+
+
 router.get('/dashboard/departmant/:departmentId', async (req, res) => {
 
     let conn;

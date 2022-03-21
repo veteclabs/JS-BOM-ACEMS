@@ -34,6 +34,7 @@ app.get('/user/logout', login);
 app.get('/WaLogin', dashboard);
 app.post('/dashboard/port/getTagValue', dashboard);
 app.post('/dashboard/tag/getTagValue', dashboard);
+app.post('/setAirCompressor', dashboard);
 
 app.get('/dashboard/getHistoryData', dashboard);
 app.get('/dashboard/departmant/:departmentId', dashboard);

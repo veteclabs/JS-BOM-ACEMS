@@ -26,12 +26,7 @@
                              @click="settingModalOpen(device.id)"/>
                     </div>
                     <div class="ibox-content">
-                        <ul class="state-box">
-                            <li :class="{'run' : device.state === 'RUN'}">RUN</li>
-                            <li :class="{'load' : device.state === 'LOAD'}">LOAD</li>
-                            <li :class="{'unload' : device.state === 'UNLOAD'}">UNLOAD</li>
-                            <li :class="{'stop' : device.state === 'STOP'}">STOP</li>
-                        </ul>
+                        <airCompressorState v-bind:propsdata="device"/>
                         <div :class="{'noti-box':true, 'alarm-box': device.alarm !== ''}">
                             <div v-if="device.alarm ===''" class="normal">Normal</div>
                             <div v-else class="alarm">Alarm</div>
@@ -102,6 +97,9 @@
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import settingAirCompressorModal from '~/components/settingModal/settingAirCompressorModal.vue';
+    import airCompressorState from '~/components/dashboard/airCompressorState.vue';
+
+
 
     export default {
         fetch({store, redirect}) {
@@ -115,7 +113,8 @@
             dayjs,
             Loading,
             settingEquipmentModal,
-            settingAirCompressorModal
+            settingAirCompressorModal,
+            airCompressorState
         },
         data() {
             return {
@@ -138,27 +137,9 @@
                 todayTime: '',
                 airCompressorList: [
                     {id: 1, state: 'RUN', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1'},
-                    {
-                        id: 2,
-                        state: 'STOP',
-                        alarm: '',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -2'
-                    },
-                    {
-                        id: 3,
-                        state: 'LOAD',
-                        alarm: '',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -3'
-                    },
-                    {
-                        id: 4,
-                        state: 'UNLOAD',
-                        alarm: '온도 2단계 알람이 발생했습니다.',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -4'
-                    },
+                    {id: 2, state: 'STOP', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -2'},
+                    {id: 3, state: 'LOAD', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -3'},
+                    {id: 4, state: 'UNLOAD', alarm: '온도 2단계 알람이 발생했습니다.', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -4'},
                 ],
                 airTagList: [
                     {id: 1, name: '전류', tagName: 'PWR_KWh', unit: 'A'},
@@ -244,6 +225,36 @@
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
+            },
+            async setAirCompressor(device, stateValue) {
+                const vm = this;
+
+                const confirmResult = confirm(`해당 컴프레셔 상태를 ${stateValue}으로 변경합니다. 진행하시겠습니까?`);
+
+                if (confirmResult) {
+                    const params = {
+                        device,
+                        stateValue
+                    };
+                    vm.LoadingData.show = true;
+                    axios.post('/api/setAirCompressor', params)
+                        .then(() => {
+                            vm.msgData.show = true;
+                            vm.msgData.msg = '제어 명령이 완료되었습니다.';
+                        })
+                        .catch(() => {
+                            vm.msgData.show = true;
+                            vm.msgData.msg = '제어에 실패했습니다. 잠시 후 다시 시도해주세요.';
+                        })
+                        .finally(() => {
+                            vm.LoadingData.show = false;
+                        });
+                } else {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = '제어명령이 취소되었습니다';
+                }
+
+                return true;
             },
             settingModalOpen(id) {
                 this.$refs.settingEquipmentModal.createdModal(id);

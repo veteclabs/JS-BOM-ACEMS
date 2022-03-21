@@ -466,7 +466,6 @@ textarea.form-control {
 /*badge*/
 .bom-badge {
   display: inline-block;
-  font-size: 14px;
   color: $gray-7;
   padding: 0 5px;
   border-radius: 4px;
@@ -754,7 +753,7 @@ textarea.form-control {
 
   .dx-datagrid-search-panel {
     min-width: 300px;
-    height: 40px;
+    height: 45px;
     border: 0;
     position: absolute;
     margin: 0 10px 0 0;
