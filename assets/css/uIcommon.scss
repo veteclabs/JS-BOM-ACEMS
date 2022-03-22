@@ -22,7 +22,7 @@
   }
 
   .ibox-normal-title {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     color: $gray-6;
     padding: 0;
@@ -875,7 +875,7 @@ textarea.form-control {
 }
 
 /***bootstrap datepikcer css 수정***/
-#subContent {
+#subContent, #settingContent, #createmodal {
   .bootstrap-datetimepicker-widget {
     table {
       min-width: 245px;
@@ -910,6 +910,37 @@ textarea.form-control {
         background: url("~assets/images/table/icn_table_pre-page.svg") no-repeat center $gray-1;
         background-size: 24px;
       }
+    }
+  }
+
+  .bootstrap-datetimepicker-widget table td,
+  .bootstrap-datetimepicker-widget table td i {
+    height: auto;
+    line-height: 1;
+  }
+  .bootstrap-datetimepicker-widget table td i.fa-chevron-up {
+    height:20px;
+    line-height:20px;
+    background-image:url('~assets/images/common/icn_common_more-g4.svg');
+    background-repeat : no-repeat;
+    background-position:center;
+    transition: background ease .5s;
+    transform: rotate(-90deg);
+    &:hover {
+      background-image:url('~assets/images/common/icn_common_more.svg');
+    }
+  }
+
+  .bootstrap-datetimepicker-widget table td i.fa-chevron-down {
+    height:20px;
+    line-height:20px;
+    background-image:url('~assets/images/common/icn_common_more-g4.svg');
+    background-repeat : no-repeat;
+    background-position:center;
+    transition: background ease .5s;
+    transform: rotate(90deg);
+    &:hover {
+      background-image:url('~assets/images/common/icn_common_more.svg');
     }
   }
 }

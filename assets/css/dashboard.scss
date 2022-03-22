@@ -2,7 +2,7 @@
 .dashboard-item-box {
   @include desktop() {
     .col-lg-3 {
-      width:50%;
+      width: 50%;
     }
   }
 }
@@ -37,11 +37,11 @@
   opacity: .8;
   cursor: pointer;
   transition: opacity .3s ease;
-  border-radius:8px;
+  border-radius: 8px;
 
   &:hover, &:after, &:focus {
     opacity: 1;
-    background:$gray-0;
+    background: $gray-0;
   }
 }
 
@@ -69,27 +69,28 @@
   }
 
   li.set-btn {
-    cursor:pointer;
+    cursor: pointer;
   }
 
   li.set-btn.run {
     &:hover {
-      color:$blue-0;
+      color: $blue-0;
     }
   }
 
   li.set-btn.stop {
     &:hover {
-      color:$red-0;
+      color: $red-0;
     }
   }
+
   li.run.active {
     @extend .blue-bg-gradient;
     color: #fff;
     font-weight: 600;
 
     &:hover {
-      color:$blue-2;
+      color: $blue-2;
     }
   }
 
@@ -109,8 +110,9 @@
     @extend .red-bg-gradient;
     color: #fff;
     font-weight: 600;
+
     &:hover {
-      color:$red-2;
+      color: $red-2;
     }
   }
 }
@@ -172,6 +174,7 @@
 
 .modal-info-box {
   padding: 24px 0 0 0;
+
   li {
     @extend .font-18;
     width: 100%;
@@ -181,7 +184,7 @@
     margin: 0 0 8px 0;
 
     @include mobile() {
-      display:block;
+      display: block;
     }
 
     .title {
@@ -207,30 +210,82 @@
 }
 
 .all-schedule-list {
-  li {
+  > li {
     margin: 24px 0 0 0;
+
     .td-label {
-      margin:0;
+      margin: 0;
     }
+
     .equipment-box {
-      background:$blue-3;
-      border:1px solid $blue-0;
-      color:$blue-0;
-      border-radius:4px;
-      padding:8px 12px;
-      margin:0 0 8px 0;
-      cursor:grab;
+      /* background:$blue-3;
+       border:1px solid $blue-0;
+       color:$blue-0;*/
+      .name-box {
+        background: $gray-0;
+        border: 1px solid $gray-0;
+        color: $gray-5;
+        border-radius: 4px;
+        padding: 8px 12px;
+      }
+
+      border: 1px solid $gray-1;
+      margin: 0 0 8px 0;
+      cursor: grab;
+
       &:last-child {
-        margin:0;
+        margin: 0;
       }
     }
   }
+
   .noWeek {
-    margin:48px 0 0 0;
+    margin: 48px 0 0 0;
+
     .equipment-box {
-      background: $gray-0;
-      border: 1px solid $gray-0;
-      color: $gray-5;
+      .name-box {
+        background: $gray-0;
+        border: 1px solid $gray-0;
+        color: $gray-2;
+      }
+
+      .date-ul, .time-ul {
+        opacity: .5;
+      }
+    }
+  }
+
+  .equipment-box {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap:wrap;
+
+    @include tabletAndMobile() {
+      display: block;
+    }
+
+    > div, ul {
+      margin: 6px 12px 6px 0;
+      @include tabletAndMobile() {
+        margin:0 0 12px 0;
+      }
+    }
+
+    .date-ul {
+      li div {
+        width:30px;
+        @extend .font-16;
+      }
+    }
+
+    .time-ul {
+      display: flex;
+
+      input {
+        @extend .font-14;
+        min-width: 100px;
+        width: 100px;
+      }
     }
   }
 }

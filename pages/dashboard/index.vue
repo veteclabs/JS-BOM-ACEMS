@@ -260,9 +260,9 @@
                 this.$refs.settingEquipmentModal.createdModal(id);
                 this.settingModalData.show = true;
             },
-            settingAirCompressorModalOpen(id) {
-                this.$refs.settingAirCompressorModal.createdModal(id);
+            settingAirCompressorModalOpen() {
                 this.TPModalData.show = true;
+                this.$refs.settingAirCompressorModal.getTP();
             },
             resetInterval() {
                 const vm = this;

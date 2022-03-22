@@ -173,6 +173,7 @@
 
 .date-ul {
   display: flex;
+  flex-wrap:wrap;
   margin: 0;
 
   li {
@@ -215,36 +216,4 @@
     width:auto;
     padding:0 12px;
   }
-}
-
-#createmodal {
-  .bootstrap-datetimepicker-widget table td,
-  .bootstrap-datetimepicker-widget table td i {
-    height: auto;
-    line-height: 1;
-  }
-  .bootstrap-datetimepicker-widget table td i.fa-chevron-up {
-    height:30px;
-    background-image:url('~assets/images/common/icn_common_more-g4.svg');
-    background-repeat : no-repeat;
-    background-position:center;
-    transition: background ease .5s;
-    transform: rotate(-90deg);
-    &:hover {
-      background-image:url('~assets/images/common/icn_common_more.svg');
-    }
-  }
-
-  .bootstrap-datetimepicker-widget table td i.fa-chevron-down {
-    height:30px;
-    background-image:url('~assets/images/common/icn_common_more-g4.svg');
-    background-repeat : no-repeat;
-    background-position:center;
-    transition: background ease .5s;
-    transform: rotate(90deg);
-    &:hover {
-      background-image:url('~assets/images/common/icn_common_more.svg');
-    }
-  }
-
 }

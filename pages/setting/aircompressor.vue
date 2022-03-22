@@ -2,7 +2,7 @@
     <div id="settingSubContent">
         <div class="wrapper animated fadeInRight">
             <div class="ibox">
-                <div class="ibox-title ibox-noborder-title">
+                <div class="ibox-title ibox-normal-title ibox-noborder-title">
                     공기압축기관리
                 </div>
                 <div class="grid-header">

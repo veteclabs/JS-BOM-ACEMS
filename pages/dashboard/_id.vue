@@ -327,7 +327,6 @@
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
-            this.getSubstationAlarm();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -343,19 +342,6 @@
                     .catch((error) => {
                         vm.msgData.msg = error;
                     });
-            },
-            async getSubstationAlarm() {
-                const vm = this;
-                axios.get('/api/substation/alarm')
-                    .then((res) => {
-                        if (res.data.code === 1) {
-                            vm.alarmList = res.data.value;
-                        }
-                    }).catch((error) => {
-                    vm.msgData.msg = error;
-                }).finally(() => {
-                    vm.loadingData.show = false;
-                });
             },
             async getTagValues() {
                 const vm = this;

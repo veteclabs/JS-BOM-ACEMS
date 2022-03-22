@@ -2,7 +2,7 @@
     <div id="settingSubContent">
         <div class="wrapper animated fadeInRight">
             <div class="ibox">
-                <div class="ibox-title ibox-noborder-title">
+                <div class="ibox-title ibox-normal-title ibox-noborder-title">
                     장비 관리
                 </div>
                 <div class="grid-header">
@@ -117,8 +117,8 @@
                 });
             },
             createEquipment() {
-                this.$refs.equipmentModal.createdModal();
                 this.modalData.show = true;
+                this.$refs.equipmentModal.createdModal();
             },
             updateEquipment(e) {
                 if (e.columnIndex !== 0) {
