@@ -20,10 +20,13 @@
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
-                        <DxColumn data-field="type" caption="Type" alignment="center"/>
                         <DxColumn data-field="type" caption="Model" alignment="center"/>
-                        <DxColumn data-field="name" caption="장비명" alignment="center"
+                        <DxColumn data-field="voltage" caption="전압" alignment="center"/>
+                        <DxColumn data-field="CT" caption="CT비" alignment="center"
                                   cell-template="blockGridTemplate" />
+                        <DxColumn data-field="PT" caption="PT비" alignment="center"
+                                  cell-template="blockGridTemplate" />
+                        <DxColumn data-field="description" caption="장비명" alignment="center"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                         <template #blockGridTemplate="{ data: cellData }">

@@ -37,24 +37,33 @@
                         <ul class="tag-box">
                             <li>
                                 <div class="tagname">부하율</div>
-                                <div><h3>68%</h3></div>
+                                <div>
+                                    <h3>{{tagVal | pickValue('Name',`${device.unit}_COMP_PCY`, 'Value')}} %</h3>
+                                </div>
                             </li>
                             <li v-if="device.alarm !== ''">
                                 <div class="bom-badge red-bg-badge"
-                                     style="margin:0 8px 0 0;">Trip</div>
-                                <div>High VSD Temperature</div>
+                                     style="margin:0 8px 0 0;">Trip
+                                </div>
+                                <div>{{tagVal | pickErrorDescription('Name',`${device.unit}_COMP_WC`, 'Value')}}</div>
                             </li>
                         </ul>
                         <ul class="tag-box">
                             <li v-for="tag in airTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
-                                <div>{{tag.unit}}</div>
+                                <div>
+                                    {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
+                                    {{tag.unit}}
+                                </div>
                             </li>
                         </ul>
                         <ul class="tag-box">
                             <li v-for="tag in powerTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
-                                <div>{{tag.unit}}</div>
+                                <div>
+                                    {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
+                                    {{tag.unit}}
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -79,7 +88,10 @@
                         <ul class="tag-box">
                             <li v-for="tag in item.tag" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
-                                <div>{{tag.unit}}</div>
+                                <div>
+                                    {{tagVal | pickValue('Name',`${item.unit}_${tag.tagName}`, 'Value')}}
+                                    {{tag.unit}}
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -98,7 +110,7 @@
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import settingAirCompressorModal from '~/components/settingModal/settingAirCompressorModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
-
+    import TPArray from '~/assets/data/TPCode.json';
 
 
     export default {
@@ -134,34 +146,67 @@
                     show: false,
                 },
                 tagVal: '',
-                todayTime: '',
                 airCompressorList: [
-                    {id: 1, state: 'RUN', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1'},
-                    {id: 2, state: 'STOP', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -2'},
-                    {id: 3, state: 'LOAD', alarm: '', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -3'},
-                    {id: 4, state: 'UNLOAD', alarm: '온도 2단계 알람이 발생했습니다.', equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -4'},
-                ],
-                airTagList: [
-                    {id: 1, name: '전류', tagName: 'PWR_KWh', unit: 'A'},
-                    {id: 2, name: '전압', tagName: 'PWR_kW', unit: 'V'},
-                    {id: 3, name: '압력', tagName: 'PWR_KWh', unit: 'Bar'},
-                    {id: 4, name: '온도', tagName: 'PWR_kW', unit: '℃'},
-                ],
-                powerTagList: [
-                    {id: 11, name: '전력량', tagName: 'PWR_KWh', unit: 'kWh'},
-                    {id: 12, name: '순시전력', tagName: 'PWR_kW', unit: 'kW'},
-                ],
-                thermometerList: [
-                    {id: 1, name: '흡착식 온도계', tag: [{name: '온도', tagName: 'temp', unit: '℃'}]},
+                    {
+                        id: 1,
+                        unit: 'U001',
+                        state: 'RUN',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -1'
+                    },
                     {
                         id: 2,
-                        name: '온도계#1',
-                        tag: [{name: 'In', tagName: 'temp', unit: '℃'}, {name: 'Out', tagName: 'temp', unit: '℃'}]
+                        unit: 'U002',
+                        state: 'STOP',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -2'
                     },
                     {
                         id: 3,
+                        unit: 'U003',
+                        state: 'LOAD',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -3'
+                    },
+                    {
+                        id: 4,
+                        unit: 'U004',
+                        state: 'UNLOAD',
+                        alarm: '온도 2단계 알람이 발생했습니다.',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -4'
+                    },
+                ],
+                airTagList: [
+                    {id: 1, name: '패키치 배출압력', tagName: 'COMP_PDP', unit: ''},
+                    {id: 2, name: '에어앤드온도', tagName: 'COMP_AT', unit: ''},
+                    {id: 3, name: 'KW시간', tagName: 'COMP_KWH', unit: ''},
+                    {id: 4, name: '총 시간', tagName: 'COMP_TH', unit: ''},
+                ],
+                powerTagList: [
+                    {id: 1, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
+                    {id: 2, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
+                    {id: 3, name: '전압', tagName: 'PWR_V', unit: 'V'},
+                    {id: 4, name: '전류', tagName: 'PWR_A', unit: 'A'},
+                    {id: 5, name: '역률', tagName: 'PWR_PF', unit: '%'},
+                    {id: 6, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
+                ],
+                thermometerList: [
+                    {id: 1, unit: 'U007', name: '흡착식 온도계', tag: [{name: '온도', tagName: 'Temp', unit: '℃'}]},
+                    {
+                        id: 2,
+                        unit: 'U008',
+                        name: '온도계#1',
+                        tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]
+                    },
+                    {
+                        id: 3,
+                        unit: 'U009',
                         name: '온도계#2',
-                        tag: [{name: 'In', tagName: 'temp', unit: '℃'}, {name: 'Out', tagName: 'temp', unit: '℃'}]
+                        tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]
                     },
                 ],
                 Interval1M: '',
@@ -175,7 +220,6 @@
             },
         },
         mounted() {
-            this.timer();
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
@@ -186,9 +230,6 @@
             this.removeInterval();
         },
         methods: {
-            timer() {
-                this.todayTime = dayjs().format('YYYY-MM-DD ddd A hh:mm');
-            },
             async WaLogin() {
                 const vm = this;
                 axios.get('/api/WaLogin')
@@ -212,13 +253,12 @@
             async getTagValues() {
                 const vm = this;
                 axios.post('/api/dashboard/port/getTagValue', {
-                    portId: [-2, 33],
+                    portId: [1, 2, 3, 4, 5],
                 }, {
                     timeout: vm.intervalTime,
                 }).then((res) => {
                     if (res.data.Result.Total > 0) {
                         vm.tagVal = res.data.Values;
-                        vm.todayTime = dayjs().format('YYYY-MM-DD ddd A hh:mm');
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error;
@@ -292,6 +332,24 @@
                         return -100;
                     } else {
                         return target[0][returnValue];
+                    }
+                }
+            },
+            pickErrorDescription: function (object, property, value, returnValue) {
+                if (object === undefined || object === null || object === "") {
+                    return -1;
+                } else {
+                    let target = object.filter(object => object[property] === value);
+                    if (target.length === 0) {
+                        return -100;
+                    } else {
+                        const codeArray = TPArray.list;
+                        let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
+                        if (targetError.length === 0) {
+                            return;
+                        }else {
+                            return targetError[0].description
+                        }
                     }
                 }
             },

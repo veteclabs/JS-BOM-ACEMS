@@ -24,7 +24,6 @@
             };
         },
         mounted() {
-            console.log(this.cellData);
             this.temp  =this.cellData.data.temp;
             this.bar  =this.cellData.data.temp;
             this.kWh  =this.cellData.data.temp;

@@ -10,7 +10,7 @@
                     <img src="~assets/images/dashboard/icn_dashboard-modal_close.svg" alt="close" width="24"/>
                 </button>
             </div>
-            <div class="modal-body" style="padding:0;">
+            <div class="modal-overflow">
                 <h4 class="modal-h4-title first">공기압축기 정보</h4>
                 <table class="bom-table">
                     <tr>

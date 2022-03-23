@@ -11,7 +11,7 @@
                     <img src="~assets/images/dashboard/icn_dashboard-modal_close.svg" alt="close" width="24"/>
                 </button>
             </div>
-            <div class="modal-body" style=" height: 650px; overflow:auto; padding:4px;">
+            <div class="modal-body modal-overflow">
                 <TPSetting ref="TPSetting"/>
             </div>
             <div class="modal-footer">

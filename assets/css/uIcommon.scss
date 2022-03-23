@@ -2,7 +2,7 @@
 .ibox {
   width: 100%;
   padding: 24px;
-  margin:0 0 24px 0;
+  margin: 0 0 24px 0;
   border-radius: 16px;
   box-shadow: 0 4px 8px 0 rgba(81, 81, 81, 0.08);
   background-color: #fff;
@@ -77,7 +77,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
 }
 
 .flex-box.flex-center-box {
@@ -85,17 +85,19 @@
 }
 
 .title-box {
-  width:100%;
+  width: 100%;
   padding: 20px 16px;
   border-radius: 8px;
-  background-color:rgba(217,217,217, 0.4);
-  margin:0 0 40px 0;
+  background-color: rgba(217, 217, 217, 0.4);
+  margin: 0 0 40px 0;
+
   img {
-    width:24px;
-    margin:0 12px 0 0;
+    width: 24px;
+    margin: 0 12px 0 0;
   }
+
   h2 {
-    margin:0;
+    margin: 0;
   }
 }
 
@@ -140,9 +142,9 @@
 }
 
 .add-button {
-  min-width:32px;
-  height:32px;
-  padding:0;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
   background-color: $blue-0;
   color: #fff;
 
@@ -152,14 +154,14 @@
 }
 
 .del-button {
-  min-width:32px;
-  height:32px;
-  padding:0;
-  margin:0 8px 0 0;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0 8px 0 0;
   background-color: $red-0;
-  background-image:url("~assets/images/setting/icn_setting_delete_w.svg");
-  background-position:center;
-  background-repeat:no-repeat;
+  background-image: url("~assets/images/setting/icn_setting_delete_w.svg");
+  background-position: center;
+  background-repeat: no-repeat;
 
   &:hover {
     background-color: $darkred-0;
@@ -167,7 +169,7 @@
 
   &:disabled {
     background-color: $gray-1;
-    background-image:url("~assets/images/setting/icn_setting_delete.svg");
+    background-image: url("~assets/images/setting/icn_setting_delete.svg");
   }
 }
 
@@ -182,7 +184,6 @@
 }
 
 
-
 .setting-button {
   background-color: $gray-2;
   color: $gray-6;
@@ -191,7 +192,6 @@
     background-color: $gray-3;
   }
 }
-
 
 
 .delete-button {
@@ -205,6 +205,7 @@
   &:disabled {
     background-color: $gray-3;
   }
+
   &:disabled + &:hover {
     background-color: $gray-3;
   }
@@ -216,8 +217,8 @@
 input[type="text"], input[type="password"], input[type="number"] {
   @extend .font-18;
   min-width: 160px;
-  width:100%;
-  height:auto;
+  width: 100%;
+  height: auto;
   padding: 8px 12px;
   border-radius: 4px;
   border: solid 1px $gray-2;
@@ -233,7 +234,7 @@ input[type="text"], input[type="password"], input[type="number"] {
 
 select {
   min-width: 160px;
-  width:100%;
+  width: 100%;
   padding: 6px 24px 6px 12px;
   border-radius: 4px;
   border: solid 1px $gray-2;
@@ -278,7 +279,7 @@ input[type="text"].datepicker {
   .radio-circle {
     position: absolute;
     top: 50%;
-    transform:translateY(-50%);
+    transform: translateY(-50%);
     width: 16px;
     height: 16px;
     background: $gray-0;
@@ -496,15 +497,16 @@ textarea.form-control {
 
 .red-bg-badge {
   background-color: $red-0;
-  font-weight:500;
-  color:#fff;
+  font-weight: 500;
+  color: #fff;
 }
 
 .green-bg-badge {
   background-color: $green-0;
-  font-weight:500;
-  color:#fff;
+  font-weight: 500;
+  color: #fff;
 }
+
 /***table***/
 
 .bom-table {
@@ -548,8 +550,10 @@ textarea.form-control {
 .modal-dialog {
   transform: translate(0, 0) !important;
 
-  .modal-content {
-    padding: 24px;
+  .modal-overflow {
+    height: 650px;
+    overflow: auto;
+    padding: 4px;
   }
 
   .modal-header {
@@ -609,7 +613,7 @@ textarea.form-control {
 
   .dx-datagrid-headers {
     background: $gray-0;
-    border-radius:8px 8px 0 0;
+    border-radius: 8px 8px 0 0;
     border: none;
     border-left: 0;
     border-right: 0;
@@ -667,12 +671,12 @@ textarea.form-control {
   .dx-checkbox-icon {
     border: 0;
     background: $gray-1;
-    color:$gray-1;
+    color: $gray-1;
   }
 
   .dx-checkbox-checked .dx-checkbox-icon {
     background: $blue-0;
-    color:#fff;
+    color: #fff;
   }
 
   /***toolbar***/
@@ -918,29 +922,32 @@ textarea.form-control {
     height: auto;
     line-height: 1;
   }
+
   .bootstrap-datetimepicker-widget table td i.fa-chevron-up {
-    height:20px;
-    line-height:20px;
-    background-image:url('~assets/images/common/icn_common_more-g4.svg');
-    background-repeat : no-repeat;
-    background-position:center;
+    height: 20px;
+    line-height: 20px;
+    background-image: url('~assets/images/common/icn_common_more-g4.svg');
+    background-repeat: no-repeat;
+    background-position: center;
     transition: background ease .5s;
     transform: rotate(-90deg);
+
     &:hover {
-      background-image:url('~assets/images/common/icn_common_more.svg');
+      background-image: url('~assets/images/common/icn_common_more.svg');
     }
   }
 
   .bootstrap-datetimepicker-widget table td i.fa-chevron-down {
-    height:20px;
-    line-height:20px;
-    background-image:url('~assets/images/common/icn_common_more-g4.svg');
-    background-repeat : no-repeat;
-    background-position:center;
+    height: 20px;
+    line-height: 20px;
+    background-image: url('~assets/images/common/icn_common_more-g4.svg');
+    background-repeat: no-repeat;
+    background-position: center;
     transition: background ease .5s;
     transform: rotate(90deg);
+
     &:hover {
-      background-image:url('~assets/images/common/icn_common_more.svg');
+      background-image: url('~assets/images/common/icn_common_more.svg');
     }
   }
 }
