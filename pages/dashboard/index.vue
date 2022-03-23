@@ -187,23 +187,23 @@
                     {id: 4, name: '총 시간', tagName: 'COMP_TH', unit: ''},
                 ],
                 powerTagList: [
-                    {id: 1, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
-                    {id: 2, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
-                    {id: 3, name: '전압', tagName: 'PWR_V', unit: 'V'},
-                    {id: 4, name: '전류', tagName: 'PWR_A', unit: 'A'},
-                    {id: 5, name: '역률', tagName: 'PWR_PF', unit: '%'},
-                    {id: 6, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
+                    {id: 5, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
+                    {id: 6, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
+                    {id: 7, name: '전압', tagName: 'PWR_V', unit: 'V'},
+                    {id: 8, name: '전류', tagName: 'PWR_A', unit: 'A'},
+                    {id: 9, name: '역률', tagName: 'PWR_PF', unit: '%'},
+                    {id: 10, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
                 ],
                 thermometerList: [
-                    {id: 1, unit: 'U007', name: '흡착식 온도계', tag: [{name: '온도', tagName: 'Temp', unit: '℃'}]},
+                    {id: 11, unit: 'U007', name: '흡착식 온도계', tag: [{name: '온도', tagName: 'Temp', unit: '℃'}]},
                     {
-                        id: 2,
+                        id: 12,
                         unit: 'U008',
                         name: '온도계#1',
                         tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]
                     },
                     {
-                        id: 3,
+                        id: 13,
                         unit: 'U009',
                         name: '온도계#2',
                         tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]

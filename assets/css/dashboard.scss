@@ -120,7 +120,8 @@
 
 .noti-box {
   width: 100%;
-  padding: 16px;
+  padding: 16px;;
+  border-radius: 8px;
   margin: 0 0 16px 0;
   background: $green-3;
   @extend .font-18;

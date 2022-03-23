@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{propsdata}}
         <b-modal v-model="propsdata.show" id="createmodal" title="Setting" size="lg" hide-footer hide-header>
             <div class="modal-header">
                 <h5 class="font-20" style="margin:0;">

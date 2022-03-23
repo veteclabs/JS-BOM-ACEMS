@@ -51,7 +51,7 @@
                         device,
                         stateValue
                     };
-                    vm.LoadingData.show = true;
+                    vm.loadingData.show = true;
                     axios.post('/api/setAirCompressor', params)
                         .then(() => {
                             vm.msgData.show = true;
@@ -62,13 +62,12 @@
                             vm.msgData.msg = '제어에 실패했습니다. 잠시 후 다시 시도해주세요.';
                         })
                         .finally(() => {
-                            vm.LoadingData.show = false;
+                            vm.loadingData.show = false;
                         });
                 } else {
                     vm.msgData.show = true;
                     vm.msgData.msg = '제어명령이 취소되었습니다';
                 }
-
                 return true;
             },
         },

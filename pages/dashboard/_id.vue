@@ -29,6 +29,13 @@
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="airCompressor[0]"/>
                     </div>
+                    <div :class="{'noti-box':true, 'alarm-box': airCompressor[0].alarm !== ''}">
+                        <div v-if="airCompressor[0].alarm ===''" class="normal">Normal</div>
+                        <div v-else class="alarm">Alarm</div>
+                        <div class="text" v-if="airCompressor[0].alarm !==''">
+                            {{airCompressor[0].alarm}}
+                        </div>
+                    </div>
                 </div>
 
                 <div class="ibox">
@@ -209,7 +216,7 @@
                         id: 1,
                         unit: 'U001',
                         state: 'RUN',
-                        alarm: '',
+                        alarm: '온도 2단계 알람이 발생했습니다.',
                         equipmentId: 'ingersollrand_rm55',
                         name: 'Ingersoll Rand RM55 -1'
                     },
@@ -223,22 +230,22 @@
                     {id: 7, name: '총 시간', tagName: 'COMP_TH', unit: ''},
                 ],
                 airTagList: [
-                    {id: 2, name: '패키지 배출 압력', tagName: 'COMP_PDP', unit: ''},
-                    {id: 3, name: '압력에서 냉각수 필터', tagName: 'COMP_CFIP', unit: ''},
-                    {id: 4, name: '냉각수에서 필터 아웃 압력', tagName: 'COMP_CFOP', unit: ''},
-                    {id: 5, name: '원격압력', tagName: 'COMP_RP', unit: ''},
-                    {id: 1, name: '퍼센트 용량', tagName: 'COMP_PCY', unit: ''},
-                    {id: 2, name: 'KW시간', tagName: 'COMP_KWH', unit: ''},
-                    {id: 4, name: '목표 압력', tagName: 'COMP_TP', unit: ''},
-                    {id: 5, name: '자동 정지 압력', tagName: 'COMP_ASP', unit: ''},
-                    {id: 5, name: '즉시 정지 압력', tagName: 'COMP_ISP', unit: ''},
-                    {id: 7, name: '시동장치 코드', tagName: 'COMP_TC', unit: ''},
+                    {id: 8, name: '패키지 배출 압력', tagName: 'COMP_PDP', unit: ''},
+                    {id: 9, name: '압력에서 냉각수 필터', tagName: 'COMP_CFIP', unit: ''},
+                    {id: 10, name: '냉각수에서 필터 아웃 압력', tagName: 'COMP_CFOP', unit: ''},
+                    {id: 11, name: '원격압력', tagName: 'COMP_RP', unit: ''},
+                    {id: 12, name: '퍼센트 용량', tagName: 'COMP_PCY', unit: ''},
+                    {id: 13, name: 'KW시간', tagName: 'COMP_KWH', unit: ''},
+                    {id: 14, name: '목표 압력', tagName: 'COMP_TP', unit: ''},
+                    {id: 15, name: '자동 정지 압력', tagName: 'COMP_ASP', unit: ''},
+                    {id: 16, name: '즉시 정지 압력', tagName: 'COMP_ISP', unit: ''},
+                    {id: 17, name: '시동장치 코드', tagName: 'COMP_TC', unit: ''},
                 ],
                 powerTagList: [
-                    {id: 2, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
-                    {id: 3, name: '전압', tagName: 'PWR_V', unit: 'V'},
-                    {id: 4, name: '전류', tagName: 'PWR_A', unit: 'A'},
-                    {id: 5, name: '역률', tagName: 'PWR_PF', unit: '%'},
+                    {id: 18, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
+                    {id: 19, name: '전압', tagName: 'PWR_V', unit: 'V'},
+                    {id: 20, name: '전류', tagName: 'PWR_A', unit: 'A'},
+                    {id: 21, name: '역률', tagName: 'PWR_PF', unit: '%'},
                 ],
                 timeCategories: [],
                 nowTime: '',
