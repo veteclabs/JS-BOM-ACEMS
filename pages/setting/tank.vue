@@ -1,34 +1,34 @@
 <template>
-    <div id="settingProcess">
+    <div id="settingTank">
         <div class="wrapper animated fadeInRight">
             <div class="ibox">
                 <div class="grid-title-header">
-                    <p>공정 관리</p>
+                    <p>탱크 관리</p>
                     <div class="grid-header">
                         <button id="deleteUser" class="button del-button"
-                                :disabled="!selectedProcessKeys.length"
-                                @click="deleteProcess"/>
-                        <button id="createProcess" class="button add-button" @click="createProcess">
+                                :disabled="!selectedTankKeys.length"
+                                @click="deleteTank"/>
+                        <button id="createTank" class="button add-button" @click="createTank">
                             <img src="~assets/images/setting/icn_setting_add.svg" alt="등록"/>
                         </button>
                     </div>
                 </div>
                 <div id="gridBox">
                     <dx-data-grid
-                            id="ProcessListGrid"
-                            :selected-row-keys="selectedProcessKeys"
-                            @selection-changed="selectionProcessChanged"
-                            :data-source="processList"
+                            id="TankListGrid"
+                            :selected-row-keys="selectedTankKeys"
+                            @selection-changed="selectionTankChanged"
+                            :data-source="tankList"
                             :show-borders="false"
-                            :onCellClick="updateProcess"
+                            :onCellClick="updateTank"
                             key-expr="id"
                             :column-min-width="100"
                     >
                         <dx-search-panel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
                         <dx-column data-field="id" caption="No" alignment="center" :width="100"/>
-                        <dx-column data-field="name" caption="공정명" alignment="center" />
-                        <dx-column data-field="costCenter" caption="Cost Center" alignment="center"
+                        <dx-column data-field="name" caption="탱크명" alignment="center" />
+                        <dx-column data-field="capacity" caption="용량" alignment="center"
                                    cell-template="blockGridTemplate"/>
                         <dx-paging :enabled="true" :page-size="20"/>
                         <dx-pager :show-page-size-selector="true" :allowed-page-sizes="pageSizes"
@@ -38,7 +38,7 @@
                         </template>
                     </dx-data-grid>
                 </div>
-                <createModal v-bind:propsdata="modalData" ref="processModal" v-on:callSearch="getProcess"/>
+                <createModal v-bind:propsdata="modalData" ref="tankModal" v-on:callSearch="getTank"/>
                 <flashModal v-bind:propsdata="msgData"/>
             </div>
         </div>
@@ -50,7 +50,7 @@
         DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxPager, DxSearchPanel,
     } from 'devextreme-vue/data-grid';
     import {DxButton} from 'devextreme-vue/button';
-    import createModal from '~/components/settingModal/createProcessModal.vue';
+    import createModal from '~/components/settingModal/createTankModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
 
@@ -89,26 +89,26 @@
                     show: false,
                     e: '',
                 },
-                processList: [],
+                tankList: [],
                 pageSizes: [5, 10, 20, 50], // 페이지사이즈
-                selectedProcessKeys: [],
-                selectionProcessChanged: (data) => {
-                    this.selectedProcessKeys = data.selectedRowKeys;
+                selectedTankKeys: [],
+                selectionTankChanged: (data) => {
+                    this.selectedTankKeys = data.selectedRowKeys;
                 },
             };
         },
         created() {
-            this.getProcess();
+            this.getTank();
         },
         methods: {
-            async getProcess() {
+            async getTank() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/processes',
+                    url: '/api/setting/tankes',
                 }).then((res) => {
                     if (res.data.code === 1) {
-                        vm.processList = res.data.value;
+                        vm.tankList = res.data.value;
                     }
                 }).catch((error) => {
                     vm.msgData.show = true;
@@ -116,27 +116,27 @@
                 });
             },
             // 신규 장비 등록
-            createProcess() {
-                this.$refs.processModal.createdModal();
+            createTank() {
+                this.$refs.tankModal.createdModal();
                 this.modalData.show = true;
             },
-            updateProcess(e) {
+            updateTank(e) {
                 if (e.columnIndex !== 0) {
-                    this.$refs.processModal.updateModal(e.data);
+                    this.$refs.tankModal.updateModal(e.data);
                     this.modalData.show = true;
                 }
             },
-            deleteProcess: function () {
+            deleteTank: function () {
                 const vm = this;
                 if (confirm("정말로 삭제 하시겠습니까? 삭제된 공정은 복원되지 않습니다.")) {
-                    axios.delete('/api/setting/process', {
+                    axios.delete('/api/setting/tank', {
                         data: {
-                            ids: vm.selectedProcessKeys
+                            ids: vm.selectedTankKeys
                         }
                     }).then((res) => {
                         vm.msgData.show = true;
                         vm.msgData.msg = res.data.msg;
-                        vm.getProcess();
+                        vm.getTank();
                     }).catch((error) => {
                         vm.msgData.show = true;
                         vm.msgData.msg = error;

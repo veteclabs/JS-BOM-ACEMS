@@ -48,14 +48,19 @@
           "icon": "icn_setting_factory"
         },
         {
-          "menuName": "공기압축기 제어",
-          "link": "/setting/TP",
-          "icon": "icn_setting_note"
+          "menuName": "탱크관리",
+          "link": "/setting/tank",
+          "icon": "icn_setting_tool"
         },
         {
           "menuName": "공기압축기 관리",
           "link": "/setting/aircompressor",
           "icon": "icn_setting_gear"
+        },
+        {
+          "menuName": "공기압축기 제어",
+          "link": "/setting/TP",
+          "icon": "icn_setting_note"
         }
       ]
     }

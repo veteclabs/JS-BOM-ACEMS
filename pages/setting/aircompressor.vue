@@ -22,6 +22,7 @@
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
                         <DxColumn data-field="name" caption="공기압축기명" alignment="center"
                                   cell-template="blockGridTemplate"/>
+                        <DxColumn data-field="tank" caption="탱크" alignment="center"/>
                         <DxColumn data-field="barMin" caption="최소압력" alignment="center"/>
                         <DxColumn data-field="barMax" caption="최대압력" alignment="center"/>
                         <DxColumn data-field="schedule" caption="스케줄" alignment="center"/>

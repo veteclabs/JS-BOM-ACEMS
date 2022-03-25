@@ -19,7 +19,7 @@
                     </td>
                 </tr>
             </table>
-            <VueSimpleRangeSlider id="bar-range" :min="0" :max="100" v-model="barRange"/>
+            <VueSimpleRangeSlider id="bar-range" :min="0" :max="12" v-model="barRange"/>
         </div>
         <div class="ibox">
             <div class="ibox-title ibox-normal-title ibox-noborder-title">공기압축기 전체 스케줄 제어</div>
@@ -41,11 +41,6 @@
                                     </label>
                                 </li>
                             </ul>
-                            <div class="time-ul">
-                                <date-picker v-model="element.time.start" :config="timeOptions"/>
-                                ~
-                                <date-picker v-model="element.time.end" :config="timeOptions"/>
-                            </div>
                         </div>
                     </draggable>
                 </li>
@@ -82,7 +77,7 @@
                     show: false,
                     e: '',
                 },
-                barRange: [30, 80],
+                barRange: [6, 8],
                 weekName: ['첫째주', '둘째주', '셋째주', '넷째주', '스케줄 대기 장비'],
                 weekList: {
                     week1:

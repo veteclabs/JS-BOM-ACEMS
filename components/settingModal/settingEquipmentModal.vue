@@ -21,6 +21,18 @@
                             </label>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <div class="td-label">TANK</div>
+                            <label class="input-100">
+                                <select v-model="tank">
+                                    <option v-for="tank in tankList" :key="tank.id">
+                                        {{tank.name}}
+                                    </option>
+                                </select>
+                            </label>
+                        </td>
+                    </tr>
                 </table>
                 <h4 class="modal-h4-title">공기압축기 압력</h4>
                 <table class="bom-table">
@@ -40,11 +52,7 @@
                         </td>
                     </tr>
                 </table>
-                <VueSimpleRangeSlider
-                        id="bar-range"
-                        :min="0"
-                        :max="100"
-                        v-model="barRange"
+                <VueSimpleRangeSlider id="bar-range" :min="0" :max="12" v-model="barRange"
                 />
                 <h4 class="modal-h4-title">공기압축기 스케줄</h4>
                 <table class="bom-table">
@@ -74,7 +82,7 @@
                             </ul>
                         </td>
                     </tr>
-                    <tr>
+                    <!--<tr>
                         <td style="position:relative;">
                             <div class="td-label">Time</div>
                             <date-picker v-model="time.start" :config="timeOptions"/>
@@ -83,7 +91,7 @@
                         <td style="vertical-align: bottom; position:relative;">
                             <date-picker v-model="time.end" :config="timeOptions"/>
                         </td>
-                    </tr>
+                    </tr>-->
                 </table>
             </div>
             <div class="modal-footer">
@@ -131,7 +139,7 @@
                 state: 'new',
                 id: '',
                 name:'',
-                barRange: [30, 80],
+                barRange: [6, 8],
                 weekList: [
                     {id: 1, name: '첫째 주'},
                     {id: 2, name: '둘째 주'},
@@ -155,7 +163,11 @@
                 },
                 timeOptions: {
                     format: 'HH:mm',
-                }
+                },
+                tankList: [
+                    {id: 1, name: 'tank1'},
+                    {id: 2, name: 'tank2'},
+                ],
 
             };
         },
