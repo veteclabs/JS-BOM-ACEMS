@@ -164,6 +164,7 @@
                 timeOptions: {
                     format: 'HH:mm',
                 },
+                tank:1,
                 tankList: [
                     {id: 1, name: 'tank1'},
                     {id: 2, name: 'tank2'},

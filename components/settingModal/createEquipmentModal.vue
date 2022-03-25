@@ -7,7 +7,7 @@
                     <col style="width:100px;"/>
                     <col style="width:auto;"/>
                 </colgroup>
-                <tbody><!--
+                <tbody>
                 <tr>
                     <th>Type</th>
                     <td colspan="2">
@@ -23,8 +23,8 @@
                             {{ validation.firstError('type') }}
                         </div>
                     </td>
-                </tr>-->
-                <tr>
+                </tr>
+                <tr v-if="type === 1">
                     <th>Model</th>
                     <td colspan="2">
                         <label class="input-100">
@@ -40,7 +40,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr v-if="model===1">
+                <tr v-if="type===1 && model === 1">
                     <th>전압</th>
                     <td colspan="2">
                         <label class="radio-box" v-for="list in voltageList" :key="list.id">
@@ -55,7 +55,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr v-if="model===1">
+                <tr v-if="type===1 && model === 1">
                     <th>비율</th>
                     <td>
                         <div class="td-label">CT비</div>
@@ -74,6 +74,30 @@
                         <div class="err-message" v-if="validation !== undefined">
                             {{ validation.firstError('PT') }}
                         </div>
+                    </td>
+                </tr>
+                <tr v-if="type !== 1">
+                    <th>TANK</th>
+                    <td>
+                        <label class="input-100">
+                            <select v-model="tank">
+                                <option v-for="tank in tankList" :key="tank.id">
+                                    {{tank.name}}
+                                </option>
+                            </select>
+                        </label>
+                    </td>
+                </tr>
+                <tr v-if="type === 1">
+                    <th>공기압축기</th>
+                    <td>
+                        <label class="input-100">
+                            <select v-model="airCompressor">
+                                <option v-for="comp in airCompressorList" :key="comp.id">
+                                    {{comp.name}}
+                                </option>
+                            </select>
+                        </label>
                     </td>
                 </tr>
                 <tr>
@@ -132,10 +156,12 @@
                 state: 'new',
                 id: '',
                 description: '',
-                type: '',
+                type: 1,
                 typeList: [
                     {id: 1, name: '전력'},
-                    {id: 2, name: '공기압축기'}
+                    {id: 2, name: '온도계'},
+                    {id: 3, name: '압력계'},
+                    {id: 4, name: '유량계'},
                 ],
                 model: '',
                 modelList: [
@@ -153,6 +179,46 @@
                 ],
                 CT:0,
                 PT:0,
+                tank:1,
+                tankList: [
+                    {id: 1, name: 'tank1'},
+                    {id: 2, name: 'tank2'},
+                ],
+                airCompressor:1,
+                airCompressorList: [
+                    {
+                        id: 1,
+                        unit: 'U001',
+                        state: 'RUN',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -1'
+                    },
+                    {
+                        id: 2,
+                        unit: 'U002',
+                        state: 'STOP',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -2'
+                    },
+                    {
+                        id: 3,
+                        unit: 'U003',
+                        state: 'LOAD',
+                        alarm: '',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -3'
+                    },
+                    {
+                        id: 4,
+                        unit: 'U004',
+                        state: 'UNLOAD',
+                        alarm: '온도 2단계 알람이 발생했습니다.',
+                        equipmentId: 'ingersollrand_rm55',
+                        name: 'Ingersoll Rand RM55 -4'
+                    },
+                ],
             }
         },
         validators: {
