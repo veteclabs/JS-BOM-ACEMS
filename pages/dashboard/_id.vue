@@ -9,6 +9,9 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="ibox">
+                    <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                         class="setting-btn"
+                         @click="settingModalOpen(airCompressor[0].id)"/>
                     <div class="ibox-title center">
                         <img :src="require(`~/assets/images/equipment/${airCompressor[0].equipmentId}.jpg`)"
                              :alt="airCompressor[0].equipmentId"
@@ -80,10 +83,7 @@
                 </div>
                 <div class="ibox">
                     <div class="ibox-title flex-ibox-title">
-                        실시간 공기압축기 압력 Chart
-                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
-                             class="setting-btn"
-                             @click="settingModalOpen(airCompressor[0].id)"/>
+                        실시간 전력 Chart
                     </div>
                     <div class="ibox-content">
                         <client-only>
@@ -249,7 +249,7 @@
                 ],
                 timeCategories: [],
                 nowTime: '',
-                liveChartData: [{name: '잉가솔랜드', data: []}], // 데이터 변수
+                liveChartData: [{name: '실시간 유효전력', data: []}], // 데이터 변수
                 liveChartOption: { //차트옵션 변수
                     chart: {
                         toolbar: {
@@ -264,7 +264,7 @@
                         }
                     },
                     dataLabels: {enabled: false},
-                    colors: ['#27aef3'],
+                    colors: ['#FFA100'],
                     grid: {borderColor: '#e4e9f1'},
                     stroke: {curve: 'smooth', width: 3},
                     fill: {
@@ -452,7 +452,7 @@
                 vm.timeCategories.push(vm.nowTime);
 
                 //Y좌표 설정
-                let data = vm.airCompressorBar;
+                let data = this.$options.filters.pickValue(vm.tagVal,'Name',`${vm.airCompressor[0].unit}_PWR_KW`, 'Value');
                 vm.liveChartData[0].data.push(data);
                 vm.$refs.liveChart.updateOptions({
                     "xaxis": {"categories": vm.timeCategories}

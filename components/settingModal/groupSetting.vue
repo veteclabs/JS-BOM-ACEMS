@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal v-model="propsdata.show" id="createGroupModal" title="그룹 관리" hide-footer>
+        <div class="ibox">
             <table class="bom-table">
                 <caption>그룹 정보를 입력합니다.</caption>
                 <colgroup>
@@ -30,8 +30,11 @@
                 </tr>-->
                 </tbody>
             </table>
-
-            <h4 class="modal-h4-title">공기압축기 압력 제어 범위</h4>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title ibox-noborder-title flex-box">
+                공기압축기 압력 제어 범위
+            </div>
             <table class="bom-table">
                 <tr>
                     <td>
@@ -49,26 +52,24 @@
                     </td>
                 </tr>
             </table>
-            <h4 class="modal-h4-title">그룹 스케줄 제어</h4>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title ibox-noborder-title flex-box">
+                <div>그룹 스케줄 제어</div>
+                <label class="switch-box">
+                    <input type="checkbox" v-model="isSchedule" :true-value="1" :false-value="0">
+                    <span class="slider round"></span>
+                </label>
+            </div>
             <table class="bom-table">
-                <tr>
-                    <td colspan="2">
-                        <div class="td-label">그룹 스케줄 설정</div>
-                    </td>
-                    <td class="right">
-                        <label class="switch-box">
-                            <input type="checkbox" v-model="isSchedule" :true-value="1" :false-value="0">
-                            <span class="slider round"></span>
-                        </label>
-                    </td>
-                </tr>
                 <tr :class="{'disabled-td' : isSchedule === 0}">
                     <td colspan="3">
                         <div class="td-label">Date</div>
                         <ul class="date-ul">
                             <li v-for="item in dateList">
                                 <label>
-                                    <input type="checkbox" :value="item.id" v-model="date" :disabled="isSchedule === 0"/>
+                                    <input type="checkbox" :value="item.id" v-model="date"
+                                           :disabled="isSchedule === 0"/>
                                     <div>{{item.name}}</div>
                                 </label>
                             </li>
@@ -91,30 +92,38 @@
                     </td>
                 </tr>
             </table>
+        </div>
 
-            <div class="ibox">
-                <div class="ibox-title ibox-normal-title ibox-noborder-title">공기압축기 전체 스케줄 제어</div>
-                <ul class="all-schedule-list">
-                    <li v-for="(week, property, index) in weekList" :class="property" :key="week.id">
-                        <div class="td-label">{{weekName[index]}}</div>
-                        <div v-if="week.length === 0 && index < 4" class="font-14">
-                            스케줄 지정된 장비가 없습니다.
-                        </div>
-                        <draggable class="list-group" :list="week" group="people" @change="log">
-                            <div class="list-group-item equipment-box" v-for="(element, index) in week"
-                                 :key="element.name">
-                                <div class="name-box">{{ element.name }}</div>
-                            </div>
+        <div class="ibox">
+            <div class="ibox-title ibox-noborder-title">공기압축기 전체 스케줄 제어</div>
+            <div class="ibox-content">
+                <div :class="{'disabled-ibox' : isSchedule === 0, 'all-schedule-list':true}">
+                    <ul v-for="(targetWeek, property, targetIndex) in weekSchedule">
+                        <div class="td-label">{{targetIndex + 1}}째주</div>
+                        <li v-if="targetWeek.order.length === 0">
+                            스케줄 장비가 없습니다.
+                        </li>
+                        <draggable :group="`week${targetIndex}`"  :list="targetWeek.order">
+                            <li v-for="(equipment, property, index) in targetWeek.order"
+                                :key="equipment.id">
+                                <div class="equipment-box">{{ equipment.name }}</div>
+                            </li>
                         </draggable>
-                    </li>
-                </ul>
-            </div>
+                        <div class="td-label" style="margin:48px 0 0 0">스케줄 대기장비</div>
+                        <li v-if="targetWeek.standby.length === 0">
+                            대기 장비가 없습니다.
+                        </li>
+                        <draggable :group="`week${targetIndex}`" :list="targetWeek.standby">
+                            <li v-for="(equipment, property, index) in targetWeek.standby" class="no-schedule-li"
+                                :key="equipment.id">
+                                <div class="equipment-box">{{ equipment.name }}</div>
+                            </li>
+                        </draggable>
+                    </ul>
 
-            <div class="modal-footer">
-                <button type="button" class="button cancel-button" @click="cancel">취소</button>
-                <button type="button" class="button submit-button" @click="submit">등록</button>
+                </div>
             </div>
-        </b-modal>
+        </div>
         <flashModal v-bind:propsdata="msgData"/>
     </div>
 </template>
@@ -147,7 +156,7 @@
                 id: '',
                 name: '',
                 barRange: [6, 8],
-                isSchedule:1,
+                isSchedule: 1,
                 dateList: [
                     {id: 1, name: '월'},
                     {id: 2, name: '화'},
@@ -165,44 +174,77 @@
                 timeOptions: {
                     format: 'HH:mm',
                 },
-                weekName: ['첫째주', '둘째주', '셋째주', '넷째주', '스케줄 대기 장비'],
-                weekList: {
-                    week1:
-                        [{id: 1, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1', scheduleWeek: 1},],
-                    week2: [{
-                        id: 1,
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -2',
-                        scheduleWeek: 1,
-                        date: [],
-                        time: {start: '00:00', end: '00:00'}
-                    }],
-                    week3: [{
-                        id: 1,
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -3',
-                        scheduleWeek: 1,
-                        date: [],
-                        time: {start: '00:00', end: '00:00'}
-                    }],
-                    week4: [{
-                        id: 1,
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -4',
-                        scheduleWeek: 1,
-                        date: [],
-                        time: {start: '00:00', end: '00:00'}
-                    }],
-                    noWeek: [],
+                propertyName: {
+                    standby: '스케줄대기장치'
                 },
+                weekName: ['첫째주', '둘째주', '셋째주', '넷째주'],
+                weekSchedule: {
+                    week1List: {
+                        order: [
+                            {id: 1, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1', order: 1},
+                            {id: 2, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -2', order: 1},
+                            {id: 3, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -3', order: 1},
+                        ],
+                        standby: [
+                            {id: 4, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -4', order: 1}
+                        ]
+                    },
+                    week2List: {
+                        order: [
+                            {id: 1, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1', order: 1},
+                            {id: 2, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -2', order: 1},
+                            {id: 3, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -3', order: 1},
+                        ],
+                        standby: [
+                            {id: 4, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -4', order: 1}
+                        ]
+                    },
+                    week3List: {
+                        order: [
+                            {id: 1, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1', order: 1},
+                            {id: 2, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -2', order: 1},
+                            {id: 3, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -3', order: 1},
+                        ],
+                        standby: [
+                            {id: 4, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -4', order: 1}
+                        ]
+                    },
+                    week4List: {
+                        order: [
+                            {id: 1, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -1', order: 1},
+                            {id: 2, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -2', order: 1},
+                            {id: 3, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -3', order: 1},
+                        ],
+                        standby: [
+                            {id: 4, equipmentId: 'ingersollrand_rm55', name: 'Ingersoll Rand RM55 -4', order: 1}
+                        ]
+                    },
+                }
+
+
             };
         },
         validators: {
             name(value) {
                 return Validator.value(value).required();
-            },
-        },
+            }
+            ,
+        }
+        ,
         methods: {
+            onDragover(event) {
+                event.preventDefault()
+            },
+            startDrag(event, value) {
+                console.log("start")
+                console.log(value)
+                this.dragAssetItem = value;
+            },
+            onDrop(event, data) {
+                console.log("drop")
+                console.log(data)
+                event.preventDefault();
+            },
             submit() {
                 const vm = this;
                 const modal = this.$bvModal;
@@ -249,27 +291,34 @@
                             });
                         }
                     });
-            },
+            }
+            ,
             cancel() {
                 this.$bvModal.hide('createGroupModal');
-            },
+            }
+            ,
             reset() {
                 this.name = '';
                 this.name = '';
-                this.costCenter ='';
-            },
+                this.costCenter = '';
+            }
+            ,
             createdModal() {
                 this.state = 'new';
                 this.reset();
                 this.validation.reset();
-            },
+            }
+            ,
             updateModal(e) {
                 this.validation.reset();
                 this.state = 'update';
                 this.id = e.id;
                 this.name = e.name;
                 this.costCenter = e.costCenter;
-            },
-        },
-    };
+            }
+            ,
+        }
+        ,
+    }
+    ;
 </script>
