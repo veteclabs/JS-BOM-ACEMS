@@ -1,56 +1,17 @@
 <template>
     <div id="SubContentWrap">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 주요 정보</div>
-                    <div class="ibox-content">
-                        <ul class="tag-box">
-                            <li>
-                                <div class="tagname">총 전력량</div>
-                                <div>{{tagVal | pickValue('Name',`AU_PWR_kWH`, 'Value')}}kWh</div>
-                            </li>
-                            <li>
-                                <div class="tagname">총 순시전력</div>
-                                <div>{{tagVal | pickValue('Name',`AU_PWR_kW`, 'Value')}}kW</div>
-                            </li>
-                            <li>
-                                <div class="tagname">누적 유량</div>
-                                <div>{{tagVal | pickValue('Name',`AU_WAR_Con`, 'Value')}}㎥/min</div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 전력 Chart</div>
-                    <div class="ibox-content">
-                        <client-only>
-                            <apexchart type="area" height="180" ref="liveChart" :options="liveChartOption"
-                                       :series="liveChartData"/>
-                        </client-only>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 압력</div>
-                    <div class="ibox-content">
-                        <client-only>
-                            <apexchart type="radialBar" height="240" ref="liveCTLineChart"
-                                       :options="radialChartOptions"
-                                       :series="[airCompressorBar]"/>
-                        </client-only>
-                    </div>
-                </div>
-            </div>
+        <div class="title-box flex-box">
+            <h2>
+                <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
+                RealTime Monitoring
+            </h2>
         </div>
         <div class="title-box flex-box">
             <h2>
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
                 Air Compressor
             </h2>
+            <button class="button setting-button" @click="settingAirCompressorModalOpen()">TP</button>
         </div>
         <div class="row dashboard-item-box">
             <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
@@ -194,136 +155,6 @@
                     show: false,
                 },
                 tagVal: '',
-                liveChartData: [{name: '실시간 유효전력', data: []}], // 데이터 변수
-                liveChartOption: { //차트옵션 변수
-                    chart: {
-                        toolbar: {
-                            tools: {
-                                download: true,
-                                selection: false,
-                                zoom: false,
-                                zoomin: false,
-                                zoomout: false,
-                                pan: false,
-                            }
-                        }
-                    },
-                    dataLabels: {enabled: false},
-                    colors: ['#FFA100'],
-                    grid: {borderColor: '#e4e9f1'},
-                    stroke: {curve: 'smooth', width: 3},
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0,
-                            stops: [0, 100]
-                        }
-                    },
-                    tooltip: {
-                        style: {fontFamily: 'BOM-font'},
-                        x: {show: true},
-                        y: {
-                            show: true,
-                            formatter: function (val) {
-                                return val + 'Bar'
-                            }
-                        }
-                    },
-                    xaxis: {
-                        categories: [],
-                        labels: {show: false, style: {color: ['#667082'], fontFamily: 'BOM-font', fontSize: '10px'}}
-                    },
-                    yaxis: {
-                        forceNiceScale: true,
-                        labels: {
-                            style: {colors: ['#667082'], fontFamily: 'BOM-font', fontSize: '10px'},
-                            formatter: (value) => {
-                                return value.toFixed(1)
-                            }
-                        }
-                    },
-                    legend: {show: true, fontSize: '10px', fontFamily: 'BOM-font', offsetY: -5}
-                },
-                radialChartOptions: {
-                    chart: {
-                        type: 'radialBar',
-                        toolbar: {
-                            show: true
-                        },
-                        offsetY: -10,
-                        animations: {
-                            enabled: false,
-                        }
-                    },
-                    plotOptions: {
-                        radialBar: {
-                            startAngle: -135,
-                            endAngle: 135,
-                            hollow: {
-                                margin: 0,
-                                size: '70%',
-                                background: '#fff',
-                                position: 'front',
-                                dropShadow: {
-                                    enabled: true,
-                                    top: -3,
-                                    left: 0,
-                                    blur: 4,
-                                    opacity: 0.05
-                                }
-                            },
-                            track: {
-                                background: '#f5f5f5',
-                                strokeWidth: '67%',
-                                margin: 0, // margin is in pixels
-                            },
-
-                            dataLabels: {
-                                show: true,
-                                name: {
-                                    offsetY: 40,
-                                    show: true,
-                                    color: '#6c6c6c',
-                                    fontSize: '18px',
-                                    fontWeight: 500,
-                                    fontFamily: 'BOM-font", Sans-serif',
-                                },
-                                value: {
-                                    formatter: function (val) {
-                                        return parseInt(val);
-                                    },
-                                    offsetY: -10,
-                                    color: '#1b1b1b',
-                                    fontSize: '40px',
-                                    fontWeight: 600,
-                                    fontFamily: 'BOM-font", Sans-serif',
-                                    show: true,
-                                }
-                            }
-                        }
-                    },
-                    fill: {
-                        type: 'gradient',
-                        colors: ['#c24285'],
-                        gradient: {
-                            shade: 'dark',
-                            type: 'horizontal',
-                            shadeIntensity: 0.5,
-                            gradientToColors: ['#3363ff'],
-                            inverseColors: true,
-                            opacityFrom: 1,
-                            opacityTo: 1,
-                            stops: [0, 100]
-                        }
-                    },
-                    stroke: {
-                        lineCap: 'round'
-                    },
-                    labels: ['bar'],
-                },
-                airCompressorBar: 0,
                 airCompressorList: [
                     {
                         id: 1,
@@ -437,8 +268,6 @@
                 }).then((res) => {
                     if (res.data.Result.Total > 0) {
                         vm.tagVal = res.data.Values;
-                        vm.airCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_COMP_PDP`, 'Value');
-                        vm.setLiveChart();
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error;
@@ -491,27 +320,6 @@
                     value = 0;
                 }
                 return value;
-            },
-            setLiveChart: function () {
-                const vm = this;
-                vm.getNowTime();
-                //실시간유효전력량 Graph 실시간 변경
-                let liveChartXcount = this.liveChartData[0].data.length;
-                let maxCount = 150;
-
-                //X좌표 설정
-                if (liveChartXcount > maxCount) {
-                    vm.timeCategories.shift();
-                    vm.liveChartData[0].data.shift();
-                }
-                vm.timeCategories.push(vm.nowTime);
-
-                //Y좌표 설정
-                let data = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_PWR_KW`, 'Value');
-                vm.liveChartData[0].data.push(data);
-                vm.$refs.liveChart.updateOptions({
-                    "xaxis": {"categories": vm.timeCategories}
-                });
             },
             resetInterval() {
                 const vm = this;
