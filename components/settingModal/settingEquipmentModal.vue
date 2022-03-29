@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal v-model="propsdata.show" id="createmodal"  title="Setting" hide-footer hide-header>
+        <b-modal v-model="propsdata.show" id="createmodal" title="Setting" hide-footer hide-header>
             <div class="modal-header">
                 <h5 class="font-20" style="margin:0;">
                     <img src="~assets/images/dashboard/icn_dashboard-modal_setting.png" alt="setting-icon" width="24"/>
@@ -15,26 +15,26 @@
                 <table class="bom-table">
                     <tr>
                         <td>
+                            <div class="td-label">그룹</div>
+                            <label class="input-100">
+                                <select v-model="group">
+                                    <option v-for="group in groupList" :key="group.id">
+                                        {{group.name}}
+                                    </option>
+                                </select>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <div class="td-label">공기압축기명</div>
                             <label class="input-100">
                                 <input type="text" v-model="name" class="input-100" placeholder="공기압축기명을 입력하세요"/>
                             </label>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <div class="td-label">TANK</div>
-                            <label class="input-100">
-                                <select v-model="tank">
-                                    <option v-for="tank in tankList" :key="tank.id">
-                                        {{tank.name}}
-                                    </option>
-                                </select>
-                            </label>
-                        </td>
-                    </tr>
                 </table>
-                <h4 class="modal-h4-title">공기압축기 압력</h4>
+                <h4 class="modal-h4-title">공기압축기 압력 제어 범위</h4>
                 <table class="bom-table">
                     <tr>
                         <td>
@@ -52,46 +52,48 @@
                         </td>
                     </tr>
                 </table>
-                <VueSimpleRangeSlider id="bar-range" :min="0" :max="12" v-model="barRange"
-                />
+                <!--<VueSimpleRangeSlider id="bar-range" :min="0" :max="12" v-model="barRange"/>-->
                 <h4 class="modal-h4-title">공기압축기 스케줄</h4>
                 <table class="bom-table">
                     <tr>
-                        <td colspan="3">
-                            <div class="td-label">Week</div>
-                            <ul class="date-ul week-ul">
-                                <li v-for="item in weekList">
-                                    <label>
-                                        <input type="checkbox" :value="item.id" v-model="week"/>
-                                        <div>{{item.name}}</div>
-                                    </label>
-                                </li>
-                            </ul>
+                        <td colspan="2">
+                            <div class="td-label">개별 스케줄 설정</div>
+                        </td>
+                        <td class="right">
+                            <label class="switch-box">
+                                <input type="checkbox" v-model="isSchedule" :true-value="1" :false-value="0">
+                                <span class="slider round"></span>
+                            </label>
                         </td>
                     </tr>
-                    <tr>
+                    <tr :class="{'disabled-td' : isSchedule === 0}">
                         <td colspan="3">
                             <div class="td-label">Date</div>
                             <ul class="date-ul">
                                 <li v-for="item in dateList">
                                     <label>
-                                        <input type="checkbox" :value="item.id" v-model="date"/>
+                                        <input type="checkbox" :value="item.id" v-model="date" :disabled="isSchedule === 0"/>
                                         <div>{{item.name}}</div>
                                     </label>
                                 </li>
                             </ul>
                         </td>
                     </tr>
-                    <!--<tr>
-                        <td style="position:relative;">
-                            <div class="td-label">Time</div>
-                            <date-picker v-model="time.start" :config="timeOptions"/>
-                        </td>
-                        <td style="vertical-align: bottom">~</td>
+                    <tr :class="{'disabled-td' : isSchedule === 0}">
                         <td style="vertical-align: bottom; position:relative;">
-                            <date-picker v-model="time.end" :config="timeOptions"/>
+                            <div class="td-label">시작시간</div>
+                            <label class="input-100">
+                                <date-picker v-model="time.start" :config="timeOptions" :disabled="isSchedule === 0"/>
+                            </label>
                         </td>
-                    </tr>-->
+                        <td>~</td>
+                        <td style="vertical-align: bottom; position:relative;">
+                            <div class="td-label">종료시간</div>
+                            <label class="input-100">
+                                <date-picker v-model="time.end" :config="timeOptions" :disabled="isSchedule === 0"/>
+                            </label>
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div class="modal-footer">
@@ -138,15 +140,9 @@
                 },
                 state: 'new',
                 id: '',
-                name:'',
+                name: '',
                 barRange: [6, 8],
-                weekList: [
-                    {id: 1, name: '첫째 주'},
-                    {id: 2, name: '둘째 주'},
-                    {id: 3, name: '셋째 주'},
-                    {id: 4, name: '넷째 주'}
-                ],
-                week: [],
+                isSchedule:1,
                 dateList: [
                     {id: 1, name: '월'},
                     {id: 2, name: '화'},
@@ -158,16 +154,16 @@
                 ],
                 date: [],
                 time: {
-                    start:'00:00',
+                    start: '00:00',
                     end: '00:00'
                 },
                 timeOptions: {
                     format: 'HH:mm',
                 },
-                tank:1,
-                tankList: [
-                    {id: 1, name: 'tank1'},
-                    {id: 2, name: 'tank2'},
+                group: 1,
+                groupList: [
+                    {id: 1, name: 'group1'},
+                    {id: 2, name: 'group2'},
                 ],
 
             };
@@ -250,10 +246,10 @@
             },
             reset() {
                 this.id = '';
-                this.barRange = [30,80];
+                this.barRange = [30, 80];
                 this.date = [];
                 this.time = {
-                    start:'00:00',
+                    start: '00:00',
                     end: '00:00'
                 };
                 this.validation.reset();
@@ -265,6 +261,7 @@
             updateModal(id) {
                 this.validation.reset();
                 this.state = 'update';
+                this.isSchedule = 1;
                 this.getAirCompressor(id);
             },
         },

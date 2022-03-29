@@ -3,6 +3,12 @@
         <div class="title-box flex-box">
             <h2>
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
+                RealTime Monitoring
+            </h2>
+        </div>
+        <div class="title-box flex-box">
+            <h2>
+                <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
                 Air Compressor
             </h2>
             <button class="button setting-button" @click="settingAirCompressorModalOpen()">TP</button>
@@ -37,7 +43,10 @@
                         <ul class="tag-box">
                             <li>
                                 <div class="tagname">부하율</div>
-                                <div>
+                                <div style="display:flex; flex:1; justify-content: end; align-items: center;">
+                                    <div class="progressbar">
+                                        <div class="inner-bar" :style="`width:${getProgressBarValue(device.unit)}%`"/>
+                                    </div>
                                     <h3>{{tagVal | pickValue('Name',`${device.unit}_COMP_PCY`, 'Value')}} %</h3>
                                 </div>
                             </li>
@@ -304,6 +313,14 @@
                 this.TPModalData.show = true;
                 this.$refs.settingAirCompressorModal.getTP();
             },
+            getProgressBarValue(unit) {
+                const vm = this;
+                let value = this.$options.filters.pickValue(vm.tagVal, 'Name', `${unit}_COMP_PCY`, 'Value');
+                if (value < 0) {
+                    value = 0;
+                }
+                return value;
+            },
             resetInterval() {
                 const vm = this;
                 clearInterval(this.interval);
@@ -347,7 +364,7 @@
                         let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
                         if (targetError.length === 0) {
                             return;
-                        }else {
+                        } else {
                             return targetError[0].description
                         }
                     }

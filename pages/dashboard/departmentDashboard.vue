@@ -127,7 +127,7 @@
         DxDataGrid,
         DxColumn,
     } from 'devextreme-vue/data-grid';
-    import deptRankingTemplate from '~/components/gridTemplate/deptRankingTemplate.vue';
+    import deptRankingTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
     import blockGridUnitTemplate from '~/components/gridTemplate/blockGridUnitTemplate.vue';
 
 

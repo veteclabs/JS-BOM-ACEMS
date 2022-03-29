@@ -48,9 +48,9 @@
           "icon": "icn_setting_factory"
         },
         {
-          "menuName": "탱크관리",
-          "link": "/setting/tank",
-          "icon": "icn_setting_tool"
+          "menuName": "그룹관리",
+          "link": "/setting/group",
+          "icon": "icn_setting_folder"
         },
         {
           "menuName": "공기압축기 관리",
@@ -58,7 +58,7 @@
           "icon": "icn_setting_gear"
         },
         {
-          "menuName": "공기압축기 제어",
+          "menuName": "공기압축기 그룹 제어",
           "link": "/setting/TP",
           "icon": "icn_setting_note"
         }

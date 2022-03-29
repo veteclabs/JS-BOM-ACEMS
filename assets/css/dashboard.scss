@@ -259,7 +259,7 @@
   .equipment-box {
     display: flex;
     justify-content: space-between;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
 
     @include tabletAndMobile() {
       display: block;
@@ -268,13 +268,13 @@
     > div, ul {
       margin: 6px 12px 6px 0;
       @include tabletAndMobile() {
-        margin:0 0 12px 0;
+        margin: 0 0 12px 0;
       }
     }
 
     .date-ul {
       li div {
-        width:30px;
+        width: 30px;
         @extend .font-16;
       }
     }
@@ -289,4 +289,29 @@
       }
     }
   }
+}
+
+.progressbar {
+  width:50%;
+  height:10px;
+  margin:0 10px 0 0;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: inset 3px 3px 10px #ccc;
+  background: $gray-0;
+  overflow: hidden;
+  .inner-bar {
+    height:10px;
+    border-radius: 10px;
+
+    background: repeating-linear-gradient(to right, $green-0 0%, $green-1 50%, $green-0 100%);
+    background-size: 200% auto;
+    background-position: 0 100%;
+    animation: progressbarAnimation 2s ease infinite;
+  }
+}
+
+@keyframes progressbarAnimation {
+  0%   { background-position: 0 0; }
+  100% { background-position: -200% 0; }
 }

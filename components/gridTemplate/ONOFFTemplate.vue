@@ -21,9 +21,14 @@
         },
         mounted() {
             if(this.cellData.value === 1) {
-                this.colorType= 'red-badge red'
+                this.colorType= 'blue-badge blue';
+                this.text = 'ON';
+            }else if(this.cellData.value === 0) {
+                this.colorType= 'red-badge red';
+                this.text = 'OFF';
+            }else {
+                this.text = this.cellData.value;
             }
-            this.text = this.cellData.value;
         },
     };
 </script>

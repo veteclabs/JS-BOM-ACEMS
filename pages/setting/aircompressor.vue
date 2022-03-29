@@ -20,19 +20,18 @@
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
+                        <DxColumn data-field="group" caption="그룹" alignment="center"/>
                         <DxColumn data-field="name" caption="공기압축기명" alignment="center"
                                   cell-template="blockGridTemplate"/>
-                        <DxColumn data-field="tank" caption="탱크" alignment="center"/>
-                        <DxColumn data-field="barMin" caption="최소압력" alignment="center"/>
-                        <DxColumn data-field="barMax" caption="최대압력" alignment="center"/>
-                        <DxColumn data-field="schedule" caption="스케줄" alignment="center"/>
+                        <DxColumn data-field="isSchedule" caption="개별스케줄제어" alignment="center"
+                                  cell-template="ONOFFTemplate"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
-                        <template #blockGridAlarmTemplate="{ data: cellData }">
-                            <blockGridAlarmTemplate :cell-data="cellData"/>
-                        </template>
                         <template #blockGridTemplate="{ data: cellData }">
                             <blockGridTemplate :cell-data="cellData"/>
+                        </template>
+                        <template #ONOFFTemplate="{ data: cellData }">
+                            <ONOFFTemplate :cell-data="cellData"/>
                         </template>
                     </DxDataGrid>
                 </div>
@@ -57,7 +56,7 @@
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
-    import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
+    import ONOFFTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -79,8 +78,8 @@
             DxLookup,
             DxPager,
             DxSearchPanel,
-            blockGridAlarmTemplate,
-            blockGridTemplate
+            blockGridTemplate,
+            ONOFFTemplate,
         },
         data() {
             return {
@@ -94,10 +93,46 @@
                     show: false,
                 },
                 airCompressorList: [
-                    {id: 1, barMin:30, barMax:80, schedule: '월, 화', start:'18:00', end:'07:00', name:'Ingersoll Rand 100'},
-                    {id: 2, barMin:30, barMax:80, schedule: '수, 목', start:'18:00', end:'07:00', name: 'Ingersoll Rand 200'},
-                    {id: 3, barMin:30, barMax:80, schedule: '', start:'18:00', end:'07:00', name: 'Ingersoll Rand 150'},
-                    {id: 4, barMin:30, barMax:80, schedule: '토, 일', start:'18:00', end:'07:00', name: 'YUJIN 100'},
+                    {
+                        id: 1,
+                        barMin: 30,
+                        barMax: 80,
+                        isSchedule: 1,
+                        schedule: '월, 화',
+                        start: '18:00',
+                        end: '07:00',
+                        name: 'Ingersoll Rand 100'
+                    },
+                    {
+                        id: 2,
+                        barMin: 30,
+                        barMax: 80,
+                        isSchedule: 0,
+                        schedule: '수, 목',
+                        start: '18:00',
+                        end: '07:00',
+                        name: 'Ingersoll Rand 200'
+                    },
+                    {
+                        id: 3,
+                        barMin: 30,
+                        barMax: 80,
+                        isSchedule: 0,
+                        schedule: '',
+                        start: '18:00',
+                        end: '07:00',
+                        name: 'Ingersoll Rand 150'
+                    },
+                    {
+                        id: 4,
+                        barMin: 30,
+                        barMax: 80,
+                        isSchedule: 0,
+                        schedule: '토, 일',
+                        start: '18:00',
+                        end: '07:00',
+                        name: 'YUJIN 100'
+                    },
                 ],
                 pageSizes: [5, 10, 20], // 페이지사이즈
             };

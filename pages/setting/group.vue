@@ -1,33 +1,33 @@
 <template>
-    <div id="settingTank">
+    <div id="settingGroup">
         <div class="wrapper animated fadeInRight">
             <div class="ibox">
                 <div class="grid-title-header">
-                    <p>탱크 관리</p>
+                    <p>그룹 관리</p>
                     <div class="grid-header">
                         <button id="deleteUser" class="button del-button"
-                                :disabled="!selectedTankKeys.length"
-                                @click="deleteTank"/>
-                        <button id="createTank" class="button add-button" @click="createTank">
+                                :disabled="!selectedGroupKeys.length"
+                                @click="deleteGroup"/>
+                        <button id="createGroup" class="button add-button" @click="createGroup">
                             <img src="~assets/images/setting/icn_setting_add.svg" alt="등록"/>
                         </button>
                     </div>
                 </div>
                 <div id="gridBox">
                     <dx-data-grid
-                            id="TankListGrid"
-                            :selected-row-keys="selectedTankKeys"
-                            @selection-changed="selectionTankChanged"
-                            :data-source="tankList"
+                            id="GroupListGrid"
+                            :selected-row-keys="selectedGroupKeys"
+                            @selection-changed="selectionGroupChanged"
+                            :data-source="groupList"
                             :show-borders="false"
-                            :onCellClick="updateTank"
+                            :onCellClick="updateGroup"
                             key-expr="id"
                             :column-min-width="100"
                     >
                         <dx-search-panel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
                         <dx-column data-field="id" caption="No" alignment="center" :width="100"/>
-                        <dx-column data-field="name" caption="탱크명" alignment="center" />
+                        <dx-column data-field="name" caption="그룹명" alignment="center" />
                         <dx-column data-field="capacity" caption="용량" alignment="center"
                                    cell-template="blockGridTemplate"/>
                         <dx-paging :enabled="true" :page-size="20"/>
@@ -38,7 +38,7 @@
                         </template>
                     </dx-data-grid>
                 </div>
-                <createModal v-bind:propsdata="modalData" ref="tankModal" v-on:callSearch="getTank"/>
+                <createModal v-bind:propsdata="modalData" ref="groupModal" v-on:callSearch="getGroup"/>
                 <flashModal v-bind:propsdata="msgData"/>
             </div>
         </div>
@@ -50,7 +50,7 @@
         DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxPager, DxSearchPanel,
     } from 'devextreme-vue/data-grid';
     import {DxButton} from 'devextreme-vue/button';
-    import createModal from '~/components/settingModal/createTankModal.vue';
+    import createModal from '~/components/settingModal/createGroupModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
 
@@ -89,26 +89,26 @@
                     show: false,
                     e: '',
                 },
-                tankList: [],
+                groupList: [],
                 pageSizes: [5, 10, 20, 50], // 페이지사이즈
-                selectedTankKeys: [],
-                selectionTankChanged: (data) => {
-                    this.selectedTankKeys = data.selectedRowKeys;
+                selectedGroupKeys: [],
+                selectionGroupChanged: (data) => {
+                    this.selectedGroupKeys = data.selectedRowKeys;
                 },
             };
         },
         created() {
-            this.getTank();
+            this.getGroup();
         },
         methods: {
-            async getTank() {
+            async getGroup() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/tankes',
+                    url: '/api/setting/group',
                 }).then((res) => {
                     if (res.data.code === 1) {
-                        vm.tankList = res.data.value;
+                        vm.groupList = res.data.value;
                     }
                 }).catch((error) => {
                     vm.msgData.show = true;
@@ -116,27 +116,27 @@
                 });
             },
             // 신규 장비 등록
-            createTank() {
-                this.$refs.tankModal.createdModal();
+            createGroup() {
+                this.$refs.groupModal.createdModal();
                 this.modalData.show = true;
             },
-            updateTank(e) {
+            updateGroup(e) {
                 if (e.columnIndex !== 0) {
-                    this.$refs.tankModal.updateModal(e.data);
+                    this.$refs.groupModal.updateModal(e.data);
                     this.modalData.show = true;
                 }
             },
-            deleteTank: function () {
+            deleteGroup: function () {
                 const vm = this;
                 if (confirm("정말로 삭제 하시겠습니까? 삭제된 공정은 복원되지 않습니다.")) {
                     axios.delete('/api/setting/tank', {
                         data: {
-                            ids: vm.selectedTankKeys
+                            ids: vm.selectedGroupKeys
                         }
                     }).then((res) => {
                         vm.msgData.show = true;
                         vm.msgData.msg = res.data.msg;
-                        vm.getTank();
+                        vm.getGroup();
                     }).catch((error) => {
                         vm.msgData.show = true;
                         vm.msgData.msg = error;

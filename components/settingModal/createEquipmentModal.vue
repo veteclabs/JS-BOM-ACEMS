@@ -77,12 +77,12 @@
                     </td>
                 </tr>
                 <tr v-if="type !== 1">
-                    <th>TANK</th>
+                    <th>그룹</th>
                     <td>
                         <label class="input-100">
-                            <select v-model="tank">
-                                <option v-for="tank in tankList" :key="tank.id">
-                                    {{tank.name}}
+                            <select v-model="group">
+                                <option v-for="group in groupList" :key="group.id">
+                                    {{group.name}}
                                 </option>
                             </select>
                         </label>
@@ -179,10 +179,10 @@
                 ],
                 CT:0,
                 PT:0,
-                tank:1,
-                tankList: [
-                    {id: 1, name: 'tank1'},
-                    {id: 2, name: 'tank2'},
+                group:1,
+                groupList: [
+                    {id: 1, name: 'group1'},
+                    {id: 2, name: 'group2'},
                 ],
                 airCompressor:1,
                 airCompressorList: [
