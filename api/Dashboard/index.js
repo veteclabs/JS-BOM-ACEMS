@@ -101,8 +101,8 @@ router.post('/dashboard/tag/getTagValue', async (req, res) => {
     const URL = process.env.WA_IP;
     const userPass = btoa(`${UserName}:${Password}`);
     const myProjURL = `${URL}/WaWebService/Json/GetTagValue/${process.env.WA_PROJECT}`;
-    const {tagList} = req.body;
 
+    const {tagList} = req.body;
 
     let dataParam = {};
     let tagObjectList = [];
@@ -197,34 +197,33 @@ router.get('/dashboard/departmant/:departmentId', async (req, res) => {
     try {
         conn = await dataPool.getConnection();
         let hourElecQuery = `
-SELECT 
-substation_id, 
-substation_name, 
-id, 
-panelboard_id, 
-panelboard_name, 
-switchboard_id, 
-switchboard_name, 
-department_id, 
-department_name, 
-manufacturing_process_id, 
-manufacturing_process_name, 
-cost_center, 
-description, 
-breaker_spec, 
-ct_spec, 
-wire_capacity, 
-ct_serial_number, 
-tag_unit, 
-timestamp, 
-v.tagname as \`tagname\`, 
+SELECT
+substation_id,
+substation_name,
+id,
+panelboard_id,
+panelboard_name,
+switchboard_id,
+switchboard_name,
+department_id,
+department_name,
+manufacturing_process_id,
+manufacturing_process_name,
+cost_center,
+description,
+breaker_spec,
+ct_spec,
+wire_capacity,
+ct_serial_number,
+tag_unit,
+timestamp,
+v.tagname as \`tagname\`,
 ifnull(sum(\`usage\`),0) \`usage\`
-FROM v_department_substation v 
-left outer join tagdata.history_day d on d.tagname = v.tagname and date(now()) = d.timestamp  
-where description not like '%메인%' and department_id = ${req.params.departmentId} 
-GROUP BY manufacturing_process_id 
-order by \`usage\` desc;
-`;
+FROM v_department_substation v
+left outer join tagdata.history_day d on d.tagname = v.tagname and date(now()) = d.timestamp
+where description not like '%메인%' and department_id = ${req.params.departmentId}
+GROUP BY manufacturing_process_id
+order by \`usage\` desc;`;
 
         let data = await dataPool.query(hourElecQuery);
         for (let d in data) {

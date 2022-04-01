@@ -2,16 +2,47 @@ const express = require('express');
 
 const router = express.Router();
 const Pool = require('../../config/database');
-
-router.get('/setting/panelBoards', async (req, res) => {
+const schedule = require("node-schedule");
+router.get('/compressors', async (req, res) => {
   let conn;
   try {
     conn = await Pool.getConnection();
-    const query = `SELECT * FROM panelboards`;
-    const queryResult = await conn.query(query);
+    let query = `SELECT
+dm.device_id id,
+dm.name,
+s.startTime,
+s.endTime
+FROM device dm
+LEFT JOIN equipment e ON e.equipment_id = dm.equipment_id
+LEFT JOIN \`schedule\` s ON dm.device_id = s.device_id
+WHERE e.\`type\` = "compressor"`;
+    let getComp = await conn.query(query);
+    for (let comp of getComp) {
+      query = `SELECT dow.name AS \`dayOfWeek\`, dow.dayofweek_id
+FROM device d
+LEFT join \`schedule\` s ON d.device_id = s.device_id
+LEFT JOIN day_mapper dmp ON dmp.schedule_id = s.schedule_id
+LEFT JOIN dayofweek dow ON dow.dayofweek_id = dmp.dayofweek_id
+WHERE d.device_id = ${comp.id}
+GROUP BY dow.name`;
+      const getDayOfWeek = await conn.query(query);
+      query = `SELECT w.name AS \`week\`, w.week_id
+FROM device d
+LEFT join \`schedule\` s ON d.device_id = s.device_id
+LEFT JOIN week_mapper wmp ON wmp.schedule_id = s.schedule_id
+LEFT JOIN week w ON w.week_id = wmp.week_id
+WHERE d.device_id = ${comp.id}
+GROUP BY w.name`;
+      const getWeeks = await conn.query(query);
+      comp.dayOfWeeks = getDayOfWeek[0].dayOfWeeks
+      getDayOfWeek.map(({}))
+      comp.weekNames = getWeeks.map((({week})=>week)).join(', ')
+      comp.weekIds = getWeeks.map((({week_id})=>week_id))
+    }
+
     res.json({
       code: 1,
-      value: queryResult,
+      value: getComp,
     });
   } catch (e) {
     res.json({
@@ -24,15 +55,43 @@ router.get('/setting/panelBoards', async (req, res) => {
   }
 });
 
-router.get('/setting/switchBoards', async (req, res) => {
+router.get('/dayofweek', async (req, res) => {
   let conn;
   try {
     conn = await Pool.getConnection();
-    const query = `SELECT * FROM switchboards`;
-    const queryResult = await conn.query(query);
+    let query = `SELECT dayofweek_id id, name from dayofweek`;
+    let getComp = await conn.query(query);
+    let rule = new schedule.RecurrenceRule();
+    rule.second = [1, 10, 21, 24, 31, 34, 37, 40, 44, 47, 50, 53, 56, 59];
+    rule.id = 1;
+    schedule.scheduleJob("5", rule, () => {
+      console.log("ewf");
+    });
+    console.log(schedule.scheduledJobs)
     res.json({
       code: 1,
-      value: queryResult,
+      value: getComp,
+    });
+  } catch (e) {
+    res.json({
+      message: '응답이 없습니다. 새로고침 후 다시 시도하시기 바랍니다.',
+    });
+  } finally {
+    if (conn) {
+      await conn.release();
+    }
+  }
+});
+router.get('/week', async (req, res) => {
+  let conn;
+  try {
+    conn = await Pool.getConnection();
+    let query = `SELECT week_id id, name from week`;
+    let getComp = await conn.query(query);
+
+    res.json({
+      code: 1,
+      value: getComp,
     });
   } catch (e) {
     res.json({
@@ -45,115 +104,46 @@ router.get('/setting/switchBoards', async (req, res) => {
   }
 });
 
-router.get('/setting/locations', async (req, res) => {
+
+
+router.post('/compressor', async (req, res) => {
   let conn;
   try {
     conn = await Pool.getConnection();
-    const query = `
-    SELECT  
-    ds.id,
-    substation_id substationId,
-    s.name substationName,
-    panelboard_id panelBoardId,
-    p.name panelboardName,
-    switchboard_id switchBoardId,
-    sw.name switchboardName,
-    department_id departmentId,
-    d.name departmentName,
-    manufacturing_process_id manufacturingProcessId,
-    mp.name manufacturingProcessName,
-    description
-    FROM department_substation ds
-    inner join substation s on ds.substation_id = s.id
-    inner join panelboards p on ds.panelboard_id = p.id
-    inner join switchboards sw on ds.switchboard_id = sw.id
-    inner join departments d on ds.department_id = d.id
-    inner join manufacturing_process mp on ds.manufacturing_process_id = mp.id
-    order by ds.id
-    `;
-    const queryResult = await conn.query(query);
-    res.json({
-      code: 1,
-      value: queryResult,
-    });
-  } catch (e) {
-    res.json({
-      message: '응답이 없습니다. 새로고침 후 다시 시도하시기 바랍니다.',
-    });
-  } finally {
-    if (conn) {
-      await conn.release();
+    const deviceName = req.body.name;
+    const startTime = req.body.startTime;
+    const endTime = req.body.endTime;
+    const dayOfWeeks = req.body.dayOfWeeks;
+    const weeks = req.body.weeks;
+    const max = req.body.max;
+    const min = req.body.min;
+    let deviceId = await conn.query(`SHOW TABLE STATUS FROM \`ing\` WHERE \`name\` LIKE 'device'`);
+    deviceId = deviceId[0].Auto_increment
+    let createDevice = await conn.query(`insert into device(\`name\`, \`equipment_id\`) values (
+    '${deviceName}',
+    1)`);
+    let scheduleId = await conn.query(`SHOW TABLE STATUS FROM \`ing\` WHERE \`name\` LIKE 'schedule'`);
+    scheduleId = scheduleId[0].Auto_increment
+    let createSchedule = await conn.query(`insert into schedule(\`startTime\`, \`endTime\`, \`min\`, \`max\`, \`device_id\`) values (
+    '${startTime}',
+    '${endTime}',
+    ${max},
+    ${min},
+    ${deviceId})`);
+
+    for (let dayOfWeek of dayOfWeeks) {
+      await conn.query(`insert into day_mapper(\`schedule_id\`, \`dayofweek_id\`) values(${scheduleId}, ${dayOfWeek})`);
     }
-  }
-});
-router.get('/setting/equipments', async (req, res) => {
-  let conn;
-  try {
-    conn = await Pool.getConnection();
-    const query = `
-    SELECT  
-    id,
-    description
-    FROM 
-    department_substation`;
-    const queryResult = await conn.query(query);
-    res.json({
-      code: 1,
-      value: queryResult,
-    });
-  } catch (e) {
-    res.json({
-      message: '응답이 없습니다. 새로고침 후 다시 시도하시기 바랍니다.',
-    });
-  } finally {
-    if (conn) {
-      await conn.release();
+    for (let week of weeks) {
+      await conn.query(`insert into week_mapper(\`schedule_id\`, \`week_id\`) values(${scheduleId}, ${week})`);
     }
-  }
-});
-
-router.post('/setting/location', async (req, res) => {
-  let conn;
-  try {
-    conn = await Pool.getConnection();
-    const id = req.params.equipmentId;
-    const substationId = req.body.substationId;
-    const panelBoardId = req.body.panelBoardId;
-    const switchBoardId = req.body.switchBoardId;
-    const departmentId = req.body.departmentId;
-    const manufacturingProcessId = req.body.manufacturingProcessId;
-    const description = req.body.description;
-    let idValue = await conn.query(`SHOW TABLE STATUS FROM \`bom\` WHERE \`name\` LIKE 'department_substation';`);
-    idValue = idValue[0].Auto_increment
-    let unit = '';
-
-    const query = ` 
-    insert into 
-department_substation(
-\`substation_id\`,
-\`panelboard_id\`,
-\`switchboard_id\`,
-\`department_id\`,
-\`manufacturing_process_id\`,
-\`description\`,
-\`tag_unit\`) 
-values
-( ${substationId},
- ${panelBoardId},
- ${switchBoardId},
- ${departmentId},
- ${manufacturingProcessId},
- '${description}',
- 'U${String(idValue).padStart(3-String(idValue).length, '0')}')
- `;
-    await conn.query(query);
-
     // 완료 후 메시지전송
     res.json({
       code: 1,
       message: process.env.DB_INSERT_MSG,
     });
   } catch (e) {
+    console.log(e)
     res.json({
       message: '응답이 없습니다. 새로고침 후 다시 시도하시기 바랍니다.',
     });
@@ -164,35 +154,40 @@ values
   }
 });
 
-router.put('/setting/location/:locationId', async (req, res) => {
+router.put('/compressor/:deviceId', async (req, res) => {
   let conn;
   try {
     conn = await Pool.getConnection();
-    const id = req.params.locationId;
-    const substationId = req.body.substationId;
-    const panelBoardId = req.body.panelBoardId;
-    const switchBoardId = req.body.switchBoardId;
-    const departmentId = req.body.departmentId;
-    const manufacturingProcessId = req.body.manufacturingProcessId;
-    const description = req.body.description;
+    const deviceId = req.params.deviceId
+    const deviceName = req.body.name;
+    const startTime = req.body.startTime;
+    const endTime = req.body.endTime;
+    const dayOfWeeks = req.body.dayOfWeeks;
+    const weeks = req.body.weeks;
+    const max = req.body.max;
+    const min = req.body.min;
+    let createDevice = await conn.query(`update  device 
+    set 
+    name = '${deviceName}'
+    where
+    device_id = ${deviceId}`);
+    let createSchedule = await conn.query(`insert into schedule(\`startTime\`, \`endTime\`, \`min\`, \`max\`, \`device_id\`) values (
+    '${startTime}',
+    '${endTime}',
+    ${max},
+    ${min},
+    ${deviceId})`);
 
-    const query = ` 
-    UPDATE 
-    department_substation 
-    SET 
-substation_id = ${substationId},
-panelboard_id = ${panelBoardId},
-switchboard_id = ${switchBoardId},
-department_id = ${departmentId},
-manufacturing_process_id = ${manufacturingProcessId},
-description = '${description}'
-    WHERE id=${id}`;
-    await conn.query(query);
-
+    for (let dayOfWeek of dayOfWeeks) {
+      await conn.query(`insert into day_mapper(\`schedule_id\`, \`dayofweek_id\`) values(${scheduleId}, ${dayOfWeek})`);
+    }
+    for (let week of weeks) {
+      await conn.query(`insert into week_mapper(\`schedule_id\`, \`week_id\`) values(${scheduleId}, ${week})`);
+    }
     // 완료 후 메시지전송
     res.json({
       code: 1,
-      message: process.env.DB_UPDATE_MSG,
+      message: process.env.DB_INSERT_MSG,
     });
   } catch (e) {
     (e)
@@ -223,7 +218,6 @@ router.delete('/setting/location/:locationId', async (req, res) => {
       message: process.env.DB_DELETE_MSG,
     });
   } catch (e) {
-    (e)
     res.json({
       message: '응답이 없습니다. 새로고침 후 다시 시도하시기 바랍니다.',
     });
