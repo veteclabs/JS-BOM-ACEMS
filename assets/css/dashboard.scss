@@ -213,6 +213,9 @@
 .all-schedule-list {
   display:flex;
   justify-content: space-between;
+  ul {
+    padding:4px;
+  }
   >ul li {
     margin: 0 0 24px 0;
     color:$gray-5;
@@ -298,4 +301,44 @@
 @keyframes progressbarAnimation {
   0%   { background-position: 0 0; }
   100% { background-position: -200% 0; }
+}
+
+
+.group {
+  background-color: rgba(217, 217, 217, 0.4);
+  padding: 16px;
+  margin:0 0 16px 0;
+  border-radius: 8px;
+  .aircompressor-ibox-title h3{
+    @extend .font-20;
+  }
+
+  .group-state {
+    margin:0 0 8px 0;
+    span {
+      display:block;
+      @extend .td-label;
+    }
+  }
+
+  .device-state {
+    @extend .bom-badge;
+  }
+  .RUN.device-state {
+    @extend .blue-bg-badge;
+  }
+  .STOP.device-state {
+    @extend .red-bg-badge;
+  }
+  .LOAD.device-state {
+    @extend .green-bg-badge;
+  }
+  .UNLOAD.device-state {
+    @extend .orange-bg-badge;
+  }
+
+  .tag-box li{
+    @extend .font-16;
+    margin:0;
+  }
 }

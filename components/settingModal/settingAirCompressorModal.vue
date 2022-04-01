@@ -11,7 +11,7 @@
                 </button>
             </div>
             <div class="modal-body modal-overflow">
-                <TPSetting ref="TPSetting"/>
+                <groupSetting ref="groupSetting"/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="button cancel-button" @click="cancel">취소</button>
@@ -22,12 +22,12 @@
 </template>
 
 <script>
-    import TPSetting from '~/components/settingModal/TPSetting.vue';
+    import groupSetting from '~/components/settingModal/groupSetting.vue';
 
     export default {
         props: ['propsdata'],
         components: {
-            TPSetting,
+            groupSetting,
         },
         methods: {
             cancel() {
@@ -35,11 +35,11 @@
             },
             async getTP() {
                 await this.$nextTick();
-                this.$refs.TPSetting.getTP();
+                this.$refs.groupSetting.getTP();
 
             },
             submit: function () {
-                this.$refs.TPSetting.submit();
+                this.$refs.groupSetting.submit();
             },
         },
     };

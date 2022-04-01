@@ -32,7 +32,6 @@
                 </div>
             </div>
         </div>
-        <passwordChangeModal v-bind:propsdata='passwordModalData' ref="passwordModal"/>
     </div>
 </template>
 

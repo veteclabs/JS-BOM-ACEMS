@@ -11,8 +11,12 @@
       "iconSelect": "",
       "subMenu": [
         {
-          "menuName": "전체",
+          "menuName": "전체대시보드",
           "link": "/dashboard"
+        },
+        {
+          "menuName": "그룹별대시보드",
+          "link": "/dashboard/groupDashboard"
         }
       ]
     },
