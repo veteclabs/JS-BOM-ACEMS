@@ -30,13 +30,12 @@ public class Energy {
     @Column(name="tCO2")
     private Double tCO2;
 
-    @Column(name="usage")
+    @Column(name="\"usage\"")
     private Integer usage;
 
 
-    @BatchSize(size = 300)
     @OneToMany(mappedBy = "energy", fetch = FetchType.LAZY)
-    private Set<Device> equipmentMgmts = new HashSet<>();
+    private Set<Device> devices = new HashSet<>();
 
 
 }

@@ -16,15 +16,19 @@ public class Equipment {
     @Id
     @Column(name = "equipment_id")
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", length = 150)
     private String name;
+    @Column(name = "type", length = 70)
+    private String type;
+    @Column(name = "maker", length = 70)
+    private String maker;
     @Column(name = "created")
     private LocalDateTime created;
     @Column(name = "updated")
     private LocalDateTime updated;
 
     @OneToMany(mappedBy="equipment",fetch = FetchType.LAZY)
-    private Set<Device> equipmentMgmt = new HashSet<>();
+    private Set<Device> devices = new HashSet<>();
 
 
 }
