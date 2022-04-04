@@ -1,0 +1,46 @@
+
+
+server:
+  port: 8030
+spring:
+  batch:
+    initialize-schema=always:
+  application:
+    name: ems-ing
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://login.vetec.dev/auth/realms/vetec/protocol/openid-connect/certs
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://112.216.32.4:3721/ingv2?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    jdbc-url: jdbc:mariadb://112.216.32.4:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    username: root
+    password: vetec3721
+    initialization-mode:
+      - always
+    platform: maria
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+      use_aql_comments: true
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+#        show_sql: true
+        format_sql: true
+    defer-datasource-initialization: true
+    generate-ddl: false
+
+mybatis:
+  type-aliases-package: com.markcha.ems.mapper
+  mapper-locations: mybatis/mapper/**/*.xml
+
+#logging.level:
+#  org:
+#    hibernate:
+#      SQL: debug
+#      type: trace
+
