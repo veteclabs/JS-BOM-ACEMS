@@ -109,7 +109,7 @@
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/equipments',
+                    url: '/api/equipments',
                 }).then((res) => {
                     if (res.data.code === 1) {
                         vm.equipmentList = res.data.value;

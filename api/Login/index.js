@@ -52,6 +52,7 @@ passport.use(
 
 // 로그인 최초 시 passport 호출
 router.post('/user/login', (req, res, next) => {
+
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       next(err);

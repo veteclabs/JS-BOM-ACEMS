@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-
+require('dotenv').config()
 module.exports = {
   telemetry: false,
   /*
@@ -41,12 +41,12 @@ module.exports = {
   modules: [
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
+    '@nuxtjs/axios'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
     bootstrapVueCSS: false, // Or `bvCSS: false`
   },
-
   /*
   ** Global CSS
   */
@@ -58,6 +58,10 @@ module.exports = {
   /*
   ** Build configuration
   */
+  axios: {
+    // baseURL: "http://localhost:8030"
+    proxy:true
+  },
   build: {
     vendor: ['axios', 'jquery', 'html2canvas'],
     plugins: [
@@ -67,9 +71,13 @@ module.exports = {
         'window.jQuery': 'jquery',
         html2canvas: 'html2canvas',
       }),
+
     ],
   },
   serverMiddleware: [
     { path: '/api', handler: '~/api/index.js' },
   ],
+  proxy: {
+    '/api/': process.env.NODE_ENV === 'development'? process.env.API_TEST_URL : process.env.API_PROD_URL
+  }
 };
