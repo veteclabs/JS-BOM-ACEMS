@@ -59,4 +59,7 @@ public class Device {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
     private Set<WeekMapper> weekMappers = new HashSet<>();
+
+    private Double ct;
+    private Double pt;
 }
