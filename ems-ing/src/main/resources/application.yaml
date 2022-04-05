@@ -1,7 +1,7 @@
 
 
 server:
-  port: 8030
+  port: 8031
 spring:
   batch:
     initialize-schema=always:

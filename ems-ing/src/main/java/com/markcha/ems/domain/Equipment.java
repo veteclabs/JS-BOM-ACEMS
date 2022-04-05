@@ -22,6 +22,8 @@ public class Equipment {
     private String type;
     @Column(name = "maker", length = 70)
     private String maker;
+    @Column(name = "model", length = 70)
+    private String model;
     @Column(name = "created")
     private LocalDateTime created;
     @Column(name = "updated")

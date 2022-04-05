@@ -8,10 +8,14 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
+import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
 import static com.markcha.ems.domain.QDevice.device;
 import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QSchedule.schedule;
+import static com.markcha.ems.domain.QWeek.week;
+import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 
 
 @Repository
@@ -30,19 +34,25 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
         return queryFactory.select(device)
                 .from(device)
                 .leftJoin(device.equipment, equipment).fetchJoin()
-                .where(equipment.type.eq(typeName))
+                .where(equipment.type.ne(typeName))
                 .fetch();
     }
 
     @Override
     public List<Device> findAllCompressors(String typeName) {
         return queryFactory.select(device)
-                .from(device)
+                .from(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(group.schedule, schedule).fetchJoin()
-
-                .where(equipment.type.eq(typeName))
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .where(
+                        equipment.type.eq(typeName)
+                )
+                .orderBy(device.id.asc())
                 .fetch();
     }
 }

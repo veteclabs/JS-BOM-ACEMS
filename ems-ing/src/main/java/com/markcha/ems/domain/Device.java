@@ -62,4 +62,8 @@ public class Device {
 
     private Double ct;
     private Double pt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private Voltage voltage;
 }

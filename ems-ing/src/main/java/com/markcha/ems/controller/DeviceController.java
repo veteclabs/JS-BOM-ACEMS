@@ -21,12 +21,32 @@ public class DeviceController {
     }
 
     @GetMapping(value="/templcates", headers="X-API-VERSION=1")
-    public List<TemplcateDto> templcate(
+    public List<TemplcateDto> compressorGroups(
     ) {
-        return deviceDslRepository.findAllTemplcates("templcate").stream()
+        return deviceDslRepository.findAllTemplcates("compressor").stream()
                 .map(TemplcateDto::new)
                 .collect(Collectors.toList());
     }
+    @GetMapping(value="/templcates", headers="X-API-VERSION=1")
+    public List<TemplcateDto> group(
+    ) {
+        return deviceDslRepository.findAllTemplcates("compressor").stream()
+                .map(TemplcateDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(value="/templcates", headers="X-API-VERSION=1")
+    public List<TemplcateDto> templcate(
+    ) {
+        return deviceDslRepository.findAllTemplcates("compressor").stream()
+                .map(TemplcateDto::new)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+
     @GetMapping(value="/compressors", headers="X-API-VERSION=1")
     public List<CompressorDto> compressors(
     ) {
