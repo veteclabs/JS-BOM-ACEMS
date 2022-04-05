@@ -6,6 +6,9 @@
                     장비 관리
                 </div>
                 <div class="grid-header">
+                    <button id="deleteUser" class="button del-button"
+                            :disabled="!selectedKeys.length"
+                            @click="deleteEquipment"/>
                     <button id="createEquipment" class="button add-button" @click="createEquipment">
                         <img src="~assets/images/setting/icn_setting_add.svg" alt="등록"/>
                     </button>
@@ -16,17 +19,17 @@
                             :data-source="equipmentList"
                             :show-borders="false"
                             :onCellClick="updateEquipment"
+                            :selected-row-keys="selectedKeys"
+                            @selection-changed="selectionChanged"
                             key-expr="id"
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
+                        <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
-                        <DxColumn data-field="type" caption="Model" alignment="center"/>
-                        <DxColumn data-field="voltage" caption="전압" alignment="center"/>
-                        <DxColumn data-field="CT" caption="CT비" alignment="center"
-                                  cell-template="blockGridTemplate" />
-                        <DxColumn data-field="PT" caption="PT비" alignment="center"
-                                  cell-template="blockGridTemplate" />
-                        <DxColumn data-field="description" caption="장비명" alignment="center"/>
+                        <DxColumn data-field="type" caption="type" alignment="center" cell-template="blockGridTemplate"/>
+                        <DxColumn data-field="groupId" caption="groupId" :visible="false"/>
+                        <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
+                        <DxColumn data-field="name" caption="장비명"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                         <template #blockGridTemplate="{ data: cellData }">
@@ -95,6 +98,10 @@
                     show: false,
                 },
                 equipmentList: [],
+                selectedKeys: [], // 선택삭제 시 이용
+                selectionChanged: (data) => {
+                    this.selectedKeys = data.selectedRowKeys;
+                },
                 pageSizes: [5, 10, 20], // 페이지사이즈
             };
         },
@@ -109,11 +116,9 @@
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/equipments',
+                    url: '/api/etcs',
                 }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.equipmentList = res.data.value;
-                    }
+                    vm.equipmentList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
@@ -127,6 +132,21 @@
                 if (e.columnIndex !== 0) {
                     this.$refs.equipmentModal.updateModal(e.data);
                     this.modalData.show = true;
+                }
+            },
+            deleteEquipment: function () {
+                const vm = this;
+                if (confirm("정말로 삭제 하시겠습니까? 삭제된 데이터는 복원되지 않습니다.")) {
+                    axios.delete('/api/etcs', {
+                        data: vm.selectedKeys
+                    }).then((res) => {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = res.data.message;
+                        vm.getUser();
+                    }).catch((error) => {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = error;
+                    })
                 }
             },
         },

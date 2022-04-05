@@ -20,10 +20,10 @@
             };
         },
         mounted() {
-            if(this.cellData.value === 1) {
+            if(this.cellData.value === true) {
                 this.colorType= 'blue-badge blue';
                 this.text = 'ON';
-            }else if(this.cellData.value === 0) {
+            }else if(this.cellData.value === false) {
                 this.colorType= 'red-badge red';
                 this.text = 'OFF';
             }else {

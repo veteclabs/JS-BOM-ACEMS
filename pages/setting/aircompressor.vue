@@ -20,10 +20,9 @@
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
-                        <DxColumn data-field="group" caption="그룹" alignment="center"/>
-                        <DxColumn data-field="name" caption="공기압축기명" alignment="center"
-                                  cell-template="blockGridTemplate"/>
-                        <DxColumn data-field="isSchedule" caption="개별스케줄제어" alignment="center"
+                        <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
+                        <DxColumn data-field="name" caption="공기압축기명" alignment="center" cell-template="blockGridTemplate"/>
+                        <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center"
                                   cell-template="ONOFFTemplate"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
@@ -92,48 +91,7 @@
                 modalData: {
                     show: false,
                 },
-                airCompressorList: [
-                    {
-                        id: 1,
-                        barMin: 30,
-                        barMax: 80,
-                        isSchedule: 1,
-                        schedule: '월, 화',
-                        start: '18:00',
-                        end: '07:00',
-                        name: 'Ingersoll Rand 100'
-                    },
-                    {
-                        id: 2,
-                        barMin: 30,
-                        barMax: 80,
-                        isSchedule: 0,
-                        schedule: '수, 목',
-                        start: '18:00',
-                        end: '07:00',
-                        name: 'Ingersoll Rand 200'
-                    },
-                    {
-                        id: 3,
-                        barMin: 30,
-                        barMax: 80,
-                        isSchedule: 0,
-                        schedule: '',
-                        start: '18:00',
-                        end: '07:00',
-                        name: 'Ingersoll Rand 150'
-                    },
-                    {
-                        id: 4,
-                        barMin: 30,
-                        barMax: 80,
-                        isSchedule: 0,
-                        schedule: '토, 일',
-                        start: '18:00',
-                        end: '07:00',
-                        name: 'YUJIN 100'
-                    },
-                ],
+                airCompressorList: [],
                 pageSizes: [5, 10, 20], // 페이지사이즈
             };
         },
@@ -141,18 +99,16 @@
             this.id = this.$store.getters.ID;
         },
         mounted() {
-            this.getEquipment();
+            this.getCompressor();
         },
         methods: {
-            async getEquipment() {
+            getCompressor() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/equipments',
+                    url: '/api/compressors',
                 }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.equipmentList = res.data.value;
-                    }
+                    vm.airCompressorList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;

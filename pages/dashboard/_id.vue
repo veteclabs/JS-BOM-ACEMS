@@ -9,9 +9,11 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="ibox">
-                    <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
-                         class="setting-btn"
-                         @click="settingModalOpen(airCompressor[0].id)"/>
+                    <div class="ibox-title ibox-noborder-title ibox-no-padding-content right">
+                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                             class="setting-btn"
+                             @click="settingModalOpen(airCompressor[0].id)"/>
+                    </div>
                     <div class="ibox-title center">
                         <img :src="require(`~/assets/images/equipment/${airCompressor[0].equipmentId}.jpg`)"
                              :alt="airCompressor[0].equipmentId"

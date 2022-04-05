@@ -28,8 +28,6 @@
                         <DxSelection mode="multiple"/>
                         <dx-column data-field="id" caption="No" alignment="center" :width="100"/>
                         <dx-column data-field="name" caption="그룹명" alignment="center" />
-                        <dx-column data-field="capacity" caption="용량" alignment="center"
-                                   cell-template="blockGridTemplate"/>
                         <dx-paging :enabled="true" :page-size="20"/>
                         <dx-pager :show-page-size-selector="true" :allowed-page-sizes="pageSizes"
                                   :show-info="true"/>
@@ -101,15 +99,13 @@
             this.getGroup();
         },
         methods: {
-            async getGroup() {
+            getGroup() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/group',
+                    url: '/api/device/groups',
                 }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.groupList = res.data.value;
-                    }
+                    vm.groupList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
@@ -122,8 +118,7 @@
             },
             updateGroup(e) {
                 if (e.columnIndex !== 0) {
-                    this.$refs.groupModal.updateModal(e.data);
-                    this.modalData.show = true;
+                    this.$router.push(`/setting/group/${e.data.id}`);
                 }
             },
             deleteGroup: function () {
