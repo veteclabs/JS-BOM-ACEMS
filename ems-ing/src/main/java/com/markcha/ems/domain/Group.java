@@ -29,7 +29,7 @@ public class Group {
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
-
+    private String type;
     // 자식 정의
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     private Set<Group> children = new HashSet<>();

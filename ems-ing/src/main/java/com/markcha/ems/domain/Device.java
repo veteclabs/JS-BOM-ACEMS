@@ -1,5 +1,6 @@
 package com.markcha.ems.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name ="device")
 public class Device {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "device_id")
     private Long id;
 

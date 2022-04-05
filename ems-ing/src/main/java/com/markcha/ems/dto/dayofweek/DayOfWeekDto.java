@@ -11,11 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DayOfWeekDto {
     private Long id;
-    private Integer idx;
     private String name;
     public DayOfWeekDto(DayOfWeek dayOfWeek) {
         this.id = dayOfWeek.getId();
-        this.idx = dayOfWeek.getIdx();
         this.name = dayOfWeek.getName();
     }
 }

@@ -6,11 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TemplcateDto {
     private Long id;
+    private Long groupId;
+    private String groupName;
     private String name;
     private String model;
     private String type;
@@ -21,6 +27,10 @@ public class TemplcateDto {
     public TemplcateDto(Device device) {
         this.id = device.getId();
         this.name = device.getName();
+        if (!isNull(device.getGroup())) {
+            this.groupId = device.getGroup().getId();
+            this.groupName = device.getGroup().getName();
+        }
         this.model = device.getEquipment().getModel();
         this.type = device.getEquipment().getType();
         this.maker = device.getEquipment().getMaker();
