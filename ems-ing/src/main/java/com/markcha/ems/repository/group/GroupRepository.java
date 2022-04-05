@@ -1,6 +1,7 @@
 package com.markcha.ems.repository.group;
 
 
+import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Group;
 
 import java.util.List;

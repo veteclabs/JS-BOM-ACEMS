@@ -10,4 +10,5 @@ public interface DeviceRepository {
     public List<Device> findAllTemplcates(String typeName);
     public List<Device> findAllCompressors(String typeName);
     public Device getOneById(Long id);
+    public Device getOneByIdJoinGroupSchedule(Long id);
 }

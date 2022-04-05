@@ -70,4 +70,14 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
                         device.id.eq(id)
                 ).fetchOne();
     }
+    @Override
+    public Device getOneByIdJoinGroupSchedule(Long id) {
+        return queryFactory.select(device)
+                .from(device)
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .where(
+                        device.id.eq(id)
+                ).fetchOne();
+    }
 }

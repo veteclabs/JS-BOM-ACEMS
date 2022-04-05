@@ -68,7 +68,6 @@ public class CompressorServiceImpl implements DeviceService {
             dayOfWeekMapper.setSchedule(newSchedule);
             newDayOfWeekMappers.add(dayOfWeekMapper);
         }
-        System.out.println(newDayOfWeekMappers);
         dayOfWeekMapperDataRepository.saveAll(newDayOfWeekMappers);
         // 요일 끝
 
@@ -110,11 +109,10 @@ public class CompressorServiceImpl implements DeviceService {
     @Override
     public Boolean updateCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
-        Device seletedDevice = deviceDslRepository.getOneById(compressorInsertDto.getId());
-        Group seletedGruop = groupDslRepository.getOneById(compressorInsertDto.getId());
+        Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());
         // 스케줄 생성 및 그룹과 연동
         // 스케줄 만 생성
-        Schedule newSchedule = new Schedule();
+        Schedule newSchedule = seletedDevice.getGroup().getSchedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
         newSchedule.setIsActive(true);
@@ -125,7 +123,7 @@ public class CompressorServiceImpl implements DeviceService {
         newSchedule.setStartTime(scheduleDto.getStartTime());
         newSchedule.setStopTime(scheduleDto.getStopTime());
         newSchedule.setUpdated(LocalDateTime.now());
-        scheduleDataRepository.save(newSchedule);
+
 
         // 요일 관계 생성
         List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
@@ -139,8 +137,7 @@ public class CompressorServiceImpl implements DeviceService {
             dayOfWeekMapper.setSchedule(newSchedule);
             newDayOfWeekMappers.add(dayOfWeekMapper);
         }
-        System.out.println(newDayOfWeekMappers);
-        dayOfWeekMapperDataRepository.saveAll(newDayOfWeekMappers);
+//        dayOfWeekMapperDataRepository.saveAll(newDayOfWeekMappers);
         // 요일 끝
 
         // 주차 관계 생성
@@ -155,27 +152,26 @@ public class CompressorServiceImpl implements DeviceService {
             weekMapper.setSchedule(newSchedule);
             newWeekMappers.add(weekMapper);
         }
-        weekMapperDataRepository.saveAll(newWeekMappers);
+//        weekMapperDataRepository.saveAll(newWeekMappers);
 
+        newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
+        newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
+        scheduleDataRepository.save(newSchedule);
 
         // 그룹 생성 및 부모 그룹 세팅
-        Group newGroup = groupDslRepository.getOneById(compressorInsertDto.getId());
+        Group newGroup = seletedDevice.getGroup();
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
         newGroup.setParent(parentGroup);
         newGroup.setName(compressorInsertDto.getName());
         newGroup.setType(typeName);
-        newGroup.setSchedule(newSchedule);
         newGroup.setLevel(2);
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연
-        Device newDevice = new Device();
         Equipment selectedEquipoment = equipmentDslRepository.getOneByType(typeName);
-        newDevice.setName(compressorInsertDto.getName());
-        newDevice.setEquipment(selectedEquipoment);
-        newDevice.setGroup(newGroup);
-        deviceDataRepository.save(newDevice);
-
+        seletedDevice.setName(compressorInsertDto.getName());
+        seletedDevice.setEquipment(selectedEquipoment);
+        deviceDataRepository.save(seletedDevice);
 
         return true;
     }
