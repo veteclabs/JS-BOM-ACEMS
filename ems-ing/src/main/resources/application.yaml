@@ -38,6 +38,12 @@ mybatis:
   type-aliases-package: com.markcha.ems.mapper
   mapper-locations: mybatis/mapper/**/*.xml
 
+response:
+  jpa:
+    DB_INSERT_MSG: successfully created!
+    DB_UPDATE_MSG: successfully saved!
+    DB_DELETE_MSG: successfully deleted!
+    DB_ERROR_MSG: An unexpected error occurred.
 #logging.level:
 #  org:
 #    hibernate:

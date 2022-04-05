@@ -10,12 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WeekDto {
     private Long id;
-    private Integer idx;
     private String name;
 
     public WeekDto(Week week) {
         this.id = week.getId();
-        this.idx = week.getIdx();
         this.name = week.getName();
     }
 }

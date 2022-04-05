@@ -23,4 +23,5 @@ public class DayOfWeekMapper {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="day_of_week_id")
     private DayOfWeek dayOfWeek;
+
 }

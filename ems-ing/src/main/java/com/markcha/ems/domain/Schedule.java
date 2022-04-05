@@ -33,13 +33,20 @@ public class Schedule {
     @Column(name="start_time", columnDefinition = "TIME")
     private LocalTime startTime;
     @Column(name="stop_time", columnDefinition = "TIME")
-    private LocalTime stotTime;
+    private LocalTime stopTime;
     @Column(name="updated", columnDefinition = "DATETIME")
     private LocalDateTime updated;
+
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private Set<WeekMapper> weekMappers = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
+
+
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private Set<Group> groups = new HashSet<>();
+    private Integer min;
+    private Integer max;
 }
