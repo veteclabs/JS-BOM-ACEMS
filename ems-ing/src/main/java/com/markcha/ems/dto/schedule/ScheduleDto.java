@@ -47,4 +47,16 @@ public class ScheduleDto {
         this.max = schedule.getMax();
         this.isActive = schedule.getIsActive();
     }
+    public ScheduleDto(Schedule schedule, Boolean forGroup) {
+        this.id = schedule.getId();
+        this.interval = schedule.getInterval();
+        this.isGroup = schedule.getIsGroup();
+        this.type = schedule.getType();
+        this.startTime = schedule.getStartTime();
+        this.stopTime = schedule.getStopTime();
+        this.updated = schedule.getUpdated();
+        this.min = schedule.getMin();
+        this.max = schedule.getMax();
+        this.isActive = schedule.getIsActive();
+    }
 }
