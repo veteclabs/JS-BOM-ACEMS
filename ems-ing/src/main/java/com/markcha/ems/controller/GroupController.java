@@ -33,7 +33,6 @@ public class GroupController {
     private final GroupDslRepositoryImpl groupDslRepository;
     @GetMapping(value="/groups")
     public List<GroupDto> show() {
-
         return groupDslRepository.findAllJoinSchedule().stream()
                 .map((group)->new GroupDto(group))
                 .collect(toList());
