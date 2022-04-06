@@ -76,6 +76,10 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
                 .from(device)
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
                 .where(
                         device.id.eq(id)
                 ).fetchOne();
