@@ -75,7 +75,7 @@ public class DeviceController {
         deviceService.createDevice(deviceInsert);
         return new ApiResponseDto(dbInsertMsg);
     }
-    @DeleteMapping(value="/etcs")
+    @GetMapping(value="/delete/etcs")
     public ApiResponseDto etcDeletes(
             @RequestBody List<Long> ids
     ) {
@@ -94,8 +94,24 @@ public class DeviceController {
 
     @Getter
     @Setter
-    @NoArgsConstructor
+    @Data
     public static class DeviceInsertDto {
+        public DeviceInsertDto(Long id, String name, Long groupId, String type, String model, Double ct, Double pt, Voltage voltage) {
+            System.out.println(name);
+            System.out.println(model);
+            System.out.println(type);
+            this.id = id;
+            this.name = name;
+            this.groupId = groupId;
+            this.type = type;
+            this.model = model;
+            this.ct = ct;
+            this.pt = pt;
+            this.voltage = voltage;
+
+        }
+
+
         private Long id;
         private String name;
         private Long groupId;

@@ -216,6 +216,9 @@
                         return;
                     }
                 }
+                for(let key of Object.keys(vm.params)) {
+                    if(vm.params[key] === "") vm.params[key] = null;
+                }
                 this.$validate()
                     .then((success) => {
                         if (success) {

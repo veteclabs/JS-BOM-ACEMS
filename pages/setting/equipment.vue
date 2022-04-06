@@ -137,7 +137,9 @@
             deleteEquipment: function () {
                 const vm = this;
                 if (confirm("정말로 삭제 하시겠습니까? 삭제된 데이터는 복원되지 않습니다.")) {
-                    axios.delete('/api/etcs', {
+                    axios({
+                        url:'/api/etcs',
+                        method:'get',
                         data: vm.selectedKeys
                     }).then((res) => {
                         vm.msgData.show = true;

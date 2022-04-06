@@ -58,10 +58,7 @@ module.exports = {
   /*
   ** Build configuration
   */
-  axios: {
-    // baseURL: "http://localhost:8030"
-    proxy:true
-  },
+
   build: {
     vendor: ['axios', 'jquery', 'html2canvas'],
     plugins: [
@@ -77,7 +74,11 @@ module.exports = {
   serverMiddleware: [
     { path: '/api', handler: '~/api/index.js' },
   ],
-  proxy: {
-    '/api/': process.env.NODE_ENV === 'development'? process.env.API_TEST_URL : process.env.API_PROD_URL
-  }
+  // axios: {
+  //   // baseURL: "http://localhost:8030"
+  //   proxy:true
+  // },
+  // proxy: {
+  //   '/api/': process.env.NODE_ENV === 'development'? process.env.API_TEST_URL : process.env.API_PROD_URL
+  // }
 };
