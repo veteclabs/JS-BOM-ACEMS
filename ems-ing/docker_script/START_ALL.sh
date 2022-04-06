@@ -1,5 +1,8 @@
 ./DOCKER_NETWORK.sh
-#./DB_RUN.sh
+#.
+#
+#
+# /DB_RUN.sh
 ./APP_BUILD.sh
 ./APP_IMAGE.sh
 ./APP_RUN.sh

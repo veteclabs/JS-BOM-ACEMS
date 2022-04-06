@@ -139,19 +139,17 @@
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/setting/equipments',
+                    url: '/api/compressors',
                 }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.equipmentList = res.data.value;
-                    }
+                    vm.compressorList = res.data;
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
                 });
             },
             async submit() {
-                this.msgData.show= true;
-                this.msgData.msg ='저장이 완료되었습니다.'
+                this.msgData.show = true;
+                this.msgData.msg = '저장이 완료되었습니다.'
             }
         },
     };

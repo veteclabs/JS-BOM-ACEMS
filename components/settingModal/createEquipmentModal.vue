@@ -219,6 +219,7 @@
                 for(let key of Object.keys(vm.params)) {
                     if(vm.params[key] === "") vm.params[key] = null;
                 }
+
                 this.$validate()
                     .then((success) => {
                         if (success) {
@@ -247,14 +248,14 @@
             },
             reset() {
                 this.params = {
-                    groupId: '',
-                    name: '',
-                    model: '',
-                    type: '',
-                    maker: '',
-                    ct: '',
-                    pt: '',
-                    voltage: ''
+                    groupId: null,
+                    name: null,
+                    model: null,
+                    type: null,
+                    maker: null,
+                    ct: null,
+                    pt: null,
+                    voltage: null
                 };
                 this.validation.reset();
             },

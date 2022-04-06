@@ -12,6 +12,7 @@
             </div>
             <div class="modal-overflow">
                 <h4 class="modal-h4-title first">공기압축기 정보</h4>
+                {{params}}
                 <table class="bom-table">
                     <tr>
                         <td>
@@ -230,11 +231,12 @@
                 const {state} = this;
                 let url, method;
 
+
                 if (state === 'new') {
-                    url = `/api/setting/location`;
+                    url = `/api/compressor`;
                     method = 'post';
                 } else if (state === 'update') {
-                    url = `/api/setting/location/${vm.params.id}`;
+                    url = `/api/compressor/${vm.params.id}`;
                     method = 'put';
                     if (!vm.params.id) {
                         vm.msgData.show = true;
@@ -242,10 +244,12 @@
                         return;
                     }
                 }
+                vm.params.schedule = vm.schedule;
+
                 this.$validate()
                     .then((success) => {
                         if (success) {
-                            console.log(success)
+                            console.log( vm.params)
                             // form 입력완료
                             axios.post(url, vm.params)
                                 .then((res) => {
