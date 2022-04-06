@@ -63,25 +63,23 @@
                         </label>
                     </td>
                 </tr>
-                <tr v-if="params.type !== '전력'">
-                    <th>그룹</th>
+                <tr>
+                    <th>
+                        <div v-if="params.type === '전력'">공기압축기</div>
+                        <div v-else>그룹</div>
+                    </th>
                     <td>
-                        <label class="input-100">
+                        <label class="input-100" v-if="params.type === '전력'">
                             <select v-model="params.groupId">
-                                <option v-for="group in groupList" :value="group.id" :key="group.id">
+                                <option v-for="group in airCompressorList" :value="group.id" :key="group.id">
                                     {{group.name}}
                                 </option>
                             </select>
                         </label>
-                    </td>
-                </tr>
-                <tr v-if="params.type === '전력'">
-                    <th>공기압축기</th>
-                    <td>
-                        <label class="input-100">
-                            <select v-model="params.airCompressor">
-                                <option v-for="comp in airCompressorList" :key="comp.id">
-                                    {{comp.name}}
+                        <label class="input-100" v-else>
+                            <select v-model="params.groupId">
+                                <option v-for="group in groupList" :value="group.id" :key="group.id">
+                                    {{group.name}}
                                 </option>
                             </select>
                         </label>
@@ -153,8 +151,8 @@
                     {id: 2, type: '전력', name: '남전사'},
                 ],
                 voltageList: [
-                    {id: 1, name: '고압'},
-                    {id: 2, name: '저압'}
+                    {id: 'HIGH', name: '고압'},
+                    {id: 'LOW', name: '저압'}
                 ],
                 groupList: [],
                 airCompressorList: [],
@@ -216,9 +214,8 @@
                         return;
                     }
                 }
-                for(let key of Object.keys(vm.params)) {
-                    if(vm.params[key] === "") vm.params[key] = null;
-                }
+
+                console.log(vm.params)
 
                 this.$validate()
                     .then((success) => {
@@ -228,7 +225,6 @@
                                 url: url,
                                 data: vm.params
                             }).then((res) => {
-                                console.log(res)
                                 // 등록완료시 모달 닫고 초기화 안내메시지 일여주기
                                 modal.hide('createmodal');
                                 vm.msgData.show = true;

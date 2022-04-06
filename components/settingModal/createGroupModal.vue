@@ -100,7 +100,7 @@
                         <div v-if="week.length === 0 && index < 4" class="font-14">
                             스케줄 지정된 장비가 없습니다.
                         </div>
-                        <draggable class="list-group" :list="week" group="people" @change="log">
+                        <draggable class="list-group" :list="week" group="people">
                             <div class="list-group-item equipment-box" v-for="(element, index) in week"
                                  :key="element.name">
                                 <div class="name-box">{{ element.name }}</div>
@@ -201,6 +201,9 @@
             name(value) {
                 return Validator.value(value).required();
             },
+        },
+        mounted() {
+            console.log(this.$route)
         },
         methods: {
             submit() {

@@ -12,7 +12,6 @@
             </div>
             <div class="modal-overflow">
                 <h4 class="modal-h4-title first">공기압축기 정보</h4>
-                {{params}}
                 <table class="bom-table">
                     <tr>
                         <td>
@@ -159,22 +158,22 @@
                     isActive:false,
                     min:0,
                     max:0,
-                    startTime:'00:00',
-                    endTime:'00:00',
+                    startTime:'00:00:00',
+                    stopTime:'00:00:00',
                 },
                 id: '',
                 name: '',
                 dateList: [
-                    {id: 1, name: '월'},
-                    {id: 2, name: '화'},
-                    {id: 3, name: '수'},
-                    {id: 4, name: '목'},
-                    {id: 5, name: '금'},
-                    {id: 6, name: '토'},
-                    {id: 7, name: '일'}
+                    {id: 3, name: '월'},
+                    {id: 4, name: '화'},
+                    {id: 5, name: '수'},
+                    {id: 6, name: '목'},
+                    {id: 7, name: '금'},
+                    {id: 1, name: '토'},
+                    {id: 2, name: '일'}
                 ],
                 timeOptions: {
-                    format: 'HH:mm',
+                    format: 'HH:mm:00',
                 },
                 groupList: [],
 
@@ -245,11 +244,9 @@
                     }
                 }
                 vm.params.schedule = vm.schedule;
-
                 this.$validate()
                     .then((success) => {
                         if (success) {
-                            console.log( vm.params)
                             // form 입력완료
                             axios.post(url, vm.params)
                                 .then((res) => {
@@ -282,8 +279,8 @@
                     isActive:false,
                     min:0,
                     max:0,
-                    startTime:'00:00',
-                    stopTime:'00:00',
+                    startTime:'00:00:00',
+                    stopTime:'00:00:00',
                 };
                 this.validation.reset();
             },
