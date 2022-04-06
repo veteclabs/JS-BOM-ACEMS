@@ -169,7 +169,7 @@ public class CompressorServiceImpl implements DeviceService {
         newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
         newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
         scheduleDataRepository.save(newSchedule);
-//
+
 //        // 그룹 생성 및 부모 그룹 세팅
         Group newGroup = seletedDevice.getGroup();
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
