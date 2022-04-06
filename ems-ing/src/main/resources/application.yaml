@@ -14,7 +14,7 @@ spring:
           jwk-set-uri: https://login.vetec.dev/auth/realms/vetec/protocol/openid-connect/certs
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://112.216.32.4:3721/ingv3?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://112.216.32.4:3721/ingv2?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     jdbc-url: jdbc:mariadb://112.216.32.4:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721

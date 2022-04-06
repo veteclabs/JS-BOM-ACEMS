@@ -208,7 +208,7 @@
                     url = `/api/etcs`;
                     method = 'post';
                 } else if (state === 'update') {
-                    url = `/api/etcs/${vm.params.id}`;
+                    url = `/api/etc/${vm.params.id}`;
                     method = 'put';
                     if (!vm.params.id) {
                         vm.msgData.show = true;
