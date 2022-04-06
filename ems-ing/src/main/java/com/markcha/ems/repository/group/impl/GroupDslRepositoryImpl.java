@@ -53,20 +53,16 @@ public class GroupDslRepositoryImpl implements GroupRepository {
 
     @Override
     public List<Group> findAllJoinSchedule() {
-        QGroup group = new QGroup("group");
-        QGroup weekGroup = new QGroup("weekGroup");
+        QGroup weekGroup = new QGroup("wg");
         return queryFactory.select(group)
                 .from(group)
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
-                .leftJoin(weekMapper.group, weekGroup)
-                .leftJoin(weekGroup.deviceSet, device)
-                .leftJoin(device.equipment, equipment)
+                .leftJoin(weekMapper.group, weekGroup).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
                 .where(group.type.eq("group"),
-                        device.equipment.type.eq("compressor"),
                         weekGroup.parent.id.eq(group.id))
                 .fetch();
 
