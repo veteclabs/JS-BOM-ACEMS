@@ -1,7 +1,6 @@
 <template>
     <div>
         <b-modal v-model="propsdata.show" id="createmodal" title="장비 관리" hide-footer>
-            {{params}}
             <table class="bom-table">
                 <caption>장비 정보를 입력합니다.</caption>
                 <colgroup>

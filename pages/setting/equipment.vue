@@ -142,7 +142,7 @@
                     }).then((res) => {
                         vm.msgData.show = true;
                         vm.msgData.msg = res.data.message;
-                        vm.getUser();
+                        vm.getEquipment();
                     }).catch((error) => {
                         vm.msgData.show = true;
                         vm.msgData.msg = error;

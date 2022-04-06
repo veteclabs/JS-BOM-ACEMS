@@ -113,8 +113,7 @@
             },
             // 신규 장비 등록
             createGroup() {
-                this.$refs.groupModal.createdModal();
-                this.modalData.show = true;
+                this.$router.push(`/setting/group/create`);
             },
             updateGroup(e) {
                 if (e.columnIndex !== 0) {

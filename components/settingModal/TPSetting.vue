@@ -19,7 +19,7 @@
                     </td>
                 </tr>
             </table>
-            <VueSimpleRangeSlider id="bar-range" :min="0" :max="12" v-model="barRange"/>
+            <VueSimpleRangeSlider id="bar-range" :min="0" :max="20" v-model="barRange"/>
         </div>
         <div class="ibox">
             <div class="ibox-title ibox-normal-title ibox-noborder-title">공기압축기 전체 스케줄 제어</div>
@@ -29,7 +29,7 @@
                     <div v-if="week.length === 0 && index < 4" class="font-14">
                         스케줄 지정된 장비가 없습니다.
                     </div>
-                    <draggable class="list-group" :list="week" group="people" @change="log">
+                    <draggable class="list-group" :list="week" group="people">
                         <div class="list-group-item equipment-box" v-for="(element, index) in week"
                              :key="element.name">
                             <div class="name-box">{{ element.name }}</div>
