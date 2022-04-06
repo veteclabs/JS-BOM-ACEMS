@@ -11,6 +11,7 @@ import java.util.List;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
 import static com.markcha.ems.domain.QDevice.device;
+import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QSchedule.schedule;
 import static com.markcha.ems.domain.QWeek.week;
@@ -52,13 +53,21 @@ public class GroupDslRepositoryImpl implements GroupRepository {
 
     @Override
     public List<Group> findAllJoinSchedule() {
+        QGroup group = new QGroup("group");
+        QGroup weekGroup = new QGroup("weekGroup");
         return queryFactory.select(group)
                 .from(group)
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(weekMapper.group, weekGroup)
+                .leftJoin(weekGroup.deviceSet, device)
+                .leftJoin(device.equipment, equipment)
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
+                .where(group.type.eq("group"),
+                        device.equipment.type.eq("compressor"),
+                        weekGroup.parent.id.eq(group.id))
                 .fetch();
 
     }

@@ -5,6 +5,10 @@ import com.markcha.ems.dto.schedule.ScheduleDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
+
 @Data
 @NoArgsConstructor
 public class GroupDto {
@@ -15,6 +19,6 @@ public class GroupDto {
     public GroupDto(Group group) {
         this.id = group.getId();
         this.name = group.getName();
-        this.schedule = new ScheduleDto(group.getSchedule(), true);
+        if (!isNull(group.getSchedule())) this.schedule = new ScheduleDto(group.getSchedule(), true);
     }
 }

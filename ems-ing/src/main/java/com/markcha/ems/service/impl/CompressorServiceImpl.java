@@ -75,17 +75,21 @@ public class CompressorServiceImpl implements DeviceService {
         // 요일 끝
 
         // 주차 관계 생성
-        List<Long> weekIds = scheduleDto.getWeeks().stream()
-                .map(WeekDto::getId)
-                .collect(toList());
-        List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
         List<WeekMapper> newWeekMappers = new ArrayList<>();
-        for (Week week: weeks) {
-            WeekMapper weekMapper = new WeekMapper();
-            weekMapper.setWeek(week);
-            weekMapper.setSchedule(newSchedule);
-            newWeekMappers.add(weekMapper);
+        if (!isNull(scheduleDto.getWeeks())){
+            List<Long> weekIds = scheduleDto.getWeeks().stream()
+                    .map(WeekDto::getId)
+                    .collect(toList());
+            List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
+
+            for (Week week: weeks) {
+                WeekMapper weekMapper = new WeekMapper();
+                weekMapper.setWeek(week);
+                weekMapper.setSchedule(newSchedule);
+                newWeekMappers.add(weekMapper);
+            }
         }
+
         newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
         newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
         scheduleDataRepository.save(newSchedule);

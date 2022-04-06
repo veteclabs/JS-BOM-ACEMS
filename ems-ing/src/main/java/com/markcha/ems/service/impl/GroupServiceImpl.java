@@ -35,6 +35,7 @@ public class GroupServiceImpl {
         Group newGroup = new Group();
         newGroup.setName(groupInsertDto.getName());
         newGroup.setLevel(1);
+        newGroup.setType("group");
         Schedule newSchedule = new Schedule();
         ScheduleDto scheduleDto = groupInsertDto.getSchedule();
         newSchedule.setIsGroup(true);
