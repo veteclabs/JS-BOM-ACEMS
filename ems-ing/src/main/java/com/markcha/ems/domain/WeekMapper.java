@@ -21,7 +21,7 @@ public class WeekMapper {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="week_id")
     private Week week;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="groups_id")
     private Group group;
     @Column(name="\"order\"")

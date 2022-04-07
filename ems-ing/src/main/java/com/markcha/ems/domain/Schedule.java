@@ -1,5 +1,6 @@
 package com.markcha.ems.domain;
 
+import com.markcha.ems.dto.week.WeekGroupDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,4 +50,8 @@ public class Schedule {
     private Set<Group> groups = new HashSet<>();
     private Integer min;
     private Integer max;
+
+    @Transient
+    private List<WeekMapper> weeks = new ArrayList<>();
+
 }

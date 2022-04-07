@@ -35,13 +35,18 @@ public class Group {
     private Set<Group> children = new HashSet<>();
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private Set<Device> deviceSet = new HashSet<>();
+    private List<Device> deviceSet = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "group")
+    private WeekMapper weekMapper;
+
 
     @Transient
     private List<Group> childs = new ArrayList<>();
     @Transient
     private Set<Device> devices = new HashSet<>();
-
+    @Transient
+    private List<Device> standByDeivces = new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parents")
     private Set<Link> parentLocations = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "childs")

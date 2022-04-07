@@ -68,7 +68,7 @@ public class ScheduleDto {
         this.min = schedule.getMin();
         this.max = schedule.getMax();
         this.isActive = schedule.getIsActive();
-        this.weekDevices = schedule.getWeekMappers().stream()
+        this.weekDevices = schedule.getWeeks().stream()
                 .map((wm) -> new WeekGroupDto(wm)).collect(toList());
 
         this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
