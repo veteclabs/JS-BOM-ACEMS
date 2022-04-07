@@ -72,7 +72,7 @@ module.exports = {
     ],
   },
   serverMiddleware: [
-    { path: '/api', handler: '~/api/index.js' },
+    { path: '/nuxt', handler: '~/api/index.js' },
   ],
   // axios: {
   //   // baseURL: "http://localhost:8030"

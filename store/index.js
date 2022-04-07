@@ -42,8 +42,8 @@ export const actions = {
         state.Snotify.error(message);
     },
     async login({commit}, {id, password}) {
-        return fetch('/api/user/login', {
-            // Send the client cookies to the server
+        console.log(id)
+        return fetch('/nuxt/user/login', {
             credentials: 'same-origin',
             method: 'POST',
             headers: {
@@ -67,7 +67,7 @@ export const actions = {
             });
     },
     async logout({commit}) {
-        return fetch('/login/user/logout', {
+        return fetch('/nuxt/user/logout', {
             // Send the client cookies to the server
             credentials: 'same-origin',
             method: 'POST',
