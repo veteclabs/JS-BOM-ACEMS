@@ -25,11 +25,6 @@ public class WeekMapper {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="week_id")
     private Week week;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="groups_id")
-    private Group group;
-    @Column(name="\"order\"")
-    private Integer order;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "weekMapper")
     private Set<Order> orders = new HashSet<>();
     @Transient

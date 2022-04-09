@@ -8,6 +8,8 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.*;
 
+import static java.util.Objects.isNull;
+
 @Data
 @Entity
 @Table(name="groups")
@@ -35,9 +37,6 @@ public class Group {
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     private List<Device> deviceSet = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "group")
-    private WeekMapper weekMapper;
-
 
     @Transient
     private List<Group> childs = new ArrayList<>();
@@ -54,7 +53,10 @@ public class Group {
 
     @Override
     public int hashCode() {
-        return this.id.hashCode();
+        if(!isNull(this.id)) {
+            return this.id.hashCode();
+        }
+        return 0;
     }
     @Override
     public boolean equals(Object o) {

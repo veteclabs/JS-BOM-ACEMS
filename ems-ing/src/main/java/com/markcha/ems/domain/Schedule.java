@@ -44,8 +44,6 @@ public class Schedule {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",cascade = CascadeType.ALL)
     private Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
 
-
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private Set<Group> groups = new HashSet<>();
     private Integer min;

@@ -58,9 +58,6 @@ public class Device {
     @Column(name = "updated")
     private LocalDateTime updated;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
-    private Set<WeekMapper> weekMappers = new HashSet<>();
-
     private Double ct;
     private Double pt;
 

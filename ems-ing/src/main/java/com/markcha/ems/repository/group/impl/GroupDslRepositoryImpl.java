@@ -55,28 +55,20 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 .where(device.id.eq(id))
                 .fetchOne();
     }
-    private List<Group> getGroupByMapperIdAndParentGroupId(List<Long> mapperIds, List<Long> parentGroupIds) {
-        return queryFactory.select(group)
-                .from(group)
-                .leftJoin(group.deviceSet, device).fetchJoin()
-                .where(
-                         group.id.in(parentGroupIds)
-                        ,group.weekMapper.id.in(mapperIds)
-                        )
-                .fetch();
 
-    }
     private List<WeekMapper> getWeekMapper(List<Long> scheduleIds) {
         return queryFactory.select(weekMapper)
-                .from(weekMapper)
+                .from(weekMapper).distinct()
                 .leftJoin(weekMapper.orders, order1).fetchJoin()
                 .leftJoin(order1.group, group).fetchJoin()
                 .leftJoin(group.deviceSet, device)
-                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.equipment, equipment)
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                          weekMapper.schedule.id.in(scheduleIds)
-                        ,equipment.type.eq("compressor")
+                        ,equipment.type.eq("compressor").or(
+                                order1.isNull()
+                        )
                 )
                 .fetch();
     }

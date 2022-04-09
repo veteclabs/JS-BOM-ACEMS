@@ -74,36 +74,10 @@ public class ScheduleDto {
         this.max = schedule.getMax();
         this.isActive = schedule.getIsActive();
         if(!isNull(schedule.getWeeks())) {
-            weekDevices = schedule.getWeeks().stream()
-                    .map(t->t.getWeek())
-                    .distinct()
-                    .sorted(comparing(Week::getId))
-                    .map(WeekGroupDto::new)
+            this.weekDevices = schedule.getWeeks().stream()
+                    .map(t->new WeekGroupDto(t))
+                    .sorted(comparing(WeekGroupDto::getId))
                     .collect(toList());
-            List<CompressorSimpleDto> deviceList = schedule.getStandByGroups().stream()
-                    .map(t -> new CompressorSimpleDto(t, null))
-                    .distinct()
-                    .collect(toList());
-            deviceList.forEach(t-> System.out.println(t.getName()));
-            Map<Long, List<CompressorSimpleDto>> grouppingWeek = schedule.getWeeks().stream()
-                    .collect(
-                            groupingBy(t -> t.getWeek().getId(),
-                            mapping(t -> new CompressorSimpleDto(t.getGroup(), t.getOrder()), toList())));
-
-            weekDevices.forEach(t-> {
-                List<CompressorSimpleDto> compressorSimpleDtos = grouppingWeek.get(t.getId());
-                compressorSimpleDtos.removeIf(rm->rm.getId() == null);
-                List<CompressorSimpleDto> workingDevices = compressorSimpleDtos.stream()
-                        .sorted(comparing(CompressorSimpleDto::getOrder))
-                        .collect(toList());
-                workingDevices.forEach(n->n.setOrder(null));
-                List<CompressorSimpleDto> standByDeivces = new ArrayList<>();
-                deviceList.forEach(ad->standByDeivces.add(ad));
-                standByDeivces.removeAll(workingDevices);
-                t.setWorking(workingDevices);
-                t.setStandBys(standByDeivces);
-            });
-
         }
         if(!isNull(schedule.getDayOfWeekMappers())) {
             this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
