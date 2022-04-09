@@ -1,7 +1,9 @@
 package com.markcha.ems.repository.weekmapper.impl;
 
 import com.markcha.ems.domain.QWeekMapper;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,7 @@ public class WeekMapperDslRepositoryImpl {
                 .execute();
         return true;
     }
-    public List<Long> findAllByScheduleId(Long id) {
+    public List<Long> findAllByScheduleId(Long id, BooleanExpression isNull) {
         return query.select(
                 Projections.constructor(
                         Long.class,
@@ -39,7 +41,7 @@ public class WeekMapperDslRepositoryImpl {
                 ))
                 .from(weekMapper)
                 .leftJoin(weekMapper.schedule, schedule)
-                .where(schedule.id.eq(id))
+                .where(schedule.id.eq(id), isNull)
                 .fetch();
     }
 }

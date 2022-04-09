@@ -53,5 +53,6 @@ public class Schedule {
 
     @Transient
     private List<WeekMapper> weeks = new ArrayList<>();
-
+    @Transient
+    private List<Group> standByGroups = new ArrayList<>();
 }

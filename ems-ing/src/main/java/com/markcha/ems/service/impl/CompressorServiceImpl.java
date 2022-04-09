@@ -115,6 +115,11 @@ public class CompressorServiceImpl implements DeviceService {
     }
 
     @Override
+    public Boolean createDevice(DeviceInsertDto deviceInsert) {
+        return null;
+    }
+
+    @Override
     public Boolean updateCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
         Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());
@@ -154,7 +159,7 @@ public class CompressorServiceImpl implements DeviceService {
 
         // 주차 관계 생성
         newSchedule.setWeekMappers(new HashSet<>());
-        List<Long> allByScheduleId = weekMapperDslRepository.findAllByScheduleId(newSchedule.getId());
+        List<Long> allByScheduleId = weekMapperDslRepository.findAllByScheduleId(newSchedule.getId(), null);
         weekMapperDslRepository.deleteByIdIn(allByScheduleId);
         List<Long> weekIds = scheduleDto.getWeeks().stream()
                 .map(WeekDto::getId)
@@ -190,11 +195,6 @@ public class CompressorServiceImpl implements DeviceService {
         deviceDataRepository.save(seletedDevice);
 //
         return true;
-    }
-
-    @Override
-    public Boolean createDevice(DeviceInsertDto deviceInsert) {
-        return null;
     }
 
     @Override

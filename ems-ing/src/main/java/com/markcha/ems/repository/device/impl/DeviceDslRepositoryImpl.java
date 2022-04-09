@@ -82,6 +82,6 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
                 .where(
                         device.id.eq(id)
-                ).fetchOne();
+                ).limit(1).fetchOne();
     }
 }

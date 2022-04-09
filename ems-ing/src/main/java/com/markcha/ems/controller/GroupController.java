@@ -44,6 +44,15 @@ public class GroupController {
         groupService.createGruops(groupInsertDto);
         return new ApiResponseDto(dbInsertMsg);
     }
+    @PutMapping(value="/group/{groupId}")
+    public ApiResponseDto update(
+            @RequestBody GroupInsertDto groupInsertDto,
+            @PathVariable("groupId") Long groupId
+    ) {
+        System.out.println(groupInsertDto.getSchedule());
+//        groupService.createGruops(groupInsertDto);
+        return new ApiResponseDto(dbUpdateMsg);
+    }
     @Data
     @NoArgsConstructor
     public static class GroupInsertDto {

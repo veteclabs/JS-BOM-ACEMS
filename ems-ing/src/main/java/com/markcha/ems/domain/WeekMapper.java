@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -26,4 +30,8 @@ public class WeekMapper {
     private Group group;
     @Column(name="\"order\"")
     private Integer order;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "weekMapper")
+    private Set<Order> orders = new HashSet<>();
+    @Transient
+    private List<Group> standByGroups = new ArrayList<>();
 }
