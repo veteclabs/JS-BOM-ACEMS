@@ -18,29 +18,31 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@NoArgsConstructor
+
 public class WeekGroupDto {
     private Long id;
-    private WeekDto week;
+    private String name;
     private List<CompressorSimpleDto> working = new ArrayList<>();
     private List<CompressorSimpleDto> standBy;
-    @JsonIgnore
-    private Week savedWeek;
+    public WeekGroupDto(Long id, String name, List<CompressorSimpleDto> working) {
+        this.id = id;
+        this.name = name;
+        this.working = working;
+    }
     public WeekGroupDto(WeekMapper weekMapper) {
-        this.id = weekMapper.getId();
+//        this.id = weekMapper.getId();
         if(!isNull(weekMapper.getWeek())) {
-            this.week = new WeekDto(weekMapper.getWeek());
+            this.id = weekMapper.getWeek().getId();
+            this.name = weekMapper.getWeek().getName();
         }
-        if (!isNull(weekMapper.getOrders())) {;
+        if (!isNull(weekMapper.getOrders())) {
             List<CompressorSimpleDto> workingGroups = weekMapper.getOrders().stream()
-                    .map(t -> {
-                        CompressorSimpleDto workingGroup = new CompressorSimpleDto(t.getGroup(), t.getOrder());
-                        CompressorSimpleDto working = new CompressorSimpleDto(t.getGroup(), t.getOrder());
-                        this.working.add(working);
-                        return workingGroup;
-                    }).collect(toList());
-            this.working.stream()
-                    .sorted(comparing(CompressorSimpleDto::getOrder).reversed());
+                    .map(t -> new CompressorSimpleDto(t.getGroup(), t.getOrder()))
+                    .collect(toList());
+            this.working = weekMapper.getOrders().stream()
+                    .map(t->new CompressorSimpleDto(t.getGroup(), t.getOrder()))
+                    .sorted(comparing(CompressorSimpleDto::getOrder))
+                    .collect(toList());
             if (!isNull(weekMapper.getStandByGroups())) {
                 List<CompressorSimpleDto> standByGroups = weekMapper.getStandByGroups().stream()
                         .map(CompressorSimpleDto::new)

@@ -9,7 +9,9 @@ import org.hibernate.annotations.BatchSize;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -64,4 +66,7 @@ public class Device {
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private Voltage voltage;
+
+    @Transient
+    private List<Tag> tagList = new ArrayList<>();
 }

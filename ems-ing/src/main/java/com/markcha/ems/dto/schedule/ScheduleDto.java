@@ -76,7 +76,7 @@ public class ScheduleDto {
         if(!isNull(schedule.getWeeks())) {
             this.weekDevices = schedule.getWeeks().stream()
                     .map(t->new WeekGroupDto(t))
-                    .sorted(comparing(WeekGroupDto::getId))
+                    .sorted(comparing(k->k.getId()))
                     .collect(toList());
         }
         if(!isNull(schedule.getDayOfWeekMappers())) {

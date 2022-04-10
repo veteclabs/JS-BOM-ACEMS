@@ -31,10 +31,16 @@ public class GroupController {
     private String dbErrorMsg;
     private final GroupServiceImpl groupService;
     private final GroupDslRepositoryImpl groupDslRepository;
-    @GetMapping(value="/groups")
-    public List<GroupDto> show() {
+    @GetMapping(value="/groups", headers = "setting=true")
+    public List<GroupDto> showSetting() {
         return groupDslRepository.findAllJoinSchedule().stream()
                 .map((group)->new GroupDto(group))
+                .collect(toList());
+    }
+    @GetMapping(value="/groups", headers = "setting=false")
+    public List<GroupDto> show() {
+        return groupDslRepository.findAllGroupJoinTags().stream()
+                .map((group)->new GroupDto(group, true))
                 .collect(toList());
     }
     @PostMapping(value="/group")
@@ -49,13 +55,15 @@ public class GroupController {
             @RequestBody GroupInsertDto groupInsertDto,
             @PathVariable("groupId") Long groupId
     ) {
-        System.out.println(groupInsertDto.getSchedule());
-//        groupService.createGruops(groupInsertDto);
+        groupInsertDto.setId(groupId);
+        groupInsertDto.getSchedule().setId(groupId);
+        groupService.updateCompressor(groupInsertDto);
         return new ApiResponseDto(dbUpdateMsg);
     }
     @Data
     @NoArgsConstructor
     public static class GroupInsertDto {
+        private Long id;
         private String name;
         private ScheduleDto schedule;
     }

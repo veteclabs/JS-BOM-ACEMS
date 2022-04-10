@@ -11,4 +11,6 @@ public interface GroupRepository {
     public Group getOneById(Long id);
     public Group getOneByDeviceId(Long id);
     public List<Group> findAllJoinSchedule();
+    public List<Group> findAllByIds(List<Long> ids);
+    public List<Group> findAllChildGroupsById(Long id);
 }
