@@ -35,7 +35,7 @@ public class CompressorController {
     private String dbErrorMsg;
     private final DeviceRepository deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
-    private final DeviceService compressorService;
+    private final CompressorServiceImpl compressorService;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final GroupDataRepository groupDataRepository;
 
@@ -70,7 +70,7 @@ public class CompressorController {
             @RequestBody List<Long> ids
     ) {
 
-        groupDataRepository.deleteAllById(ids[0]);
+        groupDataRepository.deleteAllById(ids);
         return new ApiResponseDto(dbDeleteMsg);
     }
 
