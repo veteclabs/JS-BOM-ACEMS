@@ -43,7 +43,7 @@ export const actions = {
     },
     async login({commit}, {id, password}) {
         console.log(id)
-        return fetch('/nuxt/user/login', {
+        return fetch('/api/user/login', {
             credentials: 'same-origin',
             method: 'POST',
             headers: {
@@ -67,7 +67,7 @@ export const actions = {
             });
     },
     async logout({commit}) {
-        return fetch('/nuxt/user/logout', {
+        return fetch('/api/user/logout', {
             // Send the client cookies to the server
             credentials: 'same-origin',
             method: 'POST',
