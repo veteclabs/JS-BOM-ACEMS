@@ -4,12 +4,15 @@ import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.repository.DeviceDataRepository;
+import com.markcha.ems.repository.GroupDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
+import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.DeviceService;
 import com.markcha.ems.service.impl.CompressorServiceImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class CompressorController {
     @Value("${response.jpa.DB_INSERT_MSG}")
     private String dbInsertMsg;
@@ -32,15 +36,9 @@ public class CompressorController {
     private final DeviceRepository deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final DeviceService compressorService;
+    private final GroupDslRepositoryImpl groupDslRepository;
+    private final GroupDataRepository groupDataRepository;
 
-    public CompressorController(
-            DeviceDslRepositoryImpl deviceDslRepository,
-            DeviceDataRepository deviceDataRepository,
-            CompressorServiceImpl compressorService) {
-        this.deviceDslRepository = deviceDslRepository;
-        this.deviceDataRepository = deviceDataRepository;
-        this.compressorService = compressorService;
-    }
 
     @GetMapping(value="/compressors")
     public List<CompressorDto> compressors(
@@ -66,6 +64,14 @@ public class CompressorController {
         compressorInsertDto.setId(compressorId);
         compressorService.updateCompressor(compressorInsertDto);
         return new ApiResponseDto(dbInsertMsg);
+    }
+    @DeleteMapping(value="/compressors")
+    public ApiResponseDto delete(
+            @RequestBody List<Long> ids
+    ) {
+
+        groupDataRepository.deleteAllById(ids[0]);
+        return new ApiResponseDto(dbDeleteMsg);
     }
 
 

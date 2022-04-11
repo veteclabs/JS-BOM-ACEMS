@@ -89,7 +89,7 @@ public class DeviceController {
     ) {
         deviceInsert.setId(deviceId);
         deviceService.updateDevice(deviceInsert);
-        return new ApiResponseDto(dbDeleteMsg);
+        return new ApiResponseDto(dbUpdateMsg);
     }
 
     @Data
