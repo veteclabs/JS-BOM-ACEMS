@@ -27,11 +27,7 @@ public class GroupDto {
         this.id = group.getId();
         this.name = group.getName();
         if (!isNull(group.getSchedule())) this.schedule = new ScheduleDto(group.getSchedule(), true);
-        if (!isNull(group.getDeviceSet())) {
-            this.devices = group.getDeviceSet().stream()
-                    .map(DeviceDto::new)
-                    .collect(toList());
-        }
+        this.devices = null;
         this.airCompressors = null;
     }
     public GroupDto(Group group, Boolean isParent) {

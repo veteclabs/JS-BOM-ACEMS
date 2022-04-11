@@ -38,6 +38,12 @@ public class GroupController {
                 .map((group)->new GroupDto(group))
                 .collect(toList());
     }
+    @GetMapping(value="/group/{groupId}")
+    public GroupDto showOne(
+            @PathVariable("groupId") Long groupId
+    ) {
+        return new GroupDto(groupDslRepository.getOneJoinSchedule(groupId));
+    }
     @GetMapping(value="/groups", headers = "setting=false")
     public List<GroupDto> show() throws JsonProcessingException {
         try {

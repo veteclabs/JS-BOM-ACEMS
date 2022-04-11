@@ -6,14 +6,12 @@ import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
@@ -81,7 +79,21 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 )
                 .fetch();
     }
-    private List<Group> getRootGroups() {
+    private List<Group> getRootGroups(BooleanExpression findById) {
+        return query.select(group)
+                .from(group).distinct()
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
+                .where(
+                         group.type.eq("group")
+                        ,findById
+                )
+                .fetch();
+    }
+    private Group getRootGroup(BooleanExpression findById) {
         return query.select(group)
                 .from(group).distinct()
                 .leftJoin(group.schedule, schedule).fetchJoin()
@@ -91,8 +103,10 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
                 .where(
                         group.type.eq("group")
+                        ,findById
                 )
-                .fetch();
+                .limit(1)
+                .fetchOne();
     }
     private List<Group> getGroups() {
         QGroup childGroup = new QGroup("cg");
@@ -202,7 +216,7 @@ public class GroupDslRepositoryImpl implements GroupRepository {
     }
     @Override
     public List<Group> findAllJoinSchedule() {
-        List<Group> rootGroup = getRootGroups();
+        List<Group> rootGroup = getRootGroups(null);
         List<Long> scheduleIds = rootGroup.stream()
                 .map((t) -> t.getSchedule().getId())
                 .collect(toList());
@@ -224,6 +238,29 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));
         rootGroup.forEach(t->t.getSchedule().setWeeks(grouppingWeekMapper.get(t.getSchedule().getId())));
 
+        return rootGroup;
+
+    }
+    @Override
+    public Group getOneJoinSchedule(Long id) {
+        Group rootGroup = getRootGroup(group.id.eq(id));
+
+        List<Long> scheduleIds = Arrays.asList(rootGroup.getSchedule().getId());
+        List<Long> parentGroupIds = Arrays.asList(rootGroup.getId());
+        List<WeekMapper> weekMappers = getWeekMapper(scheduleIds);
+
+        List<Group> childGroups = getChildGroups(parentGroupIds);
+        Map<Long, List<Group>> groupByParentId = childGroups.stream()
+                .collect(groupingBy(t -> t.getParent().getId()));
+        weekMappers.forEach(t->
+                t.getSchedule().getGroups().forEach(k->{
+                    List<Group> groups = groupByParentId.get(k.getId());
+                    t.setStandByGroups(groups);
+                }));
+
+        Map<Long, List<WeekMapper>> grouppingWeekMapper = weekMappers.stream()
+                .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));
+        rootGroup.getSchedule().setWeeks(grouppingWeekMapper.get(rootGroup.getSchedule().getId()));
         return rootGroup;
 
     }

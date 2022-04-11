@@ -13,4 +13,6 @@ public interface GroupRepository {
     public List<Group> findAllJoinSchedule();
     public List<Group> findAllByIds(List<Long> ids);
     public List<Group> findAllChildGroupsById(Long id);
+    public Group getOneJoinSchedule(Long id);
+
 }
