@@ -16,6 +16,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import com.markcha.ems.service.DeviceService;
+import com.markcha.ems.service.InsertSampleData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ public class CompressorServiceImpl implements DeviceService {
     private final ScheduleDslRepositoryImpl scheduleDslRepository;
     private final DayOfWeekMapperDslRepositoryImpl dayOfWeekMapperDslRepository;
     private final WeekMapperDslRepositoryImpl weekMapperDslRepository;
+    private final InsertSampleData insertSampleData;
     @Override
     public Boolean createCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
@@ -110,86 +112,13 @@ public class CompressorServiceImpl implements DeviceService {
         newDevice.setName(compressorInsertDto.getName());
         newDevice.setEquipment(selectedEquipoment);
         newDevice.setGroup(newGroup);
-
-        selectedEquipoment.getType();
-        deviceDataRepository.save(newDevice);
+        Device save = deviceDataRepository.save(newDevice);
+        List<Tag> tags = insertSampleData.createTags("compressor", save);
+        newDevice.setTags(new HashSet<>(tags));
+        deviceDataRepository.save(save);
         return true;
     }
-    private List<Tag> createTags(Long deviceId, String type) {
-        List<Tag> tags = new ArrayList<>();
-        String deviceUnit = String.format("%03d", deviceId) + "_";
 
-        switch(type) {
-            case "comrpressor":
-                Tag rpm = new Tag();
-                rpm.setIsAlarm(false);
-                rpm.setIsTrend(true);
-                rpm.setIsUsage(false);
-                rpm.setLoggingTime(300);
-                rpm.setNickname("rpm");
-                rpm.setShowAble(true);
-                rpm.setTagDescription("가동률");
-                rpm.setUnit("%");
-                rpm.setTagName(deviceUnit + "RPM");
-                rpm.setUnitConversion(null);
-                tags.add(rpm);
-
-                Tag state = new Tag();
-                state.setIsAlarm(false);
-                state.setIsTrend(true);
-                state.setIsUsage(false);
-                state.setLoggingTime(300);
-                state.setNickname("state");
-                state.setShowAble(true);
-                state.setTagDescription("상태");
-                state.setUnit(null);
-                state.setTagName(deviceUnit + "STATE");
-                state.setUnitConversion(null);
-                tags.add(state);
-
-                Tag bar = new Tag();
-                bar.setIsAlarm(false);
-                bar.setIsTrend(true);
-                bar.setIsUsage(false);
-                bar.setLoggingTime(300);
-                bar.setNickname("bar");
-                bar.setShowAble(true);
-                bar.setTagDescription("압력");
-                bar.setUnit(null);
-                bar.setTagName(deviceUnit + "BAR");
-                bar.setUnitConversion(null);
-                tags.add(bar);
-
-                Tag airTemp = new Tag();
-                airTemp.setIsAlarm(false);
-                airTemp.setIsTrend(true);
-                airTemp.setIsUsage(false);
-                airTemp.setLoggingTime(300);
-                airTemp.setNickname("air-temp");
-                airTemp.setShowAble(true);
-                airTemp.setTagDescription("에어 온도");
-                airTemp.setUnit(null);
-                airTemp.setTagName(deviceUnit + "AIR_TEMP");
-                airTemp.setUnitConversion(null);
-                tags.add(airTemp);
-                break;
-            case "전력":
-                Tag elect = new Tag();
-                elect.setIsAlarm(false);
-                elect.setIsTrend(false);
-                elect.setIsUsage(true);
-                elect.setLoggingTime(300);
-                elect.setNickname("air-temp");
-                elect.setShowAble(true);
-                elect.setTagDescription("에어 온도");
-                elect.setUnit("kWh");
-                elect.setTagName(deviceUnit + "AIR_TEMP");
-                elect.setUnitConversion(null);
-                tags.add(elect);
-                break;
-        }
-        return tags;
-    }
     @Override
     public Boolean createDevice(DeviceInsertDto deviceInsert) {
         return null;

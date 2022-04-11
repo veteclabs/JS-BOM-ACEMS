@@ -41,7 +41,6 @@ public class WebaccessApiServiceImpl {
         }
 
         body.put("Tags", tagObject);
-        System.out.println(host + "GetTagValue/" + project);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(
                 host + "GetTagValue/" + project,

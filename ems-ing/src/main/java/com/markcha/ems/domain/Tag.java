@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="tag")
 public class Tag {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id", nullable = false)
     private Long id;
     @Column(name="tagname", length = 32)

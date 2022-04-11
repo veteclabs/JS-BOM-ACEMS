@@ -1,5 +1,6 @@
 package com.markcha.ems.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
@@ -38,10 +39,16 @@ public class GroupController {
                 .collect(toList());
     }
     @GetMapping(value="/groups", headers = "setting=false")
-    public List<GroupDto> show() {
+    public List<GroupDto> show() throws JsonProcessingException {
+        try {
         return groupDslRepository.findAllGroupJoinTags().stream()
                 .map((group)->new GroupDto(group, true))
                 .collect(toList());
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     @PostMapping(value="/group")
     public ApiResponseDto create(

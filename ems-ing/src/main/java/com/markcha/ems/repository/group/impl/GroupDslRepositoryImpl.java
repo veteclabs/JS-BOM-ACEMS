@@ -1,7 +1,11 @@
 package com.markcha.ems.repository.group.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.markcha.ems.domain.*;
+import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.repository.group.GroupRepository;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +13,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
@@ -28,10 +33,12 @@ import static java.util.stream.Collectors.toList;
 public class GroupDslRepositoryImpl implements GroupRepository {
     private final EntityManager entityManager;
     private final JPAQueryFactory query;
+    private final WebaccessApiServiceImpl webaccessApiService;
 
-    public GroupDslRepositoryImpl(EntityManager entityManager) {
+    public GroupDslRepositoryImpl(EntityManager entityManager, WebaccessApiServiceImpl webaccessApiService) {
         this.entityManager = entityManager;
         this.query = new JPAQueryFactory(entityManager);
+        this.webaccessApiService = webaccessApiService;
     }
     @Override
     public List<Group> findAllByType(String type) {
@@ -108,7 +115,7 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                         ,device.id.in(deviceIds))
                 .fetch();
     }
-    public List<Group> findAllGroupJoinTags() {
+    public List<Group> findAllGroupJoinTags() throws JsonProcessingException {
         List<Group> groups = getGroups();
         List<Long> deviceIds = new ArrayList<>();
         groups.forEach(g->{
@@ -120,12 +127,52 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 .collect(groupingBy(t -> t.getDevice().getId()));
         groups.forEach(g->{
             g.getDeviceSet().forEach(d->{
-                List<Tag> tagList = groupByTag.get(d);
-                d.setTagList(tagList);
+                if (!isNull(groupByTag.get(d.getId()))) {
+                    List<TagDto> tagList = groupByTag.get(d.getId()).stream()
+                            .map(TagDto::new)
+                            .collect(toList());
+                    List<String> tagNames = tagList.stream()
+                            .map(k -> k.getTagName())
+                            .collect(toList());
+                    try {
+                        List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
+                        tagList.forEach(a -> {
+                            List<JsonNode> tags2 = tagValues.stream()
+                                    .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
+                                    .collect(toList());
+                            if(!isNull(tags2) && tags2.size() == 1) {
+                                a.setValue(tags2.get(0).get("Value").doubleValue());
+                            }
+                        });
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    if (!isNull(d.getTagList())) d.setTagList(tagList);
+                }
             });
             g.getChildren().forEach(c-> c.getDeviceSet().forEach(d->{
-                    List<Tag> tagList = groupByTag.get(d.getId());
+                if (!isNull(groupByTag.get(d.getId()))) {
+                    List<TagDto> tagList = groupByTag.get(d.getId()).stream()
+                            .map(TagDto::new)
+                            .collect(toList());
+                    List<String> tagNames = tagList.stream()
+                            .map(k -> k.getTagName())
+                            .collect(toList());
+                    try {
+                        List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
+                        tagList.forEach(a -> {
+                            List<JsonNode> tags2 = tagValues.stream()
+                                    .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
+                                    .collect(toList());
+                            if(!isNull(tags2) && tags2.size() == 1) {
+                                a.setValue(tags2.get(0).get("Value").doubleValue());
+                            }
+                        });
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
                     if (!isNull(d.getTagList())) d.setTagList(tagList);
+                }
                 }));
         });
         return groups;

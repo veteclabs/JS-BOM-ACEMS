@@ -5,6 +5,7 @@ import com.markcha.ems.controller.DeviceController.DeviceInsertDto;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Equipment;
 import com.markcha.ems.domain.Group;
+import com.markcha.ems.domain.Tag;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.EquipmentDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
@@ -12,22 +13,23 @@ import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.DeviceService;
+import com.markcha.ems.service.InsertSampleData;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class DeviceServiceImpl implements DeviceService {
     private final DeviceRepository deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final EquipmentDataRepository equipmentDataRepository;
     private final EquipmentDslRepositoryImpl equipmentDslRepository;
     private final GroupDslRepositoryImpl groupDslRepository;
-    public DeviceServiceImpl(DeviceDslRepositoryImpl deviceDslRepository, DeviceDataRepository deviceDataRepository, EquipmentDataRepository equipmentDataRepository, EquipmentDslRepositoryImpl equipmentDslRepository, GroupDslRepositoryImpl groupDslRepository) {
-        this.deviceDslRepository = deviceDslRepository;
-        this.deviceDataRepository = deviceDataRepository;
-        this.equipmentDataRepository = equipmentDataRepository;
-        this.equipmentDslRepository = equipmentDslRepository;
-        this.groupDslRepository = groupDslRepository;
-    }
+    private final InsertSampleData insertSampleData;
+
 
     @Override
     public Boolean createDevice(DeviceInsertDto deviceInsert) {
@@ -45,7 +47,10 @@ public class DeviceServiceImpl implements DeviceService {
         newDevice.setCt(deviceInsert.getCt());
         newDevice.setPt(deviceInsert.getPt());
         newDevice.setVoltage(deviceInsert.getVoltage());
-        deviceDataRepository.save(newDevice);
+        Device save = deviceDataRepository.save(newDevice);
+        List<Tag> tags = insertSampleData.createTags(deviceInsert.getType(), save);
+        newDevice.setTags(new HashSet<>(tags));
+        deviceDataRepository.save(save);
         return true;
     }
     @Override

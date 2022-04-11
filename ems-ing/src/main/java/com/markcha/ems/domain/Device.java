@@ -1,5 +1,6 @@
 package com.markcha.ems.domain;
 
+import com.markcha.ems.dto.tag.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -50,7 +51,7 @@ public class Device {
     private String name;
 
     @BatchSize(size=1000)
-    @OneToMany(mappedBy = "device",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "device",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Tag> tags = new HashSet<>();
 
     @Column(name = "remark", length = 50)
@@ -68,5 +69,5 @@ public class Device {
     private Voltage voltage;
 
     @Transient
-    private List<Tag> tagList = new ArrayList<>();
+    private List<TagDto> tagList = new ArrayList<>();
 }
