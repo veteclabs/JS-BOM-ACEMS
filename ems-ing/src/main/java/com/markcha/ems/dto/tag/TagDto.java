@@ -1,5 +1,6 @@
 package com.markcha.ems.dto.tag;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.Tag;
 import lombok.Data;
 import lombok.Getter;
@@ -16,8 +17,12 @@ public class TagDto {
     private String tagName;
     private Double value;
     private String unit;
+    @JsonIgnore
+    private Long deviceId;
     public TagDto(Tag tag) {
         this.tagName = tag.getTagName();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
+        if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
     }
 }
+

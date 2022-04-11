@@ -136,57 +136,33 @@ public class GroupDslRepositoryImpl implements GroupRepository {
             g.getChildren().forEach(c->c.getDeviceSet().forEach(d->deviceIds.add(d.getId())));
             g.getDeviceSet().forEach(d->deviceIds.add(d.getId()));
         });
-        List<Tag> tags = getTagsByDeviceIds(deviceIds);
-        Map<Long, List<Tag>> groupByTag = tags.stream()
-                .collect(groupingBy(t -> t.getDevice().getId()));
-        groups.forEach(g->{
-            g.getDeviceSet().forEach(d->{
-                if (!isNull(groupByTag.get(d.getId()))) {
-                    List<TagDto> tagList = groupByTag.get(d.getId()).stream()
-                            .map(TagDto::new)
-                            .collect(toList());
-                    List<String> tagNames = tagList.stream()
-                            .map(k -> k.getTagName())
-                            .collect(toList());
-                    try {
-                        List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
-                        tagList.forEach(a -> {
-                            List<JsonNode> tags2 = tagValues.stream()
-                                    .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
-                                    .collect(toList());
-                            if(!isNull(tags2) && tags2.size() == 1) {
-                                a.setValue(tags2.get(0).get("Value").doubleValue());
-                            }
-                        });
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    if (!isNull(d.getTagList())) d.setTagList(tagList);
+        List<TagDto> tags = getTagsByDeviceIds(deviceIds).stream()
+                .map(TagDto::new)
+                .collect(toList());
+        // webaccess 태그 이름으로 조회 //
+        List<String> tagNames = tags.stream()
+                .map(k -> k.getTagName())
+                .collect(toList());
+        try {
+            List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
+            tags.forEach(a -> {
+                List<JsonNode> tags2 = tagValues.stream()
+                        .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
+                        .collect(toList());
+                if(!isNull(tags2) && tags2.size() == 1) {
+                    a.setValue(tags2.get(0).get("Value").doubleValue());
                 }
             });
-            g.getChildren().forEach(c-> c.getDeviceSet().forEach(d->{
-                if (!isNull(groupByTag.get(d.getId()))) {
-                    List<TagDto> tagList = groupByTag.get(d.getId()).stream()
-                            .map(TagDto::new)
-                            .collect(toList());
-                    List<String> tagNames = tagList.stream()
-                            .map(k -> k.getTagName())
-                            .collect(toList());
-                    try {
-                        List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
-                        tagList.forEach(a -> {
-                            List<JsonNode> tags2 = tagValues.stream()
-                                    .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
-                                    .collect(toList());
-                            if(!isNull(tags2) && tags2.size() == 1) {
-                                a.setValue(tags2.get(0).get("Value").doubleValue());
-                            }
-                        });
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    if (!isNull(d.getTagList())) d.setTagList(tagList);
-                }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        // -----------------------------------//
+        Map<Long, List<TagDto>> groupByTag = tags.stream()
+                .collect(groupingBy(t -> t.getDeviceId()));
+        groups.forEach(g->{
+            g.getDeviceSet().forEach(d->d.setTagList(groupByTag.get(d.getId())));
+            g.getChildren().forEach(c->c.getDeviceSet().forEach(d->{
+                    d.setTagList(groupByTag.get(d.getId()));
                 }));
         });
         return groups;
