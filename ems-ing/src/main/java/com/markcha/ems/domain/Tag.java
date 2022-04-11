@@ -39,6 +39,7 @@ public class Tag {
     private String nickname;
     @Column(name = "is_alarm")
     private Boolean isAlarm;
-
+    @Column(name = "show_able")
+    private Boolean showAble;
 
 }

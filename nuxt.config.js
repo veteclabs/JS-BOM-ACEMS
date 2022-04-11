@@ -41,7 +41,8 @@ module.exports = {
   modules: [
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
@@ -76,9 +77,14 @@ module.exports = {
   ],
   // axios: {
   //   // baseURL: "http://localhost:8030"
-  //   proxy:true
+  //   proxy:true,
+  //   prefix: process.env.NODE_ENV === 'development'? process.env.API_TEST_URL : process.env.API_PROD_URL
   // },
   // proxy: {
-  //   '/api/': process.env.NODE_ENV === 'development'? process.env.API_TEST_URL : process.env.API_PROD_URL
-  // }
+  //   '/api/': { target: process.env.NODE_ENV === 'development'? process.env.API_TEST_URL : process.env.API_PROD_URL,
+  //     pathRewrite: {'^/api':''},
+  //     changeOrigin: true
+  //   }
+  //
+  // },
 };

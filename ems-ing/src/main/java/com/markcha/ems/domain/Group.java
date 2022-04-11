@@ -3,12 +3,12 @@ package com.markcha.ems.domain;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.Objects.isNull;
 
 @Data
 @Entity
@@ -35,7 +35,8 @@ public class Group {
     private Set<Group> children = new HashSet<>();
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private Set<Device> deviceSet = new HashSet<>();
+    private List<Device> deviceSet = new ArrayList<>();
+
 
     @Transient
     private List<Group> childs = new ArrayList<>();
@@ -46,4 +47,23 @@ public class Group {
     private Set<Link> parentLocations = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "childs")
     private Set<Link> childLocations = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
+    private Set<Order> orders = new HashSet<>();
+
+    @Override
+    public int hashCode() {
+        if(!isNull(this.id)) {
+            return this.id.hashCode();
+        }
+        return 0;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        Group group = (Group) o;
+        return Objects.equals(id, group.id);
+    }
 }

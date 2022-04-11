@@ -110,8 +110,89 @@ public class CompressorServiceImpl implements DeviceService {
         newDevice.setName(compressorInsertDto.getName());
         newDevice.setEquipment(selectedEquipoment);
         newDevice.setGroup(newGroup);
+
+        selectedEquipoment.getType();
         deviceDataRepository.save(newDevice);
         return true;
+    }
+    private List<Tag> createTags(Long deviceId, String type) {
+        List<Tag> tags = new ArrayList<>();
+        String deviceUnit = String.format("%03d", deviceId) + "_";
+
+        switch(type) {
+            case "comrpressor":
+                Tag rpm = new Tag();
+                rpm.setIsAlarm(false);
+                rpm.setIsTrend(true);
+                rpm.setIsUsage(false);
+                rpm.setLoggingTime(300);
+                rpm.setNickname("rpm");
+                rpm.setShowAble(true);
+                rpm.setTagDescription("가동률");
+                rpm.setUnit("%");
+                rpm.setTagName(deviceUnit + "RPM");
+                rpm.setUnitConversion(null);
+                tags.add(rpm);
+
+                Tag state = new Tag();
+                state.setIsAlarm(false);
+                state.setIsTrend(true);
+                state.setIsUsage(false);
+                state.setLoggingTime(300);
+                state.setNickname("state");
+                state.setShowAble(true);
+                state.setTagDescription("상태");
+                state.setUnit(null);
+                state.setTagName(deviceUnit + "STATE");
+                state.setUnitConversion(null);
+                tags.add(state);
+
+                Tag bar = new Tag();
+                bar.setIsAlarm(false);
+                bar.setIsTrend(true);
+                bar.setIsUsage(false);
+                bar.setLoggingTime(300);
+                bar.setNickname("bar");
+                bar.setShowAble(true);
+                bar.setTagDescription("압력");
+                bar.setUnit(null);
+                bar.setTagName(deviceUnit + "BAR");
+                bar.setUnitConversion(null);
+                tags.add(bar);
+
+                Tag airTemp = new Tag();
+                airTemp.setIsAlarm(false);
+                airTemp.setIsTrend(true);
+                airTemp.setIsUsage(false);
+                airTemp.setLoggingTime(300);
+                airTemp.setNickname("air-temp");
+                airTemp.setShowAble(true);
+                airTemp.setTagDescription("에어 온도");
+                airTemp.setUnit(null);
+                airTemp.setTagName(deviceUnit + "AIR_TEMP");
+                airTemp.setUnitConversion(null);
+                tags.add(airTemp);
+                break;
+            case "전력":
+                Tag elect = new Tag();
+                elect.setIsAlarm(false);
+                elect.setIsTrend(false);
+                elect.setIsUsage(true);
+                elect.setLoggingTime(300);
+                elect.setNickname("air-temp");
+                elect.setShowAble(true);
+                elect.setTagDescription("에어 온도");
+                elect.setUnit("kWh");
+                elect.setTagName(deviceUnit + "AIR_TEMP");
+                elect.setUnitConversion(null);
+                tags.add(elect);
+                break;
+        }
+        return tags;
+    }
+    @Override
+    public Boolean createDevice(DeviceInsertDto deviceInsert) {
+        return null;
     }
 
     @Override
@@ -136,13 +217,13 @@ public class CompressorServiceImpl implements DeviceService {
 //        // 요일 관계 생성
         newSchedule.setDayOfWeekMappers(new HashSet<>());
         List<Long> dayOfWeekMapperIds = dayOfWeekMapperDslRepository.findAllByScheduleId(newSchedule.getId());
-        System.out.println(dayOfWeekMapperIds);
+
         dayOfWeekMapperDslRepository.deleteByIdIn(dayOfWeekMapperIds);
         List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
-        System.out.println(dayOfWeeks);
+
         List<DayOfWeekMapper> newDayOfWeekMappers = new ArrayList<>();
         for (DayOfWeek dayOfWeek : dayOfWeeks) {
             DayOfWeekMapper dayOfWeekMapper = new DayOfWeekMapper();
@@ -154,13 +235,13 @@ public class CompressorServiceImpl implements DeviceService {
 
         // 주차 관계 생성
         newSchedule.setWeekMappers(new HashSet<>());
-        List<Long> allByScheduleId = weekMapperDslRepository.findAllByScheduleId(newSchedule.getId());
+        List<Long> allByScheduleId = weekMapperDslRepository.findAllByScheduleId(newSchedule.getId(), null);
         weekMapperDslRepository.deleteByIdIn(allByScheduleId);
         List<Long> weekIds = scheduleDto.getWeeks().stream()
                 .map(WeekDto::getId)
                 .collect(toList());
         List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
-        System.out.println(newSchedule.getWeekMappers());
+
         List<WeekMapper> newWeekMappers = new ArrayList<>();
         for (Week week: weeks) {
             WeekMapper weekMapper = new WeekMapper();
@@ -190,11 +271,6 @@ public class CompressorServiceImpl implements DeviceService {
         deviceDataRepository.save(seletedDevice);
 //
         return true;
-    }
-
-    @Override
-    public Boolean createDevice(DeviceInsertDto deviceInsert) {
-        return null;
     }
 
     @Override

@@ -2,21 +2,29 @@ package com.markcha.ems.dto.schedule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.markcha.ems.domain.Device;
+import com.markcha.ems.domain.Group;
 import com.markcha.ems.domain.Schedule;
+import com.markcha.ems.domain.Week;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
+import com.markcha.ems.dto.device.CompressorDto;
+import com.markcha.ems.dto.device.CompressorSimpleDto;
 import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.dto.week.WeekGroupDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.java.Log;
 
 import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
@@ -41,9 +49,8 @@ public class ScheduleDto {
     private List<WeekDto> weeks;
     private List<WeekGroupDto> weekDevices;
 
-
     public ScheduleDto(Schedule schedule) {
-        this.weekDevices = null;
+        this.weeks = null;
         this.id = schedule.getId();
         this.interval = schedule.getInterval();
         this.isGroup = schedule.getIsGroup();
@@ -56,8 +63,6 @@ public class ScheduleDto {
         this.isActive = schedule.getIsActive();
     }
     public ScheduleDto(Schedule schedule, Boolean forGroup) {
-        this.weeks = null;
-
         this.id = schedule.getId();
         this.interval = schedule.getInterval();
         this.isGroup = schedule.getIsGroup();
@@ -68,11 +73,16 @@ public class ScheduleDto {
         this.min = schedule.getMin();
         this.max = schedule.getMax();
         this.isActive = schedule.getIsActive();
-        this.weekDevices = schedule.getWeekMappers().stream()
-                .map((wm) -> new WeekGroupDto(wm)).collect(toList());
-
-        this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
-                .map((wm) -> new DayOfWeekDto(wm.getDayOfWeek()))
-                .collect(toList());
+        if(!isNull(schedule.getWeeks())) {
+            this.weekDevices = schedule.getWeeks().stream()
+                    .map(t->new WeekGroupDto(t))
+                    .sorted(comparing(k->k.getId()))
+                    .collect(toList());
+        }
+        if(!isNull(schedule.getDayOfWeekMappers())) {
+            this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
+                    .map((wm) -> new DayOfWeekDto(wm.getDayOfWeek()))
+                    .collect(toList());
+        }
     }
 }

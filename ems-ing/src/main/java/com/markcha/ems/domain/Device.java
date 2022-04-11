@@ -9,7 +9,9 @@ import org.hibernate.annotations.BatchSize;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -58,13 +60,13 @@ public class Device {
     @Column(name = "updated")
     private LocalDateTime updated;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
-    private Set<WeekMapper> weekMappers = new HashSet<>();
-
     private Double ct;
     private Double pt;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private Voltage voltage;
+
+    @Transient
+    private List<Tag> tagList = new ArrayList<>();
 }

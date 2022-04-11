@@ -1,5 +1,6 @@
 package com.markcha.ems.domain;
 
+import com.markcha.ems.dto.week.WeekGroupDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,10 +44,13 @@ public class Schedule {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",cascade = CascadeType.ALL)
     private Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
 
-
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private Set<Group> groups = new HashSet<>();
     private Integer min;
     private Integer max;
+
+    @Transient
+    private List<WeekMapper> weeks = new ArrayList<>();
+    @Transient
+    private List<Group> standByGroups = new ArrayList<>();
 }
