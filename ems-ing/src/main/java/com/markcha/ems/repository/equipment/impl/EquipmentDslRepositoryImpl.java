@@ -29,7 +29,7 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
         BooleanExpression typeEq = null;
         BooleanExpression modelEq = null;
         if(!isNull(type)) {
-            typeEq = equipment.type.eq(type);
+            typeEq = equipment.description.eq(type);
         }
         if(!isNull(model)) {
             modelEq = equipment.model.eq(model);

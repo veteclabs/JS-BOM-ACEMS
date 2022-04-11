@@ -1,11 +1,17 @@
 package com.markcha.ems.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.markcha.ems.domain.QEnergy;
+import com.markcha.ems.domain.QEquipment;
+import com.markcha.ems.domain.QTag;
 import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.impl.GroupServiceImpl;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +22,10 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.markcha.ems.domain.QEnergy.energy;
+import static com.markcha.ems.domain.QEquipment.equipment;
+import static com.markcha.ems.domain.QTag.tag;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -79,5 +89,41 @@ public class GroupController {
         private Long id;
         private String name;
         private ScheduleDto schedule;
+    }
+    @Data
+    public static class GroupSearchDto {
+        private Integer level;
+        private Long energyId;
+        private Boolean detail;
+        private String equipmentType;
+        private String tagUnit;
+        private Boolean isUsage;
+        @JsonIgnore
+        private BooleanExpression equipmentEqType;
+        @JsonIgnore
+        private BooleanExpression energyEqId;
+        @JsonIgnore
+        private BooleanExpression tagEqUnit;
+        @JsonIgnore
+        private BooleanExpression tagEqIsUsage;
+        public GroupSearchDto(Integer level, Long energyId, Boolean detail, String equipmentType, String tagUnit, Boolean isUsage) {
+            this.level = level;
+            this.energyId = energyId;
+            this.detail = detail;
+            this.equipmentType = equipmentType;
+            this.tagUnit = tagUnit;
+            if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
+            if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
+            if(!isNull(tagUnit)) this.tagEqUnit = tag.unit.eq(tagUnit);
+            if(!isNull(isUsage)) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
+        }
+        public void setIsUsage(Boolean isUsage) {
+            this.isUsage = isUsage;
+            this.tagEqIsUsage = tag.isUsage.eq(isUsage);
+        }
+        public void setTagUnit(String tagUnit) {
+            this.tagUnit = tagUnit;
+            this.tagEqUnit = tag.unit.eq(tagUnit);
+        }
     }
 }

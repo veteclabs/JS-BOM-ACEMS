@@ -2,6 +2,7 @@ package com.markcha.ems.repository.group.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.markcha.ems.controller.GroupController;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.repository.group.GroupRepository;
@@ -239,5 +240,25 @@ public class GroupDslRepositoryImpl implements GroupRepository {
         rootGroup.getSchedule().setWeeks(grouppingWeekMapper.get(rootGroup.getSchedule().getId()));
         return rootGroup;
 
+    }
+
+    @Override
+    public List<Group> getAnalysisLocations(List<Long> locaionIds, GroupController.GroupSearchDto locationSearchDto, Boolean deep) {
+        return null;
+    }
+
+    @Override
+    public List<Link> getDynamicLocations(List<Long> locaionIds, GroupController.GroupSearchDto locationSearchDto, Boolean deep) {
+        return null;
+    }
+
+    @Override
+    public List<Long> getLevelIds(Integer level) {
+        return null;
+    }
+
+    @Override
+    public List<Long> getTypeIds(String type) {
+        return null;
     }
 }

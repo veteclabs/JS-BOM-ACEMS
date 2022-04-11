@@ -9,6 +9,7 @@ import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.group.GroupRepository;
+import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.impl.DeviceServiceImpl;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +38,7 @@ public class DeviceController {
 
     public DeviceController(
             @Qualifier("deviceDslRepositoryImpl") DeviceRepository deviceDslRepository,
-            GroupRepository groupDslRepository, DeviceServiceImpl deviceService, DeviceDataRepository deviceDataRepository) {
+            GroupDslRepositoryImpl groupDslRepository, DeviceServiceImpl deviceService, DeviceDataRepository deviceDataRepository) {
         this.deviceDslRepository = deviceDslRepository;
         this.groupDslRepository = groupDslRepository;
         this.deviceService = deviceService;

@@ -24,6 +24,8 @@ public class Equipment {
     private String maker;
     @Column(name = "model", length = 70)
     private String model;
+    @Column(name = "description", length = 70)
+    private String description;
     @Column(name = "created")
     private LocalDateTime created;
     @Column(name = "updated")
@@ -31,6 +33,4 @@ public class Equipment {
 
     @OneToMany(mappedBy="equipment",fetch = FetchType.LAZY)
     private Set<Device> devices = new HashSet<>();
-
-
 }

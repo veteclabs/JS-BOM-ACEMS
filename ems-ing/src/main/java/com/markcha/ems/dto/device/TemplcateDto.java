@@ -32,7 +32,7 @@ public class TemplcateDto {
             this.groupName = device.getGroup().getName();
         }
         this.model = device.getEquipment().getModel();
-        this.type = device.getEquipment().getType();
+        this.type = device.getEquipment().getDescription();
         this.maker = device.getEquipment().getMaker();
         this.ct = device.getCt();
         this.pt = device.getPt();
