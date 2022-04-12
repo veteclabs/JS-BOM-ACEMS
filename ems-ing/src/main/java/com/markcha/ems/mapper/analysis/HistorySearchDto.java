@@ -66,16 +66,16 @@ public class HistorySearchDto {
         JSONObject jsonObj = (JSONObject) obj;
         String start = jsonObj.get("start").toString();
         String end =  jsonObj.get("end").toString();
-
+        convertStringToDate(start);
     }
 
     private LocalDate convertStringToDate(String date) {
         if(date.length() > 10) {
-            date.substring(0, 10);
+            return LocalDate.parse(date.substring(0, 10));
         } else if(date.length() == 10) {
-
+            return LocalDate.parse(date);
         } else if(date.length() == 7) {
-
+            return LocalDate.parse(date);
         } else if(date.length() == 4) {
 
         }
