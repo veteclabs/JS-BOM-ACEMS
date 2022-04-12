@@ -215,8 +215,6 @@
                     }
                 }
 
-                console.log(vm.params)
-
                 this.$validate()
                     .then((success) => {
                         if (success) {
@@ -262,7 +260,7 @@
             updateModal(e) {
                 this.validation.reset();
                 this.state = 'update';
-                this.params = e;
+                this.params = JSON.parse(JSON.stringify(e));
             },
         },
     };
