@@ -59,7 +59,8 @@
                         <nuxt-link :to="`/dashboard/${device.id}`">
                             <h3>
                                 <div class="img-box">
-                                    <img :src="require(`~/assets/images/equipment/${device.equipmentId}.jpg`)"
+                                    <img v-if="device.equipmentId"
+                                         :src="require(`~/assets/images/equipment/${device.equipmentId}.jpg`)"
                                          :alt="device.equipmentId"
                                          style="max-width:100%;"/>
                                 </div>
@@ -68,7 +69,7 @@
                         </nuxt-link>
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(device.id)"/>
+                             @click="settingModalOpen(device)"/>
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="device"/>
@@ -401,7 +402,7 @@
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
-            this.getSubstationAlarm();
+            this.getCompressor();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -415,14 +416,14 @@
                         vm.msgData.msg = error;
                     });
             },
-            async getSubstationAlarm() {
+            async getCompressor() {
                 const vm = this;
-                axios.get('/api/substation/alarm')
-                    .then((res) => {
-                        if (res.data.code === 1) {
-                            vm.alarmList = res.data.value;
-                        }
-                    }).catch((error) => {
+                axios({
+                    method: 'get',
+                    url: '/api/compressors',
+                }).then((res) => {
+                    vm.airCompressorList = res.data
+                }).catch((error) => {
                     vm.msgData.msg = error;
                 }).finally(() => {
                     vm.loadingData.show = false;
@@ -476,8 +477,8 @@
 
                 return true;
             },
-            settingModalOpen(id) {
-                this.$refs.settingEquipmentModal.createdModal(id);
+            settingModalOpen(device) {
+                this.$refs.settingEquipmentModal.updateModal(device);
                 this.settingModalData.show = true;
             },
             settingAirCompressorModalOpen() {

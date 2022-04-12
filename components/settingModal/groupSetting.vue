@@ -225,8 +225,6 @@
 
                 params.schedule.min = Number( params.schedule.min);
                 params.schedule.max = Number( params.schedule.max);
-                console.log(params.schedule.min)
-                console.log(params.schedule.max)
 
                 this.$validate().then((success) => {
                     if (success) {
