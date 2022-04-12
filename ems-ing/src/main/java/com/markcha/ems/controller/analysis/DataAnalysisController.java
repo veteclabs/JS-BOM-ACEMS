@@ -5,6 +5,8 @@ import com.markcha.ems.controller.GroupController.GroupSearchDto;
 import com.markcha.ems.domain.Group;
 import com.markcha.ems.domain.Link;
 import com.markcha.ems.dto.response.ApiResponseDto;
+import com.markcha.ems.mapper.analysis.DataMapper;
+import com.markcha.ems.mapper.analysis.HistorySearchDto;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -30,21 +33,43 @@ public class DataAnalysisController {
     private String dbErrorMsg;
 
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
+    private final DataMapper dataMapper;
 
     @GetMapping(value="/data")
-    public List<GroupQueryDto> create(
-            GroupSearchDto groupInsertDto
+    public List<HashMap<String, Object>> create(
+            GroupSearchDto groupInsertDto,
+            HistorySearchDto historySearchDto
     ) {
         groupInsertDto.setIsUsage(true);
-//        groupInsertDto.();
-
+        groupInsertDto.setEnergyId(null);
+        groupInsertDto.setEnergyEqId(null);
+        Boolean isDuo = groupInsertDto.getTagType().equals("FLOW")?true:false;
+        historySearchDto.setIsDuo(isDuo);
+        historySearchDto.setTagNames(new ArrayList<>());
+        historySearchDto.setSecondTagNames(new ArrayList<>());
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
-        List<String> tagNames = new ArrayList<>();
         List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
-                .map(GroupQueryDto::new)
-                .peek(t -> tagNames.addAll(t.getTagNames()))
+                .map(t->new GroupQueryDto(t, false))
+                .peek(t -> historySearchDto.getTagNames().addAll(t.getTagNames()))
                 .collect(toList());
-        System.out.println(tagNames);
-        return collect;
+        if(isDuo) {
+            groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
+                    .map(t->new GroupQueryDto(t, false))
+                    .peek(t -> historySearchDto.getSecondTagNames().addAll(t.getTagNames()))
+                    .collect(toList());
+        }
+
+        if(historySearchDto.getTimeType().equals("H")) {
+            return dataMapper.getHistoryHour(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("D")) {
+            return dataMapper.getHistoryDay(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("15min")) {
+            return dataMapper.getHistoryMin(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("M")) {
+            return dataMapper.getHistoryMonth(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("Y")) {
+            return dataMapper.getHistoryYear(historySearchDto);
+        }
+        return null;
     }
 }

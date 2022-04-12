@@ -21,7 +21,7 @@ public class GroupQueryDto {
     private String purpose;
     private List<String> tagNames = new ArrayList<>();
 
-    private List<DeviceQueryDto> equipmentMgmt;
+    private List<DeviceQueryDto> devices;
     private List<GroupQueryDto> childs;
 
 
@@ -32,14 +32,14 @@ public class GroupQueryDto {
         this.purpose = location.getPurpose();
 
         if(!location.getDevices().isEmpty()) {
-            this.equipmentMgmt = location.getDevices().stream()
+            this.devices = location.getDevices().stream()
                     .map(device -> {
                         device.getTags().forEach(tag -> this.tagNames.add(tag.getTagName()));
                         return new DeviceQueryDto(device);
                     })
                     .collect(Collectors.toList());
         } else {
-            this.equipmentMgmt = null;
+            this.devices = null;
         }
 
         if(!Objects.isNull(location.getChilds()) && !location.getChilds().isEmpty()) {
@@ -56,7 +56,7 @@ public class GroupQueryDto {
         }
         if (!isDetail) {
             this.childs = null;
-            this.equipmentMgmt = null;
+            this.devices = null;
         } else {
             this.tagNames = null;
         }
@@ -69,14 +69,14 @@ public class GroupQueryDto {
         this.purpose = location.getPurpose();
 
         if(!location.getDevices().isEmpty()) {
-            this.equipmentMgmt = location.getDevices().stream()
+            this.devices = location.getDevices().stream()
                     .map(device -> {
                         device.getTags().forEach(tag -> this.tagNames.add(tag.getTagName()));
                         return new DeviceQueryDto(device);
                     })
                     .collect(Collectors.toList());
         } else {
-            this.equipmentMgmt = null;
+            this.devices = null;
         }
 
         if(!Objects.isNull(location.getChilds()) && !location.getChilds().isEmpty()) {

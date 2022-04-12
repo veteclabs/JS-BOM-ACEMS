@@ -41,5 +41,7 @@ public class Tag {
     private Boolean isAlarm;
     @Column(name = "show_able")
     private Boolean showAble;
+    @Column(length = 20)
+    private String type;
 
 }

@@ -96,7 +96,7 @@ public class GroupController {
         private Long energyId;
         private Boolean detail;
         private String equipmentType;
-        private String unitType;
+        private String tagType;
         private Boolean isUsage;
 
         @JsonIgnore
@@ -104,29 +104,27 @@ public class GroupController {
         @JsonIgnore
         private BooleanExpression energyEqId;
         @JsonIgnore
-        private BooleanExpression tagEqUnit;
+        private BooleanExpression tagEqType;
         @JsonIgnore
         private BooleanExpression tagEqIsUsage;
-        @JsonIgnore
-        private BooleanExpression tagEqType;
-        public GroupSearchDto(Integer level, Long energyId, Boolean detail, String equipmentType, String unitType, Boolean isUsage) {
+        public GroupSearchDto(Integer level, Long energyId, Boolean detail, String equipmentType, String tagType, Boolean isUsage) {
             this.level = level;
             this.energyId = energyId;
             this.detail = detail;
             this.equipmentType = equipmentType;
-            this.unitType = unitType;
+            this.tagType = tagType;
             if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
             if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
-            if(!isNull(unitType)) this.tagEqUnit = tag.nickname.eq(unitType);
+            if(!isNull(tagType)) this.tagEqType = tag.type.eq(tagType);
             if(!isNull(isUsage)) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
         }
         public void setIsUsage(Boolean isUsage) {
             this.isUsage = isUsage;
             this.tagEqIsUsage = tag.isUsage.eq(isUsage);
         }
-        public void setTagUnit(String unitType) {
-            this.unitType = unitType;
-            this.tagEqUnit = tag.unit.eq(unitType);
+        public void setTagType(String tagType) {
+            this.tagType = tagType;
+            this.tagEqType = tag.type.eq(tagType);
         }
     }
 }

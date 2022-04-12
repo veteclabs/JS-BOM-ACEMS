@@ -83,7 +83,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implem
                          device.group.id.in(ids)
                         ,locationSearchDto.getEnergyEqId()
                         ,locationSearchDto.getEquipmentEqType()
-                        ,locationSearchDto.getTagEqUnit()
+                        ,locationSearchDto.getTagEqType()
                         ,locationSearchDto.getTagEqIsUsage()
                 ).fetch();
     }
@@ -95,7 +95,6 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implem
                 .map(location -> location.getId())
                 .collect(toList());
         List<Device> equipmentMgmts = getDevices(locationIds, locationSearchDto);
-
         if (!equipmentMgmts.isEmpty()) {
             Map<Long, List<Device>> equipmentMgmtGroup = equipmentMgmts.stream()
                     .collect(groupingBy(equipmentMgmt -> equipmentMgmt.getGroup().getId()));

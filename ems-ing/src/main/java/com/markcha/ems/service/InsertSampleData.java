@@ -37,6 +37,7 @@ public class InsertSampleData {
                 rpm.setUnit("%");
                 rpm.setTagName(deviceUnit + "RPM");
                 rpm.setUnitConversion(null);
+                rpm.setType("RPM");
                 rpm.setDevice(device);
                 tags.add(rpm);
 
@@ -52,6 +53,7 @@ public class InsertSampleData {
                 power.setTagName(deviceUnit + "POWER");
                 power.setUnitConversion(null);
                 power.setDevice(device);
+                power.setType("POWER");
                 tags.add(power);
 
                 Tag state = new Tag();
@@ -66,6 +68,7 @@ public class InsertSampleData {
                 state.setTagName(deviceUnit + "STATE");
                 state.setUnitConversion(null);
                 state.setDevice(device);
+                state.setType("STATE");
                 tags.add(state);
 
                 Tag bar = new Tag();
@@ -80,6 +83,7 @@ public class InsertSampleData {
                 bar.setTagName(deviceUnit + "BAR");
                 bar.setUnitConversion(null);
                 bar.setDevice(device);
+                bar.setType("BAR");
                 tags.add(bar);
 
                 Tag airTemp = new Tag();
@@ -94,6 +98,7 @@ public class InsertSampleData {
                 airTemp.setTagName(deviceUnit + "AIR_TEMP");
                 airTemp.setUnitConversion(null);
                 airTemp.setDevice(device);
+                airTemp.setType("AIR_TEMP");
                 tags.add(airTemp);
                 break;
 
@@ -107,9 +112,10 @@ public class InsertSampleData {
                 elect.setShowAble(true);
                 elect.setTagDescription("유효 전력");
                 elect.setUnit("kWh");
-                elect.setTagName(deviceUnit + "kWh");
+                elect.setTagName(deviceUnit + "KWH");
                 elect.setUnitConversion(null);
                 elect.setDevice(device);
+                elect.setType("KWH");
                 tags.add(elect);
                 break;
 
@@ -126,6 +132,7 @@ public class InsertSampleData {
                 bar2.setTagName(deviceUnit + "FLOW");
                 bar2.setUnitConversion(null);
                 bar2.setDevice(device);
+                bar2.setType("FLOW");
                 tags.add(bar2);
                 break;
 
@@ -142,6 +149,7 @@ public class InsertSampleData {
                 temp.setTagName(deviceUnit + "temp");
                 temp.setUnitConversion(null);
                 temp.setDevice(device);
+                temp.setType("TEMP");
                 tags.add(temp);
                 break;
 
@@ -158,6 +166,7 @@ public class InsertSampleData {
                 hum.setTagName(deviceUnit + "hum");
                 hum.setUnitConversion(null);
                 hum.setDevice(device);
+                hum.setType("HUM");
                 tags.add(hum);
                 break;
         }
