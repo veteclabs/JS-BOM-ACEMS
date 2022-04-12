@@ -8,6 +8,7 @@ import com.markcha.ems.dto.group.GroupsSimpleDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
+import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.impl.DeviceServiceImpl;
@@ -31,13 +32,13 @@ public class DeviceController {
     @Value("${response.jpa.DB_ERROR_MSG}")
     private String dbErrorMsg;
 
-    private final DeviceRepository deviceDslRepository;
+    private final DeviceDslRepositoryImpl deviceDslRepository;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final DeviceServiceImpl deviceService;
     private final DeviceDataRepository deviceDataRepository;
 
     public DeviceController(
-            @Qualifier("deviceDslRepositoryImpl") DeviceRepository deviceDslRepository,
+            DeviceDslRepositoryImpl deviceDslRepository,
             GroupDslRepositoryImpl groupDslRepository, DeviceServiceImpl deviceService, DeviceDataRepository deviceDataRepository) {
         this.deviceDslRepository = deviceDslRepository;
         this.groupDslRepository = groupDslRepository;

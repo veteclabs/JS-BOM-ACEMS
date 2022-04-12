@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DeviceServiceImpl implements DeviceService {
-    private final DeviceRepository deviceDslRepository;
+    private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final EquipmentDataRepository equipmentDataRepository;
     private final EquipmentDslRepositoryImpl equipmentDslRepository;
@@ -38,9 +38,7 @@ public class DeviceServiceImpl implements DeviceService {
         Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel());
-
         Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
-
         newDevice.setName(deviceInsert.getName());
         newDevice.setEquipment(selectedEquipoment);
         newDevice.setGroup(seletedGroup);
