@@ -103,7 +103,7 @@ public class GroupServiceImpl {
         Schedule newSchedule = newGroup.getSchedule();
         ScheduleDto scheduleDto = groupInsertDto.getSchedule();
         newSchedule.setIsGroup(true);
-        newSchedule.setIsActive(true);
+        newSchedule.setIsActive(scheduleDto.getIsActive());
         newSchedule.setInterval(30);
         newSchedule.setType("interval");
         newSchedule.setMax(scheduleDto.getMax());

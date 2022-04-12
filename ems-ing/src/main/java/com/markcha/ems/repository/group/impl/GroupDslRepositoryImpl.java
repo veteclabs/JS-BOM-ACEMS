@@ -24,6 +24,8 @@ import static com.markcha.ems.domain.QSchedule.schedule;
 import static com.markcha.ems.domain.QTag.tag;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.compare;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -45,7 +47,9 @@ public class GroupDslRepositoryImpl{
                 .from(group)
                 .where(
                         group.type.eq(type)
-                ).fetch();
+                )
+                .orderBy(group.id.desc())
+                .fetch();
     }
     
     public Group getOneById(Long id) {
@@ -92,6 +96,7 @@ public class GroupDslRepositoryImpl{
                          group.type.eq("group")
                         ,findById
                 )
+                .orderBy(group.id.asc())
                 .fetch();
     }
     private Group getRootGroup(BooleanExpression findById) {
@@ -120,6 +125,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(childGroup.deviceSet, childDevice)
                 .leftJoin(childDevice.tags, childTag)
                 .where(group.type.eq("group"))
+                .orderBy(group.id.desc())
                 .fetch();
     }
     public List<Group> getGroups(List<Long> ids) {
@@ -219,7 +225,6 @@ public class GroupDslRepositoryImpl{
         Map<Long, List<WeekMapper>> grouppingWeekMapper = weekMappers.stream()
                 .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));
         rootGroup.forEach(t->t.getSchedule().setWeeks(grouppingWeekMapper.get(t.getSchedule().getId())));
-
         return rootGroup;
 
     }
