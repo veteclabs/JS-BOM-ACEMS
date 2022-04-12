@@ -35,7 +35,7 @@
                     </DxDataGrid>
                 </div>
             </div>
-            <settingEquipmentModal ref="equipmentModal" v-bind:propsdata="modalData"/>
+            <settingEquipmentModal ref="equipmentModal" v-bind:propsdata="modalData" v-on:callSearch="getCompressor"/>
             <flashModal v-bind:propsdata="msgData"/>
         </div>
     </div>

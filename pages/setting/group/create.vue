@@ -6,7 +6,7 @@
                     저장
                 </button>
             </div>
-            <groupSetting ref="TPSetting"/>
+            <groupSetting ref="groupSetting"  v-bind:groupData="groupInfo"/>
         </div>
     </div>
 </template>
@@ -24,9 +24,25 @@
         components: {
             groupSetting
         },
+        data() {
+            return {
+                id: '',
+                groupInfo: {
+                    name:'',
+                    schedule : {
+                        dayOfWeeks: [],
+                        isActive: false,
+                        min: 0,
+                        max: 0,
+                        startTime: '00:00:00',
+                        stopTime: '00:00:00',
+                    }
+                },
+            }
+        },
         methods : {
             submit: function() {
-                this.$refs.TPSetting.submit();
+                this.$refs.groupSetting.submit('new');
             }
         }
     };

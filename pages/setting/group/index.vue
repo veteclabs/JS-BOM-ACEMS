@@ -123,13 +123,13 @@
             deleteGroup: function () {
                 const vm = this;
                 if (confirm("정말로 삭제 하시겠습니까? 삭제된 공정은 복원되지 않습니다.")) {
-                    axios.delete('/api/setting/tank', {
+                    axios.delete('/api/groups', {
                         data: {
                             ids: vm.selectedGroupKeys
                         }
                     }).then((res) => {
                         vm.msgData.show = true;
-                        vm.msgData.msg = res.data.msg;
+                        vm.msgData.msg = res.data.message;
                         vm.getGroup();
                     }).catch((error) => {
                         vm.msgData.show = true;

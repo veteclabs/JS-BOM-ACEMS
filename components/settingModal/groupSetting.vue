@@ -93,7 +93,8 @@
                 </tr>
             </table>
         </div>
-        <div class="ibox">
+
+        <div class="ibox" v-if="groupData.schedule.weekDevices">
             <div class="ibox-title ibox-noborder-title">공기압축기 전체 스케줄 제어</div>
             <div class="ibox-content">
                 <div :class="{'disabled-ibox' : !groupData.schedule.isActive, 'all-schedule-list':true}">
@@ -106,7 +107,7 @@
                             </li>
                         </draggable>
                         <div class="td-label" style="margin:48px 0 0 0">스케줄 대기장비</div>
-                        <li v-if="targetWeek.standBy.length === 0">대기 장비가 없습니다.</li>
+                        <li v-if="targetWeek.stanBy && targetWeek.standBy.length === 0">대기 장비가 없습니다.</li>
                         <draggable :group="`week${targetWeek.id}`" :list="targetWeek.standBy">
                             <li v-for="equipment in targetWeek.standBy" class="no-schedule-li"
                                 :key="equipment.id">
@@ -118,12 +119,13 @@
                 </div>
             </div>
         </div>
-        <b-modal v-model="msgData.show" title="알림" ok-only auto-focus-button="ok"
+        <b-modal v-model="successModal.show" title="알림" ok-only auto-focus-button="ok"
                  @ok="handleOk">
             <div>
-                {{ msgData.msg }}
+                {{ successModal.msg }}
             </div>
         </b-modal>
+        <flashModal v-bind:propsdata="msgData"/>
     </div>
 </template>
 
@@ -131,6 +133,7 @@
     import axios from 'axios';
     import SimpleVueValidation from 'simple-vue-validator';
     import draggable from 'vuedraggable';
+    import flashModal from '~/components/flashmodal.vue';
 
     const {Validator} = SimpleVueValidation;
 
@@ -141,10 +144,16 @@
             axios,
             SimpleVueValidation,
             draggable,
+            flashModal,
         },
         data() {
             return {
                 msgData: { // 알람모달
+                    msg: '',
+                    show: false,
+                    e: '',
+                },
+                successModal: { // 알람모달
                     msg: '',
                     show: false,
                     e: '',
@@ -195,13 +204,29 @@
         }
         ,
         methods: {
-            submit() {
+            submit(state) {
                 const vm = this;
-                const url = `/api/group/${vm.groupData.id}`;
-                const method = 'put';
                 const params = this.groupData;
+
+
+                let url, method;
+                if (state === 'new') {
+                    url = `/api/group`;
+                    method = 'post';
+                } else if (state === 'update') {
+                    url = `/api/group/${params.id}`;
+                    method = 'put';
+                    if (!params.id) {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = '에러가 발생했습니다. 새로고침 후 다시 시도해주세요';
+                        return;
+                    }
+                }
+
                 params.schedule.min = Number( params.schedule.min);
                 params.schedule.max = Number( params.schedule.max);
+                console.log(params.schedule.min)
+                console.log(params.schedule.max)
 
                 this.$validate().then((success) => {
                     if (success) {
@@ -210,8 +235,8 @@
                             url: url,
                             data: params
                         }).then((res) => {
-                            vm.msgData.show = true;
-                            vm.msgData.msg = res.data.message;
+                            vm.successModal.show = true;
+                            vm.successModal.msg = res.data.message;
                         }).catch((error) => {
                             vm.msgData.show = true;
                             vm.msgData.msg = error;

@@ -244,8 +244,8 @@
                     }
                 }
                 vm.params.schedule = vm.schedule;
-                vm.params.schedule.min = Number( params.schedule.min);
-                vm.params.schedule.max = Number( params.schedule.max);
+                vm.params.schedule.min = Number( vm.params.schedule.min);
+                vm.params.schedule.max = Number( vm.params.schedule.max);
                 this.$validate()
                     .then((success) => {
                         if (success) {
@@ -293,9 +293,9 @@
             updateModal(e) {
                 this.validation.reset();
                 this.state = 'update';
-                this.params = e;
+                this.params = JSON.parse(JSON.stringify(e));
                 if (e.schedule !== null) {
-                    this.schedule = e.schedule;
+                    this.schedule = this.params.schedule;
                 }
             },
         },

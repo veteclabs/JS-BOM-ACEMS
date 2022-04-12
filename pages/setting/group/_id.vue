@@ -59,7 +59,7 @@
                 });
             },
             submit: function() {
-                this.$refs.groupSetting.submit();
+                this.$refs.groupSetting.submit('update');
             }
         }
     };
