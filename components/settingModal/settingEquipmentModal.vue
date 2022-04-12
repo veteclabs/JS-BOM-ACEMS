@@ -151,15 +151,15 @@
                     e: '',
                 },
                 state: 'new',
-                params:{},
-                schedule:{
-                    dayOfWeeks:[],
-                    id:'',
-                    isActive:false,
-                    min:0,
-                    max:0,
-                    startTime:'00:00:00',
-                    stopTime:'00:00:00',
+                params: {},
+                schedule: {
+                    dayOfWeeks: [],
+                    id: '',
+                    isActive: false,
+                    min: 0,
+                    max: 0,
+                    startTime: '00:00:00',
+                    stopTime: '00:00:00',
                 },
                 id: '',
                 name: '',
@@ -180,10 +180,10 @@
             };
         },
         validators: {
-            'params.name':function (value) {
+            'params.name': function (value) {
                 return Validator.value(value).required();
             },
-            'schedule.min, schedule.max':function (min, max) {
+            'schedule.min, schedule.max': function (min, max) {
                 return Validator.value(min).required().custom(function () {
                     if ((min !== null && max !== null)) {
                         if (max < min) {
@@ -196,17 +196,17 @@
             },
             'schedule.isActive, schedule.dayOfWeeks, schedule.startTime, schedule.stopTime':
                 function (active, day, start, stop) {
-                return Validator.value(active).required().custom(function () {
-                        if(active) {
-                            if(day.length === 0) {
+                    return Validator.value(active).required().custom(function () {
+                        if (active) {
+                            if (day.length === 0) {
                                 return '요일을 선택해주세요'
                             }
-                            if(start === null || stop === null || start === undefined || stop === undefined) {
+                            if (start === null || stop === null || start === undefined || stop === undefined) {
                                 return '시간을 선택해주세요'
                             }
                         }
-                });
-            },
+                    });
+                },
         },
         mounted() {
             this.getGroup();
@@ -244,21 +244,24 @@
                     }
                 }
                 vm.params.schedule = vm.schedule;
+                vm.params.schedule.min = Number( params.schedule.min);
+                vm.params.schedule.max = Number( params.schedule.max);
                 this.$validate()
                     .then((success) => {
                         if (success) {
                             // form 입력완료
-                            axios.post(url, vm.params)
-                                .then((res) => {
-                                    if (res.data.code === 1) {
-                                        // 등록완료시 모달 닫고 초기화 안내메시지 일여주기
-                                        modal.hide('createmodal');
-                                        vm.msgData.show = true;
-                                        vm.msgData.msg = res.data.message;
-                                        vm.$emit('send-message', 1);
-                                        vm.$emit('callSearch');
-                                    }
-                                }).catch((error) => {
+                            axios({
+                                method: method,
+                                url: url,
+                                data: vm.params
+                            }).then((res) => {
+                                // 등록완료시 모달 닫고 초기화 안내메시지 일여주기
+                                modal.hide('createmodal');
+                                vm.msgData.show = true;
+                                vm.msgData.msg = res.data.message;
+                                vm.$emit('send-message', 1);
+                                vm.$emit('callSearch');
+                            }).catch((error) => {
                                 vm.msgData.show = true;
                                 vm.msgData.msg = error;
                             });
@@ -271,16 +274,15 @@
             },
             reset() {
                 this.params = {
-                    name:'',
+                    name: '',
                 };
                 this.schedule = {
-                    dayOfWeeks:[],
-                    id:'',
-                    isActive:false,
-                    min:0,
-                    max:0,
-                    startTime:'00:00:00',
-                    stopTime:'00:00:00',
+                    dayOfWeeks: [],
+                    isActive: false,
+                    min: 0,
+                    max: 0,
+                    startTime: '00:00:00',
+                    stopTime: '00:00:00',
                 };
                 this.validation.reset();
             },
@@ -292,7 +294,7 @@
                 this.validation.reset();
                 this.state = 'update';
                 this.params = e;
-                if(e.schedule !== null) {
+                if (e.schedule !== null) {
                     this.schedule = e.schedule;
                 }
             },

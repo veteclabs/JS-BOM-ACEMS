@@ -6,12 +6,13 @@
                     저장
                 </button>
             </div>
-            <groupSetting ref="TPSetting"/>
+            <groupSetting ref="groupSetting"  v-bind:groupData="groupInfo"/>
         </div>
     </div>
 </template>
 <script>
     import groupSetting from '~/components/settingModal/groupSetting.vue';
+    import axios from "axios";
 
     export default {
         fetch({store, redirect}) {
@@ -24,9 +25,41 @@
         components: {
             groupSetting
         },
+        data() {
+            return {
+                id: '',
+                groupInfo: {
+                    name:'',
+                    schedule : {
+                        dayOfWeeks: [],
+                        isActive: false,
+                        min: 0,
+                        max: 0,
+                        startTime: '00:00:00',
+                        stopTime: '00:00:00',
+                    }
+                },
+            }
+        },
+        mounted() {
+            this.id = this.$route.params.id;
+            this.getGroup();
+        },
         methods : {
+            getGroup: function() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: `/api/group/${vm.id}`,
+                }).then((res) => {
+                    vm.groupInfo = res.data
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
             submit: function() {
-                this.$refs.TPSetting.submit();
+                this.$refs.groupSetting.submit();
             }
         }
     };
