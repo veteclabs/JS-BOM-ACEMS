@@ -26,16 +26,10 @@ public class CompressorDto {
     private String name;
     private Long groupId;
     private String groupName;
-    private String model;
-    private String maker;
-    private List<String> dayOfWeeks;
-    private List<String> weeks;
     private ScheduleDto schedule;
     public CompressorDto(Device device) {
         this.id = device.getId();
         this.name = device.getName();
-        this.model = device.getEquipment().getName();
-        this.maker = device.getEquipment().getMaker();
         if(!isNull(device.getGroup())) {
             Group group = device.getGroup();
             if (!isNull(group.getParent())) {
@@ -52,18 +46,6 @@ public class CompressorDto {
                         })
                         .sorted(Comparator.comparing(DayOfWeekDto::getId))
                         .collect(toList()));
-                scheduleDto.setWeeks(schedule.getWeekMappers().stream()
-                        .map((wmp) -> {
-                            return new WeekDto(wmp.getWeek());
-                        })
-                        .sorted(Comparator.comparing(WeekDto::getId))
-                        .collect(toList()));
-                this.weeks = scheduleDto.getWeeks().stream()
-                        .map(WeekDto::getName)
-                        .collect(toList());
-                this.dayOfWeeks = scheduleDto.getDayOfWeeks().stream()
-                        .map(DayOfWeekDto::getName)
-                        .collect(toList());
                 this.schedule = scheduleDto;
             }
         }
