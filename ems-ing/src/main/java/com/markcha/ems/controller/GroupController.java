@@ -19,12 +19,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.QEnergy.energy;
 import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QTag.tag;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
@@ -44,9 +46,10 @@ public class GroupController {
     private final GroupDslRepositoryImpl groupDslRepository;
     @GetMapping(value="/groups", headers = "setting=true")
     public List<GroupDto> showSetting() {
-        return groupDslRepository.findAllJoinSchedule().stream()
-                .map((group)->new GroupDto(group))
+        List<GroupDto> collect = groupDslRepository.findAllJoinSchedule().stream()
+                .map((group) -> new GroupDto(group))
                 .collect(toList());
+        return collect;
     }
     @GetMapping(value="/group/{groupId}")
     public GroupDto showOne(

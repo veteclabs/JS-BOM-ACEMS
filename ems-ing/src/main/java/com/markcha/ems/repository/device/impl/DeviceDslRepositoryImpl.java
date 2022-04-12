@@ -37,7 +37,7 @@ public class DeviceDslRepositoryImpl {
                 .innerJoin(device.equipment, equipment).fetchJoin()
                 .innerJoin(device.group, group).fetchJoin()
                 .where(equipment.type.ne(typeName))
-                .orderBy(device.id.asc())
+                .orderBy(device.id.desc())
                 .fetch();
     }
     
@@ -57,7 +57,7 @@ public class DeviceDslRepositoryImpl {
                 .where(
                         equipment.type.eq(typeName)
                 )
-                .orderBy(device.id.asc())
+                .orderBy(device.id.desc())
                 .fetch();
     }
     

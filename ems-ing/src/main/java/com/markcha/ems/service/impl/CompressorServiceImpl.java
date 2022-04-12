@@ -166,22 +166,25 @@ public class CompressorServiceImpl implements DeviceService {
         newSchedule.setWeekMappers(new HashSet<>());
         List<Long> allByScheduleId = weekMapperDslRepository.findAllByScheduleId(newSchedule.getId(), null);
         weekMapperDslRepository.deleteByIdIn(allByScheduleId);
-        List<Long> weekIds = scheduleDto.getWeeks().stream()
-                .map(WeekDto::getId)
-                .collect(toList());
-        List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
+        if(!isNull(scheduleDto.getWeeks())) {
+            List<Long> weekIds = scheduleDto.getWeeks().stream()
+                    .map(WeekDto::getId)
+                    .collect(toList());
+            List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
 
-        List<WeekMapper> newWeekMappers = new ArrayList<>();
-        for (Week week: weeks) {
-            WeekMapper weekMapper = new WeekMapper();
-            weekMapper.setWeek(week);
-            weekMapper.setSchedule(newSchedule);
-            newWeekMappers.add(weekMapper);
+            List<WeekMapper> newWeekMappers = new ArrayList<>();
+            for (Week week : weeks) {
+                WeekMapper weekMapper = new WeekMapper();
+                weekMapper.setWeek(week);
+                weekMapper.setSchedule(newSchedule);
+                newWeekMappers.add(weekMapper);
+            }
+            newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
         }
 
 
         newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
-        newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
+
         scheduleDataRepository.save(newSchedule);
 
 //        // 그룹 생성 및 부모 그룹 세팅
@@ -198,7 +201,6 @@ public class CompressorServiceImpl implements DeviceService {
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
         deviceDataRepository.save(seletedDevice);
-//
         return true;
     }
 
