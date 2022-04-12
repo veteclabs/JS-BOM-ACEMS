@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implements GroupRepository {
+public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
     /**
@@ -40,7 +40,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implem
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
-    @Override
+    
     public List<Long> getLevelIds(Integer level) {
         return queryFactory.select(
                 Projections.constructor(
@@ -52,7 +52,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implem
                 .fetch();
     }
 
-    @Override
+    
     public List<Long> getTypeIds(String type) {
         return queryFactory.select(
                 Projections.constructor(
@@ -110,7 +110,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implem
         return locations;
     }
 
-    @Override
+    
     public List<Group> getAnalysisLocations(List<Long> locaionIds, GroupSearchDto locationSearchDto, Boolean deep) {
         List<Group> parentLocations = getLocationNode(
                 deep? group.id.in(locaionIds):group.parent.id.in(locaionIds),
@@ -131,45 +131,5 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport implem
                 .collect(groupingBy(cheildLocation -> cheildLocation.getParent().getId()));
         parentLocations.forEach(parent ->parent.setChilds(childLocationGroup.get(parent.getId())));
         return parentLocations;
-    }
-
-    @Override
-    public List<Link> getDynamicLocations(List<Long> locaionIds, GroupSearchDto locationSearchDto, Boolean deep) {
-        return null;
-    }
-
-    @Override
-    public List<Group> findAllByType(String type) {
-        return null;
-    }
-
-    @Override
-    public Group getOneById(Long id) {
-        return null;
-    }
-
-    @Override
-    public Group getOneByDeviceId(Long id) {
-        return null;
-    }
-
-    @Override
-    public List<Group> findAllJoinSchedule() {
-        return null;
-    }
-
-    @Override
-    public List<Group> findAllByIds(List<Long> ids) {
-        return null;
-    }
-
-    @Override
-    public List<Group> findAllChildGroupsById(Long id) {
-        return null;
-    }
-
-    @Override
-    public Group getOneJoinSchedule(Long id) {
-        return null;
     }
 }

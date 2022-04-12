@@ -83,6 +83,14 @@ public class GroupController {
         groupService.updateCompressor(groupInsertDto);
         return new ApiResponseDto(dbUpdateMsg);
     }
+    @PutMapping(value="/groups")
+    public ApiResponseDto updateAll(
+            @RequestBody List<GroupDto> groupInsertDtos
+    ) {
+        groupInsertDtos.forEach(t-> System.out.println(t.getName()));
+        System.out.println(groupInsertDtos.get(0).getAirCompressors().get(0).getName());
+        return new ApiResponseDto(dbUpdateMsg);
+    }
     @Data
     @NoArgsConstructor
     public static class GroupInsertDto {

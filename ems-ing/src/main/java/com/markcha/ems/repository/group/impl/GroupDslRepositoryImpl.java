@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class GroupDslRepositoryImpl implements GroupRepository {
+public class GroupDslRepositoryImpl{
     private final EntityManager entityManager;
     private final JPAQueryFactory query;
     private final WebaccessApiServiceImpl webaccessApiService;
@@ -39,7 +39,7 @@ public class GroupDslRepositoryImpl implements GroupRepository {
         this.query = new JPAQueryFactory(entityManager);
         this.webaccessApiService = webaccessApiService;
     }
-    @Override
+    
     public List<Group> findAllByType(String type) {
         return query.select(group)
                 .from(group)
@@ -47,7 +47,7 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                         group.type.eq(type)
                 ).fetch();
     }
-    @Override
+    
     public Group getOneById(Long id) {
         return query.select(group)
                 .from(group)
@@ -55,7 +55,7 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 .fetchOne();
     }
 
-    @Override
+    
     public Group getOneByDeviceId(Long id) {
         return query.select(group)
                 .from(group)
@@ -122,6 +122,11 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 .where(group.type.eq("group"))
                 .fetch();
     }
+    public List<Group> getGroups(List<Long> ids) {
+        return query.selectFrom(group)
+                .where(group.id.in(ids))
+                .fetch();
+    }
     private List<Tag> getTagsByDeviceIds(List<Long> deviceIds) {
         return query.selectFrom(tag).distinct()
                 .join(tag.device, device).fetchJoin()
@@ -180,18 +185,18 @@ public class GroupDslRepositoryImpl implements GroupRepository {
                 )
                 .fetch();
     }
-    @Override
+    
     public List<Group> findAllChildGroupsById(Long id) {
         QGroup childGroup = new QGroup("cg");
         return query.selectFrom(group)
                 .leftJoin(group.children, childGroup).fetchJoin()
                 .fetch();
     }
-    @Override
+    
     public List<Group> findAllByIds(List<Long> ids) {
         return query.selectFrom(group).where(group.id.in(ids)).fetch();
     }
-    @Override
+    
     public List<Group> findAllJoinSchedule() {
         List<Group> rootGroup = getRootGroups(null);
         List<Long> scheduleIds = rootGroup.stream()
@@ -218,7 +223,7 @@ public class GroupDslRepositoryImpl implements GroupRepository {
         return rootGroup;
 
     }
-    @Override
+    
     public Group getOneJoinSchedule(Long id) {
         Group rootGroup = getRootGroup(group.id.eq(id));
 
@@ -242,23 +247,4 @@ public class GroupDslRepositoryImpl implements GroupRepository {
 
     }
 
-    @Override
-    public List<Group> getAnalysisLocations(List<Long> locaionIds, GroupController.GroupSearchDto locationSearchDto, Boolean deep) {
-        return null;
-    }
-
-    @Override
-    public List<Link> getDynamicLocations(List<Long> locaionIds, GroupController.GroupSearchDto locationSearchDto, Boolean deep) {
-        return null;
-    }
-
-    @Override
-    public List<Long> getLevelIds(Integer level) {
-        return null;
-    }
-
-    @Override
-    public List<Long> getTypeIds(String type) {
-        return null;
-    }
 }
