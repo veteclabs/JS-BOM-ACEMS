@@ -71,6 +71,7 @@
                     <td>
                         <label class="input-100" v-if="params.type === '전력'">
                             <select v-model="params.groupId">
+                                <option :value="null" selected >미지정</option>
                                 <option v-for="group in airCompressorList" :value="group.id" :key="group.id">
                                     {{group.name}}
                                 </option>
@@ -78,6 +79,7 @@
                         </label>
                         <label class="input-100" v-else>
                             <select v-model="params.groupId">
+                                <option :value="null" selected >미지정</option>
                                 <option v-for="group in groupList" :value="group.id" :key="group.id">
                                     {{group.name}}
                                 </option>
