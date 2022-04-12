@@ -66,7 +66,14 @@ public class HistorySearchDto {
         JSONObject jsonObj = (JSONObject) obj;
         String start = jsonObj.get("start").toString();
         String end =  jsonObj.get("end").toString();
-        convertStringToDate(start);
+        this.startDate = convertStringToDate(start);
+        this.endDate = convertStringToDate(end);
+        this.startOneDayBeforeDate = this.startDate.plusDays(-1);
+        this.endOneDayBeforeDate = this.endDate.plusDays(-1);
+        this.startOneMomthBeforeDate = this.startDate.plusMonths(-1);
+        this.endOneMomthBeforeDate = this.endDate.plusMonths(-1);
+        this.startOneYearBeforeDate = this.startDate.plusYears(-1);
+        this.endOneYearBeforeDate = this.endDate.plusYears(-1);
     }
 
     private LocalDate convertStringToDate(String date) {
@@ -75,11 +82,13 @@ public class HistorySearchDto {
         } else if(date.length() == 10) {
             return LocalDate.parse(date);
         } else if(date.length() == 7) {
-            return LocalDate.parse(date);
+            return LocalDate.parse(date + "-01");
         } else if(date.length() == 4) {
-
+            return LocalDate.parse(date + "-01-01");
         }
         return null;
     }
 }
+
+
 

@@ -34,13 +34,13 @@ public class DeviceDslRepositoryImpl {
     public List<Device> findAllTemplcates(String typeName) {
         return queryFactory.select(device)
                 .from(device)
-                .innerJoin(device.equipment, equipment).fetchJoin()
-                .innerJoin(device.group, group).fetchJoin()
+                .join(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
                 .where(equipment.type.ne(typeName))
                 .orderBy(device.id.desc())
                 .fetch();
     }
-    
+
     public List<Device> findAllCompressors(String typeName) {
         QGroup parentGroup = new QGroup("pGroup");
         QGroup childGroup = new QGroup("cGroup");
