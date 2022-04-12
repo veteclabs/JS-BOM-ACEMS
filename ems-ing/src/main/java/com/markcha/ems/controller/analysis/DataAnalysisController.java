@@ -36,7 +36,7 @@ public class DataAnalysisController {
             GroupSearchDto groupInsertDto
     ) {
         groupInsertDto.setIsUsage(true);
-        groupInsertDto.setEquipmentType();
+//        groupInsertDto.();
 
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
         List<String> tagNames = new ArrayList<>();

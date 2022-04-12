@@ -119,11 +119,11 @@ public class InsertSampleData {
                 bar2.setIsTrend(false);
                 bar2.setIsUsage(true);
                 bar2.setLoggingTime(300);
-                bar2.setNickname("pressour");
+                bar2.setNickname("flow");
                 bar2.setShowAble(true);
-                bar2.setTagDescription("압력");
-                bar2.setUnit(null);
-                bar2.setTagName(deviceUnit + "BAR");
+                bar2.setTagDescription("유량");
+                bar2.setUnit("m3");
+                bar2.setTagName(deviceUnit + "FLOW");
                 bar2.setUnitConversion(null);
                 bar2.setDevice(device);
                 tags.add(bar2);
