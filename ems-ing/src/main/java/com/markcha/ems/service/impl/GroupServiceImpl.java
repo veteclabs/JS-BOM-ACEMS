@@ -13,6 +13,7 @@ import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.dto.week.WeekGroupDto;
 import com.markcha.ems.repository.*;
 import com.markcha.ems.repository.dayofweekmapper.impl.DayOfWeekMapperDslRepositoryImpl;
+import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
@@ -43,6 +44,7 @@ public class GroupServiceImpl {
     private final ScheduleDataRepository scheduleDataRepository;
     private final OrderDataRepository orderDataRepository;
     private final OrderDslRepositoryImpl orderDslRepository;
+    private final DeviceDslRepositoryImpl deviceDslRepository;
     public Boolean createGruops(GroupInsertDto groupInsertDto) {
         Group newGroup = new Group();
         newGroup.setName(groupInsertDto.getName());
@@ -178,6 +180,19 @@ public class GroupServiceImpl {
 
                 });
         List<Group> compressors = groupDslRepository.findAllByIds(compressorIds);
+        List<Device> devices = deviceDslRepository.findAllByIds(compressorDeviceIds);
+
+        groupDtos.forEach(t-> {
+            t.getAirCompressors().forEach(k -> {
+                Group compressor = compressors.stream().filter(c -> c.getId().equals(k.getId())).findFirst().get();
+                k.getDevices().forEach(g->{
+                    Device device = devices.stream().filter(c -> c.getId().equals(g.getId())).findFirst().get();
+                    device.setGroup(compressor);
+                });
+            });
+
+        });
+
 //        List<Device> compressorDevices = device
 
 //        List<Long> groupIds = GroupDtos.stream()
