@@ -6,6 +6,7 @@ import com.markcha.ems.controller.GroupController.GroupInsertDto;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
+import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.week.WeekDto;
@@ -167,22 +168,18 @@ public class GroupServiceImpl {
         return true;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
-//        List<>
-//        groupDtos.stream()
-//                .map(t->t.getAirCompressors())
-//                .map(k->k.get)
-//                .collect(toList());
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+        List<Long> compressorDeviceIds = new ArrayList<>();
+        List<Long> compressorIds = new ArrayList<>();
+        groupDtos.forEach(t-> {
+                    t.getAirCompressors().forEach(k -> {
+                            compressorDeviceIds.addAll(k.getDevices().stream().map(g->g.getId()).collect(toList()));
+                            compressorIds.add(k.getId());
+                        });
+
+                });
+        List<Group> compressors = groupDslRepository.findAllByIds(compressorIds);
+//        List<Device> compressorDevices = device
+
 //        List<Long> groupIds = GroupDtos.stream()
 //                .map(t->t.getId())
 //                .collect(toList());

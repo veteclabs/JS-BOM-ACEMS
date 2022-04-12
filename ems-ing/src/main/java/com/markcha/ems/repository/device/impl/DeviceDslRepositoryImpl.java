@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 
 
 @Repository
-public class DeviceDslRepositoryImpl implements DeviceRepository {
+public class DeviceDslRepositoryImpl {
     private final EntityManager entityManager;
     private final JPAQueryFactory queryFactory;
 
@@ -31,18 +31,16 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    @Override
     public List<Device> findAllTemplcates(String typeName) {
         return queryFactory.select(device)
-                .from(device).distinct()
-                .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(device.group, group).fetchJoin()
+                .from(device)
+                .innerJoin(device.equipment, equipment).fetchJoin()
+                .innerJoin(device.group, group).fetchJoin()
                 .where(equipment.type.ne(typeName))
                 .orderBy(device.id.asc())
                 .fetch();
     }
-
-    @Override
+    
     public List<Device> findAllCompressors(String typeName) {
         QGroup parentGroup = new QGroup("pGroup");
         QGroup childGroup = new QGroup("cGroup");
@@ -62,7 +60,7 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
                 .orderBy(device.id.asc())
                 .fetch();
     }
-    @Override
+    
     public Device getOneById(Long id) {
         return queryFactory.select(device)
                 .from(device)
@@ -70,7 +68,7 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
                         device.id.eq(id)
                 ).fetchOne();
     }
-    @Override
+    
     public Device getOneByIdJoinGroupSchedule(Long id) {
         return queryFactory.select(device)
                 .from(device)
@@ -83,5 +81,9 @@ public class DeviceDslRepositoryImpl implements DeviceRepository {
                 .where(
                         device.id.eq(id)
                 ).limit(1).fetchOne();
+    }
+    public List<Device> findAllByIds(List<Long> ids) {
+        return queryFactory.selectFrom(device)
+                .where(device.id.in(ids)).fetch();
     }
 }

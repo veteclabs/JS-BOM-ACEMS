@@ -35,7 +35,7 @@ public class CompressorController {
     private String dbDeleteMsg;
     @Value("${response.jpa.DB_ERROR_MSG}")
     private String dbErrorMsg;
-    private final DeviceRepository deviceDslRepository;
+    private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final CompressorServiceImpl compressorService;
     private final GroupDslRepositoryImpl groupDslRepository;

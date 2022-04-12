@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 public class CompressorServiceImpl implements DeviceService {
-    private final DeviceRepository deviceDslRepository;
+    private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final EquipmentDataRepository equipmentDataRepository;
     private final EquipmentDslRepositoryImpl equipmentDslRepository;
@@ -135,7 +135,7 @@ public class CompressorServiceImpl implements DeviceService {
         Schedule newSchedule = seletedDevice.getGroup().getSchedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
-        newSchedule.setIsActive(true);
+        newSchedule.setIsActive(scheduleDto.getIsActive());
         newSchedule.setInterval(30);
         newSchedule.setType("interval");
         newSchedule.setMax(scheduleDto.getMax());
