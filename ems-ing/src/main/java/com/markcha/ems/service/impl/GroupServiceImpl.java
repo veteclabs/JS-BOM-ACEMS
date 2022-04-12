@@ -6,6 +6,7 @@ import com.markcha.ems.controller.GroupController.GroupInsertDto;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
+import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.dto.week.WeekGroupDto;
@@ -130,7 +131,7 @@ public class GroupServiceImpl {
         newSchedule.setWeekMappers(new HashSet<>());
         List<Long> weekIds = new ArrayList<>();
         scheduleDto.getWeekDevices().forEach(k->{
-            if (!isNull(k.getWorking()) && k.getWorking().size() != 0) {
+            if (!isNull(k.getWorking())) {
                 weekIds.add(k.getId());
             }
         });
@@ -165,5 +166,31 @@ public class GroupServiceImpl {
 
         return true;
     }
+    public Boolean updateGroups(List<GroupDto> groupDtos) {
+//        List<>
+//        groupDtos.stream()
+//                .map(t->t.getAirCompressors())
+//                .map(k->k.get)
+//                .collect(toList());
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//        List<Long> groupIds = GroupDtos.stream()
+//                .map(t->t.getId())
+//                .collect(toList());
+//
+//        List<Long> compressorIds = new ArrayList<>();
+//        GroupDtos.forEach(t->
+//                compressorIds.addAll(t.getAirCompressors().stream().map(k->k.getId()).collect(toList())));
 
+        return true;
+    }
 }

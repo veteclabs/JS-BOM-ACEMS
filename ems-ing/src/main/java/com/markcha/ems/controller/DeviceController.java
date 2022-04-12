@@ -32,7 +32,7 @@ public class DeviceController {
     private String dbErrorMsg;
 
     private final DeviceRepository deviceDslRepository;
-    private final GroupRepository groupDslRepository;
+    private final GroupDslRepositoryImpl groupDslRepository;
     private final DeviceServiceImpl deviceService;
     private final DeviceDataRepository deviceDataRepository;
 

@@ -34,7 +34,7 @@
             </if>
 
         FROM
-        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=28) formula,
+        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
         (SELECT logvalue AS h FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 0 AND logvalue <![CDATA[<=]]> 23) s
         LEFT JOIN
         (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
@@ -116,7 +116,7 @@
         </if>
 
         FROM
-        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=28) formula,
+        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
 
         (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> last_day(#{startDate})) s
 
@@ -211,14 +211,14 @@
         </if>
 
         FROM
-        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=28) formula,
+        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
         (SELECT logvalue AS m FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> 12) s
 
 
         LEFT JOIN
         (SELECT
         month(`TIMESTAMP`) m,
-        if(tagname like '%PF%', avg(`usage`),sum(`usage`)) `USAGE`
+        if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -236,7 +236,7 @@
         LEFT JOIN
         (SELECT
         month(`TIMESTAMP`) m,
-        if(tagname like '%PF%', avg(`usage`),sum(`usage`)) `USAGE`
+        if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -252,7 +252,9 @@
 
         <if test="isDuo.equals(true)">
             LEFT JOIN
-            (SELECT day(`TIMESTAMP`) d,sum(`USAGE`) `usage`, TIMESTAMP, tagname
+            (SELECT
+            month(`TIMESTAMP`) m,
+            if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
             FROM `tagdata`.history_day
             WHERE tagname in
             <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
@@ -261,7 +263,7 @@
             AND timestamp <![CDATA[>=]]> #{startDate}
             AND TIMESTAMP <![CDATA[<]]> #{endDate}
             group by hour(`TIMESTAMP`)
-            ) `EY` ON `EY`.d = s.d
+            ) `EY` ON `EY`.m = s.m
         </if>
         ORDER BY s.m ASC
     </select>
@@ -270,30 +272,47 @@
         SELECT year(`timestamp`) y
 
         <if test="usageType.equals('Usage')">
-            ,if(tagname like '%PF%', avg(`usage`),sum(`usage`)) #{usageType}
+            ,if(#{tagType} = 'PF', avg(shr.`usage`),sum(shr.`usage`)) #{usageType}
+
+            <if test="isDuo.equals(true)">
+                ,if(#{tagType} = 'PF', avg(`EY`.`usage`),sum(`EY`.`usage`)) kWh
+            </if>
         </if>
 
         <if test="usageType.equals('TOE')">
-            , ROUND(IFNULL((sum(`usage`) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
+            , ROUND(IFNULL((if(#{tagType} = "PF", avg(shr.`usage`),sum(shr.`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
         </if>
 
         <if test="usageType.equals('tCo2')">
-            , ROUND(IFNULL((sum(`usage`) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
+            , ROUND(IFNULL((if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
         </if>
         
         
-        FROM (
-        SELECT `toe`,`tco2`
-        FROM energy
-        WHERE energy_id=28) formula,
-        `tagdata`.history_day
-        where tagname in
+        FROM
+        (SELECT `toe`,`tco2` FROM energy WHERE energy_id=#{energyId}) formula,
+        `tagdata`.history_day shr
+        where shr.tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-        and `timestamp` <![CDATA[>]]> #{startDate} AND
-        `timestamp` <![CDATA[<=]]> #{endDate}
-        group by year(`timestamp`);
+        AND shr.`timestamp` <![CDATA[>]]> #{startDate}
+        AND shr.`timestamp` <![CDATA[<=]]> #{endDate}
+        <if test="isDuo.equals(true)">
+            LEFT JOIN
+            (SELECT
+            `TIMESTAMP`,
+            if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
+            FROM `tagdata`.history_day
+            WHERE tagname in
+            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                #{secondtagname}
+            </foreach>
+            AND `timestamp` <![CDATA[>]]> #{startDate}
+            AND `timestamp` <![CDATA[<=]]> #{endDate}
+            group by hour(`TIMESTAMP`)
+            ) `EY` ON year(`EY`.TIMESTAMP) = year(shr.timestamp)
+        </if>
+        group by y;
     </select>
 
     <select id="getHistoryMin" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
@@ -318,8 +337,8 @@
             (select logvalue as f from `tagdata`.sources_quarter_past) s
         left join (SELECT time(from_unixtime(ceil(UNIX_TIMESTAMP(`timestamp`)/900)*900))t,tagname AS tagname,
         <if test="usageType.equals('PF')">
-            if(tagname like '%PF%', avg(`usage`),sum(`usage`)) AS kWh,
-            if(tagname like '%PF%', avg(`usage`),sum(`usage`)*4) AS kW
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) AS kWh,
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)*4) AS kW
         </if>
         <if test="usageType.equals('Usage')">
             SUM(`usage`) AS kWh, SUM(`usage`)*4 as kW
@@ -335,8 +354,8 @@
         group by t) f on s.f = f.t
         left join (SELECT time(from_unixtime(ceil(UNIX_TIMESTAMP(`timestamp`)/900)*900))t,tagname AS tagname,
         <if test="usageType.equals('PF')">
-            if(tagname like '%PF%', avg(`usage`),sum(`usage`)) AS kWh,
-            if(tagname like '%PF%', avg(`usage`),sum(`usage`)*4) AS kW
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) AS kWh,
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)*4) AS kW
         </if>
         <if test="usageType.equals('Usage')">
             SUM(`usage`) AS kWh, SUM(`usage`)*4 as kW

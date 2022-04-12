@@ -46,8 +46,8 @@ public class Schedule {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private Set<Group> groups = new HashSet<>();
-    private Integer min;
-    private Integer max;
+    private Double min;
+    private Double max;
 
     @Transient
     private List<WeekMapper> weeks = new ArrayList<>();

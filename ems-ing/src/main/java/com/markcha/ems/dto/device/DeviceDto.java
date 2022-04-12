@@ -3,6 +3,7 @@ package com.markcha.ems.dto.device;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @Data
+@NoArgsConstructor
 public class DeviceDto {
     private Long id;
     private String name;
