@@ -1,8 +1,10 @@
 package com.markcha.ems.controller;
 
+import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
+import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.GroupDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
@@ -83,5 +85,7 @@ public class CompressorController {
         private String name;
         private Long groupId;
         private ScheduleDto schedule;
+        private List<String> dayOfWeeks;
+        private List<String> weeks;
     }
 }

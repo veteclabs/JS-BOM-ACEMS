@@ -16,6 +16,22 @@ public class HistorySearchDto {
     private LocalDate startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startOneDayBeforeDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endOneDayBeforeDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startOneMomthBeforeDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endOneMomthBeforeDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startOneYearBeforeDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endOneYearBeforeDate;
+
+
     private String date;
     private List<String> tagNames = new ArrayList<>();
     private List<String> secondTagNames = new ArrayList<>();

@@ -29,7 +29,7 @@
                 , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneDay}
                 , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
                 <if test="isDuo.equals(true)">
-                    ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
+                    ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
                 </if>
             </if>
 
@@ -54,8 +54,8 @@
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-        AND timestamp <![CDATA[>]]> #{startDate}
-        AND TIMESTAMP <![CDATA[<=]]> #{endDate}
+        AND timestamp <![CDATA[>]]> #{startOneDayBeforeDate}
+        AND TIMESTAMP <![CDATA[<=]]> #{endOneDayBeforeDate}
         group by hour(`TIMESTAMP`)
         ) `bf` ON `bf`.h = s.h
         LEFT JOIN
@@ -65,8 +65,8 @@
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-        AND timestamp <![CDATA[>]]> #{startDate}
-        AND TIMESTAMP <![CDATA[<=]]> #{endDate}
+        AND timestamp <![CDATA[>]]> #{startOneMomthBeforeDate}
+        AND TIMESTAMP <![CDATA[<=]]> #{endOneMomthBeforeDate}
         group by hour(`TIMESTAMP`)
         ) `LY` ON `LY`.h = s.h
         <if test="isDuo.equals(true)">
@@ -90,7 +90,7 @@
         s.d AS #{timeType}
         <if test="usageType.equals('Usage')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
-            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneMonth}
             ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ifnull(`EY`.`USAGE`, 0)     AS     `kWh`
@@ -99,7 +99,7 @@
 
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
-            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneDay}
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneMonth}
             , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
@@ -108,16 +108,20 @@
 
         <if test="usageType.equals('tCo2')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
-            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneDay}
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneMonth}
             , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
             <if test="isDuo.equals(true)">
-                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
             </if>
         </if>
 
         FROM
         (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=28) formula,
+
         (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> last_day(#{startDate})) s
+
+
+
         LEFT JOIN
         (SELECT day(`TIMESTAMP`) d, sum(`USAGE`) `usage`, TIMESTAMP, tagname
         FROM `tagdata`.history_day
@@ -125,12 +129,14 @@
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-
         AND timestamp <![CDATA[>=]]> #{startDate}
         AND TIMESTAMP <![CDATA[<]]> #{endDate}
-
         group by day(`TIMESTAMP`)
         ) shr ON shr.d = s.d
+
+
+
+
         LEFT JOIN
         (SELECT day(`TIMESTAMP`) d, sum(`USAGE`) `usage`, TIMESTAMP, tagname
         FROM `tagdata`.history_day
@@ -138,8 +144,14 @@
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneMomthBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneMomthBeforeDate}
         group by day(`TIMESTAMP`)
-        ) `bf` ON DATE_ADD(shr.timestamp, INTERVAL -1 DAY) = `bf`.timestamp
+        ) `bf` ON `bf`.d = s.d
+
+
+
+
         LEFT JOIN
         (SELECT day(`TIMESTAMP`) d,sum(`USAGE`) `usage`, TIMESTAMP, tagname
         FROM `tagdata`.history_day
@@ -147,20 +159,26 @@
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneYearBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneYearBeforeDate}
         group by day(`TIMESTAMP`)
-        ) `LY` ON DATE_ADD(shr.timestamp, INTERVAL -1 year) = `LY`.timestamp
+        ) `LY` ON `LY`.d = s.d
+
+
+
+
         <if test="isDuo.equals(true)">
             LEFT JOIN
-            (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
-            FROM `tagdata`.history_hour
+            (SELECT day(`TIMESTAMP`) d,sum(`USAGE`) `usage`, TIMESTAMP, tagname
+            FROM `tagdata`.history_day
             WHERE tagname in
             <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
                 #{secondtagname}
             </foreach>
-            AND timestamp <![CDATA[>]]> #{startDate}
-            AND TIMESTAMP <![CDATA[<=]]> #{endDate}
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}
             group by hour(`TIMESTAMP`)
-            ) `EY` ON `EY`.h = s.h
+            ) `EY` ON `EY`.d = s.d
         </if>
         ORDER BY if(s.d = 0, 24, s.d)
 
@@ -171,23 +189,36 @@
         <if test="usageType.equals('Usage')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
             ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneYear}
+            <if test="isDuo.equals(true)">
+                ,ifnull(`EY`.`USAGE`, 0) AS         `kWh`
+            </if>
         </if>
 
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
             , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+            <if test="isDuo.equals(true)">
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) kWh
+            </if>
         </if>
 
         <if test="usageType.equals('tCo2')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
             , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+            <if test="isDuo.equals(true)">
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) kWh
+            </if>
         </if>
 
         FROM
         (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=28) formula,
         (SELECT logvalue AS m FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> 12) s
+
+
         LEFT JOIN
-        (SELECT month(`TIMESTAMP`) m, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT
+        month(`TIMESTAMP`) m,
+        if(tagname like '%PF%', avg(`usage`),sum(`usage`)) `USAGE`
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -195,19 +226,44 @@
         </foreach>
         AND timestamp <![CDATA[>=]]> #{startDate}
         AND TIMESTAMP <![CDATA[<]]> #{endDate}
-
         group by month(`TIMESTAMP`)
         ) shr ON shr.m = s.m
+
+
+
+
+
         LEFT JOIN
-        (SELECT month(`TIMESTAMP`) m, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT
+        month(`TIMESTAMP`) m,
+        if(tagname like '%PF%', avg(`usage`),sum(`usage`)) `USAGE`
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneYearBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneYearBeforeDate}
         group by month(`TIMESTAMP`)
-        ) `bf` ON DATE_ADD(shr.timestamp, INTERVAL -1 year) = `bf`.timestamp
+        ) `bf` ON `bf`.m = s.m
 
+
+
+
+        <if test="isDuo.equals(true)">
+            LEFT JOIN
+            (SELECT day(`TIMESTAMP`) d,sum(`USAGE`) `usage`, TIMESTAMP, tagname
+            FROM `tagdata`.history_day
+            WHERE tagname in
+            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                #{secondtagname}
+            </foreach>
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}
+            group by hour(`TIMESTAMP`)
+            ) `EY` ON `EY`.d = s.d
+        </if>
+        ORDER BY s.m ASC
     </select>
 
     <select id="getHistoryYear" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
