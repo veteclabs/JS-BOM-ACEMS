@@ -8,18 +8,9 @@
             <div id="searchFilter">
                 <div class="filter-title">
                     <p>
-                        <img
-                                src="~assets/images/filter/icn_filter_show.svg"
-                                alt="filter"
-                                width="16"
-                                v-if="resetState"
-                        />
-                        <img
-                                src="~assets/images/filter/icn_filter_show_hover.svg"
-                                alt="filter"
-                                width="16"
-                                v-if="!resetState"
-                        />
+                        <img src="~assets/images/filter/icn_filter_show.svg" alt="filter" width="16" v-if="resetState"/>
+                        <img src="~assets/images/filter/icn_filter_show_hover.svg" alt="filter" width="16"
+                             v-if="!resetState"/>
                         Filter
                     </p>
                     <a @click="filterReset">Reset</a>
@@ -28,16 +19,10 @@
                     <div v-if="propsdata.timeType">
                         <ul class="button-group">
                             <li v-for="(type, index) in timeTypeOptions" :key="index">
-                                <label
-                                        v-bind:class=" { active: searchParams.timeType === type.value,
-                                    last: index === timeTypeOptions.length - 1 && index % 2 === 0 }"
-                                >
-                                    <input
-                                            type="radio"
-                                            v-model="searchParams.timeType"
-                                            v-bind:value="type.value"
-                                            @change="refresh"
-                                    />
+                                <label v-bind:class=" { active: searchParams.timeType === type.value,
+                                 last: index === timeTypeOptions.length - 1 && index % 2 === 0 }">
+                                    <input type="radio" v-model="searchParams.timeType" v-bind:value="type.value"
+                                           @change="refresh"/>
                                     {{ type.text }}
                                 </label>
                             </li>
@@ -77,68 +62,28 @@
                     </div>
                     <div v-if="propsdata.usageType">
                         <h4>에너지원 사용 타입</h4>
-                        <label class="radio-box" v-for="item in usageOnlyOption" :key="item.id" v-if="propsdata.usageType.only">
-                            <input
-                                    type="radio"
-                                    v-model="searchParams.usageType"
-                                    :value="item.id"
-                                    @change="refresh"
-                            />
-                            <div class="radio-circle">
-                                <div class="inner-circle"/>
-                            </div>
-                            <div class="radio-label">{{ item.name }}</div>
-                        </label>
-                        <label class="radio-box" v-for="item in usageTypeOption" :key="item.id" v-else>
-                            <input
-                                    type="radio"
-                                    v-model="searchParams.usageType"
-                                    :value="item.id"
-                                    @change="refresh"
-                            />
+                        <label class="radio-box" v-for="item in usageTypeOption" :key="item.id">
+                            <input type="radio" v-model="searchParams.usageType" :value="item.id" @change="refresh"/>
                             <div class="radio-circle">
                                 <div class="inner-circle"/>
                             </div>
                             <div class="radio-label">{{ item.name }}</div>
                         </label>
                     </div>
-                    <div v-if="propsdata.location">
-                        <h4>시설명</h4>
-                        <select v-model="searchParams.location" @change="refresh"
-                                v-show=" propsdata.location && propsdata.location.type === 'select'">
-                            <option :value="null">전체</option>
-                            <option v-for="item in locationList" :key="item.id" :value="item.id">
-                                {{ item.description}}
+                    <div v-if="propsdata.equipmentName">
+                        <h4>장비</h4>
+                        <select v-model="searchParams.equipmentName" @change="refresh"
+                                v-show=" propsdata.equipmentName && propsdata.equipmentName.type === 'select'">
+                            <option v-for="item in equipmentList" :key="item.TagName" v-bind:value="item.TagName">
+                                {{ item.name }}
                             </option>
                         </select>
-                        <label v-show=" propsdata.location && propsdata.location.type === 'text'">
-                            <input type="text" v-model="searchParams.location" @keyup="refresh"/>
-                        </label>
-                    </div>
-                    <div v-if="propsdata.department">
-                        <h4>부서명</h4>
-                        <select v-model="searchParams.department" @change="refresh"
-                                v-show=" propsdata.department && propsdata.department.type === 'select'">
-                            <option value="AU">전체</option>
-                            <option v-for="item in departmentList" :key="item.id" :value="item.id">
-                                {{ item.name}}
-                            </option>
-                        </select>
-                        <label v-show=" propsdata.department && propsdata.department.type === 'text'">
-                            <input type="text" v-model="searchParams.department" @keyup="refresh"/>
-                        </label>
-                    </div>
-                    <div v-if="propsdata.process">
-                        <h4>공정명</h4>
-                        <select v-model="searchParams.process" @change="refresh"
-                                v-show=" propsdata.process && propsdata.process.type === 'select'">
-                            <option value="AU">전체</option>
-                            <option v-for="item in processList" :key="item.id" :value="item.id">
-                                {{ item.name}}
-                            </option>
-                        </select>
-                        <label v-show=" propsdata.process && propsdata.process.type === 'text'">
-                            <input type="text" v-model="searchParams.process" @keyup="refresh"/>
+                        <label v-show=" propsdata.equipmentName && propsdata.equipmentName.type === 'text'">
+                            <input
+                                    type="text"
+                                    v-model="searchParams.equipmentName"
+                                    @keyup="refresh"
+                            />
                         </label>
                     </div>
                 </div>
@@ -170,34 +115,21 @@
                         input: 'YYYY-MM-DD',
                     },
                 },
-                usageTypeOption: [],
-                usageOnlyOption: [
-                    {
-                        id: 'Usage',
-                        name: '사용량',
-                    }
-                ],
-                usageTypeDefaultOption: [
+                usageTypeOption: [
                     {
                         id: 'Usage',
                         name: '전력사용량',
                     },
                     {
+                        id: 'PF',
+                        name: '역률',
+                    },
+                    {
                         id: 'flow',
                         name: '유량',
                     },
-                    {
-                        id: 'TOE',
-                        name: 'TOE',
-                    },
-                    {
-                        id: 'tCo2',
-                        name: 'tCo2',
-                    },
                 ],
-                locationList: [],
-                departmentList: [],
-                processList: [],
+                equipmentList: [], // 등록된 계측기 리스트,
                 searchParams: {
                     timeType: 'H', //시간검색타입
                     date: {
@@ -206,9 +138,7 @@
                         end: new Date(),
                     },
                     usageType: 'Usage', //에너지원사용량
-                    location: null, //계측기이름
-                    department:'AU',
-                    process:'AU',
+                    equipmentName: 'AU', //계측기이름
                 },
                 resetParams: {
                     timeType: 'H', //시간검색타입
@@ -218,9 +148,7 @@
                         end: new Date(),
                     },
                     usageType: 'Usage', //에너지원사용량
-                    location: null, //계측기이름
-                    department:'AU',
-                    process:'AU',
+                    equipmentName: 'AU', //계측기이름
                 },
                 resetState: true,
             };
@@ -231,53 +159,35 @@
             },
         },
         mounted() {
-            this.getDepartment();
-            this.getProcess();
-            this.getLocation();
+            this.getFilter();
         },
         methods: {
             collapseMenu: function () {
                 this.$store.commit("searchFilter", !this.searchFilterState);
             },
-            async getDepartment() {
+            getFilter: async function () {
                 const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/departments',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.departmentList = res.data.result;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
-            async getProcess() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/processes',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.processList = res.data.value;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                });
-            },
-            async getLocation() {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/setting/locations',
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.locationList = res.data.value;
-                        vm.usageTypeOption = vm.usageTypeDefaultOption;
-                        vm.filterReset();
-                    }
+                axios.get('/api/etcs').then((res) => {
+                    let result = res.data;
+                    vm.equipmentList = [{
+                        name: '전체',
+                        TagName: 'AU'
+                    }];
+                    result.forEach((item) => {
+                        let target = item.id;
+                        let tagName = '';
+                        let name = '';
+                        if (target !== '') {
+                            name = item.name;
+                            tagName = `${target}`;
+                            vm.equipmentList.push({
+                                name: name,
+                                TagName: tagName
+                            })
+                        }
+                    });
+                    vm.equipmentName = 'AU';
+                    vm.filterReset();
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
@@ -315,11 +225,11 @@
 
             },
             filterResetChk: function () {
-                let resetChk =
-                    JSON.stringify(this.resetParams) === JSON.stringify(this.searchParams);
+                let resetChk = JSON.stringify(this.resetParams) === JSON.stringify(this.searchParams);
                 return resetChk;
             },
             filterReset: function () {
+
                 if (this.propsdata.timeType) {
                     this.timeTypeOptions = this.propsdata.timeType.value;
                     this.resetParams.timeType = this.timeTypeOptions[0].value;

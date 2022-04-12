@@ -242,7 +242,7 @@
                     },
                     date: {show: true,},
                     usageType: {show: true,},
-                    location: {show: true, type: 'select'},
+                    equipmentName: {show: true, type: 'select'},
                 },
                 id: '',
                 LoadingData: {
@@ -314,7 +314,8 @@
             async getSearch(params) {
                 const vm = this;
                 this.LoadingData.show = true;
-                vm.params = params
+                vm.params = params;
+                console.log(params)
                 axios({
                     method: 'get',
                     url: '/api/analysis/data',
