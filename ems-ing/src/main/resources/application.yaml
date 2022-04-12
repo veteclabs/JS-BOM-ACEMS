@@ -54,4 +54,9 @@ response:
 #    hibernate:
 #      SQL: debug
 #      type: trace
+logging:
+  level:
+    jdbc.sqlonly: DEBUG ## 이부분 추가.
+    org.springframework.web: DEBUG
+    com.zaxxer.hikari.HikariDataSource: ERROR
 

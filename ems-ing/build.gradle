@@ -41,6 +41,9 @@ dependencies {
 
 	// json 파싱 도구
 	implementation group: 'org.apache.clerezza.ext', name: 'org.json.simple', version: '0.4'
+	// https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
+	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
+
 //    implementation 'org.json:json:20190722'   gra
 	runtimeOnly 'mysql:mysql-connector-java:8.0.25'
 	compile group: 'ch.simas.qlrm', name: 'qlrm', version: '1.7.1'

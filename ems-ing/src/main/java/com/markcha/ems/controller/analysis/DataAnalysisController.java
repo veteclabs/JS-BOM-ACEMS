@@ -44,6 +44,7 @@ public class DataAnalysisController {
         groupInsertDto.setEnergyId(null);
         groupInsertDto.setEnergyEqId(null);
         Boolean isDuo = groupInsertDto.getTagType().equals("FLOW")?true:false;
+        groupInsertDto.setEnergyEqId(null);
         historySearchDto.setIsDuo(isDuo);
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
@@ -58,7 +59,7 @@ public class DataAnalysisController {
                     .peek(t -> historySearchDto.getSecondTagNames().addAll(t.getTagNames()))
                     .collect(toList());
         }
-
+        System.out.println(historySearchDto.getTagNames());
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);
         } else if(historySearchDto.getTimeType().equals("D")) {

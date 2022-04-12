@@ -60,9 +60,7 @@ public class HistorySearchDto {
         this.beforeOneMonth = "beforeOneMonth" + usageType;
         this.beforeOneYear = "beforeOneYear" + usageType;
         this.energyId = energyId;
-        System.out.println(date);
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(date);
+        Object obj = new JSONParser().parse(date);
         JSONObject jsonObj = (JSONObject) obj;
         String start = jsonObj.get("start").toString();
         String end =  jsonObj.get("end").toString();

@@ -42,8 +42,7 @@
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
-        </foreach>
-        AND timestamp <![CDATA[>]]> #{startDate}
+        </foreach> AND timestamp <![CDATA[>=]]> #{startDate}
         AND TIMESTAMP <![CDATA[<=]]> #{endDate}
         group by hour(`TIMESTAMP`)
         ) shr ON shr.h = s.h
@@ -70,6 +69,7 @@
         group by hour(`TIMESTAMP`)
         ) `LY` ON `LY`.h = s.h
         <if test="isDuo.equals(true)">
+
             LEFT JOIN
             (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
             FROM `tagdata`.history_hour
@@ -286,8 +286,8 @@
         <if test="usageType.equals('tCo2')">
             , ROUND(IFNULL((if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
         </if>
-        
-        
+
+
         FROM
         (SELECT `toe`,`tco2` FROM energy WHERE energy_id=#{energyId}) formula,
         `tagdata`.history_day shr
@@ -295,7 +295,7 @@
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-        AND shr.`timestamp` <![CDATA[>]]> #{startDate}
+         AND shr.`timestamp` <![CDATA[>]]> #{startDate}
         AND shr.`timestamp` <![CDATA[<=]]> #{endDate}
         <if test="isDuo.equals(true)">
             LEFT JOIN
