@@ -54,7 +54,7 @@ public class CompressorServiceImpl implements DeviceService {
         Schedule newSchedule = new Schedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
-        newSchedule.setIsActive(true);
+        newSchedule.setIsActive(compressorInsertDto.getSchedule().getIsActive());
         newSchedule.setInterval(30);
         newSchedule.setType("interval");
         newSchedule.setMax(scheduleDto.getMax());

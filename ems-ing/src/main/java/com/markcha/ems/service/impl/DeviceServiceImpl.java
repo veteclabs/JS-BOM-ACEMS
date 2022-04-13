@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 public class DeviceServiceImpl implements DeviceService {
@@ -38,11 +40,12 @@ public class DeviceServiceImpl implements DeviceService {
         Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel());
-        System.out.println(selectedEquipoment);
-        Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
+        if(!isNull(deviceInsert.getGroupId())) {
+            Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
+            newDevice.setGroup(seletedGroup);
+        }
         newDevice.setName(deviceInsert.getName());
         newDevice.setEquipment(selectedEquipoment);
-        newDevice.setGroup(seletedGroup);
         newDevice.setCt(deviceInsert.getCt());
         newDevice.setPt(deviceInsert.getPt());
         newDevice.setVoltage(deviceInsert.getVoltage());
@@ -59,12 +62,13 @@ public class DeviceServiceImpl implements DeviceService {
         Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel());
-
-        Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
+        if(!isNull(deviceInsert.getGroupId())) {
+            Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
+            seletedDevice.setGroup(seletedGroup);
+        }
 
         seletedDevice.setName(deviceInsert.getName());
         seletedDevice.setEquipment(selectedEquipoment);
-        seletedDevice.setGroup(seletedGroup);
         seletedDevice.setCt(deviceInsert.getCt());
         seletedDevice.setPt(deviceInsert.getPt());
         seletedDevice.setVoltage(deviceInsert.getVoltage());
