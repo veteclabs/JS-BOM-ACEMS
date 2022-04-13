@@ -170,39 +170,20 @@ public class GroupServiceImpl {
         return true;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
-        List<Long> compressorDeviceIds = new ArrayList<>();
-        List<Long> compressorIds = new ArrayList<>();
-        groupDtos.forEach(t-> {
-                    t.getAirCompressors().forEach(k -> {
-                            compressorDeviceIds.addAll(k.getDevices().stream().map(g->g.getId()).collect(toList()));
-                            compressorIds.add(k.getId());
-                        });
+        for (GroupDto groupDto : groupDtos) {
+            List<Long> deviceIds = groupDto.getDeviceList().stream()
+                    .map(t->t.getId())
+                    .collect(toList());
+            List<Long> compressorIds = groupDto.getAirCompressors().stream()
+                    .map(t->t.getId())
+                    .collect(toList());
+            Group group = groupDslRepository.getOneById(groupDto.getId());
+            List<Group> compressors = groupDslRepository.findAllByIds(compressorIds);
+            List<Device> devices = deviceDslRepository.findAllByIds(deviceIds);
+            List<Group> saveCompressors = new ArrayList<>();
 
-                });
-        List<Group> compressors = groupDslRepository.findAllByIds(compressorIds);
-        List<Device> devices = deviceDslRepository.findAllByIds(compressorDeviceIds);
-
-        groupDtos.forEach(t-> {
-            t.getAirCompressors().forEach(k -> {
-                Group compressor = compressors.stream().filter(c -> c.getId().equals(k.getId())).findFirst().get();
-                k.getDevices().forEach(g->{
-                    Device device = devices.stream().filter(c -> c.getId().equals(g.getId())).findFirst().get();
-                    device.setGroup(compressor);
-                });
-            });
-
-        });
-
-//        List<Device> compressorDevices = device
-
-//        List<Long> groupIds = GroupDtos.stream()
-//                .map(t->t.getId())
-//                .collect(toList());
-//
-//        List<Long> compressorIds = new ArrayList<>();
-//        GroupDtos.forEach(t->
-//                compressorIds.addAll(t.getAirCompressors().stream().map(k->k.getId()).collect(toList())));
-
+            updateGroups(groupDto.getAirCompressors());
+        }
         return true;
     }
 }

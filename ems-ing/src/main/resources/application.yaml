@@ -1,5 +1,3 @@
-
-
 server:
   port: 8031
 spring:
@@ -12,11 +10,6 @@ spring:
     initialize-schema=always:
   application:
     name: ems-ing
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: https://login.vetec.dev/auth/realms/vetec/protocol/openid-connect/certs
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://112.216.32.4:3721/ingv3?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
@@ -54,9 +47,5 @@ response:
 #    hibernate:
 #      SQL: debug
 #      type: trace
-logging:
-  level:
-    jdbc.sqlonly: DEBUG ## 이부분 추가.
-    org.springframework.web: DEBUG
-    com.zaxxer.hikari.HikariDataSource: ERROR
+
 

@@ -1,5 +1,6 @@
 package com.markcha.ems.dto.device;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
@@ -16,6 +17,7 @@ import static java.util.stream.Collectors.toList;
 public class DeviceDto {
     private Long id;
     private String name;
+    @JsonIgnore
     private String type;
     private List<TagDto> tags = new ArrayList<>();
     public DeviceDto(Device device) {
