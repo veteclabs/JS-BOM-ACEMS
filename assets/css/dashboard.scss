@@ -225,11 +225,11 @@
     }
 
     .equipment-box {
-      background: $gray-0;
-      color: $gray-5;
+      background: $blue-3;
+      color: $blue-0;
+      border: 1px solid $blue-1;
       border-radius: 4px;
       padding: 8px 12px;
-      border: 1px solid $gray-1;
       margin: 0 0 8px 0;
       cursor: grab;
 
@@ -241,6 +241,11 @@
 
   .no-schedule-li {
     opacity: .5;
+    .equipment-box {
+      background: $gray-1;
+      color: $gray-5;
+      border: 1px solid $gray-2;
+    }
   }
 
   .equipment-box {

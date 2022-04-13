@@ -2,52 +2,54 @@
     <div id="SubContentWrap">
         <div class="row">
             <div class="col-lg-10">
-                <div class="group" v-for="group in groupList">
+                <div class="group" v-for="group in groupList" :key="group.id">
                     <div class="title-box flex-box">
                         <h2>
                             <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
-                            {{group.groupName}}
+                            {{group.name}}
                         </h2>
-                        <button class="button setting-button" @click="settingAirCompressorModalOpen()">TP</button>
+                        <button class="button setting-button" @click="groupModalOpen(group.id)">
+                            <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"/>
+                        </button>
                     </div>
                     <div class="row group-content">
                         <div class="col-lg-2">
                             <div class="td-label">압력계</div>
-                            <draggable class="list-group" :list="group.pressure" group="pressure">
-                                <div class="ibox" v-for="device in group.pressure" :key="device.id">
+                            <draggable class="list-group" :list="group.devices.pressure" group="pressure">
+                                <div class="ibox" v-for="device in group.devices.pressure" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
                                         <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
                                     </div>
                                 </div>
-                                <div v-if="group.pressure.length === 0">등록된 압력계가 없습니다.</div>
+                                <div v-if="group.devices.pressure.length === 0">등록된 압력계가 없습니다.</div>
                             </draggable>
                             <div class="td-label">온도계</div>
-                            <draggable class="list-group" :list="group.temp" group="temp">
-                            <div class="ibox" v-for="device in group.temp" :key="device.id">
-                                <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
-                                    <div>{{device.name}}</div>
-                                    <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
-                                </div>
-                            </div>
-                                <div v-if="group.temp.length === 0">온도계가 없습니다.</div>
-                            </draggable>
-                            <div class="td-label">유량계</div>
-                            <draggable class="list-group" :list="group.flow" group="flow">
-                                <div class="ibox" v-for="device in group.flow" :key="device.id">
+                            <draggable class="list-group" :list="group.devices.temperature" group="temperature">
+                                <div class="ibox" v-for="device in group.devices.temperature" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
                                         <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
                                     </div>
                                 </div>
-                                <div v-if="group.flow.length === 0">유량계가 없습니다.</div>
+                                <div v-if="group.devices.temperature.length === 0">온도계가 없습니다.</div>
+                            </draggable>
+                            <div class="td-label">유량계</div>
+                            <draggable class="list-group" :list="group.devices.flow" group="flow">
+                                <div class="ibox" v-for="device in group.devices.flow" :key="device.id">
+                                    <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
+                                        <div>{{device.name}}</div>
+                                        <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                    </div>
+                                </div>
+                                <div v-if="group.devices.flow.length === 0">유량계가 없습니다.</div>
                             </draggable>
                         </div>
                         <div class="col-lg-8">
                             <div class="td-label">공기압축기</div>
                             <div class="row">
-                                <draggable class="list-group" :list="group.airCompressor" group="airCompressor">
-                                    <div v-for="device in group.airCompressor" :key="device.id" class="col-lg-3">
+                                <draggable class="list-group" :list="group.airCompressors" group="airCompressor">
+                                    <div v-for="device in group.airCompressors" :key="device.id" class="col-lg-3">
                                         <div class="ibox">
                                             <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                                                 <nuxt-link :to="`/dashboard/${device.id}`">
@@ -72,11 +74,10 @@
                                                     </div>
                                                 </div>
                                                 <ul class="tag-box">
-                                                    <li v-for="tag in airTagList" :key="tag.id">
-                                                        <div class="tagname">{{tag.name}}</div>
+                                                    <li v-for="tag in device.tags" :key="tag.id">
+                                                        <div class="tagname">{{tag.description}}</div>
                                                         <div>
-                                                            {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`,
-                                                            'Value')}}
+                                                            {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
                                                             {{tag.unit}}
                                                         </div>
                                                     </li>
@@ -84,7 +85,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-if="group.airCompressor.length === 0">공기압축기가 없습니다.</div>
+                                    <div v-if="group.airCompressors.length === 0">공기압축기가 없습니다.</div>
                                 </draggable>
                             </div>
                         </div>
@@ -105,14 +106,14 @@
                         <div v-if="freeGroupList.pressure.length === 0">압력계가 없습니다.</div>
                     </draggable>
                     <div class="td-label">온도계</div>
-                    <draggable class="list-group" :list="freeGroupList.temp" group="temp">
-                        <div class="ibox" v-for="device in freeGroupList.temp" :key="device.id">
+                    <draggable class="list-group" :list="freeGroupList.temperature" group="temperature">
+                        <div class="ibox" v-for="device in freeGroupList.temperature" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
                                 <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
                             </div>
                         </div>
-                        <div v-if="freeGroupList.temp.length === 0">온도계가 없습니다.</div>
+                        <div v-if="freeGroupList.temperature.length === 0">온도계가 없습니다.</div>
                     </draggable>
                     <div class="td-label">유량계</div>
                     <draggable class="list-group" :list="freeGroupList.flow" group="flow">
@@ -124,47 +125,10 @@
                         </div>
                         <div v-if="freeGroupList.flow.length === 0">유량계가 없습니다.</div>
                     </draggable>
-                    <div class="td-label">공기압축기</div>
-                    <draggable class="list-group" :list="freeGroupList.airCompressor" group="airCompressor">
-                        <div v-for="device in freeGroupList.airCompressor" :key="device.id">
-                            <div class="ibox">
-                                <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
-                                    <nuxt-link :to="`/dashboard/${device.id}`">
-                                        <h3>{{device.name}}</h3>
-                                    </nuxt-link>
-                                    <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
-                                         class="setting-btn"
-                                         @click="settingModalOpen(device.id)"/>
-                                </div>
-                                <div class="ibox-content">
-                                    <div class="group-state flex-box">
-                                        <div>
-                                            <span>상태</span>
-                                            <div :class="`${device.state} device-state`">{{device.state}}</div>
-                                        </div>
-                                        <div class="percent">
-                                            <span>부하율</span>
-                                            <h3>{{tagVal | pickValue('Name',`${device.unit}_COMP_PCY`, 'Value')}} %</h3>
-                                        </div>
-                                    </div>
-                                    <ul class="tag-box">
-                                        <li v-for="tag in airTagList" :key="tag.id">
-                                            <div class="tagname">{{tag.name}}</div>
-                                            <div>
-                                                {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
-                                                {{tag.unit}}
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="freeGroupList.airCompressor.length === 0">공기압축기가 없습니다.</div>
-                    </draggable>
                 </div>
             </div>
         </div>
-        <settingAirCompressorModal ref="settingAirCompressorModal" v-bind:propsdata="TPModalData"/>
+        <editGroupModal ref="editGroupModal" v-bind:propsdata="groupModalData"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
@@ -174,7 +138,7 @@
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
-    import settingAirCompressorModal from '~/components/settingModal/settingAirCompressorModal.vue';
+    import editGroupModal from '~/components/settingModal/editGroupModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import TPArray from '~/assets/data/TPCode.json';
     import draggable from 'vuedraggable';
@@ -192,7 +156,7 @@
             dayjs,
             Loading,
             settingEquipmentModal,
-            settingAirCompressorModal,
+            editGroupModal,
             airCompressorState,
             draggable
         },
@@ -210,92 +174,15 @@
                 settingModalData: {
                     show: false,
                 },
-                TPModalData: {
+                groupModalData: {
                     show: false,
                 },
                 tagVal: '',
-                groupList: [
-                    {
-                        id: 1, groupName: 'groupA',
-                        airCompressor: [
-                            {
-                                id: 1,
-                                unit: 'U001',
-                                state: 'RUN',
-                                alarm: '',
-                                equipmentId: 'ingersollrand_rm55',
-                                name: 'Ingersoll Rand RM55 -1'
-                            },
-                            {
-                                id: 2,
-                                unit: 'U002',
-                                state: 'STOP',
-                                alarm: '',
-                                equipmentId: 'ingersollrand_rm55',
-                                name: 'Ingersoll Rand RM55 -2'
-                            },
-                        ],
-                        pressure: [
-                            {id: 1, unit: "U007", name: '압력계#1'}
-                        ],
-                        temp: [
-                            {id: 1, unit: "U007", name: '온도계#2'}
-                        ],
-                        flow: [
-                            {id: 1, unit: "U007", name: '유량계#2'}
-                        ]
-                    },
-                    {
-                        id: 2, groupName: 'groupB',
-                        airCompressor: [
-                            {
-                                id: 3,
-                                unit: 'U003',
-                                state: 'LOAD',
-                                alarm: '',
-                                equipmentId: 'ingersollrand_rm55',
-                                name: 'Ingersoll Rand RM55 -3'
-                            },
-                            {
-                                id: 4,
-                                unit: 'U004',
-                                state: 'UNLOAD',
-                                alarm: '온도 2단계 알람이 발생했습니다.',
-                                equipmentId: 'ingersollrand_rm55',
-                                name: 'Ingersoll Rand RM55 -4'
-                            },
-                        ],
-                        pressure: [
-                            {id: 1, unit: "U008", name: '압력계#2'}
-                        ],
-                        temp: [
-                            {id: 1, unit: "U007", name: '온도계#2'}
-                        ],
-                        flow: [
-                            {id: 1, unit: "U007", name: '유량계#2'}
-                        ]
-                    },
-                ],
+                groupList: [],
                 freeGroupList: {
-                    airCompressor: [
-                        {
-                            id: 1,
-                            unit: 'U001',
-                            state: 'RUN',
-                            alarm: '',
-                            equipmentId: 'ingersollrand_rm55',
-                            name: 'Ingersoll Rand RM55 -1'
-                        },
-                    ],
-                    pressure: [
-                        {id: 1, unit: "U007", name: '압력계#3'}
-                    ],
-                    temp: [
-                        {id: 1, unit: "U007", name: '온도계#2'}
-                    ],
-                    flow: [
-                        {id: 1, unit: "U007", name: '유량계#2'}
-                    ]
+                    pressure: [],
+                    temperature: [],
+                    flow: []
                 },
                 airTagList: [
                     {id: 1, name: '패키치 배출압력', tagName: 'COMP_PDP', unit: ''},
@@ -317,7 +204,7 @@
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
-            this.getSubstationAlarm();
+            this.getGroup();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -331,14 +218,32 @@
                         vm.msgData.msg = error;
                     });
             },
-            async getSubstationAlarm() {
+            async getGroup() {
                 const vm = this;
-                axios.get('/api/substation/alarm')
-                    .then((res) => {
-                        if (res.data.code === 1) {
-                            vm.alarmList = res.data.value;
-                        }
-                    }).catch((error) => {
+                axios({
+                    method: 'get',
+                    url: '/api/groups',
+                    headers: {
+                        setting: false,
+                    }
+                }).then((res) => {
+                    vm.groupList = res.data
+                }).catch((error) => {
+                    vm.msgData.msg = error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+
+
+                axios({
+                    method: 'get',
+                    url: '/api/orphans',
+                    headers: {
+                        setting: false,
+                    }
+                }).then((res) => {
+                    vm.freeGroupList = res.data
+                }).catch((error) => {
                     vm.msgData.msg = error;
                 }).finally(() => {
                     vm.loadingData.show = false;
@@ -394,9 +299,9 @@
                 this.$refs.settingEquipmentModal.createdModal(id);
                 this.settingModalData.show = true;
             },
-            settingAirCompressorModalOpen() {
-                this.TPModalData.show = true;
-                this.$refs.settingAirCompressorModal.getTP();
+            groupModalOpen(id) {
+                this.groupModalData.show = true;
+                this.$refs.editGroupModal.updateModal(id);
             },
             getProgressBarValue(unit) {
                 const vm = this;

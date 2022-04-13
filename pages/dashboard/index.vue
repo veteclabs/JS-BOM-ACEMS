@@ -147,7 +147,6 @@
                 </div>
             </div>
         </div>
-        <settingAirCompressorModal ref="settingAirCompressorModal" v-bind:propsdata="TPModalData"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
@@ -157,7 +156,6 @@
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
-    import settingAirCompressorModal from '~/components/settingModal/settingAirCompressorModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import TPArray from '~/assets/data/TPCode.json';
 
@@ -174,7 +172,6 @@
             dayjs,
             Loading,
             settingEquipmentModal,
-            settingAirCompressorModal,
             airCompressorState
         },
         data() {
