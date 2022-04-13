@@ -113,10 +113,13 @@ public class GroupController {
     }
     @GetMapping(value="/groups", headers = "setting=false")
     public List<GroupDto> show() throws JsonProcessingException {
+
         try {
-        return groupDslRepository.findAllGroupJoinTags().stream()
-                .map((group)->new GroupDto(group, true))
-                .collect(toList());
+            List<String> typeList = new ArrayList<>();
+
+            return groupDslRepository.findAllGroupJoinTags().stream()
+                    .map((group)->new GroupDto(group, typeList, true))
+                    .collect(toList());
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

@@ -12,7 +12,7 @@ public enum EquipmentType {
     FLOW_METER("유량계", "flow"),
     THERMO_METER("온도계", "temperature"),
     HYGRO_METER("습도계", "humidity"),
-    THERMO_HYGROMETER("온습도계", "e");
+    THERMO_HYGROMETER("온습도계", "humtemperature");
     private String description;
     private String nickname;
 }

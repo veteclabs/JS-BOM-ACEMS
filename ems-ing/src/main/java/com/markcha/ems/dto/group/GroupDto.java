@@ -40,7 +40,7 @@ public class GroupDto {
         this.devices = null;
         this.airCompressors = null;
     }
-    public GroupDto(Group group, Boolean isParent) {
+    public GroupDto(Group group, List<String> typeList, Boolean isParent) {
         this.id = group.getId();
         this.name = group.getName();
         this.schedule = null;
@@ -51,7 +51,7 @@ public class GroupDto {
         }
         if (!isNull(group.getChildren())) {
             this.airCompressors = group.getChildren().stream()
-                    .map(cg-> new GroupDto(cg, false))
+                    .map(cg-> new GroupDto(cg,typeList, false))
                     .collect(toList());
         }
         if(isParent == false) {

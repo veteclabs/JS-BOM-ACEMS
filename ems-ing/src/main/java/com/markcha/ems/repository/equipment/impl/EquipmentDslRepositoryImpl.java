@@ -2,21 +2,20 @@ package com.markcha.ems.repository.equipment.impl;
 
 import com.markcha.ems.domain.Equipment;
 import com.markcha.ems.domain.EquipmentType;
-import com.markcha.ems.domain.QEquipment;
-import com.markcha.ems.repository.equipment.EquipmentRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
-import java.util.Objects;
+import java.util.List;
 
 import static com.markcha.ems.domain.QEquipment.equipment;
+import static com.querydsl.core.types.Projections.constructor;
 import static java.util.Objects.isNull;
 
 @Repository
-public class EquipmentDslRepositoryImpl implements EquipmentRepository {
+public class EquipmentDslRepositoryImpl  {
     private final EntityManager entityManager;
     private final JPAQueryFactory queryFactory;
 
@@ -25,7 +24,6 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
         this.entityManager = entityManager;
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
-    @Override
     public Equipment getOneByTypeAndModel(String type, String model) {
         System.out.println(type);
         System.out.println(model);
@@ -45,7 +43,6 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
                         modelEq)
                 .fetchOne();
     }
-    @Override
     public Equipment getOneById(Long id) {
         return queryFactory.select(equipment)
                 .from(equipment)
@@ -53,7 +50,6 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
                         equipment.id.eq(id))
                 .fetchOne();
     }
-    @Override
     public Equipment getOneByType(EquipmentType type) {
         return queryFactory.select(equipment)
                 .from(equipment)
@@ -61,5 +57,11 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
                         equipment.type.eq(type))
                 .limit(1)
                 .fetchOne();
+    }
+    public List<EquipmentType> getTpyList() {
+        return queryFactory.select(
+                constructor(EquipmentType.class, equipment.type))
+                .from(equipment)
+                .fetch();
     }
 }
