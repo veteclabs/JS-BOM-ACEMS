@@ -134,7 +134,7 @@ public class GroupDslRepositoryImpl{
                 .where(group.id.in(ids))
                 .fetch();
     }
-    private List<Tag> getTagsByDeviceIds(List<Long> deviceIds) {
+    public List<Tag> getTagsByDeviceIds(List<Long> deviceIds) {
         return query.selectFrom(tag).distinct()
                 .join(tag.device, device).fetchJoin()
                 .where(

@@ -3,6 +3,7 @@ package com.markcha.ems.dto.device;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.EquipmentType;
+import com.markcha.ems.domain.Group;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,14 +20,29 @@ public class DeviceDto {
     private Long id;
     private String name;
     @JsonIgnore
+    private Long deviceId;
+    @JsonIgnore
     private EquipmentType type;
     private List<TagDto> tags = new ArrayList<>();
     public DeviceDto(Device device) {
         this.id = device.getId();
         this.name = device.getName();
+        this.deviceId = device.getId();
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
         if (!isNull(device.getTagList())) {
             this.tags = device.getTagList();
         }
+    }
+    public DeviceDto(Device device, Boolean forGroup) {
+        if(!isNull(device.getGroup())) {
+            this.id = device.getGroup().getId();
+            this.name = device.getGroup().getName();
+        }
+        this.deviceId = device.getId();
+        if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
+        if (!isNull(device.getTagList())) {
+            this.tags = device.getTagList();
+        }
+
     }
 }
