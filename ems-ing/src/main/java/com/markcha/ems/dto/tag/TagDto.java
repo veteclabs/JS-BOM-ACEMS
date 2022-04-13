@@ -17,10 +17,12 @@ public class TagDto {
     private String tagName;
     private Double value;
     private String unit;
+    private String description;
     @JsonIgnore
     private Long deviceId;
     public TagDto(Tag tag) {
         this.tagName = tag.getTagName();
+        this.description = tag.getTagDescription();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
     }

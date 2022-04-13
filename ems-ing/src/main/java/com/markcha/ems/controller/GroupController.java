@@ -172,6 +172,19 @@ public class GroupController {
         groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);
     }
+//    @DeleteMapping(value="/groups")
+//    public ApiResponseDto updateAll(
+//            @RequestBody List<Long> ids
+//    ) {
+//        groupInsertDtos.stream()
+//                .forEach(t -> {
+//                    List<DeviceDto> devices = new ArrayList<>();
+//                    t.getDevices().forEach((key, deviceDtos)-> devices.addAll(deviceDtos));
+//                    t.setDeviceList(devices);
+//                });
+//        groupService.updateGroups(groupInsertDtos);
+//        return new ApiResponseDto(dbUpdateMsg);
+//    }
     @Data
     @NoArgsConstructor
     public static class GroupInsertDto {
