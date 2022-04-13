@@ -1,10 +1,7 @@
 package com.markcha.ems.domain;
 
 import com.markcha.ems.dto.tag.TagDto;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -17,6 +14,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name ="device")
 public class Device {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,4 +68,6 @@ public class Device {
 
     @Transient
     private List<TagDto> tagList = new ArrayList<>();
+    @Transient
+    private TagDto pressure;
 }

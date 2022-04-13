@@ -1,5 +1,6 @@
 package com.markcha.ems.dto.week;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.markcha.ems.domain.Week;
 import lombok.AllArgsConstructor;
 import lombok.Data;

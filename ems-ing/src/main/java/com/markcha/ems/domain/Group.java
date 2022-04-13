@@ -66,4 +66,6 @@ public class Group {
         Group group = (Group) o;
         return Objects.equals(id, group.id);
     }
+    @Transient
+    private Device tagetDevice;
 }

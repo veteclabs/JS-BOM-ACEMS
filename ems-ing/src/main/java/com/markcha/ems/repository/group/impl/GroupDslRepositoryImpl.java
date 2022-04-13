@@ -28,8 +28,7 @@ import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.compare;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @Repository
 public class GroupDslRepositoryImpl{
@@ -106,6 +105,70 @@ public class GroupDslRepositoryImpl{
                 .orderBy(group.id.asc())
                 .fetch();
     }
+    public List<Group> findAllJoinScheduleByScheduleId(Long id) {
+        List<Group> groups = query.selectFrom(group).distinct()
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .where(
+                        group.schedule.id.eq(id)
+                ).fetch();
+        List<Long> groupIds = groups.stream()
+                .map(t -> t.getId())
+                .collect(toList());
+        List<Device> devices = query.selectFrom(device)
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .where(
+                        device.group.id.in(groupIds)
+                        , tag.type.eq("BAR")
+                ).fetch();
+
+        List<Long> deviceIds = devices.stream()
+                .map(t->t.getId())
+                .collect(toList());
+
+        List<TagDto> tags = getTagsByDeviceIdsOnlyBar(deviceIds).stream()
+                .map(TagDto::new)
+                .collect(toList());
+        // webaccess 태그 이름으로 조회 //
+        List<String> tagNames = tags.stream()
+                .map(k -> k.getTagName())
+                .collect(toList());
+        try {
+            List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
+
+            tags.forEach(a -> {
+                List<JsonNode> tags2 = tagValues.stream()
+                        .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
+                        .collect(toList());
+                if(!isNull(tags2) && tags2.size() == 1) {
+                    a.setValue(tags2.get(0).get("Value").doubleValue());
+                }
+            });
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        devices.forEach(t-> {
+            tags.forEach(k->{
+                if(k.getDeviceId().equals(t.getId())) {
+                    t.setPressure(k);
+                }
+            });
+        });
+        groups.forEach(t-> {
+            devices.forEach(k->{
+                if(k.getGroup().getId().equals(t.getId())) {
+                    t.setTagetDevice(k);
+                }
+            });
+        });
+
+        return groups;
+    }
     private Group getRootGroup(BooleanExpression findById) {
         return query.select(group)
                 .from(group).distinct()
@@ -148,6 +211,15 @@ public class GroupDslRepositoryImpl{
                         ,device.id.in(deviceIds))
                 .fetch();
     }
+    public List<Tag> getTagsByDeviceIdsOnlyBar(List<Long> deviceIds) {
+        return query.selectFrom(tag).distinct()
+                .join(tag.device, device).fetchJoin()
+                .where(
+                         tag.showAble.eq(true)
+                        ,tag.type.eq("BAR")
+                        ,device.id.in(deviceIds))
+                .fetch();
+    }
     public List<Group> findAllGroupJoinTags() throws JsonProcessingException {
         List<Group> groups = getGroups();
         List<Long> deviceIds = new ArrayList<>();
@@ -164,6 +236,7 @@ public class GroupDslRepositoryImpl{
                 .collect(toList());
         try {
             List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
+
             tags.forEach(a -> {
                 List<JsonNode> tags2 = tagValues.stream()
                         .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
@@ -175,7 +248,7 @@ public class GroupDslRepositoryImpl{
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        // -----------------------------------//
+
         Map<Long, List<TagDto>> groupByTag = tags.stream()
                 .collect(groupingBy(t -> t.getDeviceId()));
         groups.forEach(g->{
@@ -184,6 +257,7 @@ public class GroupDslRepositoryImpl{
                     d.setTagList(groupByTag.get(d.getId()));
                 }));
         });
+        // -----------------------------------//
         return groups;
     }
     private List<Group> getChildGroups(List<Long> parentGroupIds) {

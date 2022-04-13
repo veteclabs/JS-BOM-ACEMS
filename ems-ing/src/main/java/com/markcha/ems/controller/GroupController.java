@@ -188,6 +188,7 @@ public class GroupController {
         private ScheduleDto schedule;
     }
     @Data
+    @NoArgsConstructor
     public static class GroupSearchDto {
         private Integer level;
         private Long energyId;

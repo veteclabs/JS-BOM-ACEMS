@@ -1,5 +1,6 @@
 package com.markcha.ems.dto.dayofweek;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.markcha.ems.domain.DayOfWeek;
 import com.markcha.ems.domain.Week;
 import lombok.AllArgsConstructor;
@@ -16,4 +17,5 @@ public class DayOfWeekDto {
         this.id = dayOfWeek.getId();
         this.name = dayOfWeek.getName();
     }
+
 }
