@@ -11,10 +11,7 @@ import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
@@ -31,7 +28,7 @@ public class GroupDto {
     @JsonIgnore
     private List<DeviceDto> deviceList;
     private List<GroupDto> airCompressors;
-    Map<String, List<DeviceDto>> devices;
+    Map<String, List<DeviceDto>> devices = new HashMap<>();
     private List<TagDto> tags = new ArrayList<>();
     public GroupDto(Group group) {
         this.id = group.getId();
@@ -57,8 +54,14 @@ public class GroupDto {
         if(isParent == false) {
             airCompressors = null;
         }
+
         devices = this.deviceList.stream()
                 .collect(groupingBy(t -> t.getType().getNickname()));
+        typeList.forEach(t->{
+            if(!devices.keySet().contains(t)) {
+                this.devices.put(t, new ArrayList<>());
+            }
+        });
         if(devices.containsKey("airCompressor")) {
             DeviceDto compressor = devices.get("airCompressor").get(0);
             devices.remove("airCompressor");

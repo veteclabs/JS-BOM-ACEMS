@@ -72,6 +72,7 @@ public class GroupController {
     public Map<String, List<DeviceDto>> orphans() {
         List<DeviceDto> devices = new ArrayList<>();
         List<Long> deviceIds = new ArrayList<>();
+
         devices.addAll(deviceDslRepository.findAllAirOrphs().stream()
                 .map(t->{
                     deviceIds.add(t.getId());
@@ -108,15 +109,30 @@ public class GroupController {
         Map<Long, List<TagDto>> groupByTag = tags.stream()
                 .collect(groupingBy(t -> t.getDeviceId()));
         devices.forEach(t->t.setTags(groupByTag.get(t.getDeviceId())));
-        return devices.stream()
+
+        Map<String, List<DeviceDto>> collect = devices.stream()
                 .collect(groupingBy(t -> t.getType().getNickname()));
+        List<String> typeList = new ArrayList<>();
+        typeList.add("power");
+        typeList.add("flow");
+        typeList.add("pressure");
+        typeList.add("temperature");
+        typeList.forEach(t->{
+            if(!collect.keySet().contains(t)) {
+                collect.put(t, new ArrayList<>());
+            }
+        });
+        return collect;
     }
     @GetMapping(value="/groups", headers = "setting=false")
     public List<GroupDto> show() throws JsonProcessingException {
 
         try {
             List<String> typeList = new ArrayList<>();
-
+            typeList.add("power");
+            typeList.add("flow");
+            typeList.add("pressure");
+            typeList.add("temperature");
             return groupDslRepository.findAllGroupJoinTags().stream()
                     .map((group)->new GroupDto(group, typeList, true))
                     .collect(toList());
