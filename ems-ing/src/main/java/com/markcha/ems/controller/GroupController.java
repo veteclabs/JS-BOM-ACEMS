@@ -150,7 +150,7 @@ public class GroupController {
                     t.getDevices().forEach((key, deviceDtos)-> devices.addAll(deviceDtos));
                     t.setDeviceList(devices);
                 });
-        groupInsertDtos.forEach(t-> System.out.println(t.getDeviceList()));
+        groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);
     }
     @Data

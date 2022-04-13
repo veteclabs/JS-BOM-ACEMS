@@ -54,12 +54,18 @@ public class GroupDslRepositoryImpl{
     }
     
     public Group getOneById(Long id) {
-        return query.select(group)
-                .from(group)
+        return query.selectFrom(group)
                 .where(group.id.eq(id))
                 .fetchOne();
     }
-
+    public Group getOneJoinChildsAndDevicesById(Long id) {
+        QGroup childGroup = new QGroup("cg");
+        return query.selectFrom(group)
+                .leftJoin(group.children, childGroup).fetchJoin()
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .where(group.id.eq(id))
+                .fetchOne();
+    }
     
     public Group getOneByDeviceId(Long id) {
         return query.select(group)
@@ -201,7 +207,9 @@ public class GroupDslRepositoryImpl{
     }
     
     public List<Group> findAllByIds(List<Long> ids) {
-        return query.selectFrom(group).where(group.id.in(ids)).fetch();
+        return query.selectFrom(group)
+                .where(group.id.in(ids))
+                .fetch();
     }
     
     public List<Group> findAllJoinSchedule() {

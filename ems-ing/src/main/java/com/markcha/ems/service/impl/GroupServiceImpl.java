@@ -21,10 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,6 +42,7 @@ public class GroupServiceImpl {
     private final OrderDataRepository orderDataRepository;
     private final OrderDslRepositoryImpl orderDslRepository;
     private final DeviceDslRepositoryImpl deviceDslRepository;
+    private final DeviceDataRepository deviceDataRepository;
     public Boolean createGruops(GroupInsertDto groupInsertDto) {
         Group newGroup = new Group();
         newGroup.setName(groupInsertDto.getName());
@@ -171,18 +169,40 @@ public class GroupServiceImpl {
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
         for (GroupDto groupDto : groupDtos) {
-            List<Long> deviceIds = groupDto.getDeviceList().stream()
-                    .map(t->t.getId())
-                    .collect(toList());
-            List<Long> compressorIds = groupDto.getAirCompressors().stream()
-                    .map(t->t.getId())
-                    .collect(toList());
-            Group group = groupDslRepository.getOneById(groupDto.getId());
-            List<Group> compressors = groupDslRepository.findAllByIds(compressorIds);
-            List<Device> devices = deviceDslRepository.findAllByIds(deviceIds);
-            List<Group> saveCompressors = new ArrayList<>();
-
             updateGroups(groupDto.getAirCompressors());
+            List<Long> newDeviceIds = groupDto.getDeviceList().stream()
+                    .map(t->t.getId())
+                    .collect(toList());
+            List<Long> newCompressorIds = groupDto.getAirCompressors().stream()
+                    .map(t->t.getId())
+                    .collect(toList());
+            Group group = groupDslRepository.getOneJoinChildsAndDevicesById(groupDto.getId());
+
+
+            List<Group> ordCompressors = new ArrayList<>(group.getChildren());
+            List<Device> ordDevices = group.getDeviceSet();
+            List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
+            List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
+
+            group.setChildren(null);
+            ordCompressors.forEach(t->t.setParent(null));
+            group.setDeviceSet(null);
+            ordDevices.forEach(t->t.setGroup(null));
+
+
+            groupDataRepository.save(group);
+            groupDataRepository.saveAll(ordCompressors);
+            deviceDataRepository.saveAll(ordDevices);
+
+
+            group.setChildren(new HashSet<>(newCompressors));
+            newCompressors.forEach(t->t.setParent(group));
+            group.setDeviceSet(newDevices);
+            newDevices.forEach(t->t.setGroup(group));
+
+            groupDataRepository.save(group);
+            groupDataRepository.saveAll(ordCompressors);
+            deviceDataRepository.saveAll(ordDevices);
         }
         return true;
     }
