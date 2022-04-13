@@ -2,6 +2,7 @@ package com.markcha.ems.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.QEnergy;
 import com.markcha.ems.domain.QEquipment;
 import com.markcha.ems.domain.QTag;
@@ -106,7 +107,7 @@ public class GroupController {
         private Integer level;
         private Long energyId;
         private Boolean detail;
-        private String equipmentType;
+        private EquipmentType equipmentType;
         private String tagType;
         private Boolean isUsage;
 
@@ -118,7 +119,7 @@ public class GroupController {
         private BooleanExpression tagEqType;
         @JsonIgnore
         private BooleanExpression tagEqIsUsage;
-        public GroupSearchDto(Integer level, Long energyId, Boolean detail, String equipmentType, String tagType, Boolean isUsage) {
+        public GroupSearchDto(Integer level, Long energyId, Boolean detail, EquipmentType equipmentType, String tagType, Boolean isUsage) {
             this.level = level;
             this.energyId = energyId;
             this.detail = detail;

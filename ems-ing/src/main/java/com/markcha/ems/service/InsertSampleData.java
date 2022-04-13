@@ -1,6 +1,7 @@
 package com.markcha.ems.service;
 
 import com.markcha.ems.domain.Device;
+import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.Tag;
 import com.markcha.ems.domain.TagValue;
 import com.markcha.ems.repository.TagValueDataRepository;
@@ -19,13 +20,13 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class InsertSampleData {
     private final TagValueDataRepository tagValueDataRepository;
-    public List<Tag> createTags(String type, Device device) {
+    public List<Tag> createTags(EquipmentType type, Device device) {
 
         List<Tag> tags = new ArrayList<>();
         String deviceUnit = new String(String.format("%03d", device.getId().intValue()) + "_");
 
         switch(type) {
-            case "compressor":
+            case AIR_COMPRESSOR:
                 Tag rpm = new Tag();
                 rpm.setIsAlarm(false);
                 rpm.setIsTrend(true);
@@ -102,7 +103,7 @@ public class InsertSampleData {
                 tags.add(airTemp);
                 break;
 
-            case "전력":
+            case POWER_METER:
                 Tag elect = new Tag();
                 elect.setIsAlarm(false);
                 elect.setIsTrend(false);
@@ -119,7 +120,7 @@ public class InsertSampleData {
                 tags.add(elect);
                 break;
 
-            case "유량계":
+            case FLOW_METER:
                 Tag bar2 = new Tag();
                 bar2.setIsAlarm(false);
                 bar2.setIsTrend(false);
@@ -136,7 +137,7 @@ public class InsertSampleData {
                 tags.add(bar2);
                 break;
 
-            case "온도계":
+            case THERMO_METER:
                 Tag temp = new Tag();
                 temp.setIsAlarm(false);
                 temp.setIsTrend(true);
@@ -153,7 +154,7 @@ public class InsertSampleData {
                 tags.add(temp);
                 break;
 
-            case "습도계":
+            case HYGRO_METER:
                 Tag hum = new Tag();
                 hum.setIsAlarm(false);
                 hum.setIsTrend(true);

@@ -1,6 +1,7 @@
 package com.markcha.ems.repository.equipment.impl;
 
 import com.markcha.ems.domain.Equipment;
+import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.QEquipment;
 import com.markcha.ems.repository.equipment.EquipmentRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -26,10 +27,12 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
     }
     @Override
     public Equipment getOneByTypeAndModel(String type, String model) {
+        System.out.println(type);
+        System.out.println(model);
         BooleanExpression typeEq = null;
         BooleanExpression modelEq = null;
         if(!isNull(type)) {
-            typeEq = equipment.type.eq(type);
+            typeEq = equipment.description.eq(type);
         }
         if(!isNull(model)) {
             modelEq = equipment.model.eq(model);
@@ -51,11 +54,12 @@ public class EquipmentDslRepositoryImpl implements EquipmentRepository {
                 .fetchOne();
     }
     @Override
-    public Equipment getOneByType(String type) {
+    public Equipment getOneByType(EquipmentType type) {
         return queryFactory.select(equipment)
                 .from(equipment)
                 .where(
                         equipment.type.eq(type))
+                .limit(1)
                 .fetchOne();
     }
 }

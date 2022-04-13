@@ -19,7 +19,7 @@ public class Equipment {
     @Column(name = "name", length = 150)
     private String name;
     @Column(name = "type", length = 70)
-    private String type;
+    private EquipmentType type;
     @Column(name = "maker", length = 70)
     private String maker;
     @Column(name = "model", length = 70)

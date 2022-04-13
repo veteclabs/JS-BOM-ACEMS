@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -57,16 +58,18 @@ public class GroupDto {
             airCompressors = null;
         }
         devices = this.deviceList.stream()
-                .collect(groupingBy(t -> t.getType()));
-//        if (devices.keyset())
-        if(devices.containsKey("compressor")) {
-            DeviceDto compressor = devices.get("compressor").get(0);
-            devices.remove("compressor");
+                .collect(groupingBy(t -> t.getType().getNickname()));
+        if(devices.containsKey("airCompressor")) {
+            DeviceDto compressor = devices.get("airCompressor").get(0);
+            devices.remove("airCompressor");
             this.tags = compressor.getTags();
-            System.out.println(compressor);
         } else {
             this.tags = null;
         }
-
+        if(!isNull(this.tags)) {
+            if (this.tags.size() == 0) {
+                this.tags = null;
+            }
+        }
     }
 }

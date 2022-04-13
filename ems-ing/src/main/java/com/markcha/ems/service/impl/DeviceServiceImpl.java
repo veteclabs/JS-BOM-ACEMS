@@ -38,6 +38,7 @@ public class DeviceServiceImpl implements DeviceService {
         Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel());
+        System.out.println(selectedEquipoment);
         Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
         newDevice.setName(deviceInsert.getName());
         newDevice.setEquipment(selectedEquipoment);
@@ -46,7 +47,7 @@ public class DeviceServiceImpl implements DeviceService {
         newDevice.setPt(deviceInsert.getPt());
         newDevice.setVoltage(deviceInsert.getVoltage());
         Device save = deviceDataRepository.save(newDevice);
-        List<Tag> tags = insertSampleData.createTags(deviceInsert.getType(), save);
+        List<Tag> tags = insertSampleData.createTags(selectedEquipoment.getType(), save);
         newDevice.setTags(new HashSet<>(tags));
         deviceDataRepository.save(save);
         return true;

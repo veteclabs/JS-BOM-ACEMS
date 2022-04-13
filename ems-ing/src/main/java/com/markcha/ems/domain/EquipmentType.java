@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum EquipmentType {
     AIR_COMPRESSOR("에어 컴프레셔", "airCompressor"),
-    POWER_METTER("전력계", "power"),
+    POWER_METER("전력계", "power"),
     PRESSURE_GAUGE("압력계", "airCompressor"),
     FLOW_METER("유량계", "flow"),
     THERMO_METER("온도계", "temperature"),

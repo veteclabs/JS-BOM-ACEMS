@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
@@ -108,12 +109,12 @@ public class CompressorServiceImpl implements DeviceService {
 
         // 디바이스 생성 및 그룹과 연
         Device newDevice = new Device();
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(typeName);
+        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         newDevice.setName(compressorInsertDto.getName());
         newDevice.setEquipment(selectedEquipoment);
         newDevice.setGroup(newGroup);
         Device save = deviceDataRepository.save(newDevice);
-        List<Tag> tags = insertSampleData.createTags("compressor", save);
+        List<Tag> tags = insertSampleData.createTags(AIR_COMPRESSOR, save);
         newDevice.setTags(new HashSet<>(tags));
         deviceDataRepository.save(save);
         return true;
@@ -197,7 +198,7 @@ public class CompressorServiceImpl implements DeviceService {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(typeName);
+        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
         deviceDataRepository.save(seletedDevice);

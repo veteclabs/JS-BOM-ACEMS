@@ -31,7 +31,7 @@ public class DeviceDslRepositoryImpl {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public List<Device> findAllTemplcates(String typeName) {
+    public List<Device> findAllTemplcates(EquipmentType typeName) {
         return queryFactory.select(device)
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()
@@ -41,7 +41,7 @@ public class DeviceDslRepositoryImpl {
                 .fetch();
     }
 
-    public List<Device> findAllCompressors(String typeName) {
+    public List<Device> findAllCompressors(EquipmentType typeName) {
         QGroup parentGroup = new QGroup("pGroup");
         QGroup childGroup = new QGroup("cGroup");
         return queryFactory.select(device)

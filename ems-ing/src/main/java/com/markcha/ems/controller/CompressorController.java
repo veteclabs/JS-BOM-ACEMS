@@ -1,5 +1,6 @@
 package com.markcha.ems.controller;
 
+import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -45,7 +47,7 @@ public class CompressorController {
     @GetMapping(value="/compressors")
     public List<CompressorDto> compressors(
     ) {
-        return deviceDslRepository.findAllCompressors("compressor")
+        return deviceDslRepository.findAllCompressors(AIR_COMPRESSOR)
                 .stream()
                 .map(CompressorDto::new)
                 .collect(toList());

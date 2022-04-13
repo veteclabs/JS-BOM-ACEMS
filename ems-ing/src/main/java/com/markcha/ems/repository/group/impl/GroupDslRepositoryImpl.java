@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.*;
 
+import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
 import static com.markcha.ems.domain.QDevice.device;
@@ -78,7 +79,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                          weekMapper.schedule.id.in(scheduleIds)
-                        ,equipment.type.eq("compressor").or(
+                        ,equipment.type.eq(AIR_COMPRESSOR).or(
                                 order1.isNull()
                         )
                 )
@@ -187,7 +188,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                          parentGroup.id.in(parentGroupIds)
-                        ,equipment.type.eq("compressor")
+                        ,equipment.type.eq(AIR_COMPRESSOR)
                 )
                 .fetch();
     }

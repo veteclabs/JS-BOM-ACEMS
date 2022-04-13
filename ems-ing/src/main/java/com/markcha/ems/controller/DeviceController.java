@@ -1,5 +1,6 @@
 package com.markcha.ems.controller;
 
+import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.Voltage;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 
 @RestController
 @RequestMapping("/api")
@@ -49,7 +52,7 @@ public class DeviceController {
     @GetMapping(value="/etcs")
     public List<TemplcateDto> etc(
     ) {
-        return deviceDslRepository.findAllTemplcates("compressor").stream()
+        return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
                 .map(TemplcateDto::new)
                 .collect(Collectors.toList());
     }
