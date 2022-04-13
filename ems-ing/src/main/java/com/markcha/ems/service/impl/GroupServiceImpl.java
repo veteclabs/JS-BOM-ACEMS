@@ -43,6 +43,7 @@ public class GroupServiceImpl {
     private final OrderDslRepositoryImpl orderDslRepository;
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
+    private final ScheduleDataRepository scheduleDataRepository;
     public Boolean createGruops(GroupInsertDto groupInsertDto) {
         Group newGroup = new Group();
         newGroup.setName(groupInsertDto.getName());
@@ -204,6 +205,18 @@ public class GroupServiceImpl {
             groupDataRepository.saveAll(ordCompressors);
             deviceDataRepository.saveAll(ordDevices);
         }
+        return true;
+    }
+    public Boolean deleteGroups(List<Long> groupIds) {
+        List<Group> groups = groupDslRepository.findAllByIds(groupIds);
+        List<Schedule> schedules = new ArrayList<>();
+        groups.forEach(t->{
+            if(!isNull(t.getSchedule())) {
+                schedules.add(t.getSchedule());
+            }
+        });
+        groupDataRepository.deleteAllInBatch(groups);
+        scheduleDataRepository.deleteAllInBatch(schedules);
         return true;
     }
 }
