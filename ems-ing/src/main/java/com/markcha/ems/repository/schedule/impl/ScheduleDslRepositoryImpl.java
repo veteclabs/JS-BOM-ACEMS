@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
+
 import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QSchedule.schedule;
 
@@ -27,5 +29,11 @@ public class ScheduleDslRepositoryImpl {
                 .leftJoin(schedule.groups, group)
                 .where(group.id.eq(id))
                 .fetchOne();
+    }
+
+    public List<Schedule> findAll() {
+        return query.select(schedule)
+                .from(schedule)
+                .fetch();
     }
 }

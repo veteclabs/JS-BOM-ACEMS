@@ -43,7 +43,11 @@ public class GroupServiceImpl {
     private final OrderDslRepositoryImpl orderDslRepository;
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
-    private final ScheduleDataRepository scheduleDataRepository;
+
+
+    private final DayOfWeekMapperDataRepository dayOfWeekMapperDataRepository;
+    private final WeekMapperDataRepository weekMapperDataRepository;
+
     public Boolean createGruops(GroupInsertDto groupInsertDto) {
         Group newGroup = new Group();
         newGroup.setName(groupInsertDto.getName());
@@ -212,7 +216,25 @@ public class GroupServiceImpl {
         List<Schedule> schedules = new ArrayList<>();
         groups.forEach(t->{
             if(!isNull(t.getSchedule())) {
-                schedules.add(t.getSchedule());
+                Schedule schedule = t.getSchedule();
+                schedules.add(schedule);
+                if(!isNull(schedule.getDayOfWeekMappers())) {
+                    dayOfWeekMapperDataRepository.deleteAllInBatch(schedule.getDayOfWeekMappers());
+                }
+                if(!isNull(schedule.getWeekMappers())) {
+                    schedule.getWeekMappers().forEach(z->{
+                        if(!isNull(z.getOrders())) {
+                            orderDataRepository.deleteAllInBatch(z.getOrders());
+                        }
+                    });
+                    weekMapperDataRepository.deleteAllInBatch(schedule.getWeekMappers());
+                }
+
+            }
+            if(!isNull(t.getChildren())) {
+                t.getChildren().forEach(k -> {
+                    k.setParent(null);
+                });
             }
         });
         groupDataRepository.deleteAllInBatch(groups);

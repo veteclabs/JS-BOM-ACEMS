@@ -160,7 +160,7 @@ public class GroupController {
         return new ApiResponseDto(dbUpdateMsg);
     }
     @PutMapping(value="/groups")
-    public ApiResponseDto deleteAll(
+    public ApiResponseDto updateAll(
             @RequestBody List<GroupDto> groupInsertDtos
     ) {
         groupInsertDtos.stream()
@@ -173,7 +173,7 @@ public class GroupController {
         return new ApiResponseDto(dbUpdateMsg);
     }
     @DeleteMapping(value="/groups")
-    public ApiResponseDto updateAll(
+    public ApiResponseDto deleteAll(
             @RequestBody List<Long> ids
     ) {
 

@@ -36,15 +36,13 @@ public class ScheduleController {
 //                .collect(toList());
 //    }
 //
-//    @GetMapping(value="/schedule/{scheduleId")
-//    public List<CompressorDto> schedule(
-//            @PathVariable("compressorId") Long compressorId
-//    ) {
-//        return deviceDslRepository.findAllCompressors(AIR_COMPRESSOR)
-//                .stream()
-//                .map(CompressorDto::new)
-//                .collect(toList());
-//    }
+    @GetMapping(value="/schedule/{scheduleId}")
+    public List<CompressorDto> schedule(
+            @PathVariable("compressorId") Long compressorId
+    ) {
+
+        return null;
+    }
 //
 //    @GetMapping(value="/schedules")
 //    public List<CompressorDto> schedules(
