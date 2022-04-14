@@ -8,29 +8,31 @@
                 if(s.h = 0, 24, s.h) AS #{timeType}
             <if test="usageType.equals('Usage')">
                 ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
-                ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
-                ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
                 <if test="isDuo.equals(true)">
                     ,ifnull(`EY`.`USAGE`, 0)     AS     `kWh`
                 </if>
+                ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+                ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
             </if>
 
             <if test="usageType.equals('TOE')">
                 , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
-                , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneDay}
-                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
                 <if test="isDuo.equals(true)">
                     ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
                 </if>
+                , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneDay}
+                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+
             </if>
 
             <if test="usageType.equals('tCo2')">
                 , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
-                , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneDay}
-                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
                 <if test="isDuo.equals(true)">
                     ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
                 </if>
+                , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneDay}
+                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+
             </if>
 
         FROM
@@ -90,29 +92,32 @@
         s.d AS #{timeType}
         <if test="usageType.equals('Usage')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
-            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneMonth}
-            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ifnull(`EY`.`USAGE`, 0)     AS     `kWh`
             </if>
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneMonth}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+
         </if>
 
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
-            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneMonth}
-            , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
             </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneMonth}
+            , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+
         </if>
 
         <if test="usageType.equals('tCo2')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
-            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneMonth}
-            , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
             </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneMonth}
+            , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+
         </if>
 
         FROM
@@ -188,26 +193,29 @@
         s.m AS #{timeType}
         <if test="usageType.equals('Usage')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
-            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ifnull(`EY`.`USAGE`, 0) AS         `kWh`
             </if>
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneYear}
+
         </if>
 
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
-            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) kWh
             </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+
         </if>
 
         <if test="usageType.equals('tCo2')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
-            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
             <if test="isDuo.equals(true)">
                 ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) kWh
             </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+
         </if>
 
         FROM

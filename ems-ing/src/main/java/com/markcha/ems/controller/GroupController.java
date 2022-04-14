@@ -1,12 +1,10 @@
 package com.markcha.ems.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.markcha.ems.domain.EquipmentType;
-import com.markcha.ems.domain.QEnergy;
-import com.markcha.ems.domain.QEquipment;
-import com.markcha.ems.domain.QTag;
+import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
@@ -22,6 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -117,6 +116,7 @@ public class GroupController {
         typeList.add("flow");
         typeList.add("pressure");
         typeList.add("temperature");
+        typeList.add("airCompressor");
         typeList.forEach(t->{
             if(!collect.keySet().contains(t)) {
                 collect.put(t, new ArrayList<>());
@@ -163,18 +163,20 @@ public class GroupController {
     public ApiResponseDto updateAll(
             @RequestBody List<GroupDto> groupInsertDtos
     ) {
-        groupInsertDtos.forEach(t -> {
-                    List<DeviceDto> devices = new ArrayList<>();
-                    t.getDevices().forEach((key, deviceDtos)-> {
-                        if (!key.equals("airCompressor")) devices.addAll(deviceDtos);
-                    });
-                    t.setDeviceList(devices);
-                    t.getAirCompressors().forEach(k->{
-                        List<DeviceDto> devices2 = new ArrayList<>();
-                        k.getDevices().forEach((key2,deviceDto)->devices2.addAll(deviceDto));
-                        k.setDeviceList(devices2);
-                    });
-                });
+//        groupInsertDtos.forEach(t -> {
+//                    List<DeviceDto> devices = new ArrayList<>();
+//                    t.getDevices().forEach((key, deviceDtos)-> {
+//                        if (!key.equals("airCompressor")) devices.addAll(deviceDtos);
+//                    });
+//                    t.setDeviceList(devices);
+//                    t.getAirCompressors().forEach(k->{
+//                        List<DeviceDto> devices2 = new ArrayList<>();
+//                        k.getDevices().forEach((key2,deviceDto)->devices2.addAll(deviceDto));
+//                        k.setDeviceList(devices2);
+//                    });
+//                });
+        groupInsertDtos.forEach(t->t.setDeviceList(t));
+
         groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);
     }
@@ -202,6 +204,8 @@ public class GroupController {
         private EquipmentType equipmentType;
         private String tagType;
         private Boolean isUsage;
+        private Long deviceIdT;
+
 
         @JsonIgnore
         private BooleanExpression equipmentEqType;
@@ -211,7 +215,9 @@ public class GroupController {
         private BooleanExpression tagEqType;
         @JsonIgnore
         private BooleanExpression tagEqIsUsage;
-        public GroupSearchDto(Integer level, Long energyId, Boolean detail, EquipmentType equipmentType, String tagType, Boolean isUsage) {
+        @JsonIgnore
+        private BooleanExpression deviceEqId;
+        public GroupSearchDto(Integer level, Long energyId, Boolean detail, EquipmentType equipmentType, String tagType, Boolean isUsage, Long deviceId) {
             this.level = level;
             this.energyId = energyId;
             this.detail = detail;
@@ -229,6 +235,10 @@ public class GroupController {
         public void setTagType(String tagType) {
             this.tagType = tagType;
             this.tagEqType = tag.type.eq(tagType);
+        }
+        public void setDevoceIdT(Long deviceIdT) {
+            this.deviceIdT = deviceIdT;
+            this.deviceEqId = QDevice.device.id.eq(deviceIdT);
         }
     }
 }

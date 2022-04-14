@@ -9,6 +9,7 @@ import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -46,21 +47,28 @@ public class DataAnalysisController {
     @GetMapping(value="/data")
     public List<HashMap<String, Object>> create(
             GroupSearchDto groupInsertDto,
-            HistorySearchDto historySearchDto
+            HistorySearchDto historySearchDto,
+            @RequestParam @Nullable Long deviceId
     ) {
+        groupInsertDto.setDeviceIdT(deviceId);
         groupInsertDto.setIsUsage(true);
         groupInsertDto.setEnergyId(null);
         groupInsertDto.setEnergyEqId(null);
         Boolean isDuo = false;
-        if(!isNull(groupInsertDto.getTagType())) {
+        if (!isNull(groupInsertDto.getTagType())) {
             isDuo = groupInsertDto.getTagType().equals("FLOW") ? true : false;
         }
+        if (!isNull(historySearchDto.getUsageType())) {
+            if (historySearchDto.getUsageType().equals("PF")) {
+                groupInsertDto.setTagType("PF");
+                historySearchDto.setUsageType("Usage");
+            }
+        }
+        historySearchDto.setEnergyId(28L);
         groupInsertDto.setEnergyEqId(null);
         historySearchDto.setIsDuo(isDuo);
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
-        System.out.println(groupInsertDto.getTagType());
-        System.out.println(groupInsertDto.getTagEqType());
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
         List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                 .map(t->new GroupQueryDto(t, false))
