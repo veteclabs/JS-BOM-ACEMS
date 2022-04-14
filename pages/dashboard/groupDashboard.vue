@@ -1,7 +1,12 @@
 <template>
     <div id="SubContentWrap">
         <div class="row">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
+                <div class="grid-header" style="padding:0 0 12px 0;">
+                    <button class="button submit-button" @click="submit">저장</button>
+                </div>
+            </div>
+            <div class="col-lg-10 group-overflow-box">
                 <div class="group" v-for="group in groupList" :key="group.id">
                     <div class="title-box flex-box">
                         <h2>
@@ -77,7 +82,8 @@
                                                     <li v-for="tag in device.tags" :key="tag.id">
                                                         <div class="tagname">{{tag.description}}</div>
                                                         <div>
-                                                            {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
+                                                            {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`,
+                                                            'Value')}}
                                                             {{tag.unit}}
                                                         </div>
                                                     </li>
@@ -92,9 +98,14 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-2 group-overflow-box">
                 <div class="group">
-                    <h3>그룹 미지정</h3>
+                    <div class="title-box flex-box">
+                        <h2>
+                            <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
+                            그룹 미지정
+                        </h2>
+                    </div>
                     <div class="td-label">압력계</div>
                     <draggable class="list-group" :list="freeGroupList.pressure" group="pressure">
                         <div class="ibox" v-for="device in freeGroupList.pressure" :key="device.id">
@@ -130,6 +141,7 @@
         </div>
         <editGroupModal ref="editGroupModal" v-bind:propsdata="groupModalData"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
+        <flashModal v-bind:propsdata="msgData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -137,6 +149,7 @@
     import dayjs from 'dayjs';
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
+    import flashModal from '~/components/flashmodal.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import editGroupModal from '~/components/settingModal/editGroupModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
@@ -155,6 +168,7 @@
         components: {
             dayjs,
             Loading,
+            flashModal,
             settingEquipmentModal,
             editGroupModal,
             airCompressorState,
@@ -201,9 +215,9 @@
             },
         },
         mounted() {
-            this.WaLogin();
-            this.getTagValues();
-            this.resetInterval();
+            //this.WaLogin();
+            //this.getTagValues();
+            //this.resetInterval();
             this.getGroup();
             this.loadingData.show = true;
         },
@@ -243,6 +257,23 @@
                     }
                 }).then((res) => {
                     vm.freeGroupList = res.data
+                }).catch((error) => {
+                    vm.msgData.msg = error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
+            async submit() {
+                const vm = this;
+                vm.loadingData.show= true;
+                const params = vm.groupList;
+                axios({
+                    method: 'put',
+                    url: '/api/groups',
+                    data: params
+                }).then((res) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = res.data.message;
                 }).catch((error) => {
                     vm.msgData.msg = error;
                 }).finally(() => {

@@ -309,6 +309,10 @@
 }
 
 
+.group-overflow-box {
+  height:calc(100vh - 350px);
+  overflow:auto;
+}
 .group {
   background-color: rgba(217, 217, 217, 0.4);
   padding: 16px;

@@ -9,8 +9,7 @@
                 <div class="filter-title">
                     <p>
                         <img src="~assets/images/filter/icn_filter_show.svg" alt="filter" width="16" v-if="resetState"/>
-                        <img src="~assets/images/filter/icn_filter_show_hover.svg" alt="filter" width="16"
-                             v-if="!resetState"/>
+                        <img src="~assets/images/filter/icn_filter_show_hover.svg" alt="filter" width="16" v-if="!resetState"/>
                         Filter
                     </p>
                     <a @click="filterReset">Reset</a>
@@ -60,15 +59,27 @@
                             </template>
                         </v-date-picker>
                     </div>
+                    <div v-if="propsdata.tagType">
+                        <h4>에너지원</h4>
+                        <label class="radio-box" v-for="item in tagTypeOption" :key="item.id">
+                            <input type="radio" v-model="searchParams.tagType" :value="item.id" @change="refresh"/>
+                            <div class="radio-circle">
+                                <div class="inner-circle"/>
+                            </div>
+                            <div class="radio-label">{{ item.name }}</div>
+                        </label>
+                    </div>
                     <div v-if="propsdata.usageType">
-                        <h4>에너지원 사용 타입</h4>
-                        <label class="radio-box" v-for="item in usageTypeOption" :key="item.id">
+                        <h4>사용 타입</h4>
+                        <div v-for="item in usageTypeOption" :key="item.id">
+                        <label class="radio-box" v-if="item.tagType.includes(searchParams.tagType)">
                             <input type="radio" v-model="searchParams.usageType" :value="item.id" @change="refresh"/>
                             <div class="radio-circle">
                                 <div class="inner-circle"/>
                             </div>
                             <div class="radio-label">{{ item.name }}</div>
                         </label>
+                        </div>
                     </div>
                     <div v-if="propsdata.equipmentName">
                         <h4>장비</h4>
@@ -115,19 +126,13 @@
                         input: 'YYYY-MM-DD',
                     },
                 },
+                tagTypeOption: [
+                    {id: 'power', name: '전력'},
+                    {id: 'flow', name: '유량'},
+                ],
                 usageTypeOption: [
-                    {
-                        id: 'Usage',
-                        name: '전력사용량',
-                    },
-                    {
-                        id: 'PF',
-                        name: '역률',
-                    },
-                    {
-                        id: 'flow',
-                        name: '유량',
-                    },
+                    {id: 'Usage', name: '사용량', tagType:['power', 'flow']},
+                    {id: 'PF', name: '역률', tagType:['power']},
                 ],
                 equipmentList: [], // 등록된 계측기 리스트,
                 searchParams: {
@@ -137,6 +142,7 @@
                         start: new Date(),
                         end: new Date(),
                     },
+                    tagType :'power',
                     usageType: 'Usage', //에너지원사용량
                     equipmentName: 'AU', //계측기이름
                 },
@@ -147,6 +153,7 @@
                         start: new Date(),
                         end: new Date(),
                     },
+                    tagType :'power',
                     usageType: 'Usage', //에너지원사용량
                     equipmentName: 'AU', //계측기이름
                 },

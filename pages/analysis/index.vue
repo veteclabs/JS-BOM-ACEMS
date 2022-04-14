@@ -241,6 +241,7 @@
                         ],
                     },
                     date: {show: true,},
+                    tagType: {show: true,},
                     usageType: {show: true,},
                     equipmentName: {show: true, type: 'select'},
                 },
