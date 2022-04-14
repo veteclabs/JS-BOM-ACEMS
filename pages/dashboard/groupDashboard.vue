@@ -320,7 +320,7 @@
             },
             async getTagValues() {
                 const vm = this;
-                axios.post('/api/dashboard/port/getTagValue', {
+                axios.post('/api/wa/port/getTagValue', {
                     portId: [1, 2, 3, 4, 5],
                 }, {
                     timeout: vm.intervalTime,

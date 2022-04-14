@@ -385,6 +385,7 @@
                         tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]
                     },
                 ],
+                timeCategories: [],
                 Interval1M: '',
                 interval: '',
                 intervalTime: 5 * 1000,
@@ -406,6 +407,9 @@
             this.removeInterval();
         },
         methods: {
+            getNowTime: function () {
+                this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
+            },
             async WaLogin() {
                 const vm = this;
                 axios.get('/api/WaLogin')
@@ -428,7 +432,7 @@
             },
             async getTagValues() {
                 const vm = this;
-                axios.post('/api/dashboard/port/getTagValue', {
+                axios.post('/api/wa/port/getTagValue', {
                     portId: [1, 2, 3, 4, 5],
                 }, {
                     timeout: vm.intervalTime,
@@ -477,10 +481,6 @@
             settingModalOpen(device) {
                 this.$refs.settingEquipmentModal.updateModal(device);
                 this.settingModalData.show = true;
-            },
-            settingAirCompressorModalOpen() {
-                this.TPModalData.show = true;
-                this.$refs.settingAirCompressorModal.getTP();
             },
             getProgressBarValue(unit) {
                 const vm = this;

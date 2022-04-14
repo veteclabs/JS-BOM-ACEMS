@@ -10,6 +10,7 @@
             <div class="col-lg-4">
                 <div class="ibox">
                     <div class="ibox-title ibox-noborder-title ibox-no-padding-content right">
+
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
                              @click="settingModalOpen(airCompressor[0].id)"/>
@@ -22,12 +23,16 @@
                     <div class="ibox-title">
                         <ul class="modal-info-box">
                             <li>
-                                <div class="title">Model Name</div>
-                                <p>Ingersoll Rand</p>
+                                <div class="title">그룹명</div>
+                                <p>함안 공기압축기 모니터링</p>
                             </li>
                             <li>
-                                <div class="title">Facility Number</div>
-                                <p>12345678</p>
+                                <div class="title">공기압축기명</div>
+                                <p>공기압축기#1</p>
+                            </li>
+                            <li>
+                                <div class="title">Model</div>
+                                <p>Ingersoll Rand</p>
                             </li>
                         </ul>
                     </div>
@@ -415,7 +420,7 @@
             },
             async getTagValues() {
                 const vm = this;
-                axios.post('/api/dashboard/port/getTagValue', {
+                axios.post('/api/wa/port/getTagValue', {
                     portId: [1, 5],
                 }, {
                     timeout: vm.intervalTime,
@@ -431,12 +436,11 @@
                     vm.loadingData.show = false;
                 });
             },
-
             getNowTime: function () {
                 this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
             },
-            settingModalOpen(id) {
-                this.$refs.settingEquipmentModal.createdModal(id);
+            settingModalOpen(device) {
+                this.$refs.settingEquipmentModal.updateModal(device);
                 this.settingModalData.show = true;
             },
             setLiveChart: function () {
