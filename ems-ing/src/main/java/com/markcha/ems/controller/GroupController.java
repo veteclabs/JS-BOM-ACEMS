@@ -236,9 +236,9 @@ public class GroupController {
             this.tagType = tagType;
             this.tagEqType = tag.type.eq(tagType);
         }
-        public void setDevoceIdT(Long deviceIdT) {
-            this.deviceIdT = deviceIdT;
-            this.deviceEqId = QDevice.device.id.eq(deviceIdT);
+        public void setDevoceIdT2(String deviceIdT) {
+            if(!isNull(deviceIdT) && !deviceIdT.equals("AU")) this.deviceIdT = Long.parseLong(deviceIdT);
+            if(!deviceIdT.equals("AU")) this.deviceEqId = QDevice.device.id.eq(this.deviceIdT);
         }
     }
 }

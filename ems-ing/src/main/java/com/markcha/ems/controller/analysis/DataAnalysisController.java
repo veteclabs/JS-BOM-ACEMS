@@ -7,9 +7,9 @@ import com.markcha.ems.mapper.analysis.HistorySearchDto;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
+import com.sun.istack.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -48,9 +48,10 @@ public class DataAnalysisController {
     public List<HashMap<String, Object>> create(
             GroupSearchDto groupInsertDto,
             HistorySearchDto historySearchDto,
-            @RequestParam @Nullable Long deviceId
+            @RequestParam @Nullable String deviceId
     ) {
-        groupInsertDto.setDeviceIdT(deviceId);
+        System.out.println(deviceId);
+        groupInsertDto.setDevoceIdT2(deviceId.replace("\"", ""));
         groupInsertDto.setIsUsage(true);
         groupInsertDto.setEnergyId(null);
         groupInsertDto.setEnergyEqId(null);
