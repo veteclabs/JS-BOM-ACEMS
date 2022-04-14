@@ -9,7 +9,8 @@
                 <div class="filter-title">
                     <p>
                         <img src="~assets/images/filter/icn_filter_show.svg" alt="filter" width="16" v-if="resetState"/>
-                        <img src="~assets/images/filter/icn_filter_show_hover.svg" alt="filter" width="16" v-if="!resetState"/>
+                        <img src="~assets/images/filter/icn_filter_show_hover.svg" alt="filter" width="16"
+                             v-if="!resetState"/>
                         Filter
                     </p>
                     <a @click="filterReset">Reset</a>
@@ -72,27 +73,28 @@
                     <div v-if="propsdata.usageType">
                         <h4>사용 타입</h4>
                         <div v-for="item in usageTypeOption" :key="item.id">
-                        <label class="radio-box" v-if="item.tagType.includes(searchParams.tagType)">
-                            <input type="radio" v-model="searchParams.usageType" :value="item.id" @change="refresh"/>
-                            <div class="radio-circle">
-                                <div class="inner-circle"/>
-                            </div>
-                            <div class="radio-label">{{ item.name }}</div>
-                        </label>
+                            <label class="radio-box" v-if="item.tagType.includes(searchParams.tagType)">
+                                <input type="radio" v-model="searchParams.usageType" :value="item.id"
+                                       @change="refresh"/>
+                                <div class="radio-circle">
+                                    <div class="inner-circle"/>
+                                </div>
+                                <div class="radio-label">{{ item.name }}</div>
+                            </label>
                         </div>
                     </div>
-                    <div v-if="propsdata.equipmentName">
+                    <div v-if="propsdata.deviceId">
                         <h4>장비</h4>
-                        <select v-model="searchParams.equipmentName" @change="refresh"
-                                v-show=" propsdata.equipmentName && propsdata.equipmentName.type === 'select'">
-                            <option v-for="item in equipmentList" :key="item.TagName" v-bind:value="item.TagName">
+                        <select v-model="searchParams.deviceId" @change="refresh"
+                                v-show=" propsdata.deviceId && propsdata.deviceId.type === 'select'">
+                            <option v-for="item in deviceList" :key="item.id" v-bind:value="item.id">
                                 {{ item.name }}
                             </option>
                         </select>
-                        <label v-show=" propsdata.equipmentName && propsdata.equipmentName.type === 'text'">
+                        <label v-show=" propsdata.deviceId && propsdata.deviceId.type === 'text'">
                             <input
                                     type="text"
-                                    v-model="searchParams.equipmentName"
+                                    v-model="searchParams.deviceId"
                                     @keyup="refresh"
                             />
                         </label>
@@ -127,14 +129,16 @@
                     },
                 },
                 tagTypeOption: [
-                    {id: 'power', name: '전력'},
-                    {id: 'flow', name: '유량'},
+                    {id: 'KWH', name: '전력'},
+                    {id: 'FLOW', name: '유량'},
                 ],
                 usageTypeOption: [
-                    {id: 'Usage', name: '사용량', tagType:['power', 'flow']},
-                    {id: 'PF', name: '역률', tagType:['power']},
+                    {id: 'Usage', name: '사용량', tagType: ['KWH', 'FLOW']},
+                    {id: 'PF', name: '역률', tagType: ['KWH']},
+                    {id: 'TOE', name: 'TOE', tagType: ['KWH']},
+                    {id: 'tCo2', name: 'tCo2', tagType: ['KWH']},
                 ],
-                equipmentList: [], // 등록된 계측기 리스트,
+                deviceList: [], // 등록된 계측기 리스트,
                 searchParams: {
                     timeType: 'H', //시간검색타입
                     date: {
@@ -142,9 +146,9 @@
                         start: new Date(),
                         end: new Date(),
                     },
-                    tagType :'power',
+                    tagType: 'KWH',
                     usageType: 'Usage', //에너지원사용량
-                    equipmentName: 'AU', //계측기이름
+                    deviceId: null, //계측기이름
                 },
                 resetParams: {
                     timeType: 'H', //시간검색타입
@@ -153,9 +157,9 @@
                         start: new Date(),
                         end: new Date(),
                     },
-                    tagType :'power',
+                    tagType: 'KWH',
                     usageType: 'Usage', //에너지원사용량
-                    equipmentName: 'AU', //계측기이름
+                    deviceId: null, //계측기이름
                 },
                 resetState: true,
             };
@@ -174,26 +178,28 @@
             },
             getFilter: async function () {
                 const vm = this;
-                axios.get('/api/etcs').then((res) => {
+                axios({
+                    method: 'get',
+                    url: 'api/analysis/data/type',
+                    params: {
+                        type: vm.searchParams.tagType
+                    }
+                }).then((res) => {
                     let result = res.data;
-                    vm.equipmentList = [{
+                    vm.deviceList = [{
                         name: '전체',
-                        TagName: 'AU'
+                        id: null
                     }];
                     result.forEach((item) => {
-                        let target = item.id;
-                        let tagName = '';
-                        let name = '';
+                        let target = item;
                         if (target !== '') {
-                            name = item.name;
-                            tagName = `${target}`;
-                            vm.equipmentList.push({
-                                name: name,
-                                TagName: tagName
+                            vm.deviceList.push({
+                                name: `${target.id}. ${item.name}`,
+                                id: target.id
                             })
                         }
                     });
-                    vm.equipmentName = 'AU';
+                    vm.deviceId = null;
                     vm.filterReset();
                 }).catch((error) => {
                     vm.msgData.show = true;

@@ -243,7 +243,7 @@
                     date: {show: true,},
                     tagType: {show: true,},
                     usageType: {show: true,},
-                    equipmentName: {show: true, type: 'select'},
+                    deviceId: {show: true, type: 'select'},
                 },
                 id: '',
                 LoadingData: {
@@ -311,6 +311,34 @@
                 this.colorArray = colorArray.colorArray;
                 this.columnNameList = columnNameList.columnNameList;
                 this.unitArray = unitArray.unitArray;
+            },
+            async getEquipment(params) {
+                const vm = this;
+                this.LoadingData.show = true;
+                vm.params = params;
+                axios({
+                    method: 'get',
+                    url: '/api/analysis/data',
+                    params:params,
+                }).then((res) => {
+                    if (res.data.code === 1) {
+                        vm.chartData = [];
+                        vm.chartSeries = [];
+                        vm.gridDataColumn = [];
+
+                        const chartDataArray = res.data.value;
+
+                        if (chartDataArray.length !== 0) {
+                            vm.drawDefaultChart(chartDataArray);
+                            vm.keywordCalc(chartDataArray);
+                        }
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                }).finally(() => {
+                    vm.LoadingData.show = false;
+                });
             },
             async getSearch(params) {
                 const vm = this;

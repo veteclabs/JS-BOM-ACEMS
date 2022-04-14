@@ -136,6 +136,43 @@
                         </div>
                         <div v-if="freeGroupList.flow.length === 0">유량계가 없습니다.</div>
                     </draggable>
+                    <!--<div class="td-label">공기압축기</div>
+                    <draggable class="list-group" :list="freeGroupList.airCompressor" group="airCompressor">
+                        <div v-for="device in freeGroupList.airCompressor" :key="device.id">
+                            <div class="ibox">
+                                <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
+                                    <nuxt-link :to="`/dashboard/${device.id}`">
+                                        <h3>{{device.name}}</h3>
+                                    </nuxt-link>
+                                    <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                                         class="setting-btn"
+                                         @click="settingModalOpen(device.id)"/>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="group-state flex-box">
+                                        <div>
+                                            <span>상태</span>
+                                            <div :class="`${device.state} device-state`">{{device.state}}</div>
+                                        </div>
+                                        <div class="percent">
+                                            <span>부하율</span>
+                                            <h3>{{tagVal | pickValue('Name',`${device.unit}_COMP_PCY`, 'Value')}} %</h3>
+                                        </div>
+                                    </div>
+                                    <ul class="tag-box">
+                                        <li v-for="tag in airTagList" :key="tag.id">
+                                            <div class="tagname">{{tag.name}}</div>
+                                            <div>
+                                                {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
+                                                {{tag.unit}}
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="freeGroupList.airCompressor.length === 0">공기압축기가 없습니다.</div>
+                    </draggable>-->
                 </div>
             </div>
         </div>

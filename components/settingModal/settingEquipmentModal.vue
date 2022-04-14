@@ -18,6 +18,7 @@
                             <div class="td-label">그룹</div>
                             <label class="input-100">
                                 <select v-model="params.groupId">
+                                    <option :value="null" selected >미지정</option>
                                     <option v-for="group in groupList" :value="group.id" :key="group.id">
                                         {{group.name}}
                                     </option>
