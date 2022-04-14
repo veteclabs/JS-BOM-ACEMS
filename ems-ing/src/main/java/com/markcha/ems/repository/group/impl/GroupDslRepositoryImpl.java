@@ -69,6 +69,11 @@ public class GroupDslRepositoryImpl{
         Group group = query.selectFrom(QGroup.group)
                 .leftJoin(QGroup.group.children, childGroup).fetchJoin()
                 .leftJoin(QGroup.group.deviceSet, device).fetchJoin()
+                .leftJoin(QGroup.group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(QGroup.group.id.eq(id))
                 .fetchOne();
         List<Device> devices = query.selectFrom(QDevice.device)
@@ -298,8 +303,15 @@ public class GroupDslRepositoryImpl{
         BooleanExpression groupIdEq = null;
         if(!isNull(ids)) {
             groupIdEq = group.id.in(ids);
+        } else {
+            groupIdEq = group.id.eq(-1L);
         }
         return query.selectFrom(group)
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(groupIdEq)
                 .fetch();
     }
@@ -325,7 +337,14 @@ public class GroupDslRepositoryImpl{
 
         Map<Long, List<WeekMapper>> grouppingWeekMapper = weekMappers.stream()
                 .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));
-        rootGroup.forEach(t->t.getSchedule().setWeeks(grouppingWeekMapper.get(t.getSchedule().getId())));
+        rootGroup.forEach(t->{
+            Long scheduleId = t.getSchedule().getId();
+            List<WeekMapper> weekMappers1 = grouppingWeekMapper.get(scheduleId);
+            if (!isNull(t.getSchedule())) {
+                t.getSchedule();
+                t.getSchedule().setWeeks(weekMappers1);
+            }
+        });
         return rootGroup;
 
     }

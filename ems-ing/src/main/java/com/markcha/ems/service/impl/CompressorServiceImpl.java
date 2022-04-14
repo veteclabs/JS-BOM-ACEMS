@@ -99,6 +99,7 @@ public class CompressorServiceImpl implements DeviceService {
         // 그룹 생성 및 부모 그룹 세팅
         Group newGroup = new Group();
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
+
         newGroup.setParent(parentGroup);
         newGroup.setName(compressorInsertDto.getName());
         newGroup.setType(typeName);

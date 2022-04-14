@@ -56,10 +56,12 @@ public class GroupController {
     private final DeviceDslRepositoryImpl deviceDslRepository;
     @GetMapping(value="/groups", headers = "setting=true")
     public List<GroupDto> showSetting() {
-        List<GroupDto> collect = groupDslRepository.findAllJoinSchedule().stream()
+        System.out.println(1);
+        List<Group> collect = groupDslRepository.findAllJoinSchedule();
+        System.out.println(collect.size());
+        return collect.stream()
                 .map((group) -> new GroupDto(group))
                 .collect(toList());
-        return collect;
     }
     @GetMapping(value="/group/{groupId}")
     public GroupDto showOne(
@@ -163,20 +165,7 @@ public class GroupController {
     public ApiResponseDto updateAll(
             @RequestBody List<GroupDto> groupInsertDtos
     ) {
-//        groupInsertDtos.forEach(t -> {
-//                    List<DeviceDto> devices = new ArrayList<>();
-//                    t.getDevices().forEach((key, deviceDtos)-> {
-//                        if (!key.equals("airCompressor")) devices.addAll(deviceDtos);
-//                    });
-//                    t.setDeviceList(devices);
-//                    t.getAirCompressors().forEach(k->{
-//                        List<DeviceDto> devices2 = new ArrayList<>();
-//                        k.getDevices().forEach((key2,deviceDto)->devices2.addAll(deviceDto));
-//                        k.setDeviceList(devices2);
-//                    });
-//                });
         groupInsertDtos.forEach(t->t.setDeviceList(t));
-
         groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);
     }

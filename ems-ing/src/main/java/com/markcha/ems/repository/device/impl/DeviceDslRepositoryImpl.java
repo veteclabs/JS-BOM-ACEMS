@@ -17,6 +17,7 @@ import static com.markcha.ems.domain.QDevice.device;
 import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QSchedule.schedule;
+import static com.markcha.ems.domain.QTag.tag;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Objects.isNull;
@@ -127,6 +128,8 @@ public class DeviceDslRepositoryImpl {
             deviceIdEq = device.id.eq(-1L);
         }
         return query.selectFrom(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(deviceIdEq).fetch();
     }
 }
