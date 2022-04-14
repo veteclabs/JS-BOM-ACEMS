@@ -50,7 +50,6 @@ public class DataAnalysisController {
             HistorySearchDto historySearchDto,
             @RequestParam @Nullable String deviceId
     ) {
-        System.out.println(deviceId);
         groupInsertDto.setDevoceIdT2(deviceId.replace("\"", ""));
         groupInsertDto.setIsUsage(true);
         groupInsertDto.setEnergyId(null);
@@ -82,7 +81,6 @@ public class DataAnalysisController {
                     .peek(t -> historySearchDto.getSecondTagNames().addAll(t.getTagNames()))
                     .collect(toList());
         }
-        System.out.println(historySearchDto.getTagNames());
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);
         } else if(historySearchDto.getTimeType().equals("D")) {

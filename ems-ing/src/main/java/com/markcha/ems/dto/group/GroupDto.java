@@ -34,13 +34,10 @@ public class GroupDto {
     public GroupDto() {
     }
     public GroupDto(Long id, String name, ScheduleDto schedule, List<DeviceDto> deviceList, List<GroupDto> airCompressors, Map<String, List<DeviceDto>> devices, List<TagDto> tags) {
-        System.out.println(3);
-        System.out.println(id);
         List<DeviceDto> deviceDtoList = new ArrayList<>();
         devices.forEach((key, deviceDtos)-> {
             if (!key.equals("airCompressor")) deviceDtoList.addAll(deviceDtos);
         });
-        System.out.println(deviceDtoList);
         this.deviceList = deviceDtoList;
     }
 

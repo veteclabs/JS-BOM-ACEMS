@@ -120,11 +120,11 @@ public class DeviceDslRepositoryImpl {
                 ).limit(1).fetchOne();
     }
     public List<Device> findAllByIds(List<Long> ids) {
-        System.out.println("id");
-        System.out.println(ids);
         BooleanExpression deviceIdEq = null;
         if(!isNull(ids)) {
             deviceIdEq = device.id.in(ids);
+        } else {
+            deviceIdEq = device.id.eq(-1L);
         }
         return query.selectFrom(device).distinct()
                 .where(deviceIdEq).fetch();

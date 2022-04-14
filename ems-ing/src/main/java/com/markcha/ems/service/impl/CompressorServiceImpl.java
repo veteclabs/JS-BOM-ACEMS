@@ -94,13 +94,11 @@ public class CompressorServiceImpl implements DeviceService {
 
         newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
         newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
-//        scheduleDataRepository.save(newSchedule);
+        scheduleDataRepository.save(newSchedule);
 
         // 그룹 생성 및 부모 그룹 세팅
         Group newGroup = new Group();
-        System.out.println(compressorInsertDto.getGroupId());
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
-//        System.out.println(parentGroup.getName());
         newGroup.setParent(parentGroup);
         newGroup.setName(compressorInsertDto.getName());
         newGroup.setType(typeName);
@@ -108,12 +106,14 @@ public class CompressorServiceImpl implements DeviceService {
         newGroup.setLevel(2);
         groupDataRepository.save(newGroup);
 
+
         // 디바이스 생성 및 그룹과 연
         Device newDevice = new Device();
         Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         newDevice.setName(compressorInsertDto.getName());
         newDevice.setEquipment(selectedEquipoment);
         newDevice.setGroup(newGroup);
+
         Device save = deviceDataRepository.save(newDevice);
         List<Tag> tags = insertSampleData.createTags(AIR_COMPRESSOR, save);
         newDevice.setTags(new HashSet<>(tags));

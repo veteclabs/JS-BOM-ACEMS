@@ -201,7 +201,7 @@ public class GroupServiceImpl {
 
                 groupDataRepository.save(group);
                 groupDataRepository.saveAll(ordCompressors);
-                deviceDataRepository.saveAll(ordDevices);
+//                deviceDataRepository.saveAll(ordDevices);
 
 
                 group.setChildren(new HashSet<>(newCompressors));

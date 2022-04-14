@@ -25,8 +25,6 @@ public class EquipmentDslRepositoryImpl  {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
     public Equipment getOneByTypeAndModel(String type, String model) {
-        System.out.println(type);
-        System.out.println(model);
         BooleanExpression typeEq = null;
         BooleanExpression modelEq = null;
         if(!isNull(type)) {
