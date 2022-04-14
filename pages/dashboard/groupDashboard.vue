@@ -136,7 +136,7 @@
                         </div>
                         <div v-if="freeGroupList.flow.length === 0">유량계가 없습니다.</div>
                     </draggable>
-                    <!--<div class="td-label">공기압축기</div>
+                    <div class="td-label">공기압축기</div>
                     <draggable class="list-group" :list="freeGroupList.airCompressor" group="airCompressor">
                         <div v-for="device in freeGroupList.airCompressor" :key="device.id">
                             <div class="ibox">
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <div v-if="freeGroupList.airCompressor.length === 0">공기압축기가 없습니다.</div>
-                    </draggable>-->
+                    </draggable>
                 </div>
             </div>
         </div>
@@ -233,7 +233,8 @@
                 freeGroupList: {
                     pressure: [],
                     temperature: [],
-                    flow: []
+                    flow: [],
+                    airCompressor: []
                 },
                 airTagList: [
                     {id: 1, name: '패키치 배출압력', tagName: 'COMP_PDP', unit: ''},
