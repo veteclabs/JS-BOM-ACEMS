@@ -28,11 +28,25 @@
                         <DxSelection mode="multiple"/>
                         <dx-column data-field="id" caption="No" alignment="center" :width="100"/>
                         <dx-column data-field="name" caption="그룹명" alignment="center" />
+                        <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center" width="130"
+                                  cell-template="ONOFFTemplate"/>
+                        <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.max" caption="최대압력" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.dayOfWeeks" caption="요일" alignment="center"
+                                  cell-template="dayOfWeeksTemplate"/>
+                        <DxColumn data-field="schedule.startTime" caption="시작시간" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.stopTime" caption="종료시간" alignment="center" width="100"/>
                         <dx-paging :enabled="true" :page-size="20"/>
                         <dx-pager :show-page-size-selector="true" :allowed-page-sizes="pageSizes"
                                   :show-info="true"/>
                         <template #blockGridTemplate="{ data: cellData }">
                             <blockGridTemplate :cell-data="cellData"/>
+                        </template>
+                        <template #ONOFFTemplate="{ data: cellData }">
+                            <ONOFFTemplate :cell-data="cellData"/>
+                        </template>
+                        <template #dayOfWeeksTemplate="{ data: cellData }">
+                            <dayOfWeeksTemplate :cell-data="cellData"/>
                         </template>
                     </dx-data-grid>
                 </div>
@@ -51,6 +65,8 @@
     import createModal from '~/components/settingModal/createGroupModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
+    import ONOFFTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
+    import dayOfWeeksTemplate from '~/components/gridTemplate/dayOfWeeksTemplate.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -73,7 +89,9 @@
             DxPager,
             DxSearchPanel,
             DxButton,
-            blockGridTemplate
+            blockGridTemplate,
+            ONOFFTemplate,
+            dayOfWeeksTemplate
         },
         data() {
             return {
@@ -103,7 +121,10 @@
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/device/groups',
+                    url: '/api/groups',
+                    headers: {
+                        setting: true,
+                    }
                 }).then((res) => {
                     vm.groupList = res.data
                 }).catch((error) => {
