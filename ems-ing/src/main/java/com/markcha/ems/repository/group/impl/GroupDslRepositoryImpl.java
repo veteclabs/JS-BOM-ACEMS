@@ -281,8 +281,12 @@ public class GroupDslRepositoryImpl{
     }
     
     public List<Group> findAllByIds(List<Long> ids) {
+        BooleanExpression groupIdEq = null;
+        if(!isNull(ids)) {
+            groupIdEq = group.id.in(ids);
+        }
         return query.selectFrom(group)
-                .where(group.id.in(ids))
+                .where(groupIdEq)
                 .fetch();
     }
     

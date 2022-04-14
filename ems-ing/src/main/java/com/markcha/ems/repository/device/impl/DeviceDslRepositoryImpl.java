@@ -2,6 +2,7 @@ package com.markcha.ems.repository.device.impl;
 
 import com.markcha.ems.domain.*;
 import com.markcha.ems.repository.device.DeviceRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,7 @@ import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QSchedule.schedule;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 
@@ -103,7 +105,11 @@ public class DeviceDslRepositoryImpl {
                 ).limit(1).fetchOne();
     }
     public List<Device> findAllByIds(List<Long> ids) {
+        BooleanExpression deviceIdEq = null;
+        if(!isNull(ids)) {
+            deviceIdEq = device.id.in(ids);
+        }
         return query.selectFrom(device)
-                .where(device.id.in(ids)).fetch();
+                .where(deviceIdEq).fetch();
     }
 }

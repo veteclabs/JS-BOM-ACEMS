@@ -58,14 +58,14 @@ public class Group {
         }
         return 0;
     }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
-            return false;
-        Group group = (Group) o;
-        return Objects.equals(id, group.id);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+//            return false;
+//        Group group = (Group) o;
+//        return Objects.equals(id, group.id);
+//    }
     @Transient
     private Device tagetDevice;
 }

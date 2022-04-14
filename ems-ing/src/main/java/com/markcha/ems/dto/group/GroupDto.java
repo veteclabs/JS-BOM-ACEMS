@@ -27,7 +27,7 @@ public class GroupDto {
     private ScheduleDto schedule;
     @JsonIgnore
     private List<DeviceDto> deviceList;
-    private List<GroupDto> airCompressors;
+    private List<GroupDto> airCompressors = new ArrayList<>();
     Map<String, List<DeviceDto>> devices = new HashMap<>();
     private List<TagDto> tags = new ArrayList<>();
     public GroupDto(Group group) {
