@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
@@ -164,8 +165,8 @@ public class ScheduleController {
                 if(!isNull(schedule.getDayOfWeekMappers())) {
                     this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
                             .map(t->t.getDayOfWeek().getIdx())
-                            .sorted(comparing(k->k))
                             .collect(toList());
+                    this.dayOfWeeks = new ArrayList<>(new HashSet<>(this.dayOfWeeks));
                 }
 
             }

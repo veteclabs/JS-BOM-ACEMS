@@ -56,9 +56,7 @@ public class GroupController {
     private final DeviceDslRepositoryImpl deviceDslRepository;
     @GetMapping(value="/groups", headers = "setting=true")
     public List<GroupDto> showSetting() {
-        System.out.println(1);
         List<Group> collect = groupDslRepository.findAllJoinSchedule();
-        System.out.println(collect.size());
         return collect.stream()
                 .map((group) -> new GroupDto(group))
                 .collect(toList());
