@@ -59,11 +59,18 @@ public class GroupDslRepositoryImpl{
     }
     public Group getOneJoinChildsAndDevicesById(Long id) {
         QGroup childGroup = new QGroup("cg");
-        return query.selectFrom(group)
-                .leftJoin(group.children, childGroup).fetchJoin()
-                .leftJoin(group.deviceSet, device).fetchJoin()
-                .where(group.id.eq(id))
+        Group group = query.selectFrom(QGroup.group)
+                .leftJoin(QGroup.group.children, childGroup).fetchJoin()
+                .leftJoin(QGroup.group.deviceSet, device).fetchJoin()
+                .where(QGroup.group.id.eq(id))
                 .fetchOne();
+        List<Device> devices = query.selectFrom(QDevice.device)
+                .leftJoin(QDevice.device.equipment, equipment).fetchJoin()
+                .leftJoin(QDevice.device.group, QGroup.group).fetchJoin()
+                .where(equipment.type.ne(AIR_COMPRESSOR), device.group.id.eq(group.getId()))
+                .fetch();
+        group.setDeviceSet(devices);
+        return group;
     }
     
     public Group getOneByDeviceId(Long id) {

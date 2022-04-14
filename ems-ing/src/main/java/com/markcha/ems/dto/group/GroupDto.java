@@ -10,6 +10,7 @@ import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -19,8 +20,8 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class GroupDto {
     private Long id;
     private String name;
@@ -30,6 +31,19 @@ public class GroupDto {
     private List<GroupDto> airCompressors = new ArrayList<>();
     private Map<String, List<DeviceDto>> devices = new HashMap<>();
     private List<TagDto> tags = new ArrayList<>();
+    public GroupDto() {
+    }
+    public GroupDto(Long id, String name, ScheduleDto schedule, List<DeviceDto> deviceList, List<GroupDto> airCompressors, Map<String, List<DeviceDto>> devices, List<TagDto> tags) {
+        System.out.println(3);
+        System.out.println(id);
+        List<DeviceDto> deviceDtoList = new ArrayList<>();
+        devices.forEach((key, deviceDtos)-> {
+            if (!key.equals("airCompressor")) deviceDtoList.addAll(deviceDtos);
+        });
+        System.out.println(deviceDtoList);
+        this.deviceList = deviceDtoList;
+    }
+
     public GroupDto(Group group) {
         this.id = group.getId();
         this.name = group.getName();
@@ -37,6 +51,11 @@ public class GroupDto {
         this.devices = null;
         this.airCompressors = null;
     }
+
+
+
+
+
     public GroupDto(Group group, List<String> typeList, Boolean isParent) {
         this.id = group.getId();
         this.name = group.getName();
@@ -75,4 +94,5 @@ public class GroupDto {
             }
         }
     }
+
 }

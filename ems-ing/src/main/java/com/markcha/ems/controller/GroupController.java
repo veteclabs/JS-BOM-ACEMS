@@ -166,8 +166,15 @@ public class GroupController {
         groupInsertDtos.stream()
                 .forEach(t -> {
                     List<DeviceDto> devices = new ArrayList<>();
-                    t.getDevices().forEach((key, deviceDtos)-> devices.addAll(deviceDtos));
+                    t.getDevices().forEach((key, deviceDtos)-> {
+                        if (key.equals("airCompressor")) devices.addAll(deviceDtos);
+                    });
                     t.setDeviceList(devices);
+                    t.getAirCompressors().forEach(k->{
+                        List<DeviceDto> devices2 = new ArrayList<>();
+                        k.getDevices().forEach((key2,deviceDto)->devices2.addAll(deviceDto));
+                        k.setDeviceList(devices2);
+                    });
                 });
         groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);

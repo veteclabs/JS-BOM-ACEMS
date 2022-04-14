@@ -175,7 +175,10 @@ public class GroupServiceImpl {
     public Boolean updateGroups(List<GroupDto> groupDtos) {
         if (!isNull(groupDtos)) {
             for (GroupDto groupDto : groupDtos) {
-                updateGroups(groupDto.getAirCompressors());
+                System.out.println("-------------");
+                System.out.println(groupDto.getName());
+                groupDto.getDeviceList().forEach(dto -> System.out.println(dto));
+
                 List<Long> newDeviceIds = null;
                 List<Long> newCompressorIds = null;
                 if (!isNull(groupDto.getDeviceList())) {
@@ -196,9 +199,14 @@ public class GroupServiceImpl {
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
 
-                group.setChildren(null);
+//                System.out.println(group.getId());
+                for (Device newDevice : newDevices) {
+                    System.out.println(newDevice.getId());
+                }
+                System.out.println("-------------");
+//                group.setChildren(null);
                 ordCompressors.forEach(t -> t.setParent(null));
-                group.setDeviceSet(null);
+//                group.setDeviceSet(null);
                 ordDevices.forEach(t -> t.setGroup(null));
 
 
@@ -207,14 +215,15 @@ public class GroupServiceImpl {
                 deviceDataRepository.saveAll(ordDevices);
 
 
-//                group.setChildren(new HashSet<>(newCompressors));
+                group.setChildren(new HashSet<>(newCompressors));
                 newCompressors.forEach(t -> t.setParent(group));
                 group.setDeviceSet(newDevices);
                 newDevices.forEach(t -> t.setGroup(group));
 
                 groupDataRepository.save(group);
-                groupDataRepository.saveAll(ordCompressors);
-                deviceDataRepository.saveAll(ordDevices);
+                groupDataRepository.saveAll(newCompressors);
+                deviceDataRepository.saveAll(newDevices);
+                updateGroups(groupDto.getAirCompressors());
             }
             return true;
         }
