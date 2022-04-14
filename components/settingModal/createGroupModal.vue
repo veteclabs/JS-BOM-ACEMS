@@ -202,9 +202,6 @@
                 return Validator.value(value).required();
             },
         },
-        mounted() {
-            console.log(this.$route)
-        },
         methods: {
             submit() {
                 const vm = this;

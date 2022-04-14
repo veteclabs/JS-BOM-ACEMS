@@ -315,7 +315,6 @@
                 const vm = this;
                 this.LoadingData.show = true;
                 vm.params = params;
-                console.log(params)
                 axios({
                     method: 'get',
                     url: '/api/analysis/data',

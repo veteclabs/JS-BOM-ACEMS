@@ -42,7 +42,6 @@ export const actions = {
         state.Snotify.error(message);
     },
     async login({commit}, {id, password}) {
-        console.log(id)
         return fetch('/api/user/login', {
             credentials: 'same-origin',
             method: 'POST',

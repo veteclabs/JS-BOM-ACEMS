@@ -21,7 +21,7 @@
     }
 
     .setting-space-box {
-      width: 12%;
+      width: 8%;
     }
 
     .setting-nav-box {
@@ -29,7 +29,7 @@
     }
 
     .setting-content-box {
-      width: 60%;
+      width: 62%;
     }
 
     @include desktop() {
@@ -199,10 +199,9 @@
       &:hover {
         background:$gray-1;
       }
-
     }
 
-    input[type=checkbox]:checked + div {
+    input[type=checkbox]:checked + div, div.active {
       background: $blue-3;
       border: 1px solid $blue-0;
       color: $blue-0;

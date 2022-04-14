@@ -1,7 +1,13 @@
 <template>
     <div>
         <b-modal v-model="propsdata.show" id="createmodal" title="장비 관리" hide-footer>
-            <groupSetting ref="groupSetting"  v-bind:groupData="groupInfo"/>
+            <div class="modal-body modal-overflow">
+                <groupSetting ref="groupSetting" v-bind:groupData="groupInfo" v-on:modalClose="cancel"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button cancel-button" @click="cancel">취소</button>
+                <button type="button" class="button submit-button" @click="submit">설정</button>
+            </div>
         </b-modal>
         <flashModal v-bind:propsdata="msgData"/>
     </div>
@@ -32,8 +38,8 @@
                     e: '',
                 },
                 groupInfo: {
-                    name:'',
-                    schedule : {
+                    name: '',
+                    schedule: {
                         dayOfWeeks: [],
                         isActive: false,
                         min: 0,
@@ -45,7 +51,7 @@
             };
         },
         methods: {
-            getGroup: function() {
+            getGroup: function () {
                 const vm = this;
                 axios({
                     method: 'get',
@@ -57,15 +63,17 @@
                     vm.msgData.msg = error;
                 });
             },
+            cancel() {
+                this.$bvModal.hide('createmodal');
+            },
+            submit() {
+                this.$refs.groupSetting.submit('update');
+            },
             updateModal(id) {
                 this.state = 'update';
                 this.id = id;
                 this.getGroup();
             },
-            async submit() {
-                this.msgData.show = true;
-                this.msgData.msg = '저장이 완료되었습니다.'
-            }
         },
     };
 </script>

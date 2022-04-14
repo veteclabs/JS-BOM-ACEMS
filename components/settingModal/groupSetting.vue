@@ -160,13 +160,13 @@
                 },
                 state: 'new',
                 dateList: [
-                    {id: 3, name: '월'},
-                    {id: 4, name: '화'},
-                    {id: 5, name: '수'},
-                    {id: 6, name: '목'},
-                    {id: 7, name: '금'},
-                    {id: 1, name: '토'},
-                    {id: 2, name: '일'}
+                    {id: 1, name: '월'},
+                    {id: 2, name: '화'},
+                    {id: 3, name: '수'},
+                    {id: 4, name: '목'},
+                    {id: 5, name: '금'},
+                    {id: 6, name: '토'},
+                    {id: 7, name: '일'}
                 ],
                 timeOptions: {
                     format: 'HH:mm:00',
@@ -201,8 +201,7 @@
                         }
                     });
                 },
-        }
-        ,
+        },
         methods: {
             submit(state) {
                 const vm = this;
@@ -243,7 +242,11 @@
                 });
             },
             handleOk: function () {
-                this.$router.push('/setting/group');
+                if(this.$route.name.indexOf('setting') !== -1) {
+                    this.$router.push('/setting/group');
+                }else {
+                    this.$emit('modalClose', 1);
+                }
             },
         },
     };

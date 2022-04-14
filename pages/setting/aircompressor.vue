@@ -22,8 +22,14 @@
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
                         <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
                         <DxColumn data-field="name" caption="공기압축기명" alignment="center" cell-template="blockGridTemplate"/>
-                        <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center"
+                        <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center" width="130"
                                   cell-template="ONOFFTemplate"/>
+                        <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.max" caption="최대압력" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.dayOfWeeks" caption="요일" alignment="center"
+                                  cell-template="dayOfWeeksTemplate"/>
+                        <DxColumn data-field="schedule.startTime" caption="시작시간" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.stopTime" caption="종료시간" alignment="center" width="100"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                         <template #blockGridTemplate="{ data: cellData }">
@@ -31,6 +37,9 @@
                         </template>
                         <template #ONOFFTemplate="{ data: cellData }">
                             <ONOFFTemplate :cell-data="cellData"/>
+                        </template>
+                        <template #dayOfWeeksTemplate="{ data: cellData }">
+                            <dayOfWeeksTemplate :cell-data="cellData"/>
                         </template>
                     </DxDataGrid>
                 </div>
@@ -56,6 +65,7 @@
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import ONOFFTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
+    import dayOfWeeksTemplate from '~/components/gridTemplate/dayOfWeeksTemplate.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -79,6 +89,7 @@
             DxSearchPanel,
             blockGridTemplate,
             ONOFFTemplate,
+            dayOfWeeksTemplate
         },
         data() {
             return {
