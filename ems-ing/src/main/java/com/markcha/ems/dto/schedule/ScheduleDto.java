@@ -82,6 +82,7 @@ public class ScheduleDto {
         if(!isNull(schedule.getDayOfWeekMappers())) {
             this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
                     .map((wm) -> new DayOfWeekDto(wm.getDayOfWeek()))
+                    .sorted(comparing(k->k.getId()))
                     .collect(toList());
         }
     }

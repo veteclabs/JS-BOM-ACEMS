@@ -30,7 +30,6 @@ public class WeekGroupDto {
         this.working = working;
     }
     public WeekGroupDto(WeekMapper weekMapper) {
-//        this.id = weekMapper.getId();
         if(!isNull(weekMapper.getWeek())) {
             this.id = weekMapper.getWeek().getId();
             this.name = weekMapper.getWeek().getName();

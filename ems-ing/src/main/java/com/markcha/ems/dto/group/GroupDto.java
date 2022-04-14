@@ -28,7 +28,7 @@ public class GroupDto {
     @JsonIgnore
     private List<DeviceDto> deviceList;
     private List<GroupDto> airCompressors = new ArrayList<>();
-    Map<String, List<DeviceDto>> devices = new HashMap<>();
+    private Map<String, List<DeviceDto>> devices = new HashMap<>();
     private List<TagDto> tags = new ArrayList<>();
     public GroupDto(Group group) {
         this.id = group.getId();
