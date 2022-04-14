@@ -148,7 +148,7 @@
                     },
                     tagType: 'KWH',
                     usageType: 'Usage', //에너지원사용량
-                    deviceId: null, //계측기이름
+                    deviceId: 'AU', //계측기이름
                 },
                 resetParams: {
                     timeType: 'H', //시간검색타입
@@ -159,7 +159,7 @@
                     },
                     tagType: 'KWH',
                     usageType: 'Usage', //에너지원사용량
-                    deviceId: null, //계측기이름
+                    deviceId: 'AU', //계측기이름
                 },
                 resetState: true,
             };
@@ -171,6 +171,7 @@
         },
         mounted() {
             this.getFilter();
+            this.filterReset();
         },
         methods: {
             collapseMenu: function () {
@@ -186,10 +187,7 @@
                     }
                 }).then((res) => {
                     let result = res.data;
-                    vm.deviceList = [{
-                        name: '전체',
-                        id: null
-                    }];
+                    vm.deviceList = [{name: '전체', id:'AU'}];
                     result.forEach((item) => {
                         let target = item;
                         if (target !== '') {
@@ -199,8 +197,7 @@
                             })
                         }
                     });
-                    vm.deviceId = null;
-                    vm.filterReset();
+                    vm.searchParams.deviceId = 'AU';
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
@@ -213,23 +210,17 @@
                     params[i] = vm.searchParams[i];
                 }
 
-                if (params.timeType === 'H') {
-                    params.date.start = dayjs(params.date.start)
-                        .format('YYYY-MM-DD');
+                if (params.timeType === 'H' || params.timeType === '15min') {
+                    params.date.start = dayjs(params.date.start).format('YYYY-MM-DD');
                 } else if (params.timeType === 'D') {
-                    params.date.start = dayjs(params.date.start)
-                        .format('YYYY-MM');
+                    params.date.start = dayjs(params.date.start).format('YYYY-MM');
                 } else if (params.timeType === 'M') {
-                    params.date.start = dayjs(params.date.start)
-                        .format('YYYY');
+                    params.date.start = dayjs(params.date.start).format('YYYY');
                 } else if (params.timeType === 'Y') {
-                    params.date.start = dayjs(params.date.start)
-                        .format('YYYY');
+                    params.date.start = dayjs(params.date.start).format('YYYY');
                 } else if (params.timeType === 'R') {
-                    params.date.start = dayjs(params.date.start)
-                        .format('YYYY-MM-DD');
-                    params.date.end = dayjs(params.date.end)
-                        .format('YYYY-MM-DD');
+                    params.date.start = dayjs(params.date.start).format('YYYY-MM-DD');
+                    params.date.end = dayjs(params.date.end).format('YYYY-MM-DD');
                 }
 
                 vm.resetState = vm.filterResetChk();
@@ -248,33 +239,15 @@
                     this.resetParams.timeType = this.timeTypeOptions[0].value;
                 }
 
-                if (this.propsdata.location) {
-                    if (this.propsdata.location.type === 'select') {
-                        this.resetParams.location = null;
-                    } else {
-                        this.resetParams.location = '';
-                    }
-                }
-                if (this.propsdata.department) {
-                    if (this.propsdata.department.type === 'select') {
-                        this.resetParams.department = 'AU';
-                    } else {
-                        this.resetParams.department = '';
-                    }
-                }
-                if (this.propsdata.process) {
-                    if (this.propsdata.process.type === 'select') {
-                        this.resetParams.process = 'AU';
-                    } else {
-                        this.resetParams.process = '';
-                    }
-                }
-
                 this.searchParams = JSON.parse(JSON.stringify(this.resetParams));
                 this.resetState = this.filterResetChk();
             },
         },
         watch: {
+            'searchParams.tagType': function() {
+                this.getFilter();
+                this.searchParams.usageType = 'Usage';
+            },
             'searchParams.timeType': function () {
                 if (this.searchParams.timeType === 'H' || this.searchParams.timeType === '15min') {
                     this.dateOptions.format = 'YYYY-MM-DD';

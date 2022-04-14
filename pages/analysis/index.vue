@@ -134,10 +134,10 @@
                                                 }}%
                                             </div>
                                         </div>
-                                        <h1 v-show="params.usageType ==='Usage'">
+                                        <h3 v-show="params.usageType ==='Usage'">
                                             {{ item.value | currency(0) }}{{unitArray[params.energy]}}
-                                        </h1>
-                                        <h1 v-show="params.usageType !=='Usage'">{{ item.value | numberFormat(5) }}</h1>
+                                        </h3>
+                                        <h3 v-show="params.usageType !=='Usage'">{{ item.value | numberFormat(5) }}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -312,34 +312,6 @@
                 this.columnNameList = columnNameList.columnNameList;
                 this.unitArray = unitArray.unitArray;
             },
-            async getEquipment(params) {
-                const vm = this;
-                this.LoadingData.show = true;
-                vm.params = params;
-                axios({
-                    method: 'get',
-                    url: '/api/analysis/data',
-                    params:params,
-                }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.chartData = [];
-                        vm.chartSeries = [];
-                        vm.gridDataColumn = [];
-
-                        const chartDataArray = res.data.value;
-
-                        if (chartDataArray.length !== 0) {
-                            vm.drawDefaultChart(chartDataArray);
-                            vm.keywordCalc(chartDataArray);
-                        }
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = error;
-                }).finally(() => {
-                    vm.LoadingData.show = false;
-                });
-            },
             async getSearch(params) {
                 const vm = this;
                 this.LoadingData.show = true;
@@ -347,21 +319,19 @@
                 axios({
                     method: 'get',
                     url: '/api/analysis/data',
-                    params:params,
+                    params: params,
                 }).then((res) => {
-                        if (res.data.code === 1) {
-                            vm.chartData = [];
-                            vm.chartSeries = [];
-                            vm.gridDataColumn = [];
+                    vm.chartData = [];
+                    vm.chartSeries = [];
+                    vm.gridDataColumn = [];
 
-                            const chartDataArray = res.data.value;
+                    const chartDataArray = res.data;
 
-                            if (chartDataArray.length !== 0) {
-                                vm.drawDefaultChart(chartDataArray);
-                                vm.keywordCalc(chartDataArray);
-                            }
-                        }
-                    }).catch((error) => {
+                    if (chartDataArray.length !== 0) {
+                        vm.drawDefaultChart(chartDataArray);
+                        vm.keywordCalc(chartDataArray);
+                    }
+                }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
                 }).finally(() => {
