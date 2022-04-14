@@ -56,6 +56,8 @@ public class GroupDslRepositoryImpl{
         BooleanExpression groupEqId = null;
         if(!isNull(id)) {
             groupEqId = group.id.eq(id);
+        } else {
+            groupEqId = group.id.eq(-1L);
         }
         return query.selectFrom(group)
                 .where(groupEqId)

@@ -57,8 +57,8 @@ public class HistorySearchDto {
         this.timeType = timeType;
         this.usageType = usageType;
         this.beforeOneDay = "beforeDay" + usageType;
-        this.beforeOneMonth = "beforeOneMonth" + usageType;
-        this.beforeOneYear = "beforeOneYear" + usageType;
+        this.beforeOneMonth = "beforeMonth" + usageType;
+        this.beforeOneYear = "beforeYear" + usageType;
         this.energyId = energyId;
         Object obj = new JSONParser().parse(date);
         JSONObject jsonObj = (JSONObject) obj;
