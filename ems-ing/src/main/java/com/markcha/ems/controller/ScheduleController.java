@@ -11,6 +11,7 @@ import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.order.OrderDto;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
+import com.markcha.ems.repository.DayOfWeekDataRepository;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
@@ -52,6 +53,8 @@ public class ScheduleController {
     private final GroupDslRepositoryImpl groupDslRepository;
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
     private final OrderDslRepositoryImpl orderDslRepository;
+    private final DayOfWeekDataRepository dayOfWeekDataRepository;
+
     @GetMapping(value="/schedules")
     public List<ScheduleSimpleDto> schedules(
     ) {
@@ -66,6 +69,12 @@ public class ScheduleController {
     ) {
         return groupDslRepository.findAllJoinScheduleByScheduleId(scheduleId).stream()
                 .map(ScheduleDto::new)
+                .collect(toList());
+    }
+    @GetMapping(value="/dayOfWeek")
+    public List<DayOfWeekDto> dayOfWeek() {
+        return dayOfWeekDataRepository.findAll().stream()
+                .map(DayOfWeekDto::new)
                 .collect(toList());
     }
     @GetMapping(value="/schedule/{scheduleId}/week/{weekId}")
