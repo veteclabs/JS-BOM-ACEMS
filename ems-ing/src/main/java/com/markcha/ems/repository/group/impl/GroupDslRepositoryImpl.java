@@ -53,8 +53,13 @@ public class GroupDslRepositoryImpl{
     }
     
     public Group getOneById(Long id) {
+        BooleanExpression groupEqId = null;
+        if(!isNull(id)) {
+            groupEqId = group.id.eq(id);
+        }
         return query.selectFrom(group)
-                .where(group.id.eq(id))
+                .where(groupEqId)
+                .limit(1)
                 .fetchOne();
     }
     public Group getOneJoinChildsAndDevicesById(Long id) {

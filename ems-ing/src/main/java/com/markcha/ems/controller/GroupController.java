@@ -163,11 +163,10 @@ public class GroupController {
     public ApiResponseDto updateAll(
             @RequestBody List<GroupDto> groupInsertDtos
     ) {
-        groupInsertDtos.stream()
-                .forEach(t -> {
+        groupInsertDtos.forEach(t -> {
                     List<DeviceDto> devices = new ArrayList<>();
                     t.getDevices().forEach((key, deviceDtos)-> {
-                        if (key.equals("airCompressor")) devices.addAll(deviceDtos);
+                        if (!key.equals("airCompressor")) devices.addAll(deviceDtos);
                     });
                     t.setDeviceList(devices);
                     t.getAirCompressors().forEach(k->{

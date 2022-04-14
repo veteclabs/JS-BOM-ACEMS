@@ -43,7 +43,22 @@ public class DeviceDslRepositoryImpl {
                 .orderBy(device.id.desc())
                 .fetch();
     }
+    public List<Device> findAllByType(String type) {
+        EquipmentType equipment = null;
+        switch (type) {
+            case "FLOW":
+                equipment = EquipmentType.FLOW_METER;
+                break;
+            case "KWH":
+                equipment = EquipmentType.POWER_METER;
+                break;
+        };
+        return query.selectFrom(QDevice.device)
+                .leftJoin(QDevice.device.equipment, QEquipment.equipment).fetchJoin()
+                .where(QEquipment.equipment.type.eq(equipment))
+                .fetch();
 
+    }
     public List<Device> findAllCompressors(EquipmentType typeName) {
         QGroup parentGroup = new QGroup("pGroup");
         QGroup childGroup = new QGroup("cGroup");

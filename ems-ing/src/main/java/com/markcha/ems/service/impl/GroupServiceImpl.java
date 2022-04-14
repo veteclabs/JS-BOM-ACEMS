@@ -175,10 +175,6 @@ public class GroupServiceImpl {
     public Boolean updateGroups(List<GroupDto> groupDtos) {
         if (!isNull(groupDtos)) {
             for (GroupDto groupDto : groupDtos) {
-                System.out.println("-------------");
-                System.out.println(groupDto.getName());
-                groupDto.getDeviceList().forEach(dto -> System.out.println(dto));
-
                 List<Long> newDeviceIds = null;
                 List<Long> newCompressorIds = null;
                 if (!isNull(groupDto.getDeviceList())) {
@@ -199,14 +195,7 @@ public class GroupServiceImpl {
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
 
-//                System.out.println(group.getId());
-                for (Device newDevice : newDevices) {
-                    System.out.println(newDevice.getId());
-                }
-                System.out.println("-------------");
-//                group.setChildren(null);
                 ordCompressors.forEach(t -> t.setParent(null));
-//                group.setDeviceSet(null);
                 ordDevices.forEach(t -> t.setGroup(null));
 
 

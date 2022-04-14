@@ -1,12 +1,10 @@
 package com.markcha.ems.controller.analysis;
 
-import com.markcha.ems.controller.GroupController;
 import com.markcha.ems.controller.GroupController.GroupSearchDto;
-import com.markcha.ems.domain.Group;
-import com.markcha.ems.domain.Link;
-import com.markcha.ems.dto.response.ApiResponseDto;
+import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.mapper.analysis.DataMapper;
 import com.markcha.ems.mapper.analysis.HistorySearchDto;
+import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -34,7 +33,16 @@ public class DataAnalysisController {
 
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
     private final DataMapper dataMapper;
+    private final DeviceDslRepositoryImpl deviceDslRepository;
 
+    @GetMapping(value="/data/type")
+    public List<DeviceDto> create(
+            @RequestParam String type
+    ) {
+        return deviceDslRepository.findAllByType(type).stream()
+                .map(DeviceDto::new)
+                .collect(toList());
+    }
     @GetMapping(value="/data")
     public List<HashMap<String, Object>> create(
             GroupSearchDto groupInsertDto,
@@ -43,16 +51,22 @@ public class DataAnalysisController {
         groupInsertDto.setIsUsage(true);
         groupInsertDto.setEnergyId(null);
         groupInsertDto.setEnergyEqId(null);
-        Boolean isDuo = groupInsertDto.getTagType().equals("FLOW")?true:false;
+        Boolean isDuo = false;
+        if(!isNull(groupInsertDto.getTagType())) {
+            isDuo = groupInsertDto.getTagType().equals("FLOW") ? true : false;
+        }
         groupInsertDto.setEnergyEqId(null);
         historySearchDto.setIsDuo(isDuo);
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
+        System.out.println(groupInsertDto.getTagType());
+        System.out.println(groupInsertDto.getTagEqType());
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
         List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                 .map(t->new GroupQueryDto(t, false))
                 .peek(t -> historySearchDto.getTagNames().addAll(t.getTagNames()))
                 .collect(toList());
+//        return collect;
         if(isDuo) {
             groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                     .map(t->new GroupQueryDto(t, false))

@@ -54,6 +54,23 @@ public class GroupDto {
 
 
 
+    public void setDeviceList(GroupDto groupDto) {
+        List<DeviceDto> devices = new ArrayList<>();
+        groupDto.getDevices().forEach((key, value)-> {
+            if (!key.equals("airCompressor")) devices.addAll(value);
+        });
+        groupDto.setDeviceList(devices);
+
+        groupDto.getAirCompressors().forEach(t->{
+            t.getAirCompressors().forEach(k->{
+                setDeviceList(t);
+            });
+        });
+
+    }
+    public void setDeviceList(List<DeviceDto> device) {
+        this.deviceList = device;
+    }
 
 
     public GroupDto(Group group, List<String> typeList, Boolean isParent) {
