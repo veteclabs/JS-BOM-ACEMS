@@ -1,22 +1,15 @@
 package com.markcha.ems.controller;
 
-import com.markcha.ems.domain.EquipmentType;
-import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
+import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
-import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.GroupDataRepository;
-import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
-import com.markcha.ems.service.DeviceService;
 import com.markcha.ems.service.impl.CompressorServiceImpl;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +37,7 @@ public class CompressorController {
     private final GroupDataRepository groupDataRepository;
 
 
-    @GetMapping(value="/compressors")
+    @GetMapping(value="/compressors", headers="setting=true")
     public List<CompressorDto> compressors(
     ) {
         return deviceDslRepository.findAllCompressors(AIR_COMPRESSOR)
@@ -52,6 +45,22 @@ public class CompressorController {
                 .map(CompressorDto::new)
                 .collect(toList());
     }
+
+    @GetMapping(value="/compressors")
+    public List<AirCompressorDto> compressor(
+    ) {
+        return deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR)
+                .stream()
+                .map(AirCompressorDto::new)
+                .collect(toList());
+    }
+    @GetMapping(value="/compressor/{compressorId}")
+    public AirCompressorDto compressor(
+            @PathVariable("compressorId") Long compressorId
+    ) {
+        return new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(compressorId, AIR_COMPRESSOR));
+    }
+
     @PostMapping(value="/compressor")
     public ApiResponseDto create(
             @RequestBody CompressorInsertDto compressorInsertDto

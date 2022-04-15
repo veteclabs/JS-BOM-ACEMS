@@ -73,7 +73,6 @@ exports.checkPoserState = async (scheduleId) => {
                     powerState = 'OFF'
                 }
                 if (powerState !== 'STAY') {
-                    console.log(week)
 
                     if (schedule.isGroup) {
                         await this.groupOrder(scheduleId, week, powerState);
@@ -92,9 +91,7 @@ exports.groupOrder = async (scheduleId, week, powerState) => {
     console.log(scheduleId)
     try {
         let orders = await axios.get(`http://112.216.32.6:8031/api/schedule/${scheduleId}/week/${week}`);
-
         orders = orders.data
-        // orders = orders.sort((a,b)=> a.order < b.order);
         let controllerResult = null;
         if (!orders.length !== 0) {
             for (let order of orders) {
@@ -111,45 +108,23 @@ exports.groupOrder = async (scheduleId, week, powerState) => {
 }
 exports.controllFacility = async (groupId, powerState) => {
     try {
-        const params = {
-            tagType: "POWER",
-            equipmentType: "AIR_COMPRESSOR"
-        }
-        // let tags = await axios.get(`http://localhost:8031/api/tags/${groupId}`, {params:params});
-        // tags = tags.data
+        let tags = await axios.get(`http://localhost:8031/api/tags/${groupId}`, {params:{
+                    tagType: "POWER",
+                    equipmentType: "AIR_COMPRESSOR"
+                }});
+        let s = await axios.post(`http://localhost:8031/WaWebService/Json/GetTagValue/BOM`, {data:{
+                "Tags" : [
+                    {
+                        "Name": "020_temp",
+                        "Value" : 23.3
+                    }
+                ]
+            }});
+
+        tags = tags.data
         return true;
     } catch (e) {
         console.log(e)
     }
 }
-// this.threadManeger();
 
-
-
-Date.prototype.getWeek = function (dowOffset) {
-    /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
-
-    dowOffset = typeof(dowOffset) == 'number' ? dowOffset : 0; // dowOffset이 숫자면 넣고 아니면 0
-    var newYear = new Date(this.getFullYear(),0,1);
-    var day = newYear.getDay() - dowOffset; //the day of week the year begins on
-    day = (day >= 0 ? day : day + 7);
-    var daynum = Math.floor((this.getTime() - newYear.getTime() -
-        (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-    var weeknum;
-    //if the year starts before the middle of a week
-    if(day < 4) {
-        weeknum = Math.floor((daynum+day-1)/7) + 1;
-        if(weeknum > 52) {
-            let nYear = new Date(this.getFullYear() + 1,0,1);
-            let nday = nYear.getDay() - dowOffset;
-            nday = nday >= 0 ? nday : nday + 7;
-            /*if the next year starts before the middle of
-              the week, it is week #1 of that year*/
-            weeknum = nday < 4 ? 1 : 53;
-        }
-    }
-    else {
-        weeknum = Math.floor((daynum+day-1)/7);
-    }
-    return weeknum;
-};

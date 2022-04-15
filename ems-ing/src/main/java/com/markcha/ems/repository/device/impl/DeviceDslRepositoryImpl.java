@@ -79,6 +79,39 @@ public class DeviceDslRepositoryImpl {
                 .orderBy(device.id.desc())
                 .fetch();
     }
+    public List<Device> findAllCompressorsJoinEquipment(EquipmentType typeName) {
+        QGroup parentGroup = new QGroup("pGroup");
+        QGroup childGroup = new QGroup("cGroup");
+        return query.select(device)
+                .from(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, childGroup).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
+                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .where(
+                        equipment.type.eq(typeName)
+                )
+                .orderBy(device.id.desc())
+                .fetch();
+    }
+    public Device getOneCompressorsJoinEquipment(Long id, EquipmentType typeName) {
+        QGroup parentGroup = new QGroup("pGroup");
+        QGroup childGroup = new QGroup("cGroup");
+        return query.select(device)
+                .from(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, childGroup).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
+                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .where(
+                         equipment.type.eq(typeName)
+                        ,childGroup.id.eq(id)
+                )
+                .orderBy(device.id.desc())
+                .fetchOne();
+    }
     public List<Device> findAllEtcOrphs() {
         return query.selectFrom(device)
                 .leftJoin(device.group, group).fetchJoin()

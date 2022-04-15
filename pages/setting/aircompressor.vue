@@ -118,6 +118,7 @@
                 axios({
                     method: 'get',
                     url: '/api/compressors',
+                    headers : {setting:true}
                 }).then((res) => {
                     vm.airCompressorList = res.data
                 }).catch((error) => {
