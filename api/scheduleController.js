@@ -3,46 +3,41 @@ const axios = require("axios");
 const pool = require('../config/database');
 const Dayjs = require("dayjs");
 
-const rule = new schedule.RecurrenceRule();
-rule.second = 30;
-schedule.scheduleJob("12",rule, function(){
-    console.log('The answer to life, the universe, and everything!');
-});
-schedule.scheduleJob("13",rule, function(){
-    console.log('The answer to life, the universe, and everything!');
-});
-let scheduleList = schedule.scheduledJobs
-const contain = Object.keys(scheduleList).indexOf('11');
-if(contain === -1) {
-    // 생성
-    console.log(-1)
-}
-
-
-
-exports.a = async () => {
+setInterval(async () => {
     try {
-
-        console.log(week[0][0].WEEK)
-    } catch(e) {
-
-    }
-}
-this.a()
-exports.threadManeger = async () => {
-    console.log("managing thread.")
-    try {
+        console.log(1)
         let schedules = await axios.get("http://localhost:8031/api/schedules");
         schedules = schedules.data
-        for (const schedule of schedules.data) {
-            await this.checkPoserState(t.id);
-        }
-        await http;
+        let scheduleIds = schedules.map(t=>t.id)
+        const rule = new schedule.RecurrenceRule();
+        rule.second = 30
+
+        let threadList = Object.keys(schedule.scheduledJobs)
+        let threaIds = threadList.map(t => parseInt(t, 10))
+        let distoryThreadList = threaIds.filter(x => !scheduleIds.includes(x));
+        let newThreadList = scheduleIds.filter(x => !threaIds.includes(x));
+        distoryThreadList.forEach(t=>{
+            console.log("(" + t + ") 번 스래드 삭제")
+            schedule.cancelJob(String(t));
+        })
+        newThreadList.forEach(t=>{
+            console.log("(" + t + ") 번 스래드 생성")
+            schedule.scheduleJob(String(t), rule, function () {
+                console.log('The answer to life, the universe, and everything!');
+            });
+        })
+        // console.log(schedule.scheduledJobs)
+        // if (contain === -1) {
+        //     // 생성
+        //     console.log(-1)
+        // }
+
     } catch (e) {
         console.log(e)
     }
+}, 5000)
 
-}
+// this.threadManeger();
 exports.checkPoserState = async (scheduleId) => {
     try {
         const now = Dayjs();
@@ -86,9 +81,7 @@ exports.checkPoserState = async (scheduleId) => {
         console.log(e)
     }
 }
-this.checkPoserState(1);
 exports.groupOrder = async (scheduleId, week, powerState) => {
-    console.log(scheduleId)
     try {
         let orders = await axios.get(`http://112.216.32.6:8031/api/schedule/${scheduleId}/week/${week}`);
         orders = orders.data
@@ -112,16 +105,44 @@ exports.controllFacility = async (groupId, powerState) => {
                     tagType: "POWER",
                     equipmentType: "AIR_COMPRESSOR"
                 }});
-        let s = await axios.post(`http://localhost:8031/WaWebService/Json/GetTagValue/BOM`, {data:{
-                "Tags" : [
-                    {
-                        "Name": "020_temp",
-                        "Value" : 23.3
-                    }
-                ]
-            }});
-
-        tags = tags.data
+        for (let tag of tags.data) {
+            let facilityState = await axios.post(`http://localhost:8031/WaWebService/Json/GetTagValue/BOM`, {
+                    "Tags" : [
+                        {
+                            "Name": tag
+                        }
+                    ]
+                });
+            // facilityState = facilityState.data.Values[0].Value
+            facilityState = facilityState.data.Values[0].Value
+            if (facilityState === 0 && powerState === 'ON') {
+                // 가동 제어 신호 보내기
+                await axios.post(`http://localhost:8031/WaWebService/Json/SetTagValue/BOM`, {
+                    "Tags" : [
+                        {
+                            "Name": tag,
+                            "Value": 1
+                        }
+                    ]
+                });
+                return true;
+            }   else if (facilityState === 1 && powerState === 'OFF') {
+                // 정지 제어 신호 보내기
+                await axios.post(`http://localhost:8031/WaWebService/Json/SetTagValue/BOM`, {
+                    "Tags" : [
+                        {
+                            "Name": tag,
+                            "Value": 0
+                        }
+                    ]
+                });
+                return false;
+            } else if (facilityState === 1 && powerState === 'ON') {
+                return false;
+            } else if (facilityState === 0 && powerState === 'OFF') {
+                return false;
+            }
+        }
         return true;
     } catch (e) {
         console.log(e)
