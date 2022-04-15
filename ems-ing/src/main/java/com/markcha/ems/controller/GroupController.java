@@ -216,7 +216,7 @@ public class GroupController {
         }
         public void setIsUsage(Boolean isUsage) {
             this.isUsage = isUsage;
-            this.tagEqIsUsage = tag.isUsage.eq(isUsage);
+            if(isUsage) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
         }
         public void setTagType(String tagType) {
             this.tagType = tagType;

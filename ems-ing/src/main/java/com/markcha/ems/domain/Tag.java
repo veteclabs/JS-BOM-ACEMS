@@ -43,5 +43,11 @@ public class Tag {
     private Boolean showAble;
     @Column(length = 20)
     private String type;
+    @PrePersist
+    @PreUpdate
+    void removeWhitespace() {
+        System.out.println(123);
+//        this.description = this.description.trim();
+    }
 
 }

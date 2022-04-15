@@ -62,10 +62,8 @@ public class DeviceServiceImpl implements DeviceService {
         Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel());
-        if(!isNull(deviceInsert.getGroupId())) {
-            Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
-            seletedDevice.setGroup(seletedGroup);
-        }
+        Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
+        seletedDevice.setGroup(seletedGroup);
 
         seletedDevice.setName(deviceInsert.getName());
         seletedDevice.setEquipment(selectedEquipoment);

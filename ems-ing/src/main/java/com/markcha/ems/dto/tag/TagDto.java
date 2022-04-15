@@ -2,10 +2,13 @@ package com.markcha.ems.dto.tag;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.Tag;
+import com.markcha.ems.dto.alarm.AlarmDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 import static java.util.Objects.isNull;
 
@@ -20,6 +23,8 @@ public class TagDto {
     private String description;
     @JsonIgnore
     private Long deviceId;
+    @JsonIgnore
+    private List<AlarmDto> alarms;
     public TagDto(Tag tag) {
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
