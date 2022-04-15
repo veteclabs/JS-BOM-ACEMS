@@ -40,4 +40,11 @@ public class OrderDslRepositoryImpl {
                         ,weekMapper.week.id.eq(weekId)
                 ).fetch();
     }
+
+    public List<Order> findAllByIds(List<Long> ids) {
+        return query.selectFrom(order1)
+                .leftJoin(order1.group, group).fetchJoin()
+                .where(group.id.in(ids))
+                .fetch();
+    }
 }

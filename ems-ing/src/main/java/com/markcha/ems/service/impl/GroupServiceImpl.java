@@ -18,6 +18,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -82,7 +83,7 @@ public class GroupServiceImpl {
         // 요일 끝
 
         // 주차 관계 생성
-        List<Week> weeks = weekDataRepository.findAllByIdIn(Arrays.asList(new Long[]{1L, 2L, 3L, 4L}));
+        List<Week> weeks = weekDataRepository.findAllByIdIn(Arrays.asList(new Long[]{1L, 2L, 3L, 4L, 5L}));
         List<WeekMapper> newWeekMappers = new ArrayList<>();
         for (Week week: weeks) {
             WeekMapper weekMapper = new WeekMapper();
@@ -136,9 +137,6 @@ public class GroupServiceImpl {
             newSchedule.getDayOfWeekMappers().add(dayOfWeekMapper);
         }
 
-
-
-
         // 요일 끝
 
         // 주차 관계 생성
@@ -149,7 +147,8 @@ public class GroupServiceImpl {
                 weekIds.add(k.getId());
             }
         });
-        List<WeekMapper> weekMappers = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, scheduleDto.getId());
+
+        List<WeekMapper> weekMappers = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, groupInsertDto.getSchedule().getId());
         List<Long> orderIds = new ArrayList<>();
         weekMappers.forEach(t->t.getOrders().forEach(k->orderIds.add(k.getId())));
         orderDataRepository.deleteAllByIdInBatch(orderIds);
@@ -165,7 +164,7 @@ public class GroupServiceImpl {
                 newOrder.setGroup(group);
                 newOrder.setOrder(order);
                 WeekMapper weekMapper = weekMappers.stream()
-                        .filter(k -> k.getWeek().getId() == t.getId())
+                        .filter(k -> k.getWeek().getId().equals(t.getId()))
                         .findFirst().get();
                 newOrder.setWeekMapper(weekMapper);
                 newOrders.add(newOrder);
@@ -181,6 +180,7 @@ public class GroupServiceImpl {
         return true;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
+
         if (!isNull(groupDtos)) {
             for (GroupDto groupDto : groupDtos) {
                 List<Long> newDeviceIds = null;
@@ -199,22 +199,26 @@ public class GroupServiceImpl {
 
 
                 List<Group> ordCompressors = new ArrayList<>(group.getChildren());
-                List<Device> ordDevices = group.getDeviceSet();
+                List<Device> ordDevices = new ArrayList<>(group.getDeviceSet());
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
+                List<Group> tempCompressors = new ArrayList<>();
 
+                newCompressors.forEach(t->tempCompressors.add(t));
+                tempCompressors.removeAll(ordCompressors);
                 ordCompressors.forEach(t -> t.setParent(null));
                 ordDevices.forEach(t -> t.setGroup(null));
-
+                List<Order> orders = orderDslRepository.findAllByIds(tempCompressors.stream()
+                        .map(t->t.getId()).collect(Collectors.toList()));
+                orderDataRepository.deleteAll(orders);
 
                 groupDataRepository.save(group);
                 groupDataRepository.saveAll(ordCompressors);
-//                deviceDataRepository.saveAll(ordDevices);
 
 
                 group.setChildren(new HashSet<>(newCompressors));
                 newCompressors.forEach(t -> t.setParent(group));
-                group.setDeviceSet(newDevices);
+                group.setDeviceSet(new HashSet<>(newDevices));
                 newDevices.forEach(t -> t.setGroup(group));
 
                 groupDataRepository.save(group);

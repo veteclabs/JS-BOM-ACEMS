@@ -81,7 +81,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(QDevice.device.group, QGroup.group).fetchJoin()
                 .where(equipment.type.ne(AIR_COMPRESSOR), device.group.id.eq(group.getId()))
                 .fetch();
-        group.setDeviceSet(devices);
+        group.setDeviceSet(new HashSet<>(devices));
         return group;
     }
     
@@ -190,18 +190,16 @@ public class GroupDslRepositoryImpl{
     }
     private Group getRootGroup(BooleanExpression findById) {
         return query.select(group)
-                .from(group).distinct()
+                .from(group)
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
-                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
-                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(
                         group.type.eq("group")
                         ,findById
-                )
-                .limit(1)
-                .fetchOne();
+                ).fetchOne();
     }
     private List<Group> getGroups() {
         QGroup childGroup = new QGroup("cg");
@@ -352,8 +350,8 @@ public class GroupDslRepositoryImpl{
     public Group getOneJoinSchedule(Long id) {
         Group rootGroup = getRootGroup(group.id.eq(id));
 
-        List<Long> scheduleIds = Arrays.asList(rootGroup.getSchedule().getId());
-        List<Long> parentGroupIds = Arrays.asList(rootGroup.getId());
+        List<Long> scheduleIds = new ArrayList<>(List.of(rootGroup.getSchedule().getId()));
+        List<Long> parentGroupIds = new ArrayList<>(List.of(rootGroup.getId()));
         List<WeekMapper> weekMappers = getWeekMapper(scheduleIds);
 
         List<Group> childGroups = getChildGroups(parentGroupIds);

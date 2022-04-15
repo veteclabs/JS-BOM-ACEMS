@@ -155,7 +155,6 @@ public class GroupController {
             @PathVariable("groupId") Long groupId
     ) {
         groupInsertDto.setId(groupId);
-        groupInsertDto.getSchedule().setId(groupId);
         groupService.updateCompressor(groupInsertDto);
         return new ApiResponseDto(dbUpdateMsg);
     }

@@ -35,7 +35,7 @@ public class Group {
     private Set<Group> children = new HashSet<>();
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private List<Device> deviceSet = new ArrayList<>();
+    private Set<Device> deviceSet = new HashSet<>();
 
 
     @Transient

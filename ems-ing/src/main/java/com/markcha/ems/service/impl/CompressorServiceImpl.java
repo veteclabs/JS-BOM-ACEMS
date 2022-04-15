@@ -82,7 +82,7 @@ public class CompressorServiceImpl implements DeviceService {
         // 주차 관계 생성
         List<WeekMapper> newWeekMappers = new ArrayList<>();
 
-        List<Week> weeks = weekDataRepository.findAllByIdIn(Arrays.asList(new Long[]{1L, 2L, 3L, 4L, 5L}));
+        List<Week> weeks = weekDataRepository.findAllByIdIn(Arrays.asList(new Long[]{1L, 2L, 3L, 4L, 5L, 6L}));
 
         for (Week week: weeks) {
             WeekMapper weekMapper = new WeekMapper();
