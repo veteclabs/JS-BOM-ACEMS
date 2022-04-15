@@ -5,7 +5,6 @@ const Dayjs = require("dayjs");
 
 setInterval(async () => {
     try {
-        console.log(1)
         let schedules = await axios.get("http://localhost:8031/api/schedules");
         schedules = schedules.data
         let scheduleIds = schedules.map(t=>t.id)
@@ -23,7 +22,7 @@ setInterval(async () => {
         newThreadList.forEach(t=>{
             console.log("(" + t + ") 번 스래드 생성")
             schedule.scheduleJob(String(t), rule, function () {
-                console.log('The answer to life, the universe, and everything!');
+                // console.log('The answer to life, the universe, and everything!');
             });
         })
         // console.log(schedule.scheduledJobs)
