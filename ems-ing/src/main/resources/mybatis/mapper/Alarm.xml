@@ -7,9 +7,8 @@
         select
         tagname as `tagName`,
         check_in as `checkIn`,
-        `usage` as `usage`,
-        last_usage as `lastUsage`,
-        target as `taget`,
+        `alarmValue` as `usage`,
+        `settingValue` as `taget`,
         description
         from alarms
         where true

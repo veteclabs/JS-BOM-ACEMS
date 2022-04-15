@@ -214,21 +214,21 @@ public class CompressorServiceImpl {
                 .collect(toList());
         List<String> tagNames = new ArrayList<>();
         compressors.stream().forEach(t -> t.getTags().forEach(k->tagNames.add(k.getTagName())));
-        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
-        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
-                .map(AlarmDto::new)
-                .collect(groupingBy(t -> t.getTagName()));
+//        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
+//        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
+//                .map(AlarmDto::new)
+//                .collect(groupingBy(t -> t.getTagName()));
 
-        compressors.forEach(t->{
-            t.getTags().forEach(k->{
-                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
-                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
-                    t.setAlarm(true);
-                    t.setAlarmMention(alarmDtos.get(0).getDescription());
-                }
-                k.setAlarms(alarmDtos);
-            });
-        });
+//        compressors.forEach(t->{
+//            t.getTags().forEach(k->{
+//                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
+//                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
+//                    t.setAlarm(true);
+//                    t.setAlarmMention(alarmDtos.get(0).getDescription());
+//                }
+//                k.setAlarms(alarmDtos);
+//            });
+//        });
         
         return compressors;
     }
@@ -237,19 +237,19 @@ public class CompressorServiceImpl {
         AirCompressorDto compressor = new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(id, AIR_COMPRESSOR));
         List<String> tagNames = new ArrayList<>();
         compressor.getTags().forEach(k->tagNames.add(k.getTagName()));
-        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
-        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
-                .map(AlarmDto::new)
-                .collect(groupingBy(t -> t.getTagName()));
+//        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
+//        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
+//                .map(AlarmDto::new)
+//                .collect(groupingBy(t -> t.getTagName()));
 
-        compressor.getTags().forEach(k->{
-                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
-                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
-                    compressor.setAlarm(true);
-                    compressor.setAlarmMention(alarmDtos.get(0).getDescription());
-                }
-                k.setAlarms(alarmDtos);
-            });
+//        compressor.getTags().forEach(k->{
+//                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
+//                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
+//                    compressor.setAlarm(true);
+//                    compressor.setAlarmMention(alarmDtos.get(0).getDescription());
+//                }
+//                k.setAlarms(alarmDtos);
+//            });
 
         return compressor;
     }

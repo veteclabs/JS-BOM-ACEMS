@@ -18,7 +18,6 @@ public class AlarmDto {
         tagName = (String) object.get("tagName");
         checkIn = (Boolean) object.get("checkIn");
         usage = (Integer) object.get("usage");
-        lastUsage = (Integer) object.get("lastUsage");
         taget = (Integer) object.get("taget");
         description = (String) object.get("description");
 
