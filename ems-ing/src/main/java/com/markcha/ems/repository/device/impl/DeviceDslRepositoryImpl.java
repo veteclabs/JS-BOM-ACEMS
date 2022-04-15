@@ -89,6 +89,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(
                         equipment.type.eq(typeName)
                 )
@@ -105,6 +106,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(
                          equipment.type.eq(typeName)
                         ,childGroup.id.eq(id)

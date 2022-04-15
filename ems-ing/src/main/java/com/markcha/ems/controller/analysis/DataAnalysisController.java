@@ -76,12 +76,15 @@ public class DataAnalysisController {
         historySearchDto.setIsDuo(isDuo);
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
+        groupInsertDto.setIsUsage(false);
+        System.out.println(historySearchDto);
+        System.out.println(groupInsertDto);
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
         List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                 .map(t->new GroupQueryDto(t, false))
                 .peek(t -> historySearchDto.getTagNames().addAll(t.getTagNames()))
                 .collect(toList());
-//        return collect;
+        System.out.println(historySearchDto.getTagNames());
         if(isDuo) {
             groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                     .map(t->new GroupQueryDto(t, false))
@@ -101,36 +104,13 @@ public class DataAnalysisController {
         }
         return null;
     }
-    @GetMapping(value="/alarm")
-    public Map<String, List<AlarmDto>> show() {
-        AlarmMapDto alarmMapDto = new AlarmMapDto();
-        alarmMapDto.setTagNames(new ArrayList<>(List.of("5_PWR_KWh","1_PWR_KWh")));
-        List<AlarmDto> collect = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
-                .map(AlarmDto::new)
+    @GetMapping(value="/core/{groupId}")
+    public List<GroupQueryDto> create(
+            GroupSearchDto groupInsertDto,
+            @PathVariable("groupId") Long groupId
+    ) {
+        return groupDynamicRepository.getAnalysisLocations(new ArrayList<>(List.of(groupId)), groupInsertDto, true).stream()
+                .map(t->new GroupQueryDto(t, false))
                 .collect(toList());
-        Map<Object, List<HashMap<String, Object>>> tagName = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
-                .collect(groupingBy(t -> t.get("tagName")));
-        Map<String, List<AlarmDto>> collect1 = collect.stream()
-                .collect(groupingBy(t -> t.getTagName()));
-        return collect1;
-    }
-    @Data
-    @Getter
-    public static class AlarmDto {
-        private String tagName;
-        private Boolean checkIn;
-        private Integer usage;
-        private Integer lastUsage;
-        private Integer taget;
-        private String description;
-        public AlarmDto(HashMap<String, Object> object) {
-            tagName = (String) object.get("tagName");
-            checkIn = (Boolean) object.get("checkIn");
-            usage = (Integer) object.get("usage");
-            lastUsage = (Integer) object.get("lastUsage");
-            taget = (Integer) object.get("taget");
-            description = (String) object.get("description");
-
-        }
     }
 }

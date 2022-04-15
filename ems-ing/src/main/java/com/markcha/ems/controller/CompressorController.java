@@ -1,9 +1,12 @@
 package com.markcha.ems.controller;
 
+import com.markcha.ems.controller.analysis.DataAnalysisController;
 import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
+import com.markcha.ems.mapper.alarm.AlarmMapDto;
+import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.GroupDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
@@ -13,9 +16,12 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -45,22 +51,17 @@ public class CompressorController {
                 .map(CompressorDto::new)
                 .collect(toList());
     }
-
     @GetMapping(value="/compressors")
     public List<AirCompressorDto> compressor(
     ) {
-        return deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR)
-                .stream()
-                .map(AirCompressorDto::new)
-                .collect(toList());
+        return compressorService.findAllJoinAlarm();
     }
     @GetMapping(value="/compressor/{compressorId}")
     public AirCompressorDto compressor(
             @PathVariable("compressorId") Long compressorId
     ) {
-        return new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(compressorId, AIR_COMPRESSOR));
+        return compressorService.getOneJoinAlarm(compressorId);
     }
-
     @PostMapping(value="/compressor")
     public ApiResponseDto create(
             @RequestBody CompressorInsertDto compressorInsertDto

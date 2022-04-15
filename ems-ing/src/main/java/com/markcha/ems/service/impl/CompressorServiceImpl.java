@@ -1,21 +1,21 @@
 package com.markcha.ems.service.impl;
 
 import com.markcha.ems.controller.CompressorController.CompressorInsertDto;
-import com.markcha.ems.controller.DeviceController.DeviceInsertDto;
 import com.markcha.ems.domain.*;
+import com.markcha.ems.dto.alarm.AlarmDto;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
-import com.markcha.ems.dto.device.CompressorDto;
+import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.week.WeekDto;
+import com.markcha.ems.mapper.alarm.AlarmMapDto;
+import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.repository.*;
 import com.markcha.ems.repository.dayofweekmapper.impl.DayOfWeekMapperDslRepositoryImpl;
-import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
-import com.markcha.ems.service.DeviceService;
 import com.markcha.ems.service.InsertSampleData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,11 +25,12 @@ import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
-public class CompressorServiceImpl implements DeviceService {
+public class CompressorServiceImpl {
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final EquipmentDataRepository equipmentDataRepository;
@@ -45,7 +46,8 @@ public class CompressorServiceImpl implements DeviceService {
     private final DayOfWeekMapperDslRepositoryImpl dayOfWeekMapperDslRepository;
     private final WeekMapperDslRepositoryImpl weekMapperDslRepository;
     private final InsertSampleData insertSampleData;
-    @Override
+    private final AlarmMapper alarmMapper;
+
     public Boolean createCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
 
@@ -121,13 +123,6 @@ public class CompressorServiceImpl implements DeviceService {
         deviceDataRepository.save(save);
         return true;
     }
-
-    @Override
-    public Boolean createDevice(DeviceInsertDto deviceInsert) {
-        return null;
-    }
-
-    @Override
     public Boolean updateCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
         Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());
@@ -213,9 +208,49 @@ public class CompressorServiceImpl implements DeviceService {
         return true;
     }
 
-    @Override
-    public Boolean updateDevice(DeviceInsertDto deviceInsert) {
-        return null;
+    public List<AirCompressorDto> findAllJoinAlarm() {
+        List<AirCompressorDto> compressors = deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR).stream()
+                .map(AirCompressorDto::new)
+                .collect(toList());
+        List<String> tagNames = new ArrayList<>();
+        compressors.stream().forEach(t -> t.getTags().forEach(k->tagNames.add(k.getTagName())));
+        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
+        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
+                .map(AlarmDto::new)
+                .collect(groupingBy(t -> t.getTagName()));
+
+        compressors.forEach(t->{
+            t.getTags().forEach(k->{
+                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
+                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
+                    t.setAlarm(true);
+                    t.setAlarmMention(alarmDtos.get(0).getDescription());
+                }
+                k.setAlarms(alarmDtos);
+            });
+        });
+        
+        return compressors;
     }
 
+    public AirCompressorDto getOneJoinAlarm(Long id) {
+        AirCompressorDto compressor = new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(id, AIR_COMPRESSOR));
+        List<String> tagNames = new ArrayList<>();
+        compressor.getTags().forEach(k->tagNames.add(k.getTagName()));
+        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
+        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
+                .map(AlarmDto::new)
+                .collect(groupingBy(t -> t.getTagName()));
+
+        compressor.getTags().forEach(k->{
+                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
+                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
+                    compressor.setAlarm(true);
+                    compressor.setAlarmMention(alarmDtos.get(0).getDescription());
+                }
+                k.setAlarms(alarmDtos);
+            });
+
+        return compressor;
+    }
 }
