@@ -63,7 +63,7 @@
                     <div v-if="propsdata.tagType">
                         <h4>에너지원</h4>
                         <label class="radio-box" v-for="item in tagTypeOption" :key="item.id">
-                            <input type="radio" v-model="searchParams.tagType" :value="item.id" @change="refresh"/>
+                            <input type="radio" v-model="searchParams.tagType" :value="item.id"/>
                             <div class="radio-circle">
                                 <div class="inner-circle"/>
                             </div>
@@ -206,6 +206,7 @@
             refresh() {
                 const vm = this;
                 let params = {};
+
                 for (let i in this.propsdata) {
                     params[i] = vm.searchParams[i];
                 }
@@ -244,9 +245,10 @@
             },
         },
         watch: {
-            'searchParams.tagType': function() {
-                this.getFilter();
+            'searchParams.tagType': async function() {
                 this.searchParams.usageType = 'Usage';
+                await this.getFilter();
+                this.refresh();
             },
             'searchParams.timeType': function () {
                 if (this.searchParams.timeType === 'H' || this.searchParams.timeType === '15min') {
