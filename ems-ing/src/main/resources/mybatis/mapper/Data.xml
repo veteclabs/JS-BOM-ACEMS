@@ -277,8 +277,7 @@
     </select>
 
     <select id="getHistoryYear" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
-        SELECT year(`timestamp`) y
-
+        SELECT year(shr.`timestamp`) y
         <if test="usageType.equals('Usage')">
             ,if(#{tagType} = 'PF', avg(shr.`usage`),sum(shr.`usage`)) #{usageType}
 
@@ -286,41 +285,32 @@
                 ,if(#{tagType} = 'PF', avg(`EY`.`usage`),sum(`EY`.`usage`)) kWh
             </if>
         </if>
-
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL((if(#{tagType} = "PF", avg(shr.`usage`),sum(shr.`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
         </if>
-
         <if test="usageType.equals('tCo2')">
             , ROUND(IFNULL((if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
         </if>
-
-
         FROM
         (SELECT `toe`,`tco2` FROM energy WHERE energy_id=#{energyId}) formula,
-        `tagdata`.history_day shr
-        where shr.tagname in
+        (select `usage`, `timestamp` from `tagdata`.history_day
+        where tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-         AND shr.`timestamp` <![CDATA[>]]> #{startDate}
-        AND shr.`timestamp` <![CDATA[<=]]> #{endDate}
+        AND `timestamp` <![CDATA[>]]> #{startDate}
+        AND `timestamp` <![CDATA[<=]]> #{endDate}) shr
         <if test="isDuo.equals(true)">
             LEFT JOIN
-            (SELECT
-            `TIMESTAMP`,
-            if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
-            FROM `tagdata`.history_day
+            (SELECT `usage`, `timestamp` from `tagdata`.history_day
             WHERE tagname in
             <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
                 #{secondtagname}
             </foreach>
-            AND `timestamp` <![CDATA[>]]> #{startDate}
-            AND `timestamp` <![CDATA[<=]]> #{endDate}
-            group by hour(`TIMESTAMP`)
-            ) `EY` ON year(`EY`.TIMESTAMP) = year(shr.timestamp)
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}) `EY` ON year(`EY`.timestamp) = year(shr.timestamp)
         </if>
-        group by y;
+        group by year(shr.`timestamp`);
     </select>
 
     <select id="getHistoryMin" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">

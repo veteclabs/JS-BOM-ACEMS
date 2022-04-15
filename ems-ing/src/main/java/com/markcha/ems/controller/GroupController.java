@@ -212,11 +212,11 @@ public class GroupController {
             if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
             if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
             if(!isNull(tagType)) this.tagEqType = tag.type.eq(tagType);
-            if(!isNull(isUsage)) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
+//            if(!isNull(isUsage)) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
         }
         public void setIsUsage(Boolean isUsage) {
             this.isUsage = isUsage;
-            if(isUsage) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
+            this.tagEqIsUsage = tag.isUsage.eq(isUsage);
         }
         public void setTagType(String tagType) {
             this.tagType = tagType;

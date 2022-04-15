@@ -58,7 +58,6 @@ public class DataAnalysisController {
             @RequestParam @Nullable String deviceId
     ) {
         groupInsertDto.setDevoceIdT2(deviceId.replace("\"", ""));
-        groupInsertDto.setIsUsage(true);
         groupInsertDto.setEnergyId(null);
         groupInsertDto.setEnergyEqId(null);
         Boolean isDuo = false;
@@ -76,15 +75,11 @@ public class DataAnalysisController {
         historySearchDto.setIsDuo(isDuo);
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
-        groupInsertDto.setIsUsage(false);
-        System.out.println(historySearchDto);
-        System.out.println(groupInsertDto);
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
         List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                 .map(t->new GroupQueryDto(t, false))
                 .peek(t -> historySearchDto.getTagNames().addAll(t.getTagNames()))
                 .collect(toList());
-        System.out.println(historySearchDto.getTagNames());
         if(isDuo) {
             groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                     .map(t->new GroupQueryDto(t, false))
