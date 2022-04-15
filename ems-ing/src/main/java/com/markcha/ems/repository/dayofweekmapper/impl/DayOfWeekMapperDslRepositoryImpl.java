@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
 import static com.markcha.ems.domain.QSchedule.schedule;
+import static com.querydsl.core.types.Projections.constructor;
 
 @Repository
 public class DayOfWeekMapperDslRepositoryImpl {
@@ -30,10 +31,9 @@ public class DayOfWeekMapperDslRepositoryImpl {
 
     public List<Long> findAllByScheduleId(Long id) {
         return query.select(
-                Projections.constructor(
+                    constructor(
                         Long.class,
-                        dayOfWeekMapper.id
-                        ))
+                        dayOfWeekMapper.id))
                 .from(dayOfWeekMapper)
                 .leftJoin(dayOfWeekMapper.schedule, schedule)
                 .where(schedule.id.eq(id))

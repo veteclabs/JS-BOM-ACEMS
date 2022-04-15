@@ -146,23 +146,29 @@ public class CompressorServiceImpl implements DeviceService {
         newSchedule.setStartTime(scheduleDto.getStartTime());
         newSchedule.setStopTime(scheduleDto.getStopTime());
         newSchedule.setUpdated(LocalDateTime.now());
+
+
+
 //        // 요일 관계 생성
         newSchedule.setDayOfWeekMappers(new HashSet<>());
         List<Long> dayOfWeekMapperIds = dayOfWeekMapperDslRepository.findAllByScheduleId(newSchedule.getId());
-
         dayOfWeekMapperDslRepository.deleteByIdIn(dayOfWeekMapperIds);
         List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
-
         List<DayOfWeekMapper> newDayOfWeekMappers = new ArrayList<>();
+
         for (DayOfWeek dayOfWeek : dayOfWeeks) {
             DayOfWeekMapper dayOfWeekMapper = new DayOfWeekMapper();
             dayOfWeekMapper.setDayOfWeek(dayOfWeek);
             dayOfWeekMapper.setSchedule(newSchedule);
             newSchedule.getDayOfWeekMappers().add(dayOfWeekMapper);
         }
+
+
+
+
         // 요일 끝
 
         // 주차 관계 생성
