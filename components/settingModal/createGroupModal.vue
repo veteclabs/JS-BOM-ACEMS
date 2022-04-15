@@ -20,14 +20,6 @@
                         </div>
                     </td>
                 </tr>
-                <!--<tr>
-                    <th>용량</th>
-                    <td>
-                        <label class="input-100">
-                            <input type="text" v-model="capacity" class="input-100"/>
-                        </label>
-                    </td>
-                </tr>-->
                 </tbody>
             </table>
 
@@ -148,15 +140,7 @@
                 name: '',
                 barRange: [6, 8],
                 isSchedule:1,
-                dateList: [
-                    {id: 1, name: '월'},
-                    {id: 2, name: '화'},
-                    {id: 3, name: '수'},
-                    {id: 4, name: '목'},
-                    {id: 5, name: '금'},
-                    {id: 6, name: '토'},
-                    {id: 7, name: '일'}
-                ],
+                dateList: [],
                 date: [],
                 time: {
                     start: '00:00',
@@ -202,7 +186,23 @@
                 return Validator.value(value).required();
             },
         },
+        mounted() {
+            this.getDayOfWeek();
+        },
         methods: {
+            getDayOfWeek (){
+
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/dayOfWeek ',
+                }).then((res) => {
+                    vm.dateList = res.data
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
             submit() {
                 const vm = this;
                 const modal = this.$bvModal;

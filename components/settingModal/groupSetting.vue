@@ -159,15 +159,7 @@
                     e: '',
                 },
                 state: 'new',
-                dateList: [
-                    {id: 3, name: '월'},
-                    {id: 4, name: '화'},
-                    {id: 5, name: '수'},
-                    {id: 6, name: '목'},
-                    {id: 7, name: '금'},
-                    {id: 1, name: '토'},
-                    {id: 2, name: '일'}
-                ],
+                dateList: [],
                 timeOptions: {
                     format: 'HH:mm:00',
                 },
@@ -202,7 +194,23 @@
                     });
                 },
         },
+        mounted() {
+            this.getDayOfWeek();
+        },
         methods: {
+            getDayOfWeek (){
+
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/dayOfWeek ',
+                }).then((res) => {
+                    vm.dateList = res.data
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
             submit(state) {
                 const vm = this;
                 const params = this.groupData;
