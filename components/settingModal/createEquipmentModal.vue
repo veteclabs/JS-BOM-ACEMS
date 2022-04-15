@@ -71,7 +71,6 @@
                     <td>
                         <label class="input-100" v-if="params.type === '전력'">
                             <select v-model="params.groupId">
-                                <option :value="null" selected >미지정</option>
                                 <option v-for="group in airCompressorList" :value="group.id" :key="group.id">
                                     {{group.name}}
                                 </option>
@@ -85,6 +84,9 @@
                                 </option>
                             </select>
                         </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('params.groupId') }}
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -116,14 +118,6 @@
     import flashModal from '~/components/flashmodal.vue';
 
     const {Validator} = SimpleVueValidation;
-
-    SimpleVueValidation.extendTemplates({
-        required: '필수 입력 항목입니다.',
-        length: '길이가 {0} 이어야 합니다.',
-        minLength: '{0} 글자 이상이어야 합니다.',
-        maxLength: '{0} 글자 이하여야 합니다.',
-        digit: '숫자만 입력해주세요.',
-    });
 
     export default {
 
@@ -163,6 +157,16 @@
         validators: {
             'params.type': function (value) {
                 return Validator.value(value).required();
+            },
+            'params.groupId': function (value) {
+                const vm = this;
+                return Validator.value(value).custom(function () {
+                    if(vm.params.type === '전력') {
+                        if(value === null || value === '' || value === undefined) {
+                            return '필수 입력 항목입니다.'
+                        }
+                    }
+                })
             },
             'params.name': function (value) {
                 return Validator.value(value).required();
