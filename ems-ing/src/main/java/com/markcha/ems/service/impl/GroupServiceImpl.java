@@ -53,7 +53,7 @@ public class GroupServiceImpl {
         Group newGroup = new Group();
         newGroup.setName(groupInsertDto.getName());
         newGroup.setLevel(1);
-        newGroup.setType("group");
+        newGroup.setType(GroupType.GROUP);
         Schedule newSchedule = new Schedule();
         ScheduleDto scheduleDto = groupInsertDto.getSchedule();
         newSchedule.setIsGroup(true);

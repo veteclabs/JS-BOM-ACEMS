@@ -1,6 +1,7 @@
 package com.markcha.ems.controller;
 
 import com.markcha.ems.domain.EquipmentType;
+import com.markcha.ems.domain.GroupType;
 import com.markcha.ems.domain.Voltage;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
@@ -59,14 +60,14 @@ public class DeviceController {
     @GetMapping(value="/device/groups")
     public List<GroupsSimpleDto> group(
     ) {
-        return groupDslRepository.findAllByType("group").stream()
+        return groupDslRepository.findAllByType(GroupType.GROUP).stream()
                 .map(GroupsSimpleDto::new)
                 .collect(Collectors.toList());
     }
     @GetMapping(value="/device/compressors")
     public List<CompressorSimpleDto> templcate(
     ) {
-        return groupDslRepository.findAllByType("compressor").stream()
+        return groupDslRepository.findAllByType(GroupType.OBJECT).stream()
                 .map(CompressorSimpleDto::new)
                 .collect(Collectors.toList());
     }

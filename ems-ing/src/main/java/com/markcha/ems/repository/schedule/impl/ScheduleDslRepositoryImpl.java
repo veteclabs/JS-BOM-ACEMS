@@ -65,4 +65,9 @@ public class ScheduleDslRepositoryImpl {
                 .where(schedule.id.eq(id))
                 .fetchOne();
     }
+    public Schedule a(Long id) {
+        return query.selectFrom(schedule)
+                .where(schedule.id.eq(id))
+                .fetchOne();
+    }
 }

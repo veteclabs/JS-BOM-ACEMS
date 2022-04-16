@@ -2,10 +2,7 @@ package com.markcha.ems.repository.group.impl;
 
 import com.markcha.ems.controller.GroupController;
 import com.markcha.ems.controller.GroupController.GroupSearchDto;
-import com.markcha.ems.domain.Device;
-import com.markcha.ems.domain.Group;
-import com.markcha.ems.domain.Link;
-import com.markcha.ems.domain.QEquipment;
+import com.markcha.ems.domain.*;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.querydsl.core.types.Predicate;
@@ -53,7 +50,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
     }
 
     
-    public List<Long> getTypeIds(String type) {
+    public List<Long> getTypeIds(GroupType type) {
         return queryFactory.select(
                 Projections.constructor(
                         Long.class,

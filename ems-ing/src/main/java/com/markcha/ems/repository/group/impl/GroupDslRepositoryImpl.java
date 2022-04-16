@@ -42,7 +42,7 @@ public class GroupDslRepositoryImpl{
         this.webaccessApiService = webaccessApiService;
     }
     
-    public List<Group> findAllByType(String type) {
+    public List<Group> findAllByType(GroupType type) {
         return query.select(group)
                 .from(group)
                 .where(
@@ -118,7 +118,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
                 .where(
-                         group.type.eq("group")
+                         group.type.eq(GroupType.GROUP)
                         ,findById
                 )
                 .orderBy(group.id.asc())
@@ -197,7 +197,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(
-                        group.type.eq("group")
+                        group.type.eq(GroupType.GROUP)
                         ,findById
                 ).fetchOne();
     }
@@ -211,7 +211,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(device.tags, tag)
                 .leftJoin(childGroup.deviceSet, childDevice)
                 .leftJoin(childDevice.tags, childTag)
-                .where(group.type.eq("group"))
+                .where(group.type.eq(GroupType.GROUP))
                 .orderBy(group.id.desc())
                 .fetch();
     }

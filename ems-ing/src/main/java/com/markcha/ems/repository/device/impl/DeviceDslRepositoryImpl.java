@@ -131,7 +131,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                         parentGroup.isNull(),
-                        group.type.eq("compressor")
+                        group.type.eq(GroupType.OBJECT)
                 ).fetch();
     }
     public Device getOneById(Long id) {

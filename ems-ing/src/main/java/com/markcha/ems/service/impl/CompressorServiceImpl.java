@@ -104,7 +104,7 @@ public class CompressorServiceImpl {
 
         newGroup.setParent(parentGroup);
         newGroup.setName(compressorInsertDto.getName());
-        newGroup.setType(typeName);
+        newGroup.setType(GroupType.OBJECT);
         newGroup.setSchedule(newSchedule);
         newGroup.setLevel(2);
         groupDataRepository.save(newGroup);
@@ -196,7 +196,7 @@ public class CompressorServiceImpl {
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
         newGroup.setParent(parentGroup);
         newGroup.setName(compressorInsertDto.getName());
-        newGroup.setType(typeName);
+        newGroup.setType(GroupType.OBJECT);
         newGroup.setLevel(2);
         groupDataRepository.save(newGroup);
 

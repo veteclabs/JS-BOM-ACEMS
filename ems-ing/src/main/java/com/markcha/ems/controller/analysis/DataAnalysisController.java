@@ -1,6 +1,7 @@
 package com.markcha.ems.controller.analysis;
 
 import com.markcha.ems.controller.GroupController.GroupSearchDto;
+import com.markcha.ems.domain.GroupType;
 import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.mapper.alarm.AlarmMapDto;
 import com.markcha.ems.mapper.alarm.AlarmMapper;
@@ -75,7 +76,7 @@ public class DataAnalysisController {
         historySearchDto.setIsDuo(isDuo);
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
-        List<Long> rootGroupIds = groupDynamicRepository.getTypeIds("group");
+        List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
         List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                 .map(t->new GroupQueryDto(t, false))
                 .peek(t -> historySearchDto.getTagNames().addAll(t.getTagNames()))
