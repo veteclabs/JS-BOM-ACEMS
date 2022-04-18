@@ -25,7 +25,7 @@ public class WeekMapper {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="week_id")
     private Week week;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "weekMapper")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "weekMapper",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Order> orders = new HashSet<>();
     @Transient
     private List<Group> standByGroups = new ArrayList<>();

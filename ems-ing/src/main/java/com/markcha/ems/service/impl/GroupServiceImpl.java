@@ -17,15 +17,22 @@ import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
+import static com.markcha.ems.domain.QGroup.group;
+import static com.markcha.ems.domain.QOrder.order1;
+import static com.markcha.ems.domain.QSchedule.schedule;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -102,7 +109,7 @@ public class GroupServiceImpl {
     }
 
     public Boolean updateCompressor(GroupInsertDto groupInsertDto) {
-        Group newGroup = groupDataRepository.getById(groupInsertDto.getId());
+        Group newGroup = groupDslRepository.getOneJoinScheduleById(groupInsertDto.getId());
         newGroup.setName(groupInsertDto.getName());
         Schedule newSchedule = newGroup.getSchedule();
         ScheduleDto scheduleDto = groupInsertDto.getSchedule();
@@ -121,59 +128,58 @@ public class GroupServiceImpl {
 
 
 //        // 요일 관계 생성
-        newSchedule.setDayOfWeekMappers(new HashSet<>());
-        List<Long> dayOfWeekMapperIds = dayOfWeekMapperDslRepository.findAllByScheduleId(newGroup.getSchedule().getId());
-        dayOfWeekMapperDslRepository.deleteByIdIn(dayOfWeekMapperIds);
+        newSchedule.getDayOfWeekMappers().clear();
         List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
-        List<DayOfWeekMapper> newDayOfWeekMappers = new ArrayList<>();
-
+        Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
         for (DayOfWeek dayOfWeek : dayOfWeeks) {
             DayOfWeekMapper dayOfWeekMapper = new DayOfWeekMapper();
             dayOfWeekMapper.setDayOfWeek(dayOfWeek);
             dayOfWeekMapper.setSchedule(newSchedule);
             newSchedule.getDayOfWeekMappers().add(dayOfWeekMapper);
         }
-
         // 요일 끝
 
         // 주차 관계 생성
-        newSchedule.setWeekMappers(new HashSet<>());
-        List<Long> weekIds = new ArrayList<>();
-        scheduleDto.getWeekDevices().forEach(k->{
-            if (!isNull(k.getWorking())) {
-                weekIds.add(k.getId());
-            }
-        });
 
-        List<WeekMapper> weekMappers = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, groupInsertDto.getSchedule().getId());
-        List<Long> orderIds = new ArrayList<>();
-        weekMappers.forEach(t->t.getOrders().forEach(k->orderIds.add(k.getId())));
-        orderDataRepository.deleteAllByIdInBatch(orderIds);
-        List<WeekGroupDto> weekGroupDtos = scheduleDto.getWeekDevices();
+        newSchedule.getWeekMappers().clear();
+        Set<WeekMapper> weekMappers = newSchedule.getWeekMappers();
+        List<WeekGroupDto> weekOrdes = scheduleDto.getWeekDevices();
+        List<Long> weekIds = weekOrdes.stream()
+                .map(t -> t.getId())
+                .collect(toList());
+
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
-        List<Order> newOrders = new ArrayList<>();
-        weekGroupDtos.forEach(t->{
-            int order = 1;
-            for (CompressorSimpleDto compressorSimpleDto : t.getWorking()) {
-                Order newOrder = new Order();
-                Group group = workingGroups.stream().filter(k->k.getId() == compressorSimpleDto.getId())
-                        .findFirst().get();
-                newOrder.setGroup(group);
-                newOrder.setOrder(order);
-                WeekMapper weekMapper = weekMappers.stream()
-                        .filter(k -> k.getWeek().getId().equals(t.getId()))
-                        .findFirst().get();
-                newOrder.setWeekMapper(weekMapper);
-                newOrders.add(newOrder);
-                order = order + 1;
-            }
-        });
-        orderDataRepository.saveAll(newOrders);
+        List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
+        weeks.forEach(t->{
 
-        newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
+            WeekMapper weekMapper = new WeekMapper();
+            WeekGroupDto weekOrde = weekOrdes.stream().filter(w -> {
+                return w.getId().equals(t.getId());
+            }).collect(toSingleton());
+            List<Long> groupIds = weekOrde.getStandBy().stream()
+                    .map(g->g.getId())
+                    .collect(toList());
+
+            List<Group> newGroups = workingGroups.stream()
+                    .filter(g -> groupIds.contains(g.getId()))
+                    .collect(toList());
+            weekMapper.getOrders().clear();
+            int order = 1;
+            for (Group group : newGroups) {
+                Order newOrder = new Order();
+                newOrder.setWeekMapper(weekMapper);
+                newOrder.setOrder(order);
+                newOrder.setGroup(group);
+                weekMapper.getOrders().add(newOrder);
+                order++;
+            }
+            weekMapper.setWeek(t);
+            weekMapper.setSchedule(newSchedule);
+            newSchedule.getWeekMappers().add(weekMapper);
+        });
         scheduleDataRepository.save(newSchedule);
         groupDataRepository.save(newGroup);
 
@@ -195,13 +201,23 @@ public class GroupServiceImpl {
                             .map(t -> t.getId())
                             .collect(toList());
                 }
-                Group group = groupDslRepository.getOneJoinChildsAndDevicesById(groupDto.getId());
 
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
+                Group group = groupDslRepository.getOneJoinChildsAndDevicesById(groupDto.getId());
+                stopWatch.stop();
+                System.out.println("해당 노드 그룹 조회 : " + stopWatch.getLastTaskTimeMillis());
 
                 List<Group> ordCompressors = new ArrayList<>(group.getChildren());
                 List<Device> ordDevices = new ArrayList<>(group.getDeviceSet());
+                stopWatch.start();
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
+                stopWatch.stop();
+                System.out.println("해당 노드 그룹의 자식 그룹들 조회 : " + stopWatch.getLastTaskTimeMillis());
+                stopWatch.start();
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
+                stopWatch.stop();
+                System.out.println("해당 노드 그룹의 장치들 조회 : " + stopWatch.getLastTaskTimeMillis());
                 List<Group> tempCompressors = new ArrayList<>();
 
                 newCompressors.forEach(t->tempCompressors.add(t));
@@ -259,5 +275,16 @@ public class GroupServiceImpl {
         groupDataRepository.deleteAllInBatch(groups);
         scheduleDataRepository.deleteAllInBatch(schedules);
         return true;
+    }
+    public static <T> Collector<T, ?, T> toSingleton() {
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> {
+                    if (list.size() != 1) {
+                        throw new IllegalStateException();
+                    }
+                    return list.get(0);
+                }
+        );
     }
 }

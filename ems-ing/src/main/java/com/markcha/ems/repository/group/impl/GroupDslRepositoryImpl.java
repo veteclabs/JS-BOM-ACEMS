@@ -35,7 +35,22 @@ public class GroupDslRepositoryImpl{
     private final EntityManager entityManager;
     private final JPAQueryFactory query;
     private final WebaccessApiServiceImpl webaccessApiService;
-
+    public Group getOneJoinScheduleById(Long id) {
+        BooleanExpression groupEqId = null;
+        if(!isNull(id)) {
+            groupEqId = group.id.eq(id);
+        } else {
+            groupEqId = group.id.eq(-1L);
+        }
+        return query.selectFrom(group)
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.orders, order1)
+                .where(groupEqId)
+                .limit(1)
+                .fetchOne();
+    }
     public GroupDslRepositoryImpl(EntityManager entityManager, WebaccessApiServiceImpl webaccessApiService) {
         this.entityManager = entityManager;
         this.query = new JPAQueryFactory(entityManager);
@@ -72,6 +87,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(QGroup.group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(weekMapper.orders, order1).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(QGroup.group.id.eq(id))
@@ -308,6 +324,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(weekMapper.orders, order1).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(groupIdEq)
