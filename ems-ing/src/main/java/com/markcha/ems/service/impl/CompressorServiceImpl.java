@@ -145,49 +145,18 @@ public class CompressorServiceImpl {
 
 
 //        // 요일 관계 생성
-        newSchedule.setDayOfWeekMappers(new HashSet<>());
-        List<Long> dayOfWeekMapperIds = dayOfWeekMapperDslRepository.findAllByScheduleId(newSchedule.getId());
-        dayOfWeekMapperDslRepository.deleteByIdIn(dayOfWeekMapperIds);
+        newSchedule.getDayOfWeekMappers().clear();
         List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
-        List<DayOfWeekMapper> newDayOfWeekMappers = new ArrayList<>();
-
+        Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
         for (DayOfWeek dayOfWeek : dayOfWeeks) {
             DayOfWeekMapper dayOfWeekMapper = new DayOfWeekMapper();
             dayOfWeekMapper.setDayOfWeek(dayOfWeek);
             dayOfWeekMapper.setSchedule(newSchedule);
             newSchedule.getDayOfWeekMappers().add(dayOfWeekMapper);
         }
-
-
-
-
-        // 요일 끝
-
-        // 주차 관계 생성
-        newSchedule.setWeekMappers(new HashSet<>());
-        List<Long> allByScheduleId = weekMapperDslRepository.findAllByScheduleId(newSchedule.getId(), null);
-        weekMapperDslRepository.deleteByIdIn(allByScheduleId);
-        if(!isNull(scheduleDto.getWeeks())) {
-            List<Long> weekIds = scheduleDto.getWeeks().stream()
-                    .map(WeekDto::getId)
-                    .collect(toList());
-            List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
-
-            List<WeekMapper> newWeekMappers = new ArrayList<>();
-            for (Week week : weeks) {
-                WeekMapper weekMapper = new WeekMapper();
-                weekMapper.setWeek(week);
-                weekMapper.setSchedule(newSchedule);
-                newWeekMappers.add(weekMapper);
-            }
-            newSchedule.setWeekMappers(new HashSet<>(newWeekMappers));
-        }
-
-
-        newSchedule.setDayOfWeekMappers(new HashSet<>(newDayOfWeekMappers));
 
         scheduleDataRepository.save(newSchedule);
 
@@ -229,7 +198,7 @@ public class CompressorServiceImpl {
 //                k.setAlarms(alarmDtos);
 //            });
 //        });
-        
+
         return compressors;
     }
 

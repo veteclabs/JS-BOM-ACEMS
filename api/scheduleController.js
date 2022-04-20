@@ -8,22 +8,25 @@ setInterval(async () => {
         let schedules = await axios.get("http://localhost:8031/api/schedules");
         schedules = schedules.data
         let scheduleIds = schedules.map(t=>t.id)
-        const rule = new schedule.RecurrenceRule();
-        rule.second = 30
+
 
         let threadList = Object.keys(schedule.scheduledJobs)
         let threaIds = threadList.map(t => parseInt(t, 10))
         let distoryThreadList = threaIds.filter(x => !scheduleIds.includes(x));
         let newThreadList = scheduleIds.filter(x => !threaIds.includes(x));
         distoryThreadList.forEach(t=>{
+            let scd = schedules.filter(k=>k.id === t)
+            const rule = new schedule.RecurrenceRule();
+            rule.second = scd.interval
             console.log("(" + t + ") 번 스래드 삭제")
-            schedule.cancelJob(String(t));
+            schedule.cancelJob(String(t), rule,this.checkPoserState);
         })
         newThreadList.forEach(t=>{
+            let scd = schedules.filter(k=>k.id === t)
+            const rule = new schedule.RecurrenceRule();
+            rule.second = scd.interval
             console.log("(" + t + ") 번 스래드 생성")
-            schedule.scheduleJob(String(t), rule, function () {
-                // console.log('The answer to life, the universe, and everything!');
-            });
+            schedule.scheduleJob(String(t), rule,this.checkPoserState);
         })
         // console.log(schedule.scheduledJobs)
         // if (contain === -1) {
@@ -69,7 +72,7 @@ exports.checkPoserState = async (scheduleId) => {
                 if (powerState !== 'STAY') {
 
                     if (schedule.isGroup) {
-                        await this.groupOrder(scheduleId, week, powerState);
+                        // await this.groupOrder(scheduleId, week, powerState);
                     } else {
                         // await this.controllFacility(schedule.groupId);
                     }
