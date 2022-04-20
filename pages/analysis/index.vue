@@ -374,13 +374,18 @@
                     } else {
                         valueName = valueNameTarget[0].name;
                     }
-
+                    console.log(vm.params.tagTypeOption)
+                    console.log(vm.params.usageType)
                     if (vm.params.usageType === 'Usage') {
                         if (valueFieldValue === 'kW' || valueFieldValue === 'beforekW') {
                             vm.DevNumberFormat = `#,##0.## kW`
+                        } else if  (vm.params.tagTypeOption === 'FLOW') {
+                            vm.DevNumberFormat = `#,##0.## ㎥`
                         } else {
                             vm.DevNumberFormat = `#,##0.## ${this.unitArray[vm.params.usageType]}`;
                         }
+                    } else if (vm.params.usageType === 'PF') {
+                        vm.DevNumberFormat = `#,##0.## %`
                     } else {
                         vm.DevNumberFormat = `#,##0.#####`;
                     }
@@ -566,11 +571,7 @@
                 vm.searchResult.avg.beforeValue = parseFloat(Number(vm.beforeAvg).toFixed(5));
                 vm.searchResult.sum.beforeValue = parseFloat(Number(vm.beforeSum).toFixed(5));
 
-                if (vm.params.usageType === "PF") {
-                    vm.searchResult.sum.show = false;
-                } else {
-                    vm.searchResult.sum.show = true;
-                }
+                vm.searchResult.sum.show = !(vm.params.usageType === "PF" || vm.params.usageType === 'kW');
 
             },
             customizePoint(arg) {
