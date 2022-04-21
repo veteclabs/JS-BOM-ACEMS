@@ -65,7 +65,6 @@ public class DeviceController {
     @GetMapping(value="/etcs")
     public List<TemplcateDto> etc2(
     ){
-        System.out.println(22);
         return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
                 .map(t->new TemplcateDto(t,true))
                 .collect(Collectors.toList());

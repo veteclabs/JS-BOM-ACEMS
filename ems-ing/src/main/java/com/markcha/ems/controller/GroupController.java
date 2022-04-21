@@ -10,6 +10,7 @@ import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
+import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
@@ -166,6 +167,9 @@ public class GroupController {
             @RequestBody GroupInsertDto groupInsertDto,
             @PathVariable("groupId") Long groupId
     ) {
+        if (groupDslRepository.countPressure(groupId) != 1 && groupInsertDto.getSchedule().getIsActive()) {
+            throw new MethodNotAllowedException("해당 그룹은 단 하나의 압력계가 필요합니다.");
+        }
         groupInsertDto.setId(groupId);
         groupService.updateCompressor(groupInsertDto);
         return new ApiResponseDto(dbUpdateMsg);
@@ -174,6 +178,11 @@ public class GroupController {
     public ApiResponseDto updateAll(
             @RequestBody List<GroupDto> groupInsertDtos
     ) {
+        groupInsertDtos.forEach(t->{
+            if(t.getDevices().get("pressure").size() != 1) {
+                throw new MethodNotAllowedException("해당 그룹은 단 하나의 압력계가 필요합니다.");
+            }
+        });
         groupInsertDtos.forEach(t->t.setDeviceList(t));
         groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);

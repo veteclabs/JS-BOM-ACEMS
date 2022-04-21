@@ -55,7 +55,19 @@ public class GroupDslRepositoryImpl{
         this.query = new JPAQueryFactory(entityManager);
         this.webaccessApiService = webaccessApiService;
     }
-    
+
+    public long countPressure(Long groupId) {
+        return query.select(device)
+                .from(device)
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .where(
+                         equipment.type.eq(EquipmentType.PRESSURE_GAUGE)
+                        ,group.id.eq(groupId)
+                )
+                .fetchCount();
+    }
     public List<Group> findAllByType(GroupType type) {
         return query.select(group)
                 .from(group)
