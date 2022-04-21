@@ -28,10 +28,10 @@ public class CompressorDto {
     private String groupName;
     private ScheduleDto schedule;
     public CompressorDto(Device device) {
-        this.id = device.getId();
-        this.name = device.getName();
         if(!isNull(device.getGroup())) {
             Group group = device.getGroup();
+            this.id = device.getId();
+            this.name = device.getName();
             if (!isNull(group.getParent())) {
                 Group parentGroup = group.getParent();
                 this.groupId = parentGroup.getId();

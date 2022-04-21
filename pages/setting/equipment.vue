@@ -117,6 +117,7 @@
                 axios({
                     method: 'get',
                     url: '/api/etcs',
+                    headers: {setting: true}
                 }).then((res) => {
                     vm.equipmentList = res.data
                 }).catch((error) => {

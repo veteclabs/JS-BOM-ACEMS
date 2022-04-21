@@ -1,16 +1,16 @@
 package com.markcha.ems.repository.device.impl;
 
 import com.markcha.ems.domain.*;
-import com.markcha.ems.repository.device.DeviceRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static com.markcha.ems.domain.EquipmentType.POWER_METER;
+import static com.markcha.ems.domain.GroupType.OBJECT;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
 import static com.markcha.ems.domain.QDevice.device;
@@ -21,7 +21,6 @@ import static com.markcha.ems.domain.QTag.tag;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
 
 
 @Repository
@@ -40,6 +39,7 @@ public class DeviceDslRepositoryImpl {
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(equipment.type.ne(typeName))
                 .orderBy(device.id.desc())
                 .fetch();
@@ -51,13 +51,24 @@ public class DeviceDslRepositoryImpl {
                 equipment = EquipmentType.FLOW_METER;
                 break;
             case "KWH":
-                equipment = EquipmentType.POWER_METER;
+                equipment = POWER_METER;
                 break;
         };
+        assert equipment != null;
         return query.selectFrom(QDevice.device)
                 .leftJoin(QDevice.device.equipment, QEquipment.equipment).fetchJoin()
                 .where(QEquipment.equipment.type.eq(equipment))
                 .fetch();
+
+    }
+    public long countingCompressorHavePowerDevice() {
+        return query.selectFrom(group)
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .leftJoin(device.equipment, equipment)
+                .where(
+                         equipment.type.eq(POWER_METER)
+                        ,group.type.eq(OBJECT)
+                ).fetchCount();
 
     }
     public List<Device> findAllCompressors(EquipmentType typeName) {
@@ -90,6 +101,11 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                         equipment.type.eq(typeName)
                 )
@@ -107,6 +123,11 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                          equipment.type.eq(typeName)
                         ,childGroup.id.eq(id)
@@ -131,7 +152,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                         parentGroup.isNull(),
-                        group.type.eq(GroupType.OBJECT)
+                        group.type.eq(OBJECT)
                 ).fetch();
     }
     public Device getOneById(Long id) {
@@ -149,11 +170,11 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
-                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
-                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek)
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(
                         device.id.eq(id)
-                ).limit(1).fetchOne();
+                ).fetchOne();
     }
     public List<Device> findAllByIds(List<Long> ids) {
         BooleanExpression deviceIdEq = null;

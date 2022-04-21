@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.Group;
+import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
@@ -18,10 +19,10 @@ import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import com.markcha.ems.dto.schedule.ScheduleDto;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 public class GroupDto {
     private Long id;
     private String name;
@@ -96,6 +97,15 @@ public class GroupDto {
             }
         });
         if(devices.containsKey("airCompressor")) {
+            if(!isNull(group.getSchedule())) {
+                this.schedule = new ScheduleDto(group.getSchedule());
+                this.schedule.setDayOfWeeks(group.getSchedule().getDayOfWeekMappers().stream()
+                        .map((dowmp) -> {
+                            return new DayOfWeekDto(dowmp.getDayOfWeek());
+                        })
+                        .sorted(Comparator.comparing(DayOfWeekDto::getId))
+                        .collect(toList()));
+            }
             DeviceDto compressor = devices.get("airCompressor").get(0);
             devices.remove("airCompressor");
             this.tags = compressor.getTags();

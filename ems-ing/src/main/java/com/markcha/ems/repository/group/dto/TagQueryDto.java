@@ -17,10 +17,12 @@ public class TagQueryDto {
     private String tagName;
     private String tagDescription;
     private Boolean isUsage;
+    private String type;
     public TagQueryDto(Tag tag) {
         this.id = tag.getId();
         this.tagName = tag.getTagName();
         this.tagDescription = tag.getTagDescription();
         this.isUsage = tag.getIsUsage();
+        this.type = tag.getType();
     }
 }

@@ -2,16 +2,14 @@ package com.markcha.ems.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.controller.GroupController.GroupSearchDto;
-import com.markcha.ems.domain.Group;
-import com.markcha.ems.domain.Order;
-import com.markcha.ems.domain.Schedule;
-import com.markcha.ems.domain.Week;
+import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.order.OrderDto;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.repository.DayOfWeekDataRepository;
+import com.markcha.ems.repository.group.dto.DeviceQueryDto;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
@@ -22,10 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -88,20 +83,19 @@ public class ScheduleController {
                 .map(OrderDto::new)
                 .collect(toList());
     }
-    @GetMapping(value="/tags/{groupId}")
-    public List<String> weeks(
+    @GetMapping(value="/devices/{groupId}")
+    public List<DeviceQueryDto> weeks(
             @PathVariable("groupId") Long groupId,
-            GroupSearchDto groupSearchDto
+            @RequestBody GroupSearchDto groupSearchDto
     ) {
         List<Long> rootId = new ArrayList<>();
         rootId.add(groupId);
-        List<String> tagNames = new ArrayList<>();
+        groupSearchDto.setTagInTypes(QTag.tag.type.in(groupSearchDto.getTagTypes()));
+        List<DeviceQueryDto> devices = new ArrayList<>();
         groupDynamicRepository.getAnalysisLocations(rootId, groupSearchDto, true).stream()
-                .forEach(t->{
-                    GroupQueryDto group = new GroupQueryDto(t, false);
-                    tagNames.addAll(group.getTagNames());
-                });
-        return tagNames;
+                .map(t -> new GroupQueryDto(t, false))
+                .forEach(k->devices.addAll(k.getAllDevices()));
+        return devices;
     }
     @Data
     @NoArgsConstructor

@@ -37,6 +37,7 @@ public class ScheduleDslRepositoryImpl {
     public List<Schedule> getAll() {
         return query.select(schedule)
                 .from(schedule)
+                .where(schedule.isActive.eq(true))
                 .fetch();
     }
 

@@ -83,6 +83,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
                         ,locationSearchDto.getTagEqType()
                         ,locationSearchDto.getTagEqIsUsage()
                         ,locationSearchDto.getDeviceEqId()
+                        ,locationSearchDto.getTagInTypes()
                 ).fetch();
     }
 

@@ -3,10 +3,13 @@ package com.markcha.ems.dto.device;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Group;
+import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.markcha.ems.dto.schedule.ScheduleDto;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -23,11 +26,13 @@ public class AirCompressorDto {
     private String alarmMention;
     private String unitId;
     private EquipmentDto equipment;
+    private ScheduleDto schedule;
     @JsonIgnore
     private List<TagDto> tags;
 
     public AirCompressorDto(Device device) {
         if(!isNull(device)) {
+
             if (!isNull(device.getGroup())) {
                 Group childGroup = device.getGroup();
                 id = childGroup.getId();
@@ -35,6 +40,15 @@ public class AirCompressorDto {
                 if (!isNull(childGroup.getParent())) {
                     groupId = childGroup.getParent().getId();
                     groupName = childGroup.getParent().getName();
+                }
+                if(!isNull(childGroup.getSchedule())) {
+                    this.schedule = new ScheduleDto(childGroup.getSchedule());
+                    this.schedule.setDayOfWeeks(childGroup.getSchedule().getDayOfWeekMappers().stream()
+                            .map((dowmp) -> {
+                                return new DayOfWeekDto(dowmp.getDayOfWeek());
+                            })
+                            .sorted(Comparator.comparing(DayOfWeekDto::getId))
+                            .collect(toList()));
                 }
             }
             if (!isNull(device.getEquipment())) {

@@ -46,9 +46,8 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
-                .leftJoin(weekMapper.orders, order1)
+                .leftJoin(weekMapper.orders, order1).fetchJoin()
                 .where(groupEqId)
-                .limit(1)
                 .fetchOne();
     }
     public GroupDslRepositoryImpl(EntityManager entityManager, WebaccessApiServiceImpl webaccessApiService) {
@@ -223,10 +222,15 @@ public class GroupDslRepositoryImpl{
         QTag childTag = new QTag("ct");
         return query.selectFrom(group).distinct()
                 .leftJoin(group.children, childGroup).fetchJoin()
-                .leftJoin(group.deviceSet, device)
+                .leftJoin(group.deviceSet, device).fetchJoin()
                 .leftJoin(device.tags, tag)
                 .leftJoin(childGroup.deviceSet, childDevice)
                 .leftJoin(childDevice.tags, childTag)
+                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(group.type.eq(GroupType.GROUP))
                 .orderBy(group.id.desc())
                 .fetch();

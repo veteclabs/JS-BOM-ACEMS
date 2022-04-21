@@ -72,6 +72,22 @@ public class InsertSampleData {
                 state.setType("STATE");
                 tags.add(state);
 
+                Tag local = new Tag();
+                local.setIsAlarm(false);
+                local.setIsTrend(true);
+                local.setIsUsage(false);
+                local.setLoggingTime(300);
+                local.setNickname("local state");
+                local.setShowAble(true);
+                local.setTagDescription("로컬");
+                local.setUnit(null);
+                local.setTagName(deviceUnit + "LOCAL");
+                local.setUnitConversion(null);
+                local.setDevice(device);
+                local.setType("LOCAL");
+                tags.add(local);
+
+
                 Tag bar = new Tag();
                 bar.setIsAlarm(false);
                 bar.setIsTrend(true);
