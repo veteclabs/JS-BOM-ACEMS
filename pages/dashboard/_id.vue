@@ -3,7 +3,7 @@
         <div class="title-box">
             <h2>
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
-                {{airCompressor[0].name}}
+                {{airCompressor.name}}
             </h2>
         </div>
         <div class="row">
@@ -13,37 +13,39 @@
 
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(airCompressor[0].id)"/>
+                             @click="settingModalOpen(airCompressor)"/>
                     </div>
                     <div class="ibox-title center">
-                        <img :src="require(`~/assets/images/equipment/${airCompressor[0].equipmentId}.jpg`)"
-                             :alt="airCompressor[0].equipmentId"
-                             style="max-width:100%;"/>
+                        <img
+                                :src="compressorImage"
+                                @error="replaceImg"
+                                :alt="airCompressor.equipmentId"
+                                style="max-width:100%;"/>
                     </div>
                     <div class="ibox-title">
                         <ul class="modal-info-box">
                             <li>
                                 <div class="title">그룹명</div>
-                                <p>함안 공기압축기 모니터링</p>
+                                <p>{{airCompressor.groupName}}</p>
                             </li>
                             <li>
                                 <div class="title">공기압축기명</div>
-                                <p>공기압축기#1</p>
+                                <p>{{airCompressor.name}}</p>
                             </li>
                             <li>
                                 <div class="title">Model</div>
-                                <p>Ingersoll Rand</p>
+                                <p v-if="airCompressor.equipment">{{airCompressor.equipment.model}}</p>
                             </li>
                         </ul>
                     </div>
                     <div class="ibox-content">
-                        <airCompressorState v-bind:propsdata="airCompressor[0]"/>
+                        <airCompressorState v-bind:propsdata="airCompressor"/>
                     </div>
-                    <div :class="{'noti-box':true, 'alarm-box': airCompressor[0].alarm !== ''}">
-                        <div v-if="airCompressor[0].alarm ===''" class="normal">Normal</div>
-                        <div v-else class="alarm">Alarm</div>
-                        <div class="text" v-if="airCompressor[0].alarm !==''">
-                            {{airCompressor[0].alarm}}
+                    <div :class="{'noti-box':true, 'alarm-box': airCompressor.alarm}">
+                        <div v-if="airCompressor" class="alarm">Alarm</div>
+                        <div v-else class="normal">Normal</div>
+                        <div class="text" v-if="airCompressor">
+                            {{airCompressor.alarmMention}}
                         </div>
                     </div>
                 </div>
@@ -57,7 +59,7 @@
                             <li v-for="tag in airTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
                                 <div>
-                                    {{tagVal | pickValue('Name',`${airCompressor[0].unit}_${tag.tagName}`, 'Value')}}
+                                    {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`, 'Value')}}
                                     {{tag.unit}}
                                 </div>
                             </li>
@@ -73,7 +75,7 @@
                             <li v-for="tag in powerTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
                                 <div>
-                                    {{tagVal | pickValue('Name',`${airCompressor[0].unit}_${tag.tagName}`, 'Value')}}
+                                    {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`, 'Value')}}
                                     {{tag.unit}}
                                 </div>
                             </li>
@@ -85,7 +87,7 @@
                 <div class="ibox">
                     <div class="ibox-content flex-box">
                         <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                        <div>{{tagVal | pickErrorDescription('Name',`${airCompressor[0].unit}_COMP_WC`, 'Value')}}</div>
+                        <div>{{tagVal | pickErrorDescription('Name',`${airCompressor.unitId}_COMP_WC`, 'Value')}}</div>
                     </div>
                 </div>
                 <div class="ibox">
@@ -124,7 +126,8 @@
                                     <li v-for="tag in mainTagList" :key="tag.id">
                                         <div class="tagname">{{tag.name}}</div>
                                         <div>
-                                            {{tagVal | pickValue('Name',`${airCompressor[0].unit}_${tag.tagName}`, 'Value')}}
+                                            {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`,
+                                            'Value')}}
                                             {{tag.unit}}
                                         </div>
                                     </li>
@@ -218,16 +221,8 @@
                     show: false,
                 },
                 tagVal: '',
-                airCompressor: [
-                    {
-                        id: 1,
-                        unit: 'U001',
-                        state: 'RUN',
-                        alarm: '온도 2단계 알람이 발생했습니다.',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -1'
-                    },
-                ],
+                airCompressor: {},
+                compressorImage:'',
                 mainTagList: [
                     {id: 1, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
                     {id: 2, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
@@ -316,7 +311,7 @@
                         },
                         offsetY: -10,
                         animations: {
-                            enabled:false,
+                            enabled: false,
                         }
                     },
                     plotOptions: {
@@ -385,7 +380,7 @@
                     },
                     labels: ['bar'],
                 },
-                airCompressorBar:0,
+                airCompressorBar: 0,
                 alarmList: [
                     {id: 1, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
                     {id: 2, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
@@ -405,6 +400,7 @@
             },
         },
         mounted() {
+            this.getAirCompressor();
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
@@ -414,6 +410,19 @@
             this.removeInterval();
         },
         methods: {
+            async getAirCompressor() {
+                const vm = this;
+                axios.get('/api/compressor/2'
+                ).then((res) => {
+                    vm.airCompressor = res.data;
+                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
+                }).catch((error) => {
+                    vm.msgData.msg = error;
+                });
+            },
+            replaceImg(e) {
+                e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
+            },
             async WaLogin() {
                 const vm = this;
                 axios.get('/api/WaLogin')
@@ -427,7 +436,7 @@
                 }).then((res) => {
                     if (res.data.Result.Total > 0) {
                         vm.tagVal = res.data.Values;
-                        vm.airCompressorBar = this.$options.filters.pickValue(vm.tagVal,'Name',`${vm.airCompressor[0].unit}_COMP_PDP`, 'Value');
+                        vm.airCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `${vm.airCompressor.unitId}_COMP_PDP`, 'Value');
                     }
                     vm.setLiveChart();
                 }).catch((error) => {
@@ -458,7 +467,7 @@
                 vm.timeCategories.push(vm.nowTime);
 
                 //Y좌표 설정
-                let data = this.$options.filters.pickValue(vm.tagVal,'Name',`${vm.airCompressor[0].unit}_PWR_KW`, 'Value');
+                let data = this.$options.filters.pickValue(vm.tagVal, 'Name', `${vm.airCompressor.unitId}_PWR_KW`, 'Value');
                 vm.liveChartData[0].data.push(data);
                 vm.$refs.liveChart.updateOptions({
                     "xaxis": {"categories": vm.timeCategories}
@@ -519,7 +528,7 @@
                         let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
                         if (targetError.length === 0) {
                             return
-                        }else {
+                        } else {
                             return targetError[0].description
                         }
                     }

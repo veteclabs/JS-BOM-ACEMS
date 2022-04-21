@@ -297,6 +297,7 @@
                 this.reset();
             },
             updateModal(e) {
+                console.log(e)
                 this.validation.reset();
                 this.state = 'update';
                 this.params = JSON.parse(JSON.stringify(e));

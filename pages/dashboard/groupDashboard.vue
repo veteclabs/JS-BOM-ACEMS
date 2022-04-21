@@ -63,7 +63,7 @@
                                                 <img src="~assets/images/dashboard/icn_dashboard_setting.svg"
                                                      alt="setting"
                                                      class="setting-btn"
-                                                     @click="settingModalOpen(device.id)"/>
+                                                     @click="settingModalOpen(device)"/>
                                             </div>
                                             <div class="ibox-content">
                                                 <div class="group-state flex-box">
@@ -365,7 +365,7 @@
                 return true;
             },
             settingModalOpen(id) {
-                this.$refs.settingEquipmentModal.createdModal(id);
+                this.$refs.settingEquipmentModal.updateModal(id);
                 this.settingModalData.show = true;
             },
             groupModalOpen(id) {
