@@ -205,7 +205,7 @@ public class CompressorServiceImpl {
     public AirCompressorDto getOneJoinAlarm(Long id) {
         AirCompressorDto compressor = new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(id, AIR_COMPRESSOR));
         List<String> tagNames = new ArrayList<>();
-        compressor.getTags().forEach(k->tagNames.add(k.getTagName()));
+//        compressor.getTags().forEach(k->tagNames.add(k.getTagName()));
 //        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
 //        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
 //                .map(AlarmDto::new)

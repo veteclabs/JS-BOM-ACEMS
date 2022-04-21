@@ -27,7 +27,11 @@ public class CompressorDto {
     private Long groupId;
     private String groupName;
     private ScheduleDto schedule;
+    private EquipmentDto equipment;
     public CompressorDto(Device device) {
+        if (!isNull(device.getEquipment())) {
+            equipment = new EquipmentDto(device.getEquipment());
+        }
         if(!isNull(device.getGroup())) {
             Group group = device.getGroup();
             this.id = device.getId();

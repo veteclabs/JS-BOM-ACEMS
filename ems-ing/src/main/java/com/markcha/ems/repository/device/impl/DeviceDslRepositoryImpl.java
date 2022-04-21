@@ -99,7 +99,6 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.group, childGroup).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
-                .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
@@ -121,7 +120,6 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.group, childGroup).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
-                .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
@@ -132,9 +130,9 @@ public class DeviceDslRepositoryImpl {
                          equipment.type.eq(typeName)
                         ,childGroup.id.eq(id)
                 )
-                .orderBy(device.id.desc())
                 .fetchOne();
     }
+//    public List<Group> getParentGroup(List<>)
     public List<Device> findAllEtcOrphs() {
         return query.selectFrom(device)
                 .leftJoin(device.group, group).fetchJoin()

@@ -31,6 +31,7 @@ public class AirCompressorDto {
     private List<TagDto> tags;
 
     public AirCompressorDto(Device device) {
+//        System.out.println(device);
         if(!isNull(device)) {
 
             if (!isNull(device.getGroup())) {
