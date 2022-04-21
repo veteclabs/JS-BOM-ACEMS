@@ -1,5 +1,6 @@
 package com.markcha.ems.controller;
 
+import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.GroupType;
 import com.markcha.ems.domain.Voltage;
@@ -8,6 +9,7 @@ import com.markcha.ems.dto.device.CompressorSimpleDto;
 import com.markcha.ems.dto.device.TemplcateDto;
 import com.markcha.ems.dto.group.GroupsSimpleDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
+import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
@@ -19,10 +21,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static java.util.Objects.isNull;
 
 @RestController
 @RequestMapping("/api")
@@ -52,7 +57,7 @@ public class DeviceController {
 
     @GetMapping(value="/etcs")
     public List<TemplcateDto> etc(
-    ) {
+    ) throws Exception {
         return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
                 .map(TemplcateDto::new)
                 .collect(Collectors.toList());
@@ -78,6 +83,9 @@ public class DeviceController {
     public ApiResponseDto etcCreate(
             @RequestBody DeviceInsertDto deviceInsert
     ) {
+        if (deviceDslRepository.countingCompressorHavePowerDevice() == 0 && isNull(deviceInsert.getGroupId())) {
+            throw new MethodNotAllowedException("전체 전력계 중 하나 이상의 컴프레셔 그룹이 필요합니다.");
+        }
         deviceService.createDevice(deviceInsert);
         return new ApiResponseDto(dbInsertMsg);
     }
@@ -93,6 +101,13 @@ public class DeviceController {
             @RequestBody DeviceInsertDto deviceInsert,
             @PathVariable("deviceId") Long deviceId
     ) {
+        Boolean haveGroup = !isNull(deviceDataRepository.getOne(deviceId).getGroup())? true: false;
+        if (deviceDslRepository.countingCompressorHavePowerDevice() == 1
+                && isNull(deviceInsert.getGroupId())
+                && haveGroup
+        ) {
+            throw new MethodNotAllowedException("전체 전력계 중 하나 이상의 컴프레셔 그룹이 필요합니다.");
+        }
         deviceInsert.setId(deviceId);
         deviceService.updateDevice(deviceInsert);
         return new ApiResponseDto(dbUpdateMsg);

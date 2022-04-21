@@ -2,6 +2,8 @@ package com.markcha.ems.domain;
 
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;

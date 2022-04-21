@@ -11,7 +11,9 @@ import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
+import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
+import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.service.impl.GroupServiceImpl;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -54,11 +56,23 @@ public class GroupController {
     private final WebaccessApiServiceImpl webaccessApiService;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final DeviceDslRepositoryImpl deviceDslRepository;
+    private final GroupDynamicRepositoryImpl groupDynamicRepository;
+
     @GetMapping(value="/groups", headers = "setting=true")
     public List<GroupDto> showSetting() {
         List<Group> collect = groupDslRepository.findAllJoinSchedule();
         return collect.stream()
                 .map((group) -> new GroupDto(group))
+                .collect(toList());
+    }
+    @GetMapping(value="/core")
+    public List<GroupQueryDto> core(
+            @RequestBody GroupSearchDto groupSearchDto
+    ) {
+        groupSearchDto.setTagInTypes(QTag.tag.type.in(groupSearchDto.getTagTypes()));
+        List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
+        return groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
+                .map(t->new GroupQueryDto(t, groupSearchDto.getDetail()))
                 .collect(toList());
     }
     @GetMapping(value="/group/{groupId}")
@@ -126,7 +140,6 @@ public class GroupController {
     }
     @GetMapping(value="/groups", headers = "setting=false")
     public List<GroupDto> show() throws JsonProcessingException {
-
         try {
             List<String> typeList = new ArrayList<>();
             typeList.add("power");
@@ -134,9 +147,8 @@ public class GroupController {
             typeList.add("pressure");
             typeList.add("temperature");
             return groupDslRepository.findAllGroupJoinTags().stream()
-                    .map((group)->new GroupDto(group, typeList, true))
+                    .map(g->new GroupDto(g, typeList, true))
                     .collect(toList());
-
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -166,11 +178,12 @@ public class GroupController {
         groupService.updateGroups(groupInsertDtos);
         return new ApiResponseDto(dbUpdateMsg);
     }
+
+
     @DeleteMapping(value="/groups")
     public ApiResponseDto deleteAll(
             @RequestBody List<Long> ids
     ) {
-
         groupService.deleteGroups(ids);
         return new ApiResponseDto(dbUpdateMsg);
     }
@@ -182,12 +195,14 @@ public class GroupController {
         private ScheduleDto schedule;
     }
     @Data
-    @NoArgsConstructor
+
     public static class GroupSearchDto {
         private Integer level;
         private Long energyId;
         private Boolean detail;
         private EquipmentType equipmentType;
+        private List<EquipmentType> equipmentTypes;
+        private List<String> tagTypes;
         private String tagType;
         private Boolean isUsage;
         private Long deviceIdT;
@@ -203,6 +218,14 @@ public class GroupController {
         private BooleanExpression tagEqIsUsage;
         @JsonIgnore
         private BooleanExpression deviceEqId;
+        @JsonIgnore
+        private BooleanExpression tagInTypes;
+        public GroupSearchDto() {
+            if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
+            if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
+            if(!isNull(tagType)) this.tagEqType = tag.type.eq(tagType);
+            if(!isNull(tagTypes)) this.tagInTypes = tag.type.in(tagTypes);
+        }
         public GroupSearchDto(Integer level, Long energyId, Boolean detail, EquipmentType equipmentType, String tagType, Boolean isUsage, Long deviceId) {
             this.level = level;
             this.energyId = energyId;
@@ -212,7 +235,7 @@ public class GroupController {
             if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
             if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
             if(!isNull(tagType)) this.tagEqType = tag.type.eq(tagType);
-//            if(!isNull(isUsage)) this.tagEqIsUsage = tag.isUsage.eq(isUsage);
+            if(!isNull(tagTypes)) this.tagInTypes = tag.type.in(tagTypes);
         }
         public void setIsUsage(Boolean isUsage) {
             this.isUsage = isUsage;
@@ -225,6 +248,10 @@ public class GroupController {
         public void setDevoceIdT2(String deviceIdT) {
             if(!isNull(deviceIdT) && !deviceIdT.equals("AU")) this.deviceIdT = Long.parseLong(deviceIdT);
             if(!deviceIdT.equals("AU")) this.deviceEqId = QDevice.device.id.eq(this.deviceIdT);
+        }
+        public void setEquipmentType(EquipmentType equipmentType) {
+            this.equipmentType = equipmentType;
+            this.equipmentEqType = equipment.type.eq(equipmentType);
         }
     }
 }

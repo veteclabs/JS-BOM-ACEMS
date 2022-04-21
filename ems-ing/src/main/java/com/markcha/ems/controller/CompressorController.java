@@ -1,6 +1,8 @@
 package com.markcha.ems.controller;
 
+import com.markcha.ems.controller.GroupController.GroupSearchDto;
 import com.markcha.ems.controller.analysis.DataAnalysisController;
+import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
@@ -10,7 +12,9 @@ import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.GroupDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
+import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
+import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.service.impl.CompressorServiceImpl;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,20 +40,30 @@ public class CompressorController {
     private String dbDeleteMsg;
     @Value("${response.jpa.DB_ERROR_MSG}")
     private String dbErrorMsg;
+
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
     private final CompressorServiceImpl compressorService;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final GroupDataRepository groupDataRepository;
-
+    private final GroupDynamicRepositoryImpl groupDynamicRepository;
 
     @GetMapping(value="/compressors", headers="setting=true")
     public List<CompressorDto> compressors(
     ) {
-        return deviceDslRepository.findAllCompressors(AIR_COMPRESSOR)
+        List<CompressorDto> compressorDtos = deviceDslRepository.findAllCompressors(AIR_COMPRESSOR)
                 .stream()
                 .map(CompressorDto::new)
                 .collect(toList());
+        List<Long> compressorIds = compressorDtos.stream()
+                .map(c -> c.getId())
+                .collect(toList());
+        GroupSearchDto groupInsertDto = new GroupSearchDto();
+        groupInsertDto.setEquipmentType(AIR_COMPRESSOR);
+        List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(compressorIds, groupInsertDto, true).stream()
+                .map(t->new GroupQueryDto(t, false))
+                .collect(toList());
+        return compressorDtos;
     }
     @GetMapping(value="/compressors")
     public List<AirCompressorDto> compressor(

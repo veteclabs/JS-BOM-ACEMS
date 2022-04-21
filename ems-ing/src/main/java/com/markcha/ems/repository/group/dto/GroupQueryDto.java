@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,7 +22,7 @@ public class GroupQueryDto {
     private String name;
     private String purpose;
     private List<String> tagNames = new ArrayList<>();
-
+    private List<DeviceQueryDto> allDevices = new ArrayList<>();
     private List<DeviceQueryDto> devices;
     private List<GroupQueryDto> childs;
 
@@ -38,17 +40,22 @@ public class GroupQueryDto {
                         return new DeviceQueryDto(device);
                     })
                     .collect(Collectors.toList());
+            this.allDevices = this.devices;
         } else {
             this.devices = null;
         }
-
-        if(!Objects.isNull(location.getChilds()) && !location.getChilds().isEmpty()) {
+        if(!isNull(location.getChilds()) && !location.getChilds().isEmpty()) {
             this.childs = location.getChilds().stream()
                     .map(child -> new GroupQueryDto(child, isDetail))
                     .collect(Collectors.toList());
             if (this.tagNames.isEmpty()) {
                 this.childs.forEach(child -> {
                     if (!isDetail) this.tagNames.addAll(child.getTagNames());
+                });
+            }
+            if (this.allDevices.isEmpty()) {
+                this.childs.forEach(child -> {
+                    if (!isDetail) this.allDevices.addAll(child.getAllDevices());
                 });
             }
         } else {
@@ -79,7 +86,7 @@ public class GroupQueryDto {
             this.devices = null;
         }
 
-        if(!Objects.isNull(location.getChilds()) && !location.getChilds().isEmpty()) {
+        if(!isNull(location.getChilds()) && !location.getChilds().isEmpty()) {
             this.childs = location.getChilds().stream()
                     .map(GroupQueryDto::new)
                     .collect(Collectors.toList());
