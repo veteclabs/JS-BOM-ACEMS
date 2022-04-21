@@ -42,9 +42,9 @@
                         <airCompressorState v-bind:propsdata="airCompressor"/>
                     </div>
                     <div :class="{'noti-box':true, 'alarm-box': airCompressor.alarm}">
-                        <div v-if="airCompressor" class="alarm">Alarm</div>
+                        <div v-if="airCompressor.alarm" class="alarm">Alarm</div>
                         <div v-else class="normal">Normal</div>
-                        <div class="text" v-if="airCompressor">
+                        <div class="text" v-if="airCompressor.alarm">
                             {{airCompressor.alarmMention}}
                         </div>
                     </div>
@@ -126,9 +126,7 @@
                                     <li v-for="tag in mainTagList" :key="tag.id">
                                         <div class="tagname">{{tag.name}}</div>
                                         <div>
-                                            {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`,
-                                            'Value')}}
-                                            {{tag.unit}}
+                                            {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`, 'Value')}} {{tag.unit}}
                                         </div>
                                     </li>
                                 </ul>
@@ -252,7 +250,8 @@
                 timeCategories: [],
                 nowTime: '',
                 liveChartData: [{name: '실시간 유효전력', data: []}], // 데이터 변수
-                liveChartOption: { //차트옵션 변수
+
+                liveChartOption: {
                     chart: {
                         toolbar: {
                             tools: {
@@ -412,7 +411,8 @@
         methods: {
             async getAirCompressor() {
                 const vm = this;
-                axios.get('/api/compressor/2'
+                const id = this.$route.params.id;
+                axios.get(`/api/compressor/${id}`
                 ).then((res) => {
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
@@ -424,8 +424,7 @@
                 e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
             },
             async WaLogin() {
-                const vm = this;
-                axios.get('/api/WaLogin')
+                await axios.get('/api/WaLogin')
             },
             async getTagValues() {
                 const vm = this;
@@ -455,7 +454,6 @@
             setLiveChart: function () {
                 const vm = this;
                 vm.getNowTime();
-                //실시간유효전력량 Graph 실시간 변경
                 let liveChartXcount = this.liveChartData[0].data.length;
                 let maxCount = 150;
 
