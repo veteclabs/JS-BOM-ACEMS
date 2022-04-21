@@ -55,11 +55,19 @@ public class DeviceController {
         this.deviceDataRepository = deviceDataRepository;
     }
 
-    @GetMapping(value="/etcs")
+    @GetMapping(value="/etcs",headers = "setting=true")
     public List<TemplcateDto> etc(
     ) throws Exception {
         return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
                 .map(TemplcateDto::new)
+                .collect(Collectors.toList());
+    }
+    @GetMapping(value="/etcs")
+    public List<TemplcateDto> etc2(
+    ){
+        System.out.println(22);
+        return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
+                .map(t->new TemplcateDto(t,true))
                 .collect(Collectors.toList());
     }
     @GetMapping(value="/device/groups")

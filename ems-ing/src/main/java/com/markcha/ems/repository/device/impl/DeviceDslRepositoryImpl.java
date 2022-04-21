@@ -39,6 +39,7 @@ public class DeviceDslRepositoryImpl {
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(equipment.type.ne(typeName))
                 .orderBy(device.id.desc())
                 .fetch();
