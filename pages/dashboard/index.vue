@@ -3,22 +3,13 @@
         <div class="row">
             <div class="col-lg-3">
                 <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 주요 정보</div>
+                    <div class="ibox-title flex-ibox-title">실시간 유량</div>
                     <div class="ibox-content">
-                        <ul class="tag-box">
-                            <li>
-                                <div class="tagname">총 전력량</div>
-                                <div>{{tagVal | pickValue('Name',`AU_PWR_kWH`, 'Value')}}kWh</div>
-                            </li>
-                            <li>
-                                <div class="tagname">총 순시전력</div>
-                                <div>{{tagVal | pickValue('Name',`AU_PWR_kW`, 'Value')}}kW</div>
-                            </li>
-                            <li>
-                                <div class="tagname">누적 유량</div>
-                                <div>{{tagVal | pickValue('Name',`AU_WAR_Con`, 'Value')}}㎥/min</div>
-                            </li>
-                        </ul>
+                        <client-only>
+                            <apexchart type="radialBar" height="240" ref="liveCTLineChart"
+                                       :options="radialChartOptions"
+                                       :series="[totalFlow]"/>
+                        </client-only>
                     </div>
                 </div>
             </div>
@@ -40,7 +31,7 @@
                         <client-only>
                             <apexchart type="radialBar" height="240" ref="liveCTLineChart"
                                        :options="radialChartOptions"
-                                       :series="[airCompressorBar]"/>
+                                       :series="[totalCompressorBar]"/>
                         </client-only>
                     </div>
                 </div>
@@ -321,7 +312,8 @@
                     },
                     labels: ['bar'],
                 },
-                airCompressorBar: 0,
+                totalFlow:0,
+                totalCompressorBar: 0,
                 airCompressorList: [
                     {
                         id: 1,
@@ -440,7 +432,8 @@
                 }).then((res) => {
                     if (res.data.Result.Total > 0) {
                         vm.tagVal = res.data.Values;
-                        vm.airCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_COMP_PDP`, 'Value');
+                        vm.totalFlow = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_COMP_PDP`, 'Value');
+                        vm.totalCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `U005_WAR_Con`, 'Value');
                         vm.setLiveChart();
                     }
                 }).catch((error) => {
@@ -494,7 +487,6 @@
             setLiveChart: function () {
                 const vm = this;
                 vm.getNowTime();
-                //실시간유효전력량 Graph 실시간 변경
                 let liveChartXcount = this.liveChartData[0].data.length;
                 let maxCount = 150;
 

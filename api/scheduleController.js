@@ -35,7 +35,7 @@ setInterval(async () => {
         // }
 
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 }, 5000)
 
@@ -51,7 +51,7 @@ exports.checkPoserState = async (scheduleId) => {
         let schedules = await axios.get(`http://112.216.32.6:8031/api/schedule/${scheduleId}`);
         let powerState = '';
         for (let schedule of schedules.data) {
-            console.log(schedule.isGroup)
+            //console.log(schedule.isGroup)
             if (schedule.isActive) {
                 let startTime = new Date()
                 let now2 = new Date();
@@ -98,7 +98,7 @@ exports.groupOrder = async (scheduleId, week, powerState) => {
         }
         return true;
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 }
 exports.controllFacility = async (groupId, powerState) => {
@@ -147,7 +147,7 @@ exports.controllFacility = async (groupId, powerState) => {
         }
         return true;
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 }
 
