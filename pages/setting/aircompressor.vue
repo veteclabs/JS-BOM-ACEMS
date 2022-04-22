@@ -19,6 +19,7 @@
                             :data-source="airCompressorList"
                             :show-borders="false"
                             :selected-row-keys="selectedKeys"
+                            @selection-changed="selectionChanged"
                             :onCellClick="updateEquipment"
                             key-expr="id"
                     >

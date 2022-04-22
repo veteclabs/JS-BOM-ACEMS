@@ -65,11 +65,11 @@
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="device"/>
-                        <div :class="{'noti-box':true, 'alarm-box': device.alarm !== ''}">
-                            <div v-if="device.alarm ===''" class="normal">Normal</div>
-                            <div v-else class="alarm">Alarm</div>
-                            <div class="text" v-if="device.alarm !==''">
-                                {{device.alarm}}
+                        <div :class="{'noti-box':true, 'alarm-box': device.alarm}">
+                            <div v-if="device.alarm" class="alarm">Alarm</div>
+                            <div v-else class="normal">Normal</div>
+                            <div class="text" v-if="device.alarm">
+                                {{device.alarmMention}}
                             </div>
                         </div>
                         <ul class="tag-box">
