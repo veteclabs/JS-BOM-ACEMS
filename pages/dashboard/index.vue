@@ -50,10 +50,11 @@
                         <nuxt-link :to="`/dashboard/${device.id}`">
                             <h3>
                                 <div class="img-box">
-                                    <img v-if="device.equipmentId"
-                                         :src="require(`~/assets/images/equipment/${device.equipmentId}.jpg`)"
-                                         :alt="device.equipmentId"
-                                         style="max-width:100%;"/>
+                                    <img
+                                            :src="compressorImage"
+                                            @error="replaceImg"
+                                            :alt="device.equipmentId"
+                                            style="max-width:100%;"/>
                                 </div>
                                 {{device.name}}
                             </h3>
@@ -168,7 +169,6 @@
         data() {
             return {
                 msgData: {
-                    // 알람모달
                     msg: '',
                     show: false,
                     e: '',
@@ -179,11 +179,9 @@
                 settingModalData: {
                     show: false,
                 },
-                TPModalData: {
-                    show: false,
-                },
+                compressorImage:'',
                 tagVal: '',
-                liveChartData: [{name: '실시간 유효전력', data: []}], // 데이터 변수
+                liveChartData: [{name: '실시간 유효전력', data: []}],
                 liveChartOption: { //차트옵션 변수
                     chart: {
                         toolbar: {
@@ -314,40 +312,7 @@
                 },
                 totalFlow:0,
                 totalCompressorBar: 0,
-                airCompressorList: [
-                    {
-                        id: 1,
-                        unit: 'U001',
-                        state: 'RUN',
-                        alarm: '',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -1'
-                    },
-                    {
-                        id: 2,
-                        unit: 'U002',
-                        state: 'STOP',
-                        alarm: '',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -2'
-                    },
-                    {
-                        id: 3,
-                        unit: 'U003',
-                        state: 'LOAD',
-                        alarm: '',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -3'
-                    },
-                    {
-                        id: 4,
-                        unit: 'U004',
-                        state: 'UNLOAD',
-                        alarm: '온도 2단계 알람이 발생했습니다.',
-                        equipmentId: 'ingersollrand_rm55',
-                        name: 'Ingersoll Rand RM55 -4'
-                    },
-                ],
+                airCompressorList: [],
                 airTagList: [
                     {id: 1, name: '패키치 배출압력', tagName: 'COMP_PDP', unit: ''},
                     {id: 2, name: '에어앤드온도', tagName: 'COMP_AT', unit: ''},
@@ -362,21 +327,7 @@
                     {id: 9, name: '역률', tagName: 'PWR_PF', unit: '%'},
                     {id: 10, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
                 ],
-                thermometerList: [
-                    {id: 11, unit: 'U007', name: '흡착식 온도계', tag: [{name: '온도', tagName: 'Temp', unit: '℃'}]},
-                    {
-                        id: 12,
-                        unit: 'U008',
-                        name: '온도계#1',
-                        tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]
-                    },
-                    {
-                        id: 13,
-                        unit: 'U009',
-                        name: '온도계#2',
-                        tag: [{name: 'In', tagName: 'Temp', unit: '℃'}, {name: 'Out', tagName: 'Temp', unit: '℃'}]
-                    },
-                ],
+                thermometerList: [],
                 timeCategories: [],
                 Interval1M: '',
                 interval: '',
@@ -409,12 +360,14 @@
                         vm.msgData.msg = error;
                     });
             },
+            replaceImg(e) {
+                e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
+            },
             async getCompressor() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/compressors',
-                    headers : {setting:true}
+                    url: '/api/compressors'
                 }).then((res) => {
                     vm.airCompressorList = res.data
                 }).catch((error) => {
@@ -441,36 +394,6 @@
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
-            },
-            async setAirCompressor(device, stateValue) {
-                const vm = this;
-
-                const confirmResult = confirm(`해당 컴프레셔 상태를 ${stateValue}으로 변경합니다. 진행하시겠습니까?`);
-
-                if (confirmResult) {
-                    const params = {
-                        device,
-                        stateValue
-                    };
-                    vm.LoadingData.show = true;
-                    axios.post('/api/setAirCompressor', params)
-                        .then(() => {
-                            vm.msgData.show = true;
-                            vm.msgData.msg = '제어 명령이 완료되었습니다.';
-                        })
-                        .catch(() => {
-                            vm.msgData.show = true;
-                            vm.msgData.msg = '제어에 실패했습니다. 잠시 후 다시 시도해주세요.';
-                        })
-                        .finally(() => {
-                            vm.LoadingData.show = false;
-                        });
-                } else {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = '제어명령이 취소되었습니다';
-                }
-
-                return true;
             },
             settingModalOpen(device) {
                 this.$refs.settingEquipmentModal.updateModal(device);

@@ -6,6 +6,9 @@
                     공기압축기관리
                 </div>
                 <div class="grid-header">
+                    <button id="deleteUser" class="button del-button"
+                            :disabled="!selectedKeys.length"
+                            @click="deleteEquipment"/>
                     <button id="createEquipment" class="button add-button" @click="createEquipment">
                         <img src="~assets/images/setting/icn_setting_add.svg" alt="등록"/>
                     </button>
@@ -15,10 +18,12 @@
                             id="equipmentListGrid"
                             :data-source="airCompressorList"
                             :show-borders="false"
+                            :selected-row-keys="selectedKeys"
                             :onCellClick="updateEquipment"
                             key-expr="id"
                     >
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
+                        <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
                         <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
                         <DxColumn data-field="name" caption="공기압축기명" alignment="center" cell-template="blockGridTemplate"/>
@@ -103,7 +108,11 @@
                     show: false,
                 },
                 airCompressorList: [],
-                pageSizes: [5, 10, 20], // 페이지사이즈
+                pageSizes: [5, 10, 20],
+                selectedKeys: [],
+                selectionChanged: (data) => {
+                    this.selectedKeys = data.selectedRowKeys;
+                },
             };
         },
         created() {
@@ -134,6 +143,23 @@
                 if (e.columnIndex !== 0) {
                     this.$refs.equipmentModal.updateModal(e.data);
                     this.modalData.show = true;
+                }
+            },
+            deleteEquipment: function () {
+                const vm = this;
+                if (confirm("정말로 삭제 하시겠습니까? 삭제된 데이터는 복원되지 않습니다.")) {
+                    axios({
+                        url:'/api/etcs',
+                        method:'delete',
+                        data: vm.selectedKeys
+                    }).then((res) => {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = res.data.message;
+                        vm.getCompressor();
+                    }).catch((error) => {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = error;
+                    })
                 }
             },
         },
