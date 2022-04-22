@@ -266,7 +266,6 @@ public class CompressorServiceImpl {
         List<Long> childGroupIds = compressors.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        System.out.println(childGroupIds);
         List<DeviceDto> devices = deviceDslRepository.getDeviceByGroupIds(childGroupIds).stream()
             .map(t->{
                 t.setTagList(t.getTags().stream()
@@ -313,6 +312,28 @@ public class CompressorServiceImpl {
 
     public AirCompressorDto getOneJoinAlarm(Long id) {
         AirCompressorDto compressor = new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(id, AIR_COMPRESSOR));
+
+        List<DeviceDto> devices = deviceDslRepository.getDeviceByGroupIds(new ArrayList<>(List.of(compressor.getId()))).stream()
+                .map(t->{
+                    t.setTagList(t.getTags().stream()
+                            .map(TagDto::new)
+                            .collect(toList()));
+                    Map<String, Double> tagValues = webaccessApiService.getTagValuesV2(
+                            t.getTagList().stream()
+                                    .map(g -> g.getTagName())
+                                    .collect(toList()));
+                    t.getTagList().forEach(k->{
+                        k.setValue(tagValues.get(k.getTagName()));
+                    });
+                    return new DeviceDto(t);
+                }).collect(toList());
+        Map<Long, List<DeviceDto>> groupingDevices = devices.stream()
+                .collect(groupingBy(t -> t.getGroupId()));
+
+        if(!isNull(groupingDevices.get(compressor.getId()))) {
+            compressor.setDevices(groupingDevices.get(compressor.getId()).stream()
+                    .collect(groupingBy(g -> g.getType().getNickname())));
+        }
         List<String> tagNames = new ArrayList<>();
 //        compressor.getTags().forEach(k->tagNames.add(k.getTagName()));
 //        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);

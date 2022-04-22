@@ -119,6 +119,7 @@ public class DeviceDslRepositoryImpl {
                 t.setTags(new HashSet<>(grouppingTags.get(t.getId())));
             }
         });
+
         return compressor;
     }
     public List<Device> findAllCompressorsByIds(EquipmentType typeName, List<Long> ids) {
