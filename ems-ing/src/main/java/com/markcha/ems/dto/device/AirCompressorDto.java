@@ -9,10 +9,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Data
@@ -30,9 +30,9 @@ public class AirCompressorDto {
     @JsonIgnore
     private List<TagDto> tags;
 
+    private Map<String, List<DeviceDto>> devices = new HashMap<>();
     public AirCompressorDto(Device device) {
         if(!isNull(device)) {
-
             if (!isNull(device.getGroup())) {
                 Group childGroup = device.getGroup();
                 id = childGroup.getId();

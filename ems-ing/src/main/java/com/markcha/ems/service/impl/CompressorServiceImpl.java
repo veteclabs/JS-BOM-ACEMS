@@ -1,11 +1,14 @@
 package com.markcha.ems.service.impl;
 
 import com.markcha.ems.controller.CompressorController.CompressorInsertDto;
+import com.markcha.ems.controller.WebAccessController;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.alarm.AlarmDto;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.AirCompressorDto;
+import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
+import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.mapper.alarm.AlarmMapDto;
 import com.markcha.ems.mapper.alarm.AlarmMapper;
@@ -48,6 +51,8 @@ public class CompressorServiceImpl {
     private final InsertSampleData insertSampleData;
     private final AlarmMapper alarmMapper;
     private final TagDataRepository tagDataRepository;
+    private final WebaccessApiServiceImpl webaccessApiService;
+
 
     public Boolean createCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
@@ -120,6 +125,26 @@ public class CompressorServiceImpl {
 
         Device save = deviceDataRepository.save(newDevice);
         List<Tag> tags = insertSampleData.createTags(AIR_COMPRESSOR, save);
+
+        List<TagDto> tagDtos = tags.stream()
+                .map(TagDto::new)
+                .collect(toList());
+        List<TagDto> minMaxTag = tagDtos.stream()
+                .filter(t -> {
+                    boolean isMax = t.getType().equals("PRESSURE_MAX");
+                    boolean isMin = t.getType().equals("PRESSURE_MIN");
+                    if (isMax) {
+                        t.setValue(scheduleDto.getMax());
+                    }
+                    if (isMin) {
+                        t.setValue(scheduleDto.getMin());
+                    }
+                    return isMax || isMin;
+                })
+                .collect(toList());
+        webaccessApiService.setTagValues(minMaxTag);
+
+
         newDevice.setTags(new HashSet<>(tags));
         deviceDataRepository.save(save);
         return true;
@@ -142,7 +167,6 @@ public class CompressorServiceImpl {
         newSchedule.setStartTime(scheduleDto.getStartTime());
         newSchedule.setStopTime(scheduleDto.getStopTime());
         newSchedule.setUpdated(LocalDateTime.now());
-
 
 
 //        // 요일 관계 생성
@@ -174,6 +198,24 @@ public class CompressorServiceImpl {
         Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
+
+        List<TagDto> tags = seletedDevice.getTags().stream()
+                .map(TagDto::new)
+                .collect(toList());
+        List<TagDto> minMaxTag = tags.stream()
+                .filter(t -> {
+                    boolean isMax = t.getType().equals("PRESSURE_MAX");
+                    boolean isMin = t.getType().equals("PRESSURE_MIN");
+                    if (isMax) {
+                        t.setValue(scheduleDto.getMax());
+                    }
+                    if (isMin) {
+                        t.setValue(scheduleDto.getMin());
+                    }
+                    return isMax || isMin;
+                })
+                .collect(toList());
+        webaccessApiService.setTagValues(minMaxTag);
         deviceDataRepository.save(seletedDevice);
         return true;
     }
@@ -221,8 +263,35 @@ public class CompressorServiceImpl {
         List<AirCompressorDto> compressors = deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR).stream()
                 .map(AirCompressorDto::new)
                 .collect(toList());
+        List<Long> childGroupIds = compressors.stream()
+                .map(t -> t.getId())
+                .collect(toList());
+        System.out.println(childGroupIds);
+        List<DeviceDto> devices = deviceDslRepository.getDeviceByGroupIds(childGroupIds).stream()
+            .map(t->{
+                t.setTagList(t.getTags().stream()
+                        .map(TagDto::new)
+                        .collect(toList()));
+                Map<String, Double> tagValues = webaccessApiService.getTagValuesV2(
+                        t.getTagList().stream()
+                                .map(g -> g.getTagName())
+                                .collect(toList()));
+                t.getTagList().forEach(k->{
+                    k.setValue(tagValues.get(k.getTagName()));
+            });
+            return new DeviceDto(t);
+        }).collect(toList());
+
+        Map<Long, List<DeviceDto>> groupingDevices = devices.stream()
+                .collect(groupingBy(t -> t.getGroupId()));
+        compressors.forEach(t->{
+            if(!isNull(groupingDevices.get(t.getId()))) {
+                t.setDevices(groupingDevices.get(t.getId()).stream()
+                        .collect(groupingBy(g -> g.getType().getNickname())));
+            }
+        });
         List<String> tagNames = new ArrayList<>();
-        compressors.stream().forEach(t -> t.getTags().forEach(k->tagNames.add(k.getTagName())));
+//        compressors.stream().forEach(t -> t.getTags().forEach(k->tagNames.add(k.getTagName())));
 //        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
 //        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
 //                .map(AlarmDto::new)

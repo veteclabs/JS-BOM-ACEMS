@@ -94,4 +94,8 @@ public class ScheduleDto {
                     .collect(toList());
         }
     }
+    public void setMinMax() {
+        if(isNull(this.min)) this.min = -2.0;
+        if(isNull(this.max)) this.max = -2.0;
+    }
 }

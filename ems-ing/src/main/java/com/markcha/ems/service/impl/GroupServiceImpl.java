@@ -209,18 +209,15 @@ public class GroupServiceImpl {
                 stopWatch.start();
                 Group group = groupDslRepository.getOneJoinChildsAndDevicesById(groupDto.getId());
                 stopWatch.stop();
-                System.out.println("해당 노드 그룹 조회 : " + stopWatch.getLastTaskTimeMillis());
 
                 List<Group> ordCompressors = new ArrayList<>(group.getChildren());
                 List<Device> ordDevices = new ArrayList<>(group.getDeviceSet());
                 stopWatch.start();
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
                 stopWatch.stop();
-                System.out.println("해당 노드 그룹의 자식 그룹들 조회 : " + stopWatch.getLastTaskTimeMillis());
                 stopWatch.start();
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
                 stopWatch.stop();
-                System.out.println("해당 노드 그룹의 장치들 조회 : " + stopWatch.getLastTaskTimeMillis());
                 List<Group> tempCompressors = new ArrayList<>();
 
                 newCompressors.forEach(t->tempCompressors.add(t));
