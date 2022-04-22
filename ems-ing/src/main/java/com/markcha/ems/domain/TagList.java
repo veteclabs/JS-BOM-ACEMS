@@ -8,17 +8,17 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name="tag")
-public class Tag {
+@Table(name="tag_list")
+public class TagList {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id", nullable = false)
     private Long id;
     @Column(name="tagname", length = 32)
     private String tagName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id")
-    private Device device;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "equipment_id")
+    private Equipment equipment;
 
     @Column(name = "tag_description", length = 255)
     private String tagDescription;
@@ -44,9 +44,5 @@ public class Tag {
     private Boolean showAble;
     @Column(length = 20)
     private String type;
-    @PrePersist
-    @PreUpdate
-    void removeWhitespace() {
-    }
 
 }

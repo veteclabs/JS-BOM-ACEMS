@@ -49,7 +49,6 @@ public class WebAccessController {
         List<TagResultDto> tagValues = tagValueRepository.findAllByNameIn(names).stream()
                 .map(TagResultDto::new)
                 .collect(Collectors.toList());
-        System.out.println(tagValues);
         Result result = new Result(0, tagValues.size());
         ReciveTagSetDto reciveTagSetDto = new ReciveTagSetDto();
         reciveTagSetDto.setResult(result);

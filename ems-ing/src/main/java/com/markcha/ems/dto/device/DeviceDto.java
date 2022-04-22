@@ -24,6 +24,8 @@ public class DeviceDto {
     @JsonIgnore
     private EquipmentType type;
     private List<TagDto> tags = new ArrayList<>();
+    @JsonIgnore
+    private Long groupId;
     public DeviceDto(Device device) {
         this.id = device.getId();
         this.name = device.getName();
@@ -31,6 +33,9 @@ public class DeviceDto {
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
         if (!isNull(device.getTagList())) {
             this.tags = device.getTagList();
+        }
+        if (!isNull(device.getGroup())) {
+            this.groupId = device.getGroup().getId();
         }
     }
     public DeviceDto(Device device, Boolean forGroup) {

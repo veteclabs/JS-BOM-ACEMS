@@ -167,7 +167,6 @@ public class GroupController {
             @RequestBody GroupInsertDto groupInsertDto,
             @PathVariable("groupId") Long groupId
     ) {
-        System.out.println(groupDslRepository.countPressure(groupId));
         if (groupDslRepository.countPressure(groupId) != 1 && groupInsertDto.getSchedule().getIsActive()) {
             throw new MethodNotAllowedException("그룹 안에는 하나의 압력계만 연결할 수 있습니다.");
         }

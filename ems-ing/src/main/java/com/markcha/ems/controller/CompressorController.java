@@ -76,6 +76,7 @@ public class CompressorController {
                     if(tag.getType().equals("PRESSURE_MIN")) scheduleDto.setMin(tag.getValue());
                     if(tag.getType().equals("PRESSURE_MAX")) scheduleDto.setMax(tag.getValue());
                 }
+                scheduleDto.setMinMax();
 
             }
 
@@ -100,6 +101,7 @@ public class CompressorController {
                     if(tag.getType().equals("PRESSURE_MIN")) scheduleDto.setMin(tag.getValue());
                     if(tag.getType().equals("PRESSURE_MAX")) scheduleDto.setMax(tag.getValue());
                 }
+                scheduleDto.setMinMax();
             }
         });
         return allJoinAlarm;
@@ -123,6 +125,7 @@ public class CompressorController {
                 if(tag.getType().equals("PRESSURE_MIN")) scheduleDto.setMin(tag.getValue());
                 if(tag.getType().equals("PRESSURE_MAX")) scheduleDto.setMax(tag.getValue());
             }
+            scheduleDto.setMinMax();
         }
         return oneJoinAlarm;
     }
