@@ -156,25 +156,28 @@ public class GroupServiceImpl {
         weeks.forEach(t->{
 
             WeekMapper weekMapper = new WeekMapper();
-            WeekGroupDto weekOrde = weekOrdes.stream().filter(w -> {
+            WeekGroupDto weekOrder = weekOrdes.stream().filter(w -> {
                 return w.getId().equals(t.getId());
             }).collect(toSingleton());
-            List<Long> groupIds = weekOrde.getStandBy().stream()
-                    .map(g->g.getId())
-                    .collect(toList());
+            if(!isNull(weekOrder.getStandBy())) {
+                List<Long> groupIds = weekOrder.getStandBy().stream()
+                        .map(g -> g.getId())
+                        .collect(toList());
 
-            List<Group> newGroups = workingGroups.stream()
-                    .filter(g -> groupIds.contains(g.getId()))
-                    .collect(toList());
-            weekMapper.getOrders().clear();
-            int order = 1;
-            for (Group group : newGroups) {
-                Order newOrder = new Order();
-                newOrder.setWeekMapper(weekMapper);
-                newOrder.setOrder(order);
-                newOrder.setGroup(group);
-                weekMapper.getOrders().add(newOrder);
-                order++;
+                List<Group> newGroups = workingGroups.stream()
+                        .filter(g -> groupIds.contains(g.getId()))
+                        .collect(toList());
+
+                weekMapper.getOrders().clear();
+                int order = 1;
+                for (Group group : newGroups) {
+                    Order newOrder = new Order();
+                    newOrder.setWeekMapper(weekMapper);
+                    newOrder.setOrder(order);
+                    newOrder.setGroup(group);
+                    weekMapper.getOrders().add(newOrder);
+                    order++;
+                }
             }
             weekMapper.setWeek(t);
             weekMapper.setSchedule(newSchedule);
@@ -249,21 +252,18 @@ public class GroupServiceImpl {
     public Boolean deleteGroups(List<Long> groupIds) {
         List<Group> groups = groupDslRepository.findAllByIds(groupIds);
         List<Schedule> schedules = new ArrayList<>();
+        List<Device> orphanDevices = new ArrayList<>();
+        List<Group> orphanGroups = new ArrayList<>();
+        List<WeekMapper> weekMappers = new ArrayList<>();
         groups.forEach(t->{
             if(!isNull(t.getSchedule())) {
                 Schedule schedule = t.getSchedule();
+                schedule.getWeekMappers().forEach(k->{
+                    k.getOrders().clear();
+                    weekMappers.add(k);
+                });
+                schedule.getDayOfWeekMappers().clear();
                 schedules.add(schedule);
-                if(!isNull(schedule.getDayOfWeekMappers())) {
-                    dayOfWeekMapperDataRepository.deleteAllInBatch(schedule.getDayOfWeekMappers());
-                }
-                if(!isNull(schedule.getWeekMappers())) {
-                    schedule.getWeekMappers().forEach(z->{
-                        if(!isNull(z.getOrders())) {
-                            orderDataRepository.deleteAllInBatch(z.getOrders());
-                        }
-                    });
-                    weekMapperDataRepository.deleteAllInBatch(schedule.getWeekMappers());
-                }
 
             }
             if(!isNull(t.getChildren())) {
@@ -271,8 +271,21 @@ public class GroupServiceImpl {
                     k.setParent(null);
                 });
             }
+            if(!isNull(t.getDeviceSet())) {
+                t.getDeviceSet().forEach(k->{
+                    k.setGroup(null);
+                    orphanDevices.add(k);
+                });
+            }
+            t.setDeviceSet(null);
+            t.setChildren(null);
         });
+        deviceDataRepository.saveAll(orphanDevices);
+        groupDataRepository.saveAll(orphanGroups);
         groupDataRepository.deleteAllInBatch(groups);
+        weekMapperDataRepository.saveAll(weekMappers);
+        weekMapperDataRepository.deleteAllInBatch(weekMappers);
+        scheduleDataRepository.saveAll(schedules);
         scheduleDataRepository.deleteAllInBatch(schedules);
         return true;
     }

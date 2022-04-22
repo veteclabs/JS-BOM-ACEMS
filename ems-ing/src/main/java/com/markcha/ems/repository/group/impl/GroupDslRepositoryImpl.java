@@ -57,7 +57,7 @@ public class GroupDslRepositoryImpl{
     }
 
     public long countPressure(Long groupId) {
-        return query.select(device)
+        return query.select(device).distinct()
                 .from(device)
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(group.deviceSet, device).fetchJoin()
@@ -65,8 +65,7 @@ public class GroupDslRepositoryImpl{
                 .where(
                          equipment.type.eq(EquipmentType.PRESSURE_GAUGE)
                         ,group.id.eq(groupId)
-                )
-                .fetchCount();
+                ).fetchCount();
     }
     public List<Group> findAllByType(GroupType type) {
         return query.select(group)

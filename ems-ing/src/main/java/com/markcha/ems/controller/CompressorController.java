@@ -51,19 +51,9 @@ public class CompressorController {
     @GetMapping(value="/compressors", headers="setting=true")
     public List<CompressorDto> compressors(
     ) {
-        List<CompressorDto> compressorDtos = deviceDslRepository.findAllCompressors(AIR_COMPRESSOR)
-                .stream()
+        return deviceDslRepository.findAllCompressors(AIR_COMPRESSOR).stream()
                 .map(CompressorDto::new)
                 .collect(toList());
-        List<Long> compressorIds = compressorDtos.stream()
-                .map(c -> c.getId())
-                .collect(toList());
-        GroupSearchDto groupInsertDto = new GroupSearchDto();
-        groupInsertDto.setEquipmentType(AIR_COMPRESSOR);
-        List<GroupQueryDto> collect = groupDynamicRepository.getAnalysisLocations(compressorIds, groupInsertDto, true).stream()
-                .map(t->new GroupQueryDto(t, false))
-                .collect(toList());
-        return compressorDtos;
     }
     @GetMapping(value="/compressors")
     public List<AirCompressorDto> compressor(
@@ -98,7 +88,7 @@ public class CompressorController {
             @RequestBody List<Long> ids
     ) {
 
-        groupDataRepository.deleteAllById(ids);
+        compressorService.deleteAllById(ids);
         return new ApiResponseDto(dbDeleteMsg);
     }
 

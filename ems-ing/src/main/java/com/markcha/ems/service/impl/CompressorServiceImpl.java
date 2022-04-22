@@ -47,6 +47,7 @@ public class CompressorServiceImpl {
     private final WeekMapperDslRepositoryImpl weekMapperDslRepository;
     private final InsertSampleData insertSampleData;
     private final AlarmMapper alarmMapper;
+    private final TagDataRepository tagDataRepository;
 
     public Boolean createCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
@@ -175,6 +176,47 @@ public class CompressorServiceImpl {
         seletedDevice.setEquipment(selectedEquipoment);
         deviceDataRepository.save(seletedDevice);
         return true;
+    }
+
+    public void deleteAllById(List<Long> ids) {
+        List<Device> compressors = deviceDslRepository.findAllCompressorsByIds(AIR_COMPRESSOR, ids);
+        List<Device> orphanDevices = new ArrayList<>();
+        List<DayOfWeekMapper> dayOfWeekMappers = new ArrayList<>();
+        List<WeekMapper> weekMappers = new ArrayList<>();
+        List<Schedule> schedules = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
+        List<Tag> tags = new ArrayList<>();
+        compressors.forEach(t->{
+            if(!isNull(t.getGroup())){
+                Group group = t.getGroup();
+                if(!isNull(group.getDeviceSet())) {
+                    group.getDeviceSet().forEach(g->{
+                        g.setGroup(null);
+                        orphanDevices.add(g);
+                    });
+                }
+                groups.add(group);
+                if(!isNull(group.getSchedule())) {
+                    Schedule schedule = group.getSchedule();
+                    schedule.getDayOfWeekMappers().clear();
+                    schedules.add(schedule);
+                    if(!isNull(schedule.getWeekMappers())) weekMappers.addAll(schedule.getWeekMappers());
+
+
+                }
+            }
+            if(!isNull(t.getTags())) {
+                tags.addAll(t.getTags());
+            }
+        });
+        orphanDevices.forEach(t->t.setGroup(null));
+        weekMapperDataRepository.deleteAllInBatch(weekMappers);
+        tagDataRepository.deleteAllInBatch(tags);
+        deviceDataRepository.deleteAllInBatch(compressors);
+        deviceDataRepository.saveAll(orphanDevices);
+        groupDataRepository.deleteAllInBatch(groups);
+        scheduleDataRepository.saveAll(schedules);
+        scheduleDataRepository.deleteAllInBatch(schedules);
     }
 
     public List<AirCompressorDto> findAllJoinAlarm() {

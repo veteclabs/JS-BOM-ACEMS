@@ -35,7 +35,7 @@ public class DeviceDslRepositoryImpl {
     }
 
     public List<Device> findAllTemplcates(EquipmentType typeName) {
-        return query.select(device)
+        return query.select(device).distinct()
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
@@ -86,6 +86,28 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                         equipment.type.eq(typeName)
+                )
+                .orderBy(device.id.desc())
+                .fetch();
+    }
+    public List<Device> findAllCompressorsByIds(EquipmentType typeName, List<Long> ids) {
+        QGroup parentGroup = new QGroup("pGroup");
+        QGroup childGroup = new QGroup("cGroup");
+        QDevice orphanDevice = new QDevice("orphanDevice");
+        return query.select(device)
+                .from(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, childGroup).fetchJoin()
+                .leftJoin(childGroup.deviceSet, orphanDevice).fetchJoin()
+                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
+                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
+                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+                .leftJoin(weekMapper.week, week).fetchJoin()
+                .where(
+                         equipment.type.eq(typeName)
+                        ,device.id.in(ids)
                 )
                 .orderBy(device.id.desc())
                 .fetch();
