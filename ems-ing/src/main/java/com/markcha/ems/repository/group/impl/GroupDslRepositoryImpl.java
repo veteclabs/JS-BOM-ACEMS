@@ -122,18 +122,23 @@ public class GroupDslRepositoryImpl{
     private List<WeekMapper> getWeekMapper(List<Long> scheduleIds) {
         return query.select(weekMapper)
                 .from(weekMapper).distinct()
-                .leftJoin(weekMapper.orders, order1).fetchJoin()
-                .leftJoin(order1.group, group).fetchJoin()
-                .leftJoin(group.deviceSet, device)
-                .leftJoin(device.equipment, equipment)
                 .leftJoin(weekMapper.week, week).fetchJoin()
+                .leftJoin(weekMapper.schedule, schedule).fetchJoin()
                 .where(
-                         weekMapper.schedule.id.in(scheduleIds)
-                        ,equipment.type.eq(AIR_COMPRESSOR).or(
-                                order1.isNull()
-                        )
+                         schedule.id.in(scheduleIds)
                 )
                 .fetch();
+    }
+    private List<Order> getOrderGroups(List<Long> weekMapperIds) {
+        return query.selectFrom(order1).distinct()
+                .leftJoin(order1.group, group).fetchJoin()
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .leftJoin(device.equipment,equipment).fetchJoin()
+                .leftJoin(order1.weekMapper, weekMapper).fetchJoin()
+                .where(
+                         weekMapper.id.in(weekMapperIds)
+                        ,equipment.type.eq(AIR_COMPRESSOR)
+                ).fetch();
     }
     private List<Group> getRootGroups(BooleanExpression findById) {
         return query.select(group)
@@ -215,9 +220,11 @@ public class GroupDslRepositoryImpl{
         return groups;
     }
     private Group getRootGroup(BooleanExpression findById) {
+        QGroup childGroup = new QGroup("childGroup");
         return query.select(group)
                 .from(group)
                 .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(group.children ,childGroup).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
@@ -348,17 +355,25 @@ public class GroupDslRepositoryImpl{
     
     public List<Group> findAllJoinSchedule() {
         List<Group> rootGroup = getRootGroups(null);
+
         List<Long> scheduleIds = rootGroup.stream()
                 .map((t) -> t.getSchedule().getId())
                 .collect(toList());
+
         List<Long> parentGroupIds = rootGroup.stream()
                 .map((t) -> t.getId())
                 .collect(toList());
         List<WeekMapper> weekMappers = getWeekMapper(scheduleIds);
 
         List<Group> childGroups = getChildGroups(parentGroupIds);
+//        childGroups.forEach(t-> System.out.println(t.getName()));
         Map<Long, List<Group>> groupByParentId = childGroups.stream()
                 .collect(groupingBy(t -> t.getParent().getId()));
+        groupByParentId.forEach((key, value) -> {
+            System.out.println("--0--");
+            System.out.println(key);
+            value.forEach(t-> System.out.println(t.getName()));
+        });
         weekMappers.forEach(t->
             t.getSchedule().getGroups().forEach(k->{
                 List<Group> groups = groupByParentId.get(k.getId());
@@ -385,15 +400,33 @@ public class GroupDslRepositoryImpl{
         List<Long> scheduleIds = new ArrayList<>(List.of(rootGroup.getSchedule().getId()));
         List<Long> parentGroupIds = new ArrayList<>(List.of(rootGroup.getId()));
         List<WeekMapper> weekMappers = getWeekMapper(scheduleIds);
-
-        List<Group> childGroups = getChildGroups(parentGroupIds);
+        List<Long> weekMapperIds = weekMappers.stream()
+                .map(t -> t.getId())
+                .collect(toList());
+        Map<Long, List<Order>> groupingOrder = getOrderGroups(weekMapperIds).stream()
+                .collect(groupingBy(t -> t.getWeekMapper().getId()));
+        weekMappers.forEach(t->{
+            if(!isNull(groupingOrder.get(t.getId()))) {
+                t.setOrders(new HashSet<>(groupingOrder.get(t.getId())));
+            }
+        });
+        System.out.println(weekMappers);
+        List<Group> childGroups = null;
+        if(!isNull(rootGroup.getChildren())) {
+            childGroups = getChildGroups(parentGroupIds);
+        }
         Map<Long, List<Group>> groupByParentId = childGroups.stream()
                 .collect(groupingBy(t -> t.getParent().getId()));
-        weekMappers.forEach(t->
-                t.getSchedule().getGroups().forEach(k->{
-                    List<Group> groups = groupByParentId.get(k.getId());
-                    t.setStandByGroups(groups);
-                }));
+        for (WeekMapper mapper : weekMappers) {
+            List<Group> childGroupCopy = new ArrayList<>();
+            childGroupCopy.addAll(childGroups);
+            List<Group> workingGroups = mapper.getOrders().stream()
+                    .map(t -> t.getGroup())
+                    .collect(toList());
+            childGroupCopy.removeAll(workingGroups);
+
+            mapper.setStandByGroups(childGroupCopy);
+        }
 
         Map<Long, List<WeekMapper>> grouppingWeekMapper = weekMappers.stream()
                 .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));

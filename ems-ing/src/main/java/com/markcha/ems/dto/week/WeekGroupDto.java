@@ -35,9 +35,10 @@ public class WeekGroupDto {
             this.name = weekMapper.getWeek().getName();
         }
         if (!isNull(weekMapper.getOrders())) {
-            List<CompressorSimpleDto> workingGroups = weekMapper.getOrders().stream()
-                    .map(t -> new CompressorSimpleDto(t.getGroup(), t.getOrder()))
-                    .collect(toList());
+//            List<CompressorSimpleDto> workingGroups = weekMapper.getOrders().stream()
+//                    .map(t ->{
+//                        return new CompressorSimpleDto(t.getGroup(), t.getOrder());
+//                    }).collect(toList());
             this.working = weekMapper.getOrders().stream()
                     .map(t->new CompressorSimpleDto(t.getGroup(), t.getOrder()))
                     .sorted(comparing(CompressorSimpleDto::getOrder))

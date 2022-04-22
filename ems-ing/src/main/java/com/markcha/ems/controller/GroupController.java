@@ -76,6 +76,7 @@ public class GroupController {
                 .map(t->new GroupQueryDto(t, groupSearchDto.getDetail()))
                 .collect(toList());
     }
+
     @GetMapping(value="/group/{groupId}")
     public GroupDto showOne(
             @PathVariable("groupId") Long groupId

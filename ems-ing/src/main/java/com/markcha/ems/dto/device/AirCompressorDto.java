@@ -29,7 +29,7 @@ public class AirCompressorDto {
     private ScheduleDto schedule;
     @JsonIgnore
     private List<TagDto> tags;
-
+    private Map<String, TagDto> status = new HashMap<>();
     private Map<String, List<DeviceDto>> devices = new HashMap<>();
     public AirCompressorDto(Device device) {
         if(!isNull(device)) {
@@ -50,8 +50,12 @@ public class AirCompressorDto {
             }
             if (!isNull(device.getTags())) {
                 tags = device.getTags().stream()
-                        .map(TagDto::new)
-                        .collect(toList());
+                        .map(t->{
+                            TagDto tagDto = new TagDto(t);
+                            status.put(t.getType(), tagDto);
+                            return tagDto;
+                        }).collect(toList());
+
             }
             this.alarm = false;
             this.alarmMention = "테스트 메시지";

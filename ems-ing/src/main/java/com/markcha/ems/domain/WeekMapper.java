@@ -29,4 +29,5 @@ public class WeekMapper {
     private Set<Order> orders = new HashSet<>();
     @Transient
     private List<Group> standByGroups = new ArrayList<>();
+
 }
