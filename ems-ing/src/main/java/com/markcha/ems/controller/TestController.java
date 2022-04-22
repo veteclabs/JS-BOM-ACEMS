@@ -1,8 +1,5 @@
 package com.markcha.ems.controller;
 
-import com.markcha.ems.domain.*;
-import com.markcha.ems.dto.device.AirCompressorDto;
-import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.repository.*;
 import com.markcha.ems.repository.dayofweekmapper.impl.DayOfWeekMapperDslRepositoryImpl;
@@ -12,6 +9,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import com.markcha.ems.service.InsertSampleData;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Map;
 
 
 @RestController
@@ -46,21 +41,13 @@ public class TestController {
     private final WeekMapperDslRepositoryImpl weekMapperDslRepository;
     private final InsertSampleData insertSampleData;
     private final AlarmMapper alarmMapper;
+    private final WebaccessApiServiceImpl webaccessApiService;
 
     @GetMapping(value="/device/{id}")
-    public List<GroupDto> compressor(@PathVariable("id") Long id) {
+    public Map<String, Double> compressor(@PathVariable("id") Long id) {
 
-        Group group = groupDslRepository.getOneById(id);
-        Schedule schedule = group.getSchedule();
-        schedule.setGroups(null);
-        group.setSchedule(null);
-        groupDataRepository.save(group);
-        Schedule a = scheduleDslRepository.a(5L);
-        group.setSchedule(a);
-        a.getGroups().add(group);
+        return webaccessApiService.getTagValuesV2(new ArrayList<>(List.of("032_RPM", "031_STATE")));
 
-        groupDataRepository.save(group);
-        return null;
 
     }
 }

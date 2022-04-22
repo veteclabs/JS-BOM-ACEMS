@@ -6,7 +6,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static com.markcha.ems.domain.EquipmentType.POWER_METER;
@@ -21,6 +25,8 @@ import static com.markcha.ems.domain.QTag.tag;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 
 @Repository
@@ -71,13 +77,14 @@ public class DeviceDslRepositoryImpl {
                 ).fetchCount();
 
     }
-    public List<Device> findAllCompressors(EquipmentType typeName) {
+    public List<Device> getCompressor(EquipmentType typeName) {
         QGroup parentGroup = new QGroup("pGroup");
         QGroup childGroup = new QGroup("cGroup");
         return query.select(device)
                 .from(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, childGroup).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
@@ -86,9 +93,33 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                         equipment.type.eq(typeName)
+
                 )
                 .orderBy(device.id.desc())
                 .fetch();
+    }
+    public List<Tag> getCompressorTags(List<Long> compIds) {
+        return query.selectFrom(tag)
+                .leftJoin(tag.device, device).fetchJoin()
+                .where(
+                         device.id.in(compIds)
+                        ,tag.tagName.in(new ArrayList<>(List.of("PRESSURE_MIN", "PRESSURE_MAX")))
+                ).fetch();
+    }
+    public List<Device> findAllCompressors(EquipmentType typeName) {
+        List<Device> compressor = getCompressor(typeName);
+        List<Long> compIds = compressor.stream()
+                .map(t -> t.getId())
+                .collect(toList());
+        Map<Long, List<Tag>> grouppingTags = getCompressorTags(compIds).stream()
+                .collect(groupingBy(t -> t.getDevice().getId()));
+
+        compressor.forEach(t->{
+            if(!isNull(grouppingTags.get(t.getId()))) {
+                t.setTags(new HashSet<>(grouppingTags.get(t.getId())));
+            }
+        });
+        return compressor;
     }
     public List<Device> findAllCompressorsByIds(EquipmentType typeName, List<Long> ids) {
         QGroup parentGroup = new QGroup("pGroup");
@@ -119,7 +150,6 @@ public class DeviceDslRepositoryImpl {
                 .from(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, childGroup).fetchJoin()
-                .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
@@ -130,7 +160,7 @@ public class DeviceDslRepositoryImpl {
                 .where(
                         equipment.type.eq(typeName)
                 )
-                .orderBy(device.id.desc())
+                .orderBy(childGroup.id.desc())
                 .fetch();
     }
     public Device getOneCompressorsJoinEquipment(Long id, EquipmentType typeName) {
@@ -139,10 +169,9 @@ public class DeviceDslRepositoryImpl {
         return query.select(device)
                 .from(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(device.group, childGroup).fetchJoin()
-                .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(device.group, childGroup).fetchJoin()
+                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
                 .leftJoin(childGroup.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()

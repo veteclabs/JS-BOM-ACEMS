@@ -7,7 +7,7 @@ import com.markcha.ems.dto.tag.request.SendTagSetDto;
 import com.markcha.ems.dto.tag.request.Tags;
 import com.markcha.ems.dto.tag.response.ReciveTagSetDto;
 import com.markcha.ems.dto.tag.response.Result;
-import com.markcha.ems.dto.tag.response.ResultDto;
+import com.markcha.ems.dto.tag.response.TagResultDto;
 import com.markcha.ems.repository.TagValueDataRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +46,8 @@ public class WebAccessController {
         for (Tags tag: sendTagSetDto.getTags()) {
             names.add(tag.getName());
         }
-        List<ResultDto> tagValues = tagValueRepository.findAllByNameIn(names).stream()
-                .map(ResultDto::new)
+        List<TagResultDto> tagValues = tagValueRepository.findAllByNameIn(names).stream()
+                .map(TagResultDto::new)
                 .collect(Collectors.toList());
         System.out.println(tagValues);
         Result result = new Result(0, tagValues.size());

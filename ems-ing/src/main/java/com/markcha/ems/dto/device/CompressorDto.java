@@ -1,8 +1,10 @@
 package com.markcha.ems.dto.device;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
+import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +30,8 @@ public class CompressorDto {
     private String groupName;
     private ScheduleDto schedule;
     private EquipmentDto equipment;
+    @JsonIgnore
+    private List<TagDto> tags;
     public CompressorDto(Device device) {
         if (!isNull(device.getEquipment())) {
             equipment = new EquipmentDto(device.getEquipment());
@@ -43,15 +47,13 @@ public class CompressorDto {
             }
             if (!isNull(group.getSchedule())) {
                 Schedule schedule = group.getSchedule();
-                ScheduleDto scheduleDto = new ScheduleDto(schedule);
-                scheduleDto.setDayOfWeeks(schedule.getDayOfWeekMappers().stream()
-                        .map((dowmp) -> {
-                            return new DayOfWeekDto(dowmp.getDayOfWeek());
-                        })
-                        .sorted(Comparator.comparing(DayOfWeekDto::getId))
-                        .collect(toList()));
-                this.schedule = scheduleDto;
+                this.schedule = new ScheduleDto(schedule);
             }
+        }
+        if (!isNull(device.getTags())) {
+            this.tags = device.getTags().stream()
+                    .map(TagDto::new)
+                    .collect(toList());
         }
     }
 }
