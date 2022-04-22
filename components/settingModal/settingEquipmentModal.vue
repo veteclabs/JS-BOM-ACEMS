@@ -71,7 +71,7 @@
                         </td>
                         <td class="right">
                             <label class="switch-box">
-                                <input type="checkbox" v-model="schedule.isActive">
+                                <input type="checkbox" v-model="schedule.isActive" @change="groupCheck">
                                 <span class="slider round"></span>
                             </label>
                         </td>
@@ -229,6 +229,17 @@
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
                 });
+            },
+            groupCheck() {
+                const vm = this;
+                console.log(vm.params.groupId)
+                console.log(vm.schedule.isActive)
+                if(vm.params.groupId !== null) {
+                    if(vm.schedule.isActive) {
+                        alert("그룹이 선택된 장비는 개별제어 설정이 불가합니다.");
+                        vm.schedule.isActive = false;
+                    }
+                }
             },
             submit() {
                 const vm = this;

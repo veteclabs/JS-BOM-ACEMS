@@ -52,14 +52,14 @@
           "icon": "icn_setting_factory"
         },
         {
-          "menuName": "공기압축기 관리",
-          "link": "/setting/aircompressor",
-          "icon": "icn_setting_gear"
-        },
-        {
           "menuName": "그룹관리",
           "link": "/setting/group",
           "icon": "icn_setting_folder"
+        },
+        {
+          "menuName": "공기압축기 관리",
+          "link": "/setting/aircompressor",
+          "icon": "icn_setting_gear"
         }
       ]
     }

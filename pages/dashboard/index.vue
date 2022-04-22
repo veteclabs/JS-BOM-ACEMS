@@ -61,7 +61,7 @@
                         </nuxt-link>
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(device)"/>
+                             @click="settingModalOpen(device.unitId)"/>
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="device"/>
@@ -77,23 +77,21 @@
                                 <div class="tagname">부하율</div>
                                 <div style="display:flex; flex:1; justify-content: end; align-items: center;">
                                     <div class="progressbar">
-                                        <div class="inner-bar" :style="`width:${getProgressBarValue(device.unit)}%`"/>
+                                        <div class="inner-bar" :style="`width:${getProgressBarValue(device.unitId)}%`"/>
                                     </div>
-                                    <h3>{{tagVal | pickValue('Name',`${device.unit}_COMP_PCY`, 'Value')}} %</h3>
+                                    <h3>{{tagVal | pickValue('Name',`${device.unitId}_COMP_PCY`, 'Value')}} %</h3>
                                 </div>
                             </li>
                             <li v-if="device.alarm !== ''">
-                                <div class="bom-badge red-bg-badge"
-                                     style="margin:0 8px 0 0;">Trip
-                                </div>
-                                <div>{{tagVal | pickErrorDescription('Name',`${device.unit}_COMP_WC`, 'Value')}}</div>
+                                <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                <div>{{tagVal | pickErrorDescription('Name',`${device.unitId}_COMP_ActTripCode`, 'Value')}}</div>
                             </li>
                         </ul>
                         <ul class="tag-box">
                             <li v-for="tag in airTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
                                 <div>
-                                    {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
+                                    {{tagVal | pickValue('Name',`${device.unitId}_${tag.tagName}`, 'Value')}}
                                     {{tag.unit}}
                                 </div>
                             </li>
@@ -102,7 +100,7 @@
                             <li v-for="tag in powerTagList" :key="tag.id">
                                 <div class="tagname">{{tag.name}}</div>
                                 <div>
-                                    {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
+                                    {{tagVal | pickValue('Name',`${device.unitId}_${tag.tagName}`, 'Value')}}
                                     {{tag.unit}}
                                 </div>
                             </li>
@@ -111,12 +109,9 @@
                 </div>
             </div>
         </div>
-
         <equipmentTagGroup v-bind:propsdata="equipmentList['온도계']" :title="'Thermometer'" v-if=" equipmentList['온도계']"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList['압력계']" :title="'Pressure gauge'" v-if=" equipmentList['압력계']"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList['유량계']" :title="'Flow gauge'" v-if=" equipmentList['유량계']"/>
-
-
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
@@ -301,11 +296,9 @@
                 ],
                 powerTagList: [
                     {id: 5, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
-                    {id: 6, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
+                    {id: 10, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
                     {id: 7, name: '전압', tagName: 'PWR_V', unit: 'V'},
                     {id: 8, name: '전류', tagName: 'PWR_A', unit: 'A'},
-                    {id: 9, name: '역률', tagName: 'PWR_PF', unit: '%'},
-                    {id: 10, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
                 ],
                 equipmentList: [],
                 timeCategories: [],
@@ -331,6 +324,28 @@
             this.removeInterval();
         },
         methods: {
+            async WaLogin() {
+                await axios.get('/api/WaLogin')
+            },
+            async getTagValues() {
+                const vm = this;
+                axios.post('/api/wa/port/getTagValue', {
+                    portId: [1, 2, 3, 4, 5],
+                }, {
+                    timeout: vm.intervalTime,
+                }).then((res) => {
+                    if (res.data.Result.Total > 0) {
+                        vm.tagVal = res.data.Values;
+                        vm.totalFlow = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_FLOW`, 'Value');
+                        vm.totalCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_PRE `, 'Value');
+                        vm.setLiveChart();
+                    }
+                }).catch((error) => {
+                    vm.msgData.msg = error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
             getNowTime: function () {
                 this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
             },
@@ -371,25 +386,6 @@
                         }, {});
                     };
                     vm.equipmentList = groupBy(result, 'type')
-                }).catch((error) => {
-                    vm.msgData.msg = error;
-                }).finally(() => {
-                    vm.loadingData.show = false;
-                });
-            },
-            async getTagValues() {
-                const vm = this;
-                axios.post('/api/wa/port/getTagValue', {
-                    portId: [1, 2, 3, 4, 5],
-                }, {
-                    timeout: vm.intervalTime,
-                }).then((res) => {
-                    if (res.data.Result.Total > 0) {
-                        vm.tagVal = res.data.Values;
-                        vm.totalFlow = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_COMP_PDP`, 'Value');
-                        vm.totalCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `U005_WAR_Con`, 'Value');
-                        vm.setLiveChart();
-                    }
                 }).catch((error) => {
                     vm.msgData.msg = error;
                 }).finally(() => {
