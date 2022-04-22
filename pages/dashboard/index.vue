@@ -112,33 +112,11 @@
             </div>
         </div>
 
-        <div class="title-box">
-            <h2>
-                <img src="~assets/images/dashboard/icn_dashboard_thermometer.png" alt="thermometer"/>
-                Thermometer
-            </h2>
-        </div>
+        <equipmentTagGroup v-bind:propsdata="equipmentList['온도계']" :title="'Thermometer'" v-if=" equipmentList['온도계']"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList['압력계']" :title="'Pressure gauge'" v-if=" equipmentList['압력계']"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList['유량계']" :title="'Flow gauge'" v-if=" equipmentList['유량계']"/>
 
-        <div class="row dashboard-item-box">
-            <div v-for="item in thermometerList" :key="item.id" class="col-lg-3">
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <h3>{{item.name}}</h3>
-                    </div>
-                    <div class="ibox-content">
-                        <ul class="tag-box">
-                            <li v-for="tag in item.tag" :key="tag.id">
-                                <div class="tagname">{{tag.name}}</div>
-                                <div>
-                                    {{tagVal | pickValue('Name',`${item.unit}_${tag.tagName}`, 'Value')}}
-                                    {{tag.unit}}
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
@@ -149,6 +127,7 @@
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
+    import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
     import TPArray from '~/assets/data/TPCode.json';
 
 
@@ -164,7 +143,8 @@
             dayjs,
             Loading,
             settingEquipmentModal,
-            airCompressorState
+            airCompressorState,
+            equipmentTagGroup
         },
         data() {
             return {
@@ -327,7 +307,7 @@
                     {id: 9, name: '역률', tagName: 'PWR_PF', unit: '%'},
                     {id: 10, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
                 ],
-                thermometerList: [],
+                equipmentList: [],
                 timeCategories: [],
                 Interval1M: '',
                 interval: '',
@@ -344,6 +324,7 @@
             this.getTagValues();
             this.resetInterval();
             this.getCompressor();
+            this.getEquipment();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -370,6 +351,26 @@
                     url: '/api/compressors'
                 }).then((res) => {
                     vm.airCompressorList = res.data
+                }).catch((error) => {
+                    vm.msgData.msg = error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
+            async getEquipment() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/etcs'
+                }).then((res) => {
+                    const result = res.data;
+                    const groupBy = function(xs, key) {
+                        return xs.reduce(function(rv, x) {
+                            (rv[x[key]] = rv[x[key]] || []).push(x);
+                            return rv;
+                        }, {});
+                    };
+                    vm.equipmentList = groupBy(result, 'type')
                 }).catch((error) => {
                     vm.msgData.msg = error;
                 }).finally(() => {
