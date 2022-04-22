@@ -58,9 +58,17 @@ public class ScheduleDto {
         this.startTime = schedule.getStartTime();
         this.stopTime = schedule.getStopTime();
         this.updated = schedule.getUpdated();
-        this.min = schedule.getMin();
-        this.max = schedule.getMax();
+        this.min = -2.0;
+        this.max = -2.0;
         this.isActive = schedule.getIsActive();
+        if(!isNull(schedule.getDayOfWeekMappers())) {
+            this.dayOfWeeks = schedule.getDayOfWeekMappers().stream()
+                    .map((dowmp) -> {
+                        return new DayOfWeekDto(dowmp.getDayOfWeek());
+                    })
+                    .sorted(Comparator.comparing(DayOfWeekDto::getId))
+                    .collect(toList());
+        }
     }
     public ScheduleDto(Schedule schedule, Boolean forGroup) {
         this.id = schedule.getId();

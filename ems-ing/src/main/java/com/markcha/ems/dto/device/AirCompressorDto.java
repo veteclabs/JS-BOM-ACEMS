@@ -31,7 +31,6 @@ public class AirCompressorDto {
     private List<TagDto> tags;
 
     public AirCompressorDto(Device device) {
-//        System.out.println(device);
         if(!isNull(device)) {
 
             if (!isNull(device.getGroup())) {
@@ -44,12 +43,6 @@ public class AirCompressorDto {
                 }
                 if(!isNull(childGroup.getSchedule())) {
                     this.schedule = new ScheduleDto(childGroup.getSchedule());
-                    this.schedule.setDayOfWeeks(childGroup.getSchedule().getDayOfWeekMappers().stream()
-                            .map((dowmp) -> {
-                                return new DayOfWeekDto(dowmp.getDayOfWeek());
-                            })
-                            .sorted(Comparator.comparing(DayOfWeekDto::getId))
-                            .collect(toList()));
                 }
             }
             if (!isNull(device.getEquipment())) {

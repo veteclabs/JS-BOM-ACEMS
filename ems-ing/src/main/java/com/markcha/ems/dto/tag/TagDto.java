@@ -21,6 +21,7 @@ public class TagDto {
     private Double value;
     private String unit;
     private String description;
+    private String type;
     @JsonIgnore
     private Long deviceId;
     @JsonIgnore
@@ -28,6 +29,7 @@ public class TagDto {
     public TagDto(Tag tag) {
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
+        this.type = tag.getType();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
     }

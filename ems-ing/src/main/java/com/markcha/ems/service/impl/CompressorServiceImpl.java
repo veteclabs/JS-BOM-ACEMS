@@ -187,7 +187,7 @@ public class CompressorServiceImpl {
         List<Group> groups = new ArrayList<>();
         List<Tag> tags = new ArrayList<>();
         compressors.forEach(t->{
-            if(!isNull(t.getGroup())){
+            if(!isNull(t.getGroup())) {
                 Group group = t.getGroup();
                 if(!isNull(group.getDeviceSet())) {
                     group.getDeviceSet().forEach(g->{
@@ -201,8 +201,6 @@ public class CompressorServiceImpl {
                     schedule.getDayOfWeekMappers().clear();
                     schedules.add(schedule);
                     if(!isNull(schedule.getWeekMappers())) weekMappers.addAll(schedule.getWeekMappers());
-
-
                 }
             }
             if(!isNull(t.getTags())) {

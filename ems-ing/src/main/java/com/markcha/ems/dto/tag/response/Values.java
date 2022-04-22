@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class Values {
     @JsonProperty("resultDtos")
-    private List<ResultDto> resultDtos = new ArrayList<ResultDto>();
+    private List<TagResultDto> resultDtos = new ArrayList<TagResultDto>();
 }

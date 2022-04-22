@@ -15,5 +15,5 @@ public class ReciveTagSetDto {
     @JsonProperty("Result")
     private Result Result;
     @JsonProperty("Values")
-    private List<ResultDto> Values = new ArrayList<>();
+    private List<TagResultDto> Values = new ArrayList<>();
 }
