@@ -24,7 +24,7 @@
                                 <div class="ibox" v-for="device in group.devices.pressure" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
-                                        <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                        <h3>{{device.tags["AIR_PRE"].value.toFixed(2)}} {{device.tags["AIR_PRE"].unit}}</h3>
                                     </div>
                                 </div>
                                 <div v-if="group.devices.pressure.length === 0">등록된 압력계가 없습니다.</div>
@@ -34,7 +34,7 @@
                                 <div class="ibox" v-for="device in group.devices.temperature" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
-                                        <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                        <h3>{{device.tags["WAR_Temp"].value.toFixed(2)}} {{device.tags["WAR_Temp"].unit}}</h3>
                                     </div>
                                 </div>
                                 <div v-if="group.devices.temperature.length === 0">온도계가 없습니다.</div>
@@ -44,7 +44,7 @@
                                 <div class="ibox" v-for="device in group.devices.flow" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
-                                        <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                        <h3>{{device.tags["AIR_Flow"].value.toFixed(2)}} {{device.tags["AIR_Flow"].unit}}</h3>
                                     </div>
                                 </div>
                                 <div v-if="group.devices.flow.length === 0">유량계가 없습니다.</div>
@@ -79,13 +79,21 @@
                                                     </div>
                                                 </div>
                                                 <ul class="tag-box">
-                                                    <li v-for="tag in device.tags" :key="tag.id">
-                                                        <div class="tagname">{{tag.description}}</div>
+                                                    <li>
+                                                        <div class="tagname">{{device.tags.COMP_SumpPre.description}}</div>
                                                         <div>
-                                                            {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`,
-                                                            'Value')}}
-                                                            {{tag.unit}}
+                                                            {{device.tags.COMP_SumpPre.value.toFixed(2)}} {{device.tags.COMP_SumpPre.unit}}
                                                         </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="tagname">{{device.tags.COMP_InCoolTemp.description}}</div>
+                                                        <div>
+                                                            {{device.tags.COMP_InCoolTemp.value.toFixed(2)}} {{device.tags.COMP_InCoolTemp.unit}}
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="tagname">{{device.tags.COMP_CoolInPre.description}}</div>
+                                                        <div> {{device.tags.COMP_CoolInPre.value.toFixed(2)}} {{device.tags.COMP_CoolInPre.unit}}</div>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -111,7 +119,7 @@
                         <div class="ibox" v-for="device in freeGroupList.pressure" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
-                                <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                <h3>{{device.tags["AIR_PRE"].value}} {{device.tags["AIR_PRE"].unit}}</h3>
                             </div>
                         </div>
                         <div v-if="freeGroupList.pressure.length === 0">압력계가 없습니다.</div>
@@ -121,7 +129,7 @@
                         <div class="ibox" v-for="device in freeGroupList.temperature" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
-                                <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                <h3>{{device.tags["WAR_Temp"].value.toFixed(2)}} {{device.tags["WAR_Temp"].unit}}</h3>
                             </div>
                         </div>
                         <div v-if="freeGroupList.temperature.length === 0">온도계가 없습니다.</div>
@@ -131,7 +139,7 @@
                         <div class="ibox" v-for="device in freeGroupList.flow" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
-                                <h3>{{tagVal | pickValue('Name',`${device.unit}_AIR_PRE`, 'Value')}} %</h3>
+                                <h3>{{device.tags["AIR_Flow"].value.toFixed(2)}} {{device.tags["AIR_Flow"].unit}}</h3>
                             </div>
                         </div>
                         <div v-if="freeGroupList.flow.length === 0">유량계가 없습니다.</div>
@@ -160,11 +168,12 @@
                                         </div>
                                     </div>
                                     <ul class="tag-box">
-                                        <li v-for="tag in airTagList" :key="tag.id">
-                                            <div class="tagname">{{tag.name}}</div>
-                                            <div>
-                                                {{tagVal | pickValue('Name',`${device.unit}_${tag.tagName}`, 'Value')}}
-                                                {{tag.unit}}
+                                        <li v-for="(tagSet, tagType) in device.tags">
+                                            <div v-if="compTagSet.includes(tagType)">
+                                                {{tagSet.description}}
+                                            </div>
+                                            <div v-if="compTagSet.includes(tagType)">
+                                                {{tagSet.value.toFixed(2)}} {{tagSet.unit}}
                                             </div>
                                         </li>
                                     </ul>
@@ -213,6 +222,7 @@
         },
         data() {
             return {
+                compTagSet: ['COMP_InCoolTemp', 'COMP_CoolInPre', 'COMP_SumpPre'],
                 msgData: {
                     // 알람모달
                     msg: '',

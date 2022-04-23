@@ -103,7 +103,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(tag.device, device).fetchJoin()
                 .where(
                          device.id.in(compIds)
-                        ,tag.tagName.in(new ArrayList<>(List.of("PRESSURE_MIN", "PRESSURE_MAX")))
+                        ,tag.tagName.in(new ArrayList<>(List.of("COMP_StartPre", "COMP_StopPre")))
                 ).fetch();
     }
     public List<Device> findAllCompressors(EquipmentType typeName) {

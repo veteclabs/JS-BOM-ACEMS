@@ -9,10 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +25,7 @@ public class DeviceDto {
     private Long deviceId;
     @JsonIgnore
     private EquipmentType type;
-    private List<TagDto> tags = new ArrayList<>();
+    private Map<String, TagDto> tags = new HashMap<>();
     @JsonIgnore
     private Long groupId;
     public DeviceDto(Device device) {
@@ -32,7 +34,9 @@ public class DeviceDto {
         this.deviceId = device.getId();
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
         if (!isNull(device.getTagList())) {
-            this.tags = device.getTagList();
+            this.tags = device.getTagList().stream()
+                    .collect(toMap(TagDto::getType, t -> t));
+//            this.tags = device.getTagList();
         }
         if (!isNull(device.getGroup())) {
             this.groupId = device.getGroup().getId();
@@ -46,7 +50,8 @@ public class DeviceDto {
         this.deviceId = device.getId();
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
         if (!isNull(device.getTagList())) {
-            this.tags = device.getTagList();
+            this.tags = device.getTagList().stream()
+                    .collect(toMap(TagDto::getType, t -> t));
         }
 
     }

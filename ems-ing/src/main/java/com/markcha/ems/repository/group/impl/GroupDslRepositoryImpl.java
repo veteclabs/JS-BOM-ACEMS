@@ -289,20 +289,12 @@ public class GroupDslRepositoryImpl{
         List<String> tagNames = tags.stream()
                 .map(k -> k.getTagName())
                 .collect(toList());
-        try {
-            List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
 
-            tags.forEach(a -> {
-                List<JsonNode> tags2 = tagValues.stream()
-                        .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
-                        .collect(toList());
-                if(!isNull(tags2) && tags2.size() == 1) {
-                    a.setValue(tags2.get(0).get("Value").doubleValue());
-                }
-            });
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        Map<String, Double> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+
+        tags.forEach(a -> {
+            a.setValue(tagValues.get(a.getTagName()));
+        });
 
         Map<Long, List<TagDto>> groupByTag = tags.stream()
                 .collect(groupingBy(t -> t.getDeviceId()));

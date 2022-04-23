@@ -131,8 +131,8 @@ public class CompressorServiceImpl {
                 .collect(toList());
         List<TagDto> minMaxTag = tagDtos.stream()
                 .filter(t -> {
-                    boolean isMax = t.getType().equals("PRESSURE_MAX");
-                    boolean isMin = t.getType().equals("PRESSURE_MIN");
+                    boolean isMax = t.getType().equals("COMP_StopPre");
+                    boolean isMin = t.getType().equals("COMP_StartPre");
                     if (isMax) {
                         t.setValue(scheduleDto.getMax());
                     }
@@ -204,8 +204,8 @@ public class CompressorServiceImpl {
                 .collect(toList());
         List<TagDto> minMaxTag = tags.stream()
                 .filter(t -> {
-                    boolean isMax = t.getType().equals("PRESSURE_MAX");
-                    boolean isMin = t.getType().equals("PRESSURE_MIN");
+                    boolean isMax = t.getType().equals("COMP_StopPre");
+                    boolean isMin = t.getType().equals("COMP_StartPre");
                     if (isMax) {
                         t.setValue(scheduleDto.getMax());
                     }

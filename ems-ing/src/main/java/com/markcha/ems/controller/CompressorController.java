@@ -73,8 +73,8 @@ public class CompressorController {
                     k.setValue(tagValues.get(k.getTagName()));
                 });
                 for (TagDto tag : t.getTags()) {
-                    if(tag.getType().equals("PRESSURE_MIN")) scheduleDto.setMin(tag.getValue());
-                    if(tag.getType().equals("PRESSURE_MAX")) scheduleDto.setMax(tag.getValue());
+                    if(tag.getType().equals("COMP_StartPre")) scheduleDto.setMin(tag.getValue());
+                    if(tag.getType().equals("COMP_StopPre")) scheduleDto.setMax(tag.getValue());
                 }
                 scheduleDto.setMinMax();
 
@@ -98,8 +98,8 @@ public class CompressorController {
                     k.setValue(tagValues.get(k.getTagName()));
                 });
                 for (TagDto tag : t.getTags()) {
-                    if(tag.getType().equals("PRESSURE_MIN")) scheduleDto.setMin(tag.getValue());
-                    if(tag.getType().equals("PRESSURE_MAX")) scheduleDto.setMax(tag.getValue());
+                    if(tag.getType().equals("COMP_StartPre")) scheduleDto.setMin(tag.getValue());
+                    if(tag.getType().equals("COMP_StopPre")) scheduleDto.setMax(tag.getValue());
                 }
                 scheduleDto.setMinMax();
             }
@@ -122,8 +122,8 @@ public class CompressorController {
                 k.setValue(tagValues.get(k.getTagName()));
             });
             for (TagDto tag : oneJoinAlarm.getTags()) {
-                if(tag.getType().equals("PRESSURE_MIN")) scheduleDto.setMin(tag.getValue());
-                if(tag.getType().equals("PRESSURE_MAX")) scheduleDto.setMax(tag.getValue());
+                if(tag.getType().equals("COMP_StartPre")) scheduleDto.setMin(tag.getValue());
+                if(tag.getType().equals("COMP_StopPre")) scheduleDto.setMax(tag.getValue());
             }
             scheduleDto.setMinMax();
         }

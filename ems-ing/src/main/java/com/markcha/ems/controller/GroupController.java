@@ -39,8 +39,7 @@ import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QTag.tag;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequestMapping("/api")
@@ -109,22 +108,19 @@ public class GroupController {
         List<String> tagNames = tags.stream()
                 .map(k -> k.getTagName())
                 .collect(toList());
-        try {
-            List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
-            tags.forEach(a -> {
-                List<JsonNode> tags2 = tagValues.stream()
-                        .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
-                        .collect(toList());
-                if(!isNull(tags2) && tags2.size() == 1) {
-                    a.setValue(tags2.get(0).get("Value").doubleValue());
-                }
-            });
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+
+        Map<String, Double> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+        tags.forEach(t -> {
+            t.setValue(tagValues.get(t.getTagName()));
+        });
+
         Map<Long, List<TagDto>> groupByTag = tags.stream()
                 .collect(groupingBy(t -> t.getDeviceId()));
-        devices.forEach(t->t.setTags(groupByTag.get(t.getDeviceId())));
+        devices.forEach(t->{
+            List<TagDto> tagDtos = groupByTag.get(t.getDeviceId());
+            t.setTags(tagDtos.stream()
+                    .collect(toMap(TagDto::getType, tagDto -> tagDto)));
+        });
 
         Map<String, List<DeviceDto>> collect = devices.stream()
                 .collect(groupingBy(t -> t.getType().getNickname()));

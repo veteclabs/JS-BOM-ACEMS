@@ -17,8 +17,8 @@ import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
+
 import com.markcha.ems.dto.schedule.ScheduleDto;
 
 @Data
@@ -31,7 +31,7 @@ public class GroupDto {
     private List<DeviceDto> deviceList;
     private List<GroupDto> airCompressors = new ArrayList<>();
     private Map<String, List<DeviceDto>> devices = new HashMap<>();
-    private List<TagDto> tags = new ArrayList<>();
+    private Map<String, TagDto> tags = new HashMap<>();
     public GroupDto() {
     }
     public GroupDto(Long id, String name, ScheduleDto schedule, List<DeviceDto> deviceList, List<GroupDto> airCompressors, Map<String, List<DeviceDto>> devices, List<TagDto> tags) {
