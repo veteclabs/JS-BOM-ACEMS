@@ -133,18 +133,17 @@ public class GroupServiceImpl {
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
-        Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
         for (DayOfWeek dayOfWeek : dayOfWeeks) {
             DayOfWeekMapper dayOfWeekMapper = new DayOfWeekMapper();
             dayOfWeekMapper.setDayOfWeek(dayOfWeek);
             dayOfWeekMapper.setSchedule(newSchedule);
             newSchedule.getDayOfWeekMappers().add(dayOfWeekMapper);
         }
+        scheduleDataRepository.save(newSchedule);
         // 요일 끝
 
         // 주차 관계 생성
 
-        newSchedule.getWeekMappers().clear();
         Set<WeekMapper> weekMappers = newSchedule.getWeekMappers();
         List<WeekGroupDto> weekOrdes = scheduleDto.getWeekDevices();
         List<Long> weekIds = weekOrdes.stream()
@@ -152,38 +151,31 @@ public class GroupServiceImpl {
                 .collect(toList());
 
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
-        List<Week> weeks = weekDataRepository.findAllByIdIn(weekIds);
-        weeks.forEach(t->{
-
-            WeekMapper weekMapper = new WeekMapper();
-            WeekGroupDto weekOrder = weekOrdes.stream().filter(w -> {
-                return w.getId().equals(t.getId());
-            }).collect(toSingleton());
-            if(!isNull(weekOrder.getStandBy())) {
-                List<Long> groupIds = weekOrder.getStandBy().stream()
-                        .map(g -> g.getId())
-                        .collect(toList());
-
-                List<Group> newGroups = workingGroups.stream()
-                        .filter(g -> groupIds.contains(g.getId()))
-                        .collect(toList());
-
-                weekMapper.getOrders().clear();
-                int order = 1;
-                for (Group group : newGroups) {
-                    Order newOrder = new Order();
-                    newOrder.setWeekMapper(weekMapper);
-                    newOrder.setOrder(order);
-                    newOrder.setGroup(group);
-                    weekMapper.getOrders().add(newOrder);
-                    order++;
+        List<WeekMapper> weekMappers1 = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, newSchedule.getId());
+        weekMappers1.forEach(t->{
+            t.getOrders().clear();
+            weekOrdes.forEach(k->{
+                if(k.getId().equals(t.getWeek().getId())) {
+                    int orderNum = 1;
+                    for (CompressorSimpleDto compressorSimpleDto : k.getWorking()) {
+                        compressorSimpleDto.getId();
+                        Group group = workingGroups.stream()
+                                .filter(z -> z.getId().equals(compressorSimpleDto.getId()))
+                                .findFirst()
+                                .get();
+                        Order newOrder = new Order();
+                        newOrder.setGroup(group);
+                        newOrder.setOrder(orderNum);
+                        newOrder.setWeekMapper(t);
+                        t.getOrders().add(newOrder);
+                        orderNum++;
+                    }
                 }
-            }
-            weekMapper.setWeek(t);
-            weekMapper.setSchedule(newSchedule);
-            newSchedule.getWeekMappers().add(weekMapper);
+            });
         });
-        scheduleDataRepository.save(newSchedule);
+
+        weekMapperDataRepository.saveAll(weekMappers1);
+
         groupDataRepository.save(newGroup);
 
         return true;
@@ -205,28 +197,40 @@ public class GroupServiceImpl {
                             .collect(toList());
                 }
 
-                StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
                 Group group = groupDslRepository.getOneJoinChildsAndDevicesById(groupDto.getId());
-                stopWatch.stop();
 
-                List<Group> ordCompressors = new ArrayList<>(group.getChildren());
+                System.out.println("---------------------------------");
+                System.out.println(group.getName());
+                List<Group> ordCompressors = groupDslRepository.getChildGroups(new ArrayList<>(List.of(groupDto.getId())));
+
+
+                System.out.println("기존 컴프레셔 그룹");
+                ordCompressors.forEach(t-> System.out.print(t.getName() + ","));
+
+
                 List<Device> ordDevices = new ArrayList<>(group.getDeviceSet());
-                stopWatch.start();
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
-                stopWatch.stop();
-                stopWatch.start();
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
-                stopWatch.stop();
-                List<Group> tempCompressors = new ArrayList<>();
-
-                newCompressors.forEach(t->tempCompressors.add(t));
-                tempCompressors.removeAll(ordCompressors);
+                List<Group> deletedCompressor = new ArrayList<>();
+                deletedCompressor.addAll(ordCompressors);
+//                ordCompressors.forEach(t->deletedCompressor.add(t));
+                deletedCompressor.removeAll(newCompressors);
                 ordCompressors.forEach(t -> t.setParent(null));
                 ordDevices.forEach(t -> t.setGroup(null));
-                List<Order> orders = orderDslRepository.findAllByIds(tempCompressors.stream()
-                        .map(t->t.getId()).collect(Collectors.toList()));
-                orderDataRepository.deleteAll(orders);
+                List<Order> orders = orderDslRepository.findAllByIds(
+                        deletedCompressor.stream()
+                                .map(t->t.getId())
+                                .collect(Collectors.toList()));
+
+
+                System.out.println();
+                System.out.println("신규 컴프레셔 그룹");
+                newCompressors.forEach(t-> System.out.print(t.getName() + ","));
+                System.out.println();
+                System.out.println("삭제될 오더 그룹");
+                deletedCompressor.forEach(t-> System.out.print(t.getName() + ","));
+                System.out.println();
+                orderDataRepository.deleteAllInBatch(orders);
 
                 groupDataRepository.save(group);
                 groupDataRepository.saveAll(ordCompressors);

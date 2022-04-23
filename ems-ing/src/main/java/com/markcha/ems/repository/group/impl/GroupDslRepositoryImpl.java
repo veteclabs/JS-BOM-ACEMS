@@ -91,24 +91,24 @@ public class GroupDslRepositoryImpl{
     }
     public Group getOneJoinChildsAndDevicesById(Long id) {
         QGroup childGroup = new QGroup("cg");
-        Group group = query.selectFrom(QGroup.group)
-                .leftJoin(QGroup.group.children, childGroup).fetchJoin()
-                .leftJoin(QGroup.group.deviceSet, device).fetchJoin()
-                .leftJoin(QGroup.group.schedule, schedule).fetchJoin()
+        Group groupEntity = query.selectFrom(group)
+                .leftJoin(group.children, childGroup).fetchJoin()
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .leftJoin(weekMapper.orders, order1).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
-                .where(QGroup.group.id.eq(id))
+                .where(group.id.eq(id))
                 .fetchOne();
-        List<Device> devices = query.selectFrom(QDevice.device)
-                .leftJoin(QDevice.device.equipment, equipment).fetchJoin()
-                .leftJoin(QDevice.device.group, QGroup.group).fetchJoin()
-                .where(equipment.type.ne(AIR_COMPRESSOR), device.group.id.eq(group.getId()))
+        List<Device> devices = query.selectFrom(device)
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .where(equipment.type.ne(AIR_COMPRESSOR), device.group.id.eq(groupEntity.getId()))
                 .fetch();
-        group.setDeviceSet(new HashSet<>(devices));
-        return group;
+        groupEntity.setDeviceSet(new HashSet<>(devices));
+        return groupEntity;
     }
     
     public Group getOneByDeviceId(Long id) {
@@ -132,18 +132,18 @@ public class GroupDslRepositoryImpl{
     private List<Order> getOrderGroups(List<Long> weekMapperIds) {
         return query.selectFrom(order1).distinct()
                 .leftJoin(order1.group, group).fetchJoin()
-                .leftJoin(group.deviceSet, device).fetchJoin()
-                .leftJoin(device.equipment,equipment).fetchJoin()
                 .leftJoin(order1.weekMapper, weekMapper).fetchJoin()
                 .where(
                          weekMapper.id.in(weekMapperIds)
-                        ,equipment.type.eq(AIR_COMPRESSOR)
+//                        ,group.type.eq(GroupType.OBJECT)
                 ).fetch();
     }
     private List<Group> getRootGroups(BooleanExpression findById) {
+        QGroup childGroup = new QGroup("cg");
         return query.select(group)
                 .from(group).distinct()
                 .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(group.children, childGroup).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper)
@@ -315,7 +315,7 @@ public class GroupDslRepositoryImpl{
         // -----------------------------------//
         return groups;
     }
-    private List<Group> getChildGroups(List<Long> parentGroupIds) {
+    public List<Group> getChildGroups(List<Long> parentGroupIds) {
         QGroup parentGroup = new QGroup("cg");
         return query.selectFrom(group)
                 .leftJoin(group.parent, parentGroup).fetchJoin()
@@ -329,9 +329,10 @@ public class GroupDslRepositoryImpl{
     }
     
     public List<Group> findAllChildGroupsById(Long id) {
-        QGroup childGroup = new QGroup("cg");
+        QGroup parentGroup = new QGroup("parentGroup");
         return query.selectFrom(group)
-                .leftJoin(group.children, childGroup).fetchJoin()
+                .leftJoin(group.parent, parentGroup).fetchJoin()
+                .where(parentGroup.id.eq(id))
                 .fetch();
     }
     
@@ -342,7 +343,7 @@ public class GroupDslRepositoryImpl{
         } else {
             groupIdEq = group.id.eq(-1L);
         }
-        return query.selectFrom(group)
+        return query.selectFrom(group).distinct()
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
@@ -356,40 +357,54 @@ public class GroupDslRepositoryImpl{
     public List<Group> findAllJoinSchedule() {
         List<Group> rootGroup = getRootGroups(null);
 
-        List<Long> scheduleIds = rootGroup.stream()
-                .map((t) -> t.getSchedule().getId())
-                .collect(toList());
-
-        List<Long> parentGroupIds = rootGroup.stream()
-                .map((t) -> t.getId())
-                .collect(toList());
-        List<WeekMapper> weekMappers = getWeekMapper(scheduleIds);
-
-        List<Group> childGroups = getChildGroups(parentGroupIds);
-//        childGroups.forEach(t-> System.out.println(t.getName()));
-        Map<Long, List<Group>> groupByParentId = childGroups.stream()
-                .collect(groupingBy(t -> t.getParent().getId()));
-        groupByParentId.forEach((key, value) -> {
-            System.out.println("--0--");
-            System.out.println(key);
-            value.forEach(t-> System.out.println(t.getName()));
-        });
-        weekMappers.forEach(t->
-            t.getSchedule().getGroups().forEach(k->{
-                List<Group> groups = groupByParentId.get(k.getId());
-                t.setStandByGroups(groups);
-            }));
-
-        Map<Long, List<WeekMapper>> grouppingWeekMapper = weekMappers.stream()
-                .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));
-        rootGroup.forEach(t->{
-            Long scheduleId = t.getSchedule().getId();
-            List<WeekMapper> weekMappers1 = grouppingWeekMapper.get(scheduleId);
-            if (!isNull(t.getSchedule())) {
-                t.getSchedule();
-                t.getSchedule().setWeeks(weekMappers1);
-            }
-        });
+//        List<Long> scheduleIds = rootGroup.stream()
+//                .map((t) -> t.getSchedule().getId())
+//                .collect(toList());
+//
+//        List<Long> parentGroupIds = rootGroup.stream()
+//                .map((t) -> t.getId())
+//                .collect(toList());
+//        List<WeekMapper> weekMappers = getWeekMapper(scheduleIds);
+//        List<Long> weekMapperIds = weekMappers.stream()
+//                .map(t -> t.getId())
+//                .collect(toList());
+//        Map<Long, List<Order>> groupingOrder = getOrderGroups(weekMapperIds).stream()
+//                .collect(groupingBy(t -> t.getWeekMapper().getId()));
+//
+//        weekMappers.forEach(t->{
+//            if(!isNull(groupingOrder.get(t.getId()))) {
+//                t.setOrders(new HashSet<>(groupingOrder.get(t.getId())));
+//            }
+//        });
+//
+//        List<Group> childGroups = null;
+//        if(!isNull(rootGroup.get())) {
+//            childGroups = getChildGroups(parentGroupIds);
+//        }
+//
+//        Map<Long, List<Group>> groupByParentId = childGroups.stream()
+//                .collect(groupingBy(t -> t.getParent().getId()));
+//        for (WeekMapper mapper : weekMappers) {
+//            List<Group> childGroupCopy = new ArrayList<>();
+//            childGroupCopy.addAll(childGroups);
+//            List<Group> workingGroups = mapper.getOrders().stream()
+//                    .map(t -> t.getGroup())
+//                    .collect(toList());
+//            childGroupCopy.removeAll(workingGroups);
+////            childGroupCopy.forEach(t-> System.out.println(t.getName()));
+//            mapper.setStandByGroups(childGroupCopy);
+//        }
+//
+//        Map<Long, List<WeekMapper>> grouppingWeekMapper = weekMappers.stream()
+//                .collect(groupingBy(weekMapper -> weekMapper.getSchedule().getId()));
+//        rootGroup.forEach(t->{
+//            Long scheduleId = t.getSchedule().getId();
+//            List<WeekMapper> weekMappers1 = grouppingWeekMapper.get(scheduleId);
+//            if (!isNull(t.getSchedule())) {
+//                t.getSchedule();
+//                t.getSchedule().setWeeks(weekMappers1);
+//            }
+//        });
         return rootGroup;
 
     }
@@ -405,16 +420,17 @@ public class GroupDslRepositoryImpl{
                 .collect(toList());
         Map<Long, List<Order>> groupingOrder = getOrderGroups(weekMapperIds).stream()
                 .collect(groupingBy(t -> t.getWeekMapper().getId()));
+
         weekMappers.forEach(t->{
             if(!isNull(groupingOrder.get(t.getId()))) {
                 t.setOrders(new HashSet<>(groupingOrder.get(t.getId())));
             }
         });
-        System.out.println(weekMappers);
         List<Group> childGroups = null;
         if(!isNull(rootGroup.getChildren())) {
             childGroups = getChildGroups(parentGroupIds);
         }
+
         Map<Long, List<Group>> groupByParentId = childGroups.stream()
                 .collect(groupingBy(t -> t.getParent().getId()));
         for (WeekMapper mapper : weekMappers) {
@@ -424,7 +440,7 @@ public class GroupDslRepositoryImpl{
                     .map(t -> t.getGroup())
                     .collect(toList());
             childGroupCopy.removeAll(workingGroups);
-
+//            childGroupCopy.forEach(t-> System.out.println(t.getName()));
             mapper.setStandByGroups(childGroupCopy);
         }
 

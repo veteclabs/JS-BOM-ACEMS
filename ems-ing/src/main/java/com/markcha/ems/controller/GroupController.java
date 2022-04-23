@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.markcha.ems.domain.EquipmentType.POWER_METER;
 import static com.markcha.ems.domain.QEnergy.energy;
 import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QTag.tag;
@@ -144,10 +145,10 @@ public class GroupController {
     public List<GroupDto> show() throws JsonProcessingException {
         try {
             List<String> typeList = new ArrayList<>();
-            typeList.add("power");
-            typeList.add("flow");
-            typeList.add("pressure");
-            typeList.add("temperature");
+            typeList.add(EquipmentType.POWER_METER.getNickname());
+            typeList.add(EquipmentType.FLOW_METER.getNickname());
+            typeList.add(EquipmentType.PRESSURE_GAUGE.getNickname());
+            typeList.add(EquipmentType.THERMO_METER.getNickname());
             return groupDslRepository.findAllGroupJoinTags().stream()
                     .map(g->new GroupDto(g, typeList, true))
                     .collect(toList());

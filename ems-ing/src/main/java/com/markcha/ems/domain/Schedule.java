@@ -39,7 +39,7 @@ public class Schedule {
     private LocalDateTime updated;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",cascade = CascadeType.ALL)
     private Set<WeekMapper> weekMappers = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DayOfWeekMapper> dayOfWeekMappers = new HashSet<>();
