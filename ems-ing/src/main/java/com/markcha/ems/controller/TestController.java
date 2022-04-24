@@ -44,7 +44,7 @@ public class TestController {
     private final WebaccessApiServiceImpl webaccessApiService;
 
     @GetMapping(value="/device/{id}")
-    public Map<String, Double> compressor(@PathVariable("id") Long id) {
+    public Map<String, Object> compressor(@PathVariable("id") Long id) {
 
         return webaccessApiService.getTagValuesV2(new ArrayList<>(List.of("032_RPM", "031_STATE")));
 

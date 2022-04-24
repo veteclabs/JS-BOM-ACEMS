@@ -60,7 +60,7 @@ public class WebaccessApiServiceImpl {
             throw var4;
         }
     }
-    public Map<String, Double> getTagValuesV2(List<String> tagNames) {
+    public Map<String, Object> getTagValuesV2(List<String> tagNames) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -85,7 +85,7 @@ public class WebaccessApiServiceImpl {
                 ReciveTagSetDto.class
         );
         List<TagResultDto> tagValues = response.getBody().getValues();
-        Map<String, Double> tagValueMap = new HashMap<>();
+        Map<String, Object> tagValueMap = new HashMap<>();
         tagValues.forEach(t->{
             tagValueMap.put(t.getName(), t.getValue());
 

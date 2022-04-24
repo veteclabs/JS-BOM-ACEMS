@@ -1,0 +1,40 @@
+{
+  "airCompressorDeshboardSet" : {
+    "description" : "에어 컴프레셔 대시보드 태그 셋",
+    "tags" : [
+      "COMP_InCoolTemp",
+      "COMP_CoolInPre",
+      "COMP_SumpPre"
+    ]
+  },
+  "airCompressorGroupDeshboardSet" : {
+    "description" : "에어 컴프레셔 그룹 대시보드 태그 셋",
+    "tags" : [
+      "COMP_InCoolTemp",
+      "COMP_CoolInPre",
+      "COMP_SumpPre"
+    ]
+  },
+  "accuraSet" : {
+    "description" : "아큐라 대시보드 태그 셋",
+    "tags" : [
+      "PWR_A",
+      "PWR_Kvarh",
+      "PWR_KW",
+      "PWR_KWh",
+      "PWR_PF",
+      "PWR_V"
+    ]
+  },
+  "namjunsaSet" : {
+    "description" : "아큐라 대시보드 태그 셋",
+    "tags" : [
+      "PWR_A",
+      "PWR_Kvarh",
+      "PWR_KW",
+      "PWR_KWh",
+      "PWR_PF",
+      "PWR_V"
+    ]
+  }
+}

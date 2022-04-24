@@ -109,13 +109,19 @@ exports.groupOrder = async (scheduleId, week, powerState) => {
 }
 exports.controllFacility = async (groupId, powerState) => {
     try {
-        let devices = await axios.get(`http://localhost:8031/api/devices/${groupId}`, {params:{
-                    tagType: "POWER",
-                    equipmentType: "AIR_COMPRESSOR"
-                }});
+        let powerCode = "COMP_Power";
+        let localCode = "COMP_Local";
+        let devices = await axios.get(`http://localhost:8031/api/devices/${groupId}`, {data:{
+                "equipmentType" : "AIR_COMPRESSOR",
+                "tagTypes" : [
+                     powerCode,
+                     localCode,
+
+                ]
+            }});
         for (let device of devices.data) {
-            const localTag = device.tags.find((t)=>t.type === "LOCAL");
-            const powerTag = device.tags.find((t)=>t.type === "POWER");
+            const localTag = device.tags[localCode];
+            const powerTag = device.tags[powerCode];
             let facilityState = await axios.post(`http://localhost:8031/WaWebService/Json/GetTagValue/BOM`, {
                     "Tags" : [
                         {

@@ -71,6 +71,9 @@ public class DataAnalysisController {
                 historySearchDto.setUsageType("Usage");
             }
         }
+
+
+        groupInsertDto.convertTagTypeName();
         historySearchDto.setEnergyId(28L);
         groupInsertDto.setEnergyEqId(null);
         historySearchDto.setIsDuo(isDuo);
@@ -81,6 +84,7 @@ public class DataAnalysisController {
                 .map(t->new GroupQueryDto(t, false))
                 .peek(t -> historySearchDto.getTagNames().addAll(t.getTagNames()))
                 .collect(toList());
+
         if(isDuo) {
             groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true).stream()
                     .map(t->new GroupQueryDto(t, false))

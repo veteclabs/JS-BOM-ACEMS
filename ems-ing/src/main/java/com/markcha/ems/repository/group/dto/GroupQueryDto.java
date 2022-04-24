@@ -1,6 +1,7 @@
 package com.markcha.ems.repository.group.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Group;
 import lombok.*;
 
@@ -22,7 +23,7 @@ public class GroupQueryDto {
     private String name;
     private String purpose;
     private List<String> tagNames = new ArrayList<>();
-    private List<DeviceQueryDto> allDevices = new ArrayList<>();
+    private List<Device> allDevices = new ArrayList<>();
     private List<DeviceQueryDto> devices;
     private List<GroupQueryDto> childs;
 
@@ -40,7 +41,7 @@ public class GroupQueryDto {
                         return new DeviceQueryDto(device);
                     })
                     .collect(Collectors.toList());
-            this.allDevices = this.devices;
+            this.allDevices = new ArrayList<>(location.getDevices());
         } else {
             this.devices = null;
         }

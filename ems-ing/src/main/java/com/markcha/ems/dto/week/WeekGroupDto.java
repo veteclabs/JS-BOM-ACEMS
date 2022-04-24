@@ -4,6 +4,7 @@ package com.markcha.ems.dto.week;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +16,8 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @Data
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class WeekGroupDto {
     private Long id;
     private String name;
@@ -40,7 +42,8 @@ public class WeekGroupDto {
             this.working = weekMapper.getOrders().stream()
                     .map(t ->{
                         return new CompressorSimpleDto(t.getGroup(), t.getOrder());
-                    }).collect(toList());
+                    })
+                    .sorted(comparing(CompressorSimpleDto::getOrder)).collect(toList());
         }
     }
 }

@@ -45,4 +45,7 @@ public class TagList {
     @Column(length = 20)
     private String type;
 
+    private Double min;
+    private Double max;
+    private String testType;
 }

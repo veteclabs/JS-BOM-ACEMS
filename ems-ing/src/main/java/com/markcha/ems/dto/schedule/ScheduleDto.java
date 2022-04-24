@@ -41,8 +41,8 @@ public class ScheduleDto {
     private String type;
     private LocalTime startTime;
     private LocalTime stopTime;
-    private Double min;
-    private Double max;
+    private Object min;
+    private Object max;
     @JsonIgnore
     private LocalDateTime updated;
     private List<DayOfWeekDto> dayOfWeeks;

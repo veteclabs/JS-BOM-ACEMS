@@ -33,10 +33,10 @@ public class DeviceDto {
         this.name = device.getName();
         this.deviceId = device.getId();
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
-        if (!isNull(device.getTagList())) {
-            this.tags = device.getTagList().stream()
+        if (!isNull(device.getTags())) {
+            this.tags = device.getTags().stream()
+                    .map(t->new TagDto(t,true))
                     .collect(toMap(TagDto::getType, t -> t));
-//            this.tags = device.getTagList();
         }
         if (!isNull(device.getGroup())) {
             this.groupId = device.getGroup().getId();

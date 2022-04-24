@@ -109,7 +109,7 @@ public class GroupController {
                 .map(k -> k.getTagName())
                 .collect(toList());
 
-        Map<String, Double> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
         tags.forEach(t -> {
             t.setValue(tagValues.get(t.getTagName()));
         });
@@ -138,20 +138,15 @@ public class GroupController {
         return collect;
     }
     @GetMapping(value="/groups", headers = "setting=false")
-    public List<GroupDto> show() throws JsonProcessingException {
-        try {
-            List<String> typeList = new ArrayList<>();
-            typeList.add(EquipmentType.POWER_METER.getNickname());
-            typeList.add(EquipmentType.FLOW_METER.getNickname());
-            typeList.add(EquipmentType.PRESSURE_GAUGE.getNickname());
-            typeList.add(EquipmentType.THERMO_METER.getNickname());
-            return groupDslRepository.findAllGroupJoinTags().stream()
-                    .map(g->new GroupDto(g, typeList, true))
-                    .collect(toList());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public List<GroupDto> show()  {
+        List<String> typeList = new ArrayList<>();
+        typeList.add(EquipmentType.POWER_METER.getNickname());
+        typeList.add(EquipmentType.FLOW_METER.getNickname());
+        typeList.add(EquipmentType.PRESSURE_GAUGE.getNickname());
+        typeList.add(EquipmentType.THERMO_METER.getNickname());
+        return groupDslRepository.findAllGroupJoinTags().stream()
+                .map(g->new GroupDto(g, typeList, true))
+                .collect(toList());
     }
     @PostMapping(value="/group")
     public ApiResponseDto create(
@@ -200,9 +195,9 @@ public class GroupController {
         private Long id;
         private String name;
         private ScheduleDto schedule;
+        private TagDto tags;
     }
     @Data
-
     public static class GroupSearchDto {
         private Integer level;
         private Long energyId;
@@ -228,6 +223,8 @@ public class GroupController {
         @JsonIgnore
         private BooleanExpression tagInTypes;
         public GroupSearchDto() {
+            System.out.println(equipmentType);
+            System.out.println(tagTypes);
             if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
             if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
             if(!isNull(tagType)) this.tagEqType = tag.type.eq(tagType);
@@ -252,6 +249,10 @@ public class GroupController {
             this.tagType = tagType;
             this.tagEqType = tag.type.eq(tagType);
         }
+        public void setTagTypes(List<String> tagTypes) {
+            this.tagTypes = tagTypes;
+            this.tagInTypes = tag.type.in(tagTypes);
+        }
         public void setDevoceIdT2(String deviceIdT) {
             if(!isNull(deviceIdT) && !deviceIdT.equals("AU")) this.deviceIdT = Long.parseLong(deviceIdT);
             if(!deviceIdT.equals("AU")) this.deviceEqId = QDevice.device.id.eq(this.deviceIdT);
@@ -259,6 +260,19 @@ public class GroupController {
         public void setEquipmentType(EquipmentType equipmentType) {
             this.equipmentType = equipmentType;
             this.equipmentEqType = equipment.type.eq(equipmentType);
+        }
+        public void convertTagTypeName() {
+            switch(this.tagType) {
+                case "PF":
+                    setTagType("PWR_PF");
+                    break;
+                case "KWH":
+                    setTagType("PWR_KWh");
+                    break;
+                case "FLOW":
+                    setTagType("AIR_PRE");
+                    break;
+            }
         }
     }
 }

@@ -10,15 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.data.util.Pair.toMap;
 
 @Data
 @NoArgsConstructor
@@ -31,7 +29,7 @@ public class CompressorDto {
     private ScheduleDto schedule;
     private EquipmentDto equipment;
     @JsonIgnore
-    private List<TagDto> tags;
+    private Map<String, TagDto> tags;
     public CompressorDto(Device device) {
         if (!isNull(device.getEquipment())) {
             equipment = new EquipmentDto(device.getEquipment());
@@ -52,8 +50,8 @@ public class CompressorDto {
         }
         if (!isNull(device.getTags())) {
             this.tags = device.getTags().stream()
-                    .map(TagDto::new)
-                    .collect(toList());
+                    .map(t->new TagDto(t, true))
+                    .collect(Collectors.toMap(TagDto::getType, tagDto->tagDto));
         }
     }
 }

@@ -1,184 +1,92 @@
 {
-  "list": [
-    {
-      "code": "01",
-      "description": "Description Sensor Failure 1AVPT"
-    },
-    {
-      "code": "02",
-      "description": "Sensor Failure 3 APT "
-    },
-    {
-      "code": "03",
-      "description": "Sensor Failure 4APT "
-    },
-    {
-      "code": "04",
-      "description": "Sensor Failure 5CPT"
-    },
-    {
-      "code": "05",
-      "description": "Sensor Failure 6CPT"
-    },
-    {
-      "code": "06",
-      "description": "Sensor Failure 10APT (Remote)"
-    },
-    {
-      "code": "07",
-      "description": "Sensor Failure 2APT"
-    },
-    {
-      "code": "08",
-      "description": "Sensor Failure 7APT"
-    },
-    {
-      "code": "09",
-      "description": "Sensor Failure 2CTT"
-    },
-    {
-      "code": "10",
-      "description": "Sensor Failure 2ATT"
-    },
-    {
-      "code": "11",
-      "description": "Sensor Failure 4ATT"
-    },
-    {
-      "code": "12",
-      "description": "Sensor Failure T4 (Spare)"
-    },
-    {
-      "code": "13",
-      "description": "Sensor Failure 5DTT"
-    },
-    {
-      "code": "14",
-      "description": "Sensor Failure 6DTT"
-    },
-    {
-      "code": "15",
-      "description": "Sensor Failure T7 (Spare)"
-    },
-    {
-      "code": "16",
-      "description": "Sensor Failure T8 (Spare)"
-    },
-    {
-      "code": "17",
-      "description": "High Inlet Vacuum"
-    },
-    {
-      "code": "18",
-      "description": "Motor Overload (Main)"
-    },
-    {
-      "code": "19",
-      "description": "Fan Motor Overload"
-    },
-    {
-      "code": "22",
-      "description": "Check Motor Rotation"
-    },
-    {
-      "code": "25",
-      "description": "Remote Stop Failure"
-    },
-    {
-      "code": "26",
-      "description": "Remote Start Failure"
-    },
-    {
-      "code": "28",
-      "description": "Low Sump Pressure"
-    },
-    {
-      "code": "29",
-      "description": "High Air Pressure"
-    },
-    {
-      "code": "30",
-      "description": "High Coolant Filter Pressure Drop"
-    },
-    {
-      "code": "31",
-      "description": "High A/E Discharge Temperature"
-    },
-    {
-      "code": "32",
-      "description": "Emergency Stop"
-    },
-    {
-      "code": "33",
-      "description": "Change Inlet Filter"
-    },
-    {
-      "code": "34",
-      "description": "Change Separator Element"
-    },
-    {
-      "code": "35",
-      "description": "Change Coolant Filter"
-    },
-    {
-      "code": "36",
-      "description": "Sensor Error (Calibration)"
-    },
-    {
-      "code": "39",
-      "description": "100 Hours To Service Service Required"
-    },
-    {
-      "code": "40",
-      "description": "Alarm - Service Required"
-    },
-    {
-      "code": "41",
-      "description": "Auxiliary 2"
-    },
-    {
-      "code": "42",
-      "description": "Auxiliary 1"
-    },
-    {
-      "code": "43",
-      "description": "Condensate Drain Error"
-    },
-    {
-      "code": "48",
-      "description": "Unit Too Cold To Start"
-    },
-    {
-      "code": "49",
-      "description": "High Sump Pressure"
-    },
-    {
-      "code": "50",
-      "description": "High Interstage Pressure"
-    },
-    {
-      "code": "51",
-      "description": "Dryer High Pressure"
-    },
-    {
-      "code": "52",
-      "description": "Dryer Freeze Warning"
-    },
-    {
-      "code": "53",
-      "description": "Condenser Low (Dryer)"
-    },
-    {
-      "code": "54",
-      "description": "Condenser High (Dryer)"
-    },
-    {
-      "code": "55",
-      "description": "Change HE Filter (Dryer)"
-    },
-    {
-      "code": "200",
-      "description": "Check SD Card"
+  "list": {
+    "10":  "Sensor Failure 2ATT",
+    
+    "11":  "Sensor Failure 4ATT",
+    
+    "12":  "Sensor Failure T4 (Spare)",
+    
+    "13":  "Sensor Failure 5DTT",
+    
+    "14":  "Sensor Failure 6DTT",
+    
+    "15":  "Sensor Failure T7 (Spare)",
+    
+    "16":  "Sensor Failure T8 (Spare)",
+    
+    "17":  "High Inlet Vacuum",
+    
+    "18":  "Motor Overload (Main)",
+    
+    "19":  "Fan Motor Overload",
+    
+    "22":  "Check Motor Rotation",
+    
+    "25":  "Remote Stop Failure",
+    
+    "26":  "Remote Start Failure",
+    
+    "28":  "Low Sump Pressure",
+    
+    "29":  "High Air Pressure",
+    
+    "30":  "High Coolant Filter Pressure Drop",
+    
+    "31":  "High A/E Discharge Temperature",
+    
+    "32":  "Emergency Stop",
+    
+    "33":  "Change Inlet Filter",
+    
+    "34":  "Change Separator Element",
+    
+    "35":  "Change Coolant Filter",
+    
+    "36":  "Sensor Error (Calibration)",
+    
+    "39":  "100 Hours To Service Service Required",
+    
+    "40":  "Alarm - Service Required",
+    
+    "41":  "Auxiliary 2",
+    
+    "42":  "Auxiliary 1",
+    
+    "43":  "Condensate Drain Error",
+    
+    "48":  "Unit Too Cold To Start",
+    
+    "49":  "High Sump Pressure",
+    
+    "50":  "High Interstage Pressure",
+    
+    "51":  "Dryer High Pressure",
+    
+    "52":  "Dryer Freeze Warning",
+    
+    "53":  "Condenser Low (Dryer)",
+    
+    "54":  "Condenser High (Dryer)",
+    
+    "55":  "Change HE Filter (Dryer)",
+    
+    "200":  "Check SD Card",
+    
+    "2":  "Sensor Failure 3 APT",
+    
+    "3":  "Sensor Failure 4APT",
+    
+    "4":  "Sensor Failure 5CPT",
+    
+    "5":  "Sensor Failure 6CPT",
+    
+    "6":  "Sensor Failure 10APT (Remote)",
+    
+    "7":  "Sensor Failure 2APT",
+    
+    "8":  "Sensor Failure 7APT",
+    
+    "9":  "Sensor Failure 2CTT"
     }
-  ]
+
 }

@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 @NoArgsConstructor
 public class TagDto {
     private String tagName;
-    private Double value;
+    private Object value;
     private String unit;
     private String description;
     private String type;
@@ -29,6 +29,14 @@ public class TagDto {
     public TagDto(Tag tag) {
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
+        this.type = tag.getType();
+        this.unit = isNull(tag.getUnit())?"":tag.getUnit();
+        if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
+    }
+    public TagDto(Tag tag, Boolean tagValue) {
+        this.tagName = tag.getTagName();
+        this.description = tag.getTagDescription();
+        this.value = tag.getValue();
         this.type = tag.getType();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();

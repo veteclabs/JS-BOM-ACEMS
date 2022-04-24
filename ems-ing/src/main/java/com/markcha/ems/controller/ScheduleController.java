@@ -5,6 +5,7 @@ import com.markcha.ems.controller.GroupController.GroupSearchDto;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorDto;
+import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.dto.order.OrderDto;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static com.markcha.ems.domain.QTag.tag;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -81,20 +83,24 @@ public class ScheduleController {
         Long rootGroupId = scheduleDslRepository.findRootGroupId(scheduleId).getId();
         return orderDslRepository.findAllByRootGroupIdWeekId(rootGroupId, weekId).stream()
                 .map(OrderDto::new)
+                .sorted(comparing(OrderDto::getOrder))
                 .collect(toList());
     }
     @GetMapping(value="/devices/{groupId}")
-    public List<DeviceQueryDto> weeks(
+    public List<DeviceConDto> weeks(
             @PathVariable("groupId") Long groupId,
             @RequestBody GroupSearchDto groupSearchDto
     ) {
+        groupSearchDto.getTagTypes();
+        groupSearchDto.getEquipmentType();
         List<Long> rootId = new ArrayList<>();
         rootId.add(groupId);
-        groupSearchDto.setTagInTypes(QTag.tag.type.in(groupSearchDto.getTagTypes()));
-        List<DeviceQueryDto> devices = new ArrayList<>();
+//        groupSearchDto.setTagInTypes(tag.type.in(groupSearchDto.getTagTypes()));
+        List<DeviceConDto> devices = new ArrayList<>();
         groupDynamicRepository.getAnalysisLocations(rootId, groupSearchDto, true).stream()
                 .map(t -> new GroupQueryDto(t, false))
-                .forEach(k->devices.addAll(k.getAllDevices()));
+                .forEach(k->devices.addAll(k.getAllDevices().stream()
+                .map(DeviceConDto::new).collect(toList())));
         return devices;
     }
     @Data
@@ -133,7 +139,7 @@ public class ScheduleController {
         private List<Integer> dayOfWeeks;
         private List<Integer> weeks;
 //        private List<TagDto> tags = new ArrayList<>();
-        private Double pressure;
+        private Object pressure;
         public ScheduleDto(Group group) {
             if(!isNull(group.getDeviceSet())) {
                 this.groupId = group.getId();

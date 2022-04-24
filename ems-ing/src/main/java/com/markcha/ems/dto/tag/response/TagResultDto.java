@@ -16,7 +16,7 @@ public class TagResultDto {
     @JsonProperty("Name")
     private String Name;
     @JsonProperty("Value")
-    private Double Value;
+    private Object Value;
     @JsonProperty("Quality")
     private Integer Quality;
     public TagResultDto(TagValue tagValue) {

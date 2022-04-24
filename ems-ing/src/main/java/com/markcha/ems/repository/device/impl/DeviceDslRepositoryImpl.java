@@ -1,6 +1,7 @@
 package com.markcha.ems.repository.device.impl;
 
 import com.markcha.ems.domain.*;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static com.markcha.ems.domain.EquipmentType.POWER_METER;
@@ -33,11 +33,12 @@ import static java.util.stream.Collectors.toList;
 public class DeviceDslRepositoryImpl {
     private final EntityManager entityManager;
     private final JPAQueryFactory query;
+    private final WebaccessApiServiceImpl webaccessApiService;
 
-
-    public DeviceDslRepositoryImpl(EntityManager entityManager) {
+    public DeviceDslRepositoryImpl(EntityManager entityManager, WebaccessApiServiceImpl webaccessApiService) {
         this.entityManager = entityManager;
         this.query = new JPAQueryFactory(entityManager);
+        this.webaccessApiService = webaccessApiService;
     }
 
     public List<Device> findAllTemplcates(EquipmentType typeName) {
@@ -103,7 +104,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(tag.device, device).fetchJoin()
                 .where(
                          device.id.in(compIds)
-                        ,tag.tagName.in(new ArrayList<>(List.of("COMP_StartPre", "COMP_StopPre")))
+//                        ,tag.tagName.in(new ArrayList<>(List.of("COMP_StartPre", "COMP_StopPre")))
                 ).fetch();
     }
     public List<Device> findAllCompressors(EquipmentType typeName) {
@@ -111,7 +112,11 @@ public class DeviceDslRepositoryImpl {
         List<Long> compIds = compressor.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        Map<Long, List<Tag>> grouppingTags = getCompressorTags(compIds).stream()
+        List<Tag> tags = getCompressorTags(compIds);
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tags.stream()
+                .map(t -> t.getTagName()).collect(toList()));
+        tags.forEach(t->t.setValue(tagValues.get(t.getTagName())));
+        Map<Long, List<Tag>> grouppingTags = tags.stream()
                 .collect(groupingBy(t -> t.getDevice().getId()));
 
         compressor.forEach(t->{
@@ -144,45 +149,42 @@ public class DeviceDslRepositoryImpl {
                 .orderBy(device.id.desc())
                 .fetch();
     }
-    public List<Device> findAllCompressorsJoinEquipment(EquipmentType typeName) {
+    public List<Group> findAllCompressorsJoinEquipment(EquipmentType typeName) {
         QGroup parentGroup = new QGroup("pGroup");
-        QGroup childGroup = new QGroup("cGroup");
-
-        return query.select(device)
-                .from(device).distinct()
+        return query.select(group)
+                .from(group).distinct()
+                .leftJoin(group.deviceSet, device).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(device.group, childGroup).fetchJoin()
-                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
-                .leftJoin(device.tags, tag).fetchJoin()
-                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+                .leftJoin(group.parent, parentGroup).fetchJoin()
+                .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(equipment.type.eq(typeName))
-                .orderBy(childGroup.id.desc())
+                .orderBy(group.id.desc())
                 .fetch();
     }
-    public Device getOneCompressorsJoinEquipment(Long id, EquipmentType typeName) {
-        QGroup parentGroup = new QGroup("pGroup");
-        QGroup childGroup = new QGroup("cGroup");
-        return query.select(device)
-                .from(device).distinct()
-                .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(device.tags, tag).fetchJoin()
-                .leftJoin(device.group, childGroup).fetchJoin()
-                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
-                .leftJoin(childGroup.schedule, schedule).fetchJoin()
-                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
-                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
-                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
-                .leftJoin(weekMapper.week, week).fetchJoin()
-                .where(
-                         equipment.type.eq(typeName)
-                        ,childGroup.id.eq(id)
-                )
-                .fetchOne();
-    }
+//    public Device getOneCompressorsJoinEquipment(Long id, EquipmentType typeName) {
+//        QGroup parentGroup = new QGroup("pGroup");
+//        QGroup childGroup = new QGroup("cGroup");
+//        return query.select(device)
+//                .from(device).distinct()
+//                .leftJoin(device.equipment, equipment).fetchJoin()
+//                .leftJoin(device.tags, tag).fetchJoin()
+//                .leftJoin(device.group, childGroup).fetchJoin()
+//                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
+//                .leftJoin(childGroup.schedule, schedule).fetchJoin()
+//                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+//                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
+//                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
+//                .leftJoin(weekMapper.week, week).fetchJoin()
+//                .where(
+//                         equipment.type.eq(typeName)
+//                        ,childGroup.id.eq(id)
+//                )
+//                .fetchOne();
+//    }
 //    public List<Group> getParentGroup(List<>)
     public List<Device> findAllEtcOrphs() {
         return query.selectFrom(device)

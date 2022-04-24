@@ -25,6 +25,8 @@ public class InsertSampleData {
         String deviceUnit = new String(String.format("U%03d", device.getId().intValue()) + "_");
         List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipment_Type(type);
 
+        Random random = new Random();
+        List<TagValue> tagValues = new ArrayList<>();
         allByEquipment_type.forEach(t->{
             Tag tag = new Tag();
             tag.setType(t.getType());
@@ -40,20 +42,14 @@ public class InsertSampleData {
             tag.setUnitConversion(t.getUnitConversion());
             tag.setDevice(device);
             tags.add(tag);
-        });
-
-
-        List<TagValue> tagValues = new ArrayList<>();
-        List<String> tagNames = tags.stream().map(t -> t.getTagName()).collect(toList());
-        Random random = new Random();
-        List<TagValue> tagValueStream = tagNames.stream().map(t -> {
             TagValue tagValue = new TagValue();
-            tagValue.setName(t);
+            tagValue.setName(deviceUnit + t.getType());
             tagValue.setQuality(1);
-            tagValue.setValue(random.nextDouble() * 100);
-            return tagValue;
-        }).collect(toList());
-        tagValueDataRepository.saveAll(tagValueStream);
+            tagValue.setValue(random.doubles(t.getMin(), t.getMax()).findFirst().getAsDouble());
+            tagValues.add(tagValue);
+        });
+        tagValueDataRepository.saveAll(tagValues);
+
         return tags;
     }
 }

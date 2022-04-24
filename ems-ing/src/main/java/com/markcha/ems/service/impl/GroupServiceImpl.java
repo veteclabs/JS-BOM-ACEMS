@@ -67,8 +67,8 @@ public class GroupServiceImpl {
         newSchedule.setIsActive(true);
         newSchedule.setInterval(30);
         newSchedule.setType("interval");
-        newSchedule.setMax(scheduleDto.getMax());
-        newSchedule.setMin(scheduleDto.getMin());
+        newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
+        newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
         newSchedule.setStartTime(scheduleDto.getStartTime());
         newSchedule.setStopTime(scheduleDto.getStopTime());
         newSchedule.setUpdated(LocalDateTime.now());
@@ -117,8 +117,8 @@ public class GroupServiceImpl {
         newSchedule.setIsActive(scheduleDto.getIsActive());
         newSchedule.setInterval(30);
         newSchedule.setType("interval");
-        newSchedule.setMax(scheduleDto.getMax());
-        newSchedule.setMin(scheduleDto.getMin());
+        newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
+        newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
         newSchedule.setStartTime(scheduleDto.getStartTime());
         newSchedule.setStopTime(scheduleDto.getStopTime());
         newSchedule.setUpdated(LocalDateTime.now());

@@ -32,8 +32,8 @@ public class Tag {
 
     @Column(name = "is_trend")
     private Boolean isTrend;
-    @Column(name="value")
-    private Double value;
+    @Transient
+    private Object value;
     @Column(name = "logging_time")
     private Integer loggingTime;
     @Column(name = "nickname", length = 50)
@@ -44,9 +44,6 @@ public class Tag {
     private Boolean showAble;
     @Column(length = 20)
     private String type;
-    @PrePersist
-    @PreUpdate
-    void removeWhitespace() {
-    }
+
 
 }

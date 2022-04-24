@@ -82,26 +82,29 @@
                                     <h3>{{tagVal | pickValue('Name',`${device.unitId}_COMP_PCY`, 'Value')}} %</h3>
                                 </div>
                             </li>
-                            <li v-if="device.alarm !== ''">
+                            <li v-if="device.state['COMP_Trip'].value === 1">
                                 <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                                <div>{{tagVal | pickErrorDescription('Name',`${device.unitId}_COMP_ActTripCode`, 'Value')}}</div>
+                                <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
                             </li>
                         </ul>
                         <ul class="tag-box">
-                            <li v-for="tag in airTagList" :key="tag.id">
-                                <div class="tagname">{{tag.name}}</div>
-                                <div>
-                                    {{tagVal | pickValue('Name',`${device.unitId}_${tag.tagName}`, 'Value')}}
-                                    {{tag.unit}}
+                            <li v-for="type in compTagSet">
+                                <div v-if="device.tags[type] !== undefined">
+                                    {{device.tags[type].description}}
+                                </div>
+                                <div v-if="device.tags[type] !== undefined">
+                                    {{device.tags[type].value.toFixed(2)}} {{device.tags[type].unit}}
                                 </div>
                             </li>
                         </ul>
-                        <ul class="tag-box">
-                            <li v-for="tag in powerTagList" :key="tag.id">
-                                <div class="tagname">{{tag.name}}</div>
-                                <div>
-                                    {{tagVal | pickValue('Name',`${device.unitId}_${tag.tagName}`, 'Value')}}
-                                    {{tag.unit}}
+
+                        <ul v-for="power in device.devices.power" class="tag-box">
+                            <li v-for="type in powerTagSet">
+                                <div v-if="power.tags[type] !== undefined">
+                                    {{power.tags[type].description}}
+                                </div>
+                                <div v-if="power.tags[type] !== undefined">
+                                    {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
                                 </div>
                             </li>
                         </ul>
@@ -124,6 +127,7 @@
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
     import TPArray from '~/assets/data/TPCode.json';
+    import waTagSet from '~/assets/data/tagSet.json';
 
 
     export default {
@@ -143,6 +147,9 @@
         },
         data() {
             return {
+                TPCode: TPArray.list,
+                compTagSet: waTagSet.airCompressorGroupDeshboardSet.tags,
+                powerTagSet: waTagSet.accuraSet.tags,
                 msgData: {
                     msg: '',
                     show: false,

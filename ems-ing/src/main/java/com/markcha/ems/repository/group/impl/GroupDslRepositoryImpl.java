@@ -173,7 +173,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(device.group, group).fetchJoin()
                 .where(
                         device.group.id.in(groupIds)
-                        , tag.type.eq("BAR")
+                        , tag.type.eq("AIR_PRE")
                 ).fetch();
 
         List<Long> deviceIds = devices.stream()
@@ -187,20 +187,9 @@ public class GroupDslRepositoryImpl{
         List<String> tagNames = tags.stream()
                 .map(k -> k.getTagName())
                 .collect(toList());
-        try {
-            List<JsonNode> tagValues = webaccessApiService.getTagValues(tagNames);
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
 
-            tags.forEach(a -> {
-                List<JsonNode> tags2 = tagValues.stream()
-                        .filter(l -> a.getTagName().equals(l.get("Name").toString().replace("\"", "")))
-                        .collect(toList());
-                if(!isNull(tags2) && tags2.size() == 1) {
-                    a.setValue(tags2.get(0).get("Value").doubleValue());
-                }
-            });
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        tags.forEach(a ->a.setValue(tagValues.get(a.getTagName())));
 
         devices.forEach(t-> {
             tags.forEach(k->{
@@ -271,37 +260,37 @@ public class GroupDslRepositoryImpl{
                 .join(tag.device, device).fetchJoin()
                 .where(
                          tag.showAble.eq(true)
-                        ,tag.type.eq("BAR")
+                        ,tag.type.eq("AIR_PRE")
                         ,device.id.in(deviceIds))
                 .fetch();
     }
-    public List<Group> findAllGroupJoinTags() throws JsonProcessingException {
+    public List<Group> findAllGroupJoinTags() {
         List<Group> groups = getGroups();
         List<Long> deviceIds = new ArrayList<>();
         groups.forEach(g->{
             g.getChildren().forEach(c->c.getDeviceSet().forEach(d->deviceIds.add(d.getId())));
             g.getDeviceSet().forEach(d->deviceIds.add(d.getId()));
         });
-        List<TagDto> tags = getTagsByDeviceIds(deviceIds).stream()
-                .map(TagDto::new)
-                .collect(toList());
+        List<Tag> tags = getTagsByDeviceIds(deviceIds);
         // webaccess 태그 이름으로 조회 //
         List<String> tagNames = tags.stream()
                 .map(k -> k.getTagName())
                 .collect(toList());
 
-        Map<String, Double> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
 
         tags.forEach(a -> {
             a.setValue(tagValues.get(a.getTagName()));
         });
 
-        Map<Long, List<TagDto>> groupByTag = tags.stream()
-                .collect(groupingBy(t -> t.getDeviceId()));
+        Map<Long, List<Tag>> groupByTag = tags.stream()
+                .collect(groupingBy(t -> t.getDevice().getId()));
         groups.forEach(g->{
-            g.getDeviceSet().forEach(d->d.setTagList(groupByTag.get(d.getId())));
+            g.getDeviceSet().forEach(d->d.setTags(new HashSet<>(groupByTag.get(d.getId()))));
             g.getChildren().forEach(c->c.getDeviceSet().forEach(d->{
-                    d.setTagList(groupByTag.get(d.getId()));
+                    if (!isNull(groupByTag.get(d.getId()))) {
+                        d.setTags(new HashSet<>(groupByTag.get(d.getId())));
+                    }
                 }));
         });
         // -----------------------------------//
@@ -327,7 +316,7 @@ public class GroupDslRepositoryImpl{
                 .where(parentGroup.id.eq(id))
                 .fetch();
     }
-    
+
     public List<Group> findAllByIds(List<Long> ids) {
         BooleanExpression groupIdEq = null;
         if(!isNull(ids)) {
