@@ -149,7 +149,7 @@ public class DeviceDslRepositoryImpl {
                 .orderBy(device.id.desc())
                 .fetch();
     }
-    public List<Group> findAllCompressorsJoinEquipment(EquipmentType typeName) {
+    public List<Group> findAllCompressorsJoinEquipment(EquipmentType typeName, BooleanExpression groupEqId) {
         QGroup parentGroup = new QGroup("pGroup");
         return query.select(group)
                 .from(group).distinct()
@@ -161,8 +161,10 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
-                .where(equipment.type.eq(typeName))
-                .orderBy(group.id.desc())
+                .where(
+                         equipment.type.eq(typeName)
+                        ,groupEqId
+                ).orderBy(group.id.desc())
                 .fetch();
     }
 //    public Device getOneCompressorsJoinEquipment(Long id, EquipmentType typeName) {

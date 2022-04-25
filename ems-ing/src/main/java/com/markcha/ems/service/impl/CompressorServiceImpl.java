@@ -20,6 +20,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import com.markcha.ems.service.InsertSampleData;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -259,9 +260,9 @@ public class CompressorServiceImpl {
         scheduleDataRepository.deleteAllInBatch(schedules);
     }
 
-    public List<Group> findAllJoinAlarm() {
+    public List<Group> findAllJoinAlarm(BooleanExpression groupEqId) {
 
-        List<Group> compressors = deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR);
+        List<Group> compressors = deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR, groupEqId);
         List<Long> compIds = compressors.stream()
                 .map(t -> t.getId())
                 .collect(toList());

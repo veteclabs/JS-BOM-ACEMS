@@ -1,11 +1,9 @@
 package com.markcha.ems.controller;
 
-import com.markcha.ems.domain.Device;
-import com.markcha.ems.domain.EquipmentType;
-import com.markcha.ems.domain.GroupType;
-import com.markcha.ems.domain.Voltage;
+import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
+import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.dto.device.TemplcateDto;
 import com.markcha.ems.dto.group.GroupsSimpleDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
@@ -16,6 +14,7 @@ import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.impl.DeviceServiceImpl;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
@@ -31,6 +33,7 @@ import static java.util.Objects.isNull;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class DeviceController {
     @Value("${response.jpa.DB_INSERT_MSG}")
     private String dbInsertMsg;
@@ -45,15 +48,9 @@ public class DeviceController {
     private final GroupDslRepositoryImpl groupDslRepository;
     private final DeviceServiceImpl deviceService;
     private final DeviceDataRepository deviceDataRepository;
+    private final WebaccessApiServiceImpl webaccessApiService;
 
-    public DeviceController(
-            DeviceDslRepositoryImpl deviceDslRepository,
-            GroupDslRepositoryImpl groupDslRepository, DeviceServiceImpl deviceService, DeviceDataRepository deviceDataRepository) {
-        this.deviceDslRepository = deviceDslRepository;
-        this.groupDslRepository = groupDslRepository;
-        this.deviceService = deviceService;
-        this.deviceDataRepository = deviceDataRepository;
-    }
+
 
     @GetMapping(value="/etcs",headers = "setting=true")
     public List<TemplcateDto> etc(
@@ -63,10 +60,16 @@ public class DeviceController {
                 .collect(Collectors.toList());
     }
     @GetMapping(value="/etcs")
-    public List<TemplcateDto> etc2(
+    public List<DeviceConDto> etc2(
     ){
-        return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
-                .map(t->new TemplcateDto(t,true))
+        List<Device> allTemplcates = deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR);
+        List<String> tagNames = new ArrayList<>();
+        allTemplcates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
+
+        Map<String, Object> tagValuesV2 = webaccessApiService.getTagValuesV2(tagNames);
+        allTemplcates.forEach(t->t.getTags().forEach(tag->tag.setValue(tagValuesV2.get(tag.getTagName()))));
+        return allTemplcates.stream()
+                .map(DeviceConDto::new)
                 .collect(Collectors.toList());
     }
     @GetMapping(value="/device/groups")

@@ -6,6 +6,7 @@ import com.markcha.ems.controller.GroupController.GroupSearchDto;
 import com.markcha.ems.controller.analysis.DataAnalysisController;
 import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.Group;
+import com.markcha.ems.domain.QGroup;
 import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
@@ -26,11 +27,13 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static com.markcha.ems.domain.QGroup.group;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -76,7 +79,7 @@ public class CompressorController {
     @GetMapping(value="/compressors")
     public List<AirCompressorDto> compressor(
     ) {
-        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm().stream()
+        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(null).stream()
                 .map(AirCompressorDto::new)
                 .collect(toList());
         collect.forEach(t->{
@@ -89,29 +92,27 @@ public class CompressorController {
         });
         return collect;
     }
-//    @GetMapping(value="/compressor/{compressorId}")
-//    public AirCompressorDto compressor(
-//            @PathVariable("compressorId") Long compressorId
-//    ) {
-//        AirCompressorDto oneJoinAlarm = compressorService.getOneJoinAlarm(compressorId);
-//
-//        if(!isNull(oneJoinAlarm.getSchedule())) {
-//            ScheduleDto scheduleDto = oneJoinAlarm.getSchedule();
-//            Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(
-//                    oneJoinAlarm.getTags().stream()
-//                            .map(g -> g.getTagName())
-//                            .collect(toList()));
-//            oneJoinAlarm.getTags().forEach(k->{
-//                k.setValue(tagValues.get(k.getTagName()));
-//            });
-//            for (TagDto tag : oneJoinAlarm.getTags()) {
-//                if(tag.getType().equals("COMP_StartPre")) scheduleDto.setMin(tag.getValue());
-//                if(tag.getType().equals("COMP_StopPre")) scheduleDto.setMax(tag.getValue());
-//            }
-//            scheduleDto.setMinMax();
-//        }
-//        return oneJoinAlarm;
-//    }
+    @GetMapping(value="/compressor/{compressorId}")
+    public AirCompressorDto compressor(
+            @PathVariable("compressorId") Long compressorId
+    ) {
+        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(group.id.eq(compressorId)).stream()
+                .map(AirCompressorDto::new)
+                .collect(toList());
+        collect.forEach(t->{
+            if(!isNull(t.getSchedule())) {
+                ScheduleDto scheduleDto = t.getSchedule();
+                scheduleDto.setMin(t.getState().get("COMP_StartPre").getValue());
+                scheduleDto.setMax(t.getState().get("COMP_StopPre").getValue());
+                scheduleDto.setMinMax();
+            }
+        });
+        if(collect.size() == 1) {
+
+            return collect.get(0);
+        }
+        return null;
+    }
     @PostMapping(value="/compressor")
     public ApiResponseDto create(
             @RequestBody CompressorInsertDto compressorInsertDto
