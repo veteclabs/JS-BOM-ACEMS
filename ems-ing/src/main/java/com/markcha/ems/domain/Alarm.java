@@ -26,7 +26,8 @@ public class Alarm {
     private LocalTime recoverTime;
     @Column(columnDefinition = "DATE")
     private LocalDate recoverDate;
-
+    @Column(length = 10)
+    private String type;
     private Double tempValue;
     private Double prssValue;
     private Double kwhValue;

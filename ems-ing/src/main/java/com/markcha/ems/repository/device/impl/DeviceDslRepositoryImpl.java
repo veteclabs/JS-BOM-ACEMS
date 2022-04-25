@@ -157,7 +157,7 @@ public class DeviceDslRepositoryImpl {
         QDevice groupDevices = new QDevice("groupDevices");
         QTag groupTags = new QTag("groupTags");
         QEquipment groupEquipment = new QEquipment("groupEquipment");
-        return query.selectFrom(tag)
+        return query.selectFrom(tag).distinct()
                 .leftJoin(tag.device, device).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
@@ -166,7 +166,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(groupDevices.equipment, groupEquipment).fetchJoin()
                 .where(
                          equipment.type.eq(AIR_COMPRESSOR)
-                        ,groupEquipment.type.ne(AIR_COMPRESSOR)
+                        ,groupEquipment.type.eq(POWER_METER)
                 ).fetch();
     }
     public List<Device> findAllCompressorsByIds(EquipmentType typeName, List<Long> ids) {
