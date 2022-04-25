@@ -285,6 +285,17 @@ public class GroupServiceImpl {
         weekMapperDataRepository.deleteAllInBatch(weekMappers);
         scheduleDataRepository.saveAll(schedules);
         scheduleDataRepository.deleteAllInBatch(schedules);
+
+        List<Long> childIds = groups.stream()
+                .map(pg -> {
+                    return pg.getChildren().stream()
+                            .map(cg -> cg.getId())
+                            .collect(toList());
+                }).flatMap(List::stream)
+                .collect(toList());
+
+        List<Order> allByDeviceId = orderDslRepository.findAllByDeviceIds(childIds);
+        orderDataRepository.deleteAllInBatch(allByDeviceId);
         return true;
     }
     public static <T> Collector<T, ?, T> toSingleton() {
