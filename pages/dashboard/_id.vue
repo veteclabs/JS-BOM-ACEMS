@@ -434,7 +434,7 @@
                         vm.setLiveChart();
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.error;
+                    vm.msgData.msg = error.response.data.message;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -447,7 +447,7 @@
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.error;
+                    vm.msgData.msg = error.response.data.message;
                 });
             },
             replaceImg(e) {

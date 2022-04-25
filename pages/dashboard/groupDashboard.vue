@@ -54,8 +54,7 @@
                             <div class="td-label">공기압축기</div>
                             <div class="row">
                                 <draggable class="list-group" :list="group.airCompressors" group="airCompressor">
-                                    <div v-for="device in group.airCompressors" :key="device.id" class="col-lg-4">
-                                        <div class="ibox">
+                                    <div v-for="device in group.airCompressors" :key="device.id" class="col-lg-4"><div class="ibox">
                                             <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                                                 <nuxt-link :to="`/dashboard/${device.id}`">
                                                     <h3>{{device.name}}</h3>
@@ -77,7 +76,7 @@
                                                         <h3>{{tagVal | pickValue('Name',`${device.unit}_COMP_PCY`, 'Value')}} %</h3>
                                                     </div>
                                                 </div>
-                                                <ul class="tag-box">
+                                                <ul class="tag-box" v-if="device.tags">
                                                     <li v-for="type in compTagSet">
                                                         <div v-if="device.tags[type] !== undefined">
                                                             {{device.tags[type].description}}
@@ -138,7 +137,6 @@
                     <div class="td-label">공기압축기</div>
                     <draggable class="list-group" :list="freeGroupList.airCompressor" group="airCompressor">
                         <div v-for="device in freeGroupList.airCompressor" :key="device.id">
-                            {{device}}
                             <div class="ibox">
                                 <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                                     <nuxt-link :to="`/dashboard/${device.id}`">
@@ -284,7 +282,7 @@
                 }).then((res) => {
                     vm.groupList = res.data
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.error;
+                    vm.msgData.msg = error.response.data.message;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -299,7 +297,7 @@
                 }).then((res) => {
                     vm.freeGroupList = res.data
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.error;
+                    vm.msgData.msg = error.response.data.message;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -316,7 +314,7 @@
                     vm.msgData.show = true;
                     vm.msgData.msg = res.data.message;
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.error;
+                    vm.msgData.msg = error.response.data.message;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -332,7 +330,7 @@
                         vm.tagVal = res.data.Values;
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.error;
+                    vm.msgData.msg = error.response.data.message;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });

@@ -16,7 +16,7 @@
                             <li v-for="tag in item.tags" :key="tag.id">
                                 <div class="tagname">{{tag.description}}</div>
                                 <div>
-                                    {{tagVal | pickValue('Name',`${tag.tagName}`, 'Value') | numberFormat(1)}} {{tag.unit}}
+                                    {{tag.value| numberFormat(2)}}{{tag.unit}}
                                 </div>
                             </li>
                         </ul>

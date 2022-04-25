@@ -280,7 +280,7 @@
                                 vm.$emit('callSearch');
                             }).catch((error) => {
                                 vm.msgData.show = true;
-                                vm.msgData.msg = error.response.data.error;
+                                vm.msgData.msg = error.response.data.message;
                             });
                         }
                     });
