@@ -64,7 +64,7 @@
                              @click="settingModalOpen(device)"/>
                     </div>
                     <div class="ibox-content">
-                        <airCompressorState v-bind:propsdata="device"/>
+                        <airCompressorState v-bind:propsdata="device.state"/>
                         <div :class="{'noti-box':true, 'alarm-box': device.alarm}">
                             <div v-if="device.alarm" class="alarm">Alarm</div>
                             <div v-else class="normal">Normal</div>

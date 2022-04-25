@@ -129,5 +129,40 @@ router.post('/wa/tag/getTagValue', async (req, res) => {
 });
 
 
+router.post('/wa/tag/setTagValue', async function (req, res) {
+    try {
+        const UserName = process.env.WA_ID;
+        const Password = process.env.WA_PASSWORD;
+        const URL = process.env.WA_IP;
+        const userPass = btoa(`${UserName}:${Password}`);
+        const myProjURL = `${URL}/WaWebService/Json/SetTagValue/${process.env.WA_PROJECT}`;
+
+
+        const {tag}  = req.body;
+        const {value}  = req.body;
+
+        let tagObject = {};
+        tagObject["Tags"] = [{"Name": tag, "Value": value}];
+
+        request({
+            url: myProjURL,
+            method: 'POST',
+            headers: {
+                'Authorization': 'Basic ' + userPass,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
+                'LoginType': 'View'
+            },
+            body: tagObject,
+            json: true
+        }, function (error, response, body) {
+            res.json(body);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 // 모듈로 사용할 수 있도록 export
 module.exports = router;

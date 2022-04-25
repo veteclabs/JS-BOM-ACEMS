@@ -39,7 +39,7 @@
                         </ul>
                     </div>
                     <div class="ibox-content">
-                        <airCompressorState v-bind:propsdata="airCompressor"/>
+                        <airCompressorState v-bind:propsdata="airCompressor.state"/>
                     </div>
                     <div :class="{'noti-box':true, 'alarm-box': airCompressor.alarm}">
                         <div v-if="airCompressor.alarm" class="alarm">Alarm</div>

@@ -1,13 +1,13 @@
 <template>
-    <div>
+    <div v-if="propsdata">
         <ul class="state-box">
-            <li :class="{'active' : propsdata.state === 'RUN', 'set-btn run': true}"
-                @click="setAirCompressor(propsdata.id, 'RUN')">RUN
+            <li :class="{'active' : propsdata.COMP_Power.value === 1, 'set-btn run': true}"
+                @click="setAirCompressor(propsdata.COMP_Power.tagName, 1)">RUN
             </li>
-            <li :class="{'active' : propsdata.state === 'LOAD', 'load': true}">LOAD</li>
-            <li :class="{'active' : propsdata.state === 'UNLOAD', 'unload': true}">UNLOAD</li>
-            <li :class="{'active' : propsdata.state === 'STOP', 'set-btn stop': true}"
-                @click="setAirCompressor(propsdata.id, 'STOP')">STOP
+            <li :class="{'active' : propsdata.COMP_Load.value === 1, 'load': true}">LOAD</li>
+            <li :class="{'active' : propsdata.COMP_Load.value === 0, 'unload': true}">UNLOAD</li>
+            <li :class="{'active' : propsdata.COMP_Power.value === 0, 'set-btn stop': true}"
+                @click="setAirCompressor(propsdata.COMP_Power.tagName, 0)">STOP
             </li>
         </ul>
         <Loading v-bind:propsdata="loadingData"/>
@@ -37,22 +37,23 @@
                 },
                 loadingData: {
                     show: false,
-                }
+                },
+                powerState: ['STOP', 'RUN']
             }
         },
         methods: {
-            async setAirCompressor(device, stateValue) {
+            async setAirCompressor(tagName, stateValue) {
                 const vm = this;
 
-                const confirmResult = confirm(`해당 컴프레셔 상태를 ${stateValue}으로 변경합니다. 진행하시겠습니까?`);
+                const confirmResult = confirm(`해당 컴프레셔 상태를 ${this.powerState[stateValue]}으로 변경합니다. 수동제어 명령 진행 시 스케줄 제어는 모두 해제 됩니다.진행하시겠습니까?`);
 
                 if (confirmResult) {
                     const params = {
-                        device,
+                        tagName,
                         stateValue
                     };
                     vm.loadingData.show = true;
-                    axios.post('/api/setAirCompressor', params)
+                    axios.post('/nuxt/wa/tag/setTagValue', params)
                         .then(() => {
                             vm.msgData.show = true;
                             vm.msgData.msg = '제어 명령이 완료되었습니다.';
