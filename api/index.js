@@ -7,6 +7,7 @@ const webaccess = require('./webaccess/index');
 // const scheduleController = require('./scheduleController');
 // 로그인 - Login
 app.post('/user/login', login);
+app.get('/user/logout', login);
 
 app.get('/WaLogin', webaccess);
 app.post('/wa/port/getTagValue', webaccess);

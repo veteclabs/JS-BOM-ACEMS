@@ -63,7 +63,7 @@
                 routeName:'',
                 routeList:[],
                 interval: '',
-                intervalTime: 1 * 1000,
+                intervalTime: 1000,
             };
         },
         mounted() {
@@ -95,8 +95,9 @@
             },
             // 로그아웃
             async logout() {
-                await axios.get('/api/user/logout')
+                await axios.get('/nuxt/user/logout')
                     .then(() => {
+                        this.$store.commit('SET_USER', null);
                         this.$router.push('/login');
                     });
             },

@@ -14,7 +14,7 @@
                     <div class="ibox-content" v-if="item.tags.length !== 0">
                         <ul class="tag-box">
                             <li v-for="tag in item.tags" :key="tag.id">
-                                <div class="tagname">{{tag.tagDescription}}</div>
+                                <div class="tagname">{{tag.description}}</div>
                                 <div>
                                     {{tagVal | pickValue('Name',`${tag.tagName}`, 'Value') | numberFormat(1)}} {{tag.unit}}
                                 </div>

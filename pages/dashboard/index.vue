@@ -61,7 +61,7 @@
                         </nuxt-link>
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(device.unitId)"/>
+                             @click="settingModalOpen(device)"/>
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="device"/>
@@ -112,9 +112,9 @@
                 </div>
             </div>
         </div>
-        <equipmentTagGroup v-bind:propsdata="equipmentList['온도계']" :title="'Thermometer'" v-if=" equipmentList['온도계']"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList['압력계']" :title="'Pressure gauge'" v-if=" equipmentList['압력계']"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList['유량계']" :title="'Flow gauge'" v-if=" equipmentList['유량계']"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'Thermometer'" v-if="equipmentList.temperature"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'Pressure gauge'" v-if=" equipmentList.pressure"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'Flow gauge'" v-if=" equipmentList.flow"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
@@ -149,7 +149,7 @@
             return {
                 TPCode: TPArray.list,
                 compTagSet: waTagSet.airCompressorGroupDeshboardSet.tags,
-                powerTagSet: waTagSet.accuraSet.tags,
+                powerTagSet: waTagSet.dashboardAccuraSet.tags,
                 msgData: {
                     msg: '',
                     show: false,
@@ -161,7 +161,7 @@
                 settingModalData: {
                     show: false,
                 },
-                compressorImage:'',
+                compressorImage: '',
                 tagVal: '',
                 liveChartData: [{name: '실시간 유효전력', data: []}],
                 liveChartOption: { //차트옵션 변수
@@ -292,21 +292,9 @@
                     },
                     labels: ['bar'],
                 },
-                totalFlow:0,
+                totalFlow: 0,
                 totalCompressorBar: 0,
                 airCompressorList: [],
-                airTagList: [
-                    {id: 1, name: '패키치 배출압력', tagName: 'COMP_PDP', unit: ''},
-                    {id: 2, name: '에어앤드온도', tagName: 'COMP_AT', unit: ''},
-                    {id: 3, name: 'KW시간', tagName: 'COMP_KWH', unit: ''},
-                    {id: 4, name: '총 시간', tagName: 'COMP_TH', unit: ''},
-                ],
-                powerTagList: [
-                    {id: 5, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
-                    {id: 10, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
-                    {id: 7, name: '전압', tagName: 'PWR_V', unit: 'V'},
-                    {id: 8, name: '전류', tagName: 'PWR_A', unit: 'A'},
-                ],
                 equipmentList: [],
                 timeCategories: [],
                 Interval1M: '',
@@ -332,11 +320,11 @@
         },
         methods: {
             async WaLogin() {
-                await axios.get('/api/WaLogin')
+                await axios.get('/nuxt/WaLogin')
             },
             async getTagValues() {
                 const vm = this;
-                axios.post('/api/wa/port/getTagValue', {
+                axios.post('/nuxt/wa/port/getTagValue', {
                     portId: [1, 2, 3, 4, 5],
                 }, {
                     timeout: vm.intervalTime,
@@ -355,13 +343,6 @@
             },
             getNowTime: function () {
                 this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
-            },
-            async WaLogin() {
-                const vm = this;
-                axios.get('/api/WaLogin')
-                    .catch((error) => {
-                        vm.msgData.msg = error;
-                    });
             },
             replaceImg(e) {
                 e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
@@ -385,14 +366,7 @@
                     method: 'get',
                     url: '/api/etcs'
                 }).then((res) => {
-                    const result = res.data;
-                    const groupBy = function(xs, key) {
-                        return xs.reduce(function(rv, x) {
-                            (rv[x[key]] = rv[x[key]] || []).push(x);
-                            return rv;
-                        }, {});
-                    };
-                    vm.equipmentList = groupBy(result, 'type')
+                    vm.equipmentList = res.data;
                 }).catch((error) => {
                     vm.msgData.msg = error;
                 }).finally(() => {
@@ -417,14 +391,12 @@
                 let liveChartXcount = this.liveChartData[0].data.length;
                 let maxCount = 150;
 
-                //X좌표 설정
                 if (liveChartXcount > maxCount) {
                     vm.timeCategories.shift();
                     vm.liveChartData[0].data.shift();
                 }
                 vm.timeCategories.push(vm.nowTime);
 
-                //Y좌표 설정
                 let data = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_PWR_KW`, 'Value');
                 vm.liveChartData[0].data.push(data);
                 vm.$refs.liveChart.updateOptions({
@@ -472,9 +444,7 @@
                     } else {
                         const codeArray = TPArray.list;
                         let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
-                        if (targetError.length === 0) {
-                            return;
-                        } else {
+                        if (targetError.length !== 0) {
                             return targetError[0].description
                         }
                     }
