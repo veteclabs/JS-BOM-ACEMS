@@ -50,7 +50,6 @@
                         </template>
                     </dx-data-grid>
                 </div>
-                <createModal v-bind:propsdata="modalData" ref="groupModal" v-on:callSearch="getGroup"/>
                 <flashModal v-bind:propsdata="msgData"/>
             </div>
         </div>
@@ -62,7 +61,6 @@
         DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxPager, DxSearchPanel,
     } from 'devextreme-vue/data-grid';
     import {DxButton} from 'devextreme-vue/button';
-    import createModal from '~/components/settingModal/createGroupModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import ONOFFTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
@@ -78,7 +76,6 @@
         layout: 'settingTemplate',
         components: {
             axios,
-            createModal,
             flashModal,
             DxDataGrid,
             DxColumn,
@@ -129,7 +126,7 @@
                     vm.groupList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             // 신규 장비 등록
@@ -152,7 +149,7 @@
                         vm.getGroup();
                     }).catch((error) => {
                         vm.msgData.show = true;
-                        vm.msgData.msg = error;
+                        vm.msgData.msg = error.response.data.error;
                     })
                 }
             },

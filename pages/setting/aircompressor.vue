@@ -27,7 +27,8 @@
                         <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
                         <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
-                        <DxColumn data-field="name" caption="공기압축기명" alignment="center" cell-template="blockGridTemplate"/>
+                        <DxColumn data-field="name" caption="공기압축기명" alignment="center"
+                                  cell-template="blockGridTemplate"/>
                         <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center" width="130"
                                   cell-template="ONOFFTemplate"/>
                         <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" width="100"/>
@@ -128,12 +129,12 @@
                 axios({
                     method: 'get',
                     url: '/api/compressors',
-                    headers : {setting:true}
+                    headers: {setting: true}
                 }).then((res) => {
                     vm.airCompressorList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             createEquipment() {
@@ -150,8 +151,8 @@
                 const vm = this;
                 if (confirm("정말로 삭제 하시겠습니까? 삭제된 데이터는 복원되지 않습니다.")) {
                     axios({
-                        url:'/api/compressors',
-                        method:'delete',
+                        url: '/api/compressors',
+                        method: 'delete',
                         data: vm.selectedKeys
                     }).then((res) => {
                         vm.msgData.show = true;
@@ -159,7 +160,7 @@
                         vm.getCompressor();
                     }).catch((error) => {
                         vm.msgData.show = true;
-                        vm.msgData.msg = error;
+                        vm.msgData.msg = error.response.data.error;
                     })
                 }
             },

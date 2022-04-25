@@ -33,11 +33,6 @@
             cancel() {
                 this.$bvModal.hide('createmodal');
             },
-            async getTP() {
-                await this.$nextTick();
-                this.$refs.groupSetting.getTP();
-
-            },
             submit: function () {
                 this.$refs.groupSetting.submit();
             },

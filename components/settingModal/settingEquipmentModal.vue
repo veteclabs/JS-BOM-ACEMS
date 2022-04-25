@@ -17,7 +17,7 @@
                         <td>
                             <div class="td-label">그룹</div>
                             <label class="input-100">
-                                <select v-model="params.groupId">
+                                <select v-model="params.groupId"  @change="groupCheck">
                                     <option :value="null" selected >미지정</option>
                                     <option v-for="group in groupList" :value="group.id" :key="group.id">
                                         {{group.name}}
@@ -71,7 +71,8 @@
                         </td>
                         <td class="right">
                             <label class="switch-box">
-                                <input type="checkbox" v-model="schedule.isActive" @change="groupCheck">
+                                <input type="checkbox" v-model="schedule.isActive" @change="groupCheck"
+                                ref="scheduleCheck"/>
                                 <span class="slider round"></span>
                             </label>
                         </td>
@@ -232,12 +233,11 @@
             },
             groupCheck() {
                 const vm = this;
-                console.log(vm.params.groupId)
-                console.log(vm.schedule.isActive)
                 if(vm.params.groupId !== null) {
                     if(vm.schedule.isActive) {
                         alert("그룹이 선택된 장비는 개별제어 설정이 불가합니다.");
                         vm.schedule.isActive = false;
+                        vm.$refs.scheduleCheck.checked =false;
                     }
                 }
             },
@@ -280,7 +280,7 @@
                                 vm.$emit('callSearch');
                             }).catch((error) => {
                                 vm.msgData.show = true;
-                                vm.msgData.msg = error;
+                                vm.msgData.msg = error.response.data.error;
                             });
                         }
                     });
@@ -291,6 +291,7 @@
             },
             reset() {
                 this.params = {
+                    groupId:null,
                     name: '',
                 };
                 this.schedule = {
@@ -308,7 +309,6 @@
                 this.reset();
             },
             updateModal(e) {
-                console.log(e)
                 this.validation.reset();
                 this.state = 'update';
                 this.params = JSON.parse(JSON.stringify(e));

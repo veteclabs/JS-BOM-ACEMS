@@ -53,12 +53,10 @@
         methods: {
             menuSetting() {
                 this.menus = allMenuArray.list;
-
                 for (let i in this.menus) {
                     let iconName = this.menus[i].class;
                     this.menus[i].icon = require(`@/assets/images/common/icn_common_${iconName}.png`);
                 }
-
                 this.menuPathChk();
             },
             menuPathChk() {

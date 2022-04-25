@@ -200,7 +200,7 @@
                     vm.searchParams.deviceId = 'AU';
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             refresh() {

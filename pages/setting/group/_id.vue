@@ -55,7 +55,7 @@
                     vm.groupInfo = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             submit: function() {

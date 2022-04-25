@@ -333,7 +333,7 @@
                     }
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 }).finally(() => {
                     vm.LoadingData.show = false;
                 });
@@ -374,8 +374,6 @@
                     } else {
                         valueName = valueNameTarget[0].name;
                     }
-                    console.log(vm.params.tagTypeOption)
-                    console.log(vm.params.usageType)
                     if (vm.params.usageType === 'Usage') {
                         if (valueFieldValue === 'kW' || valueFieldValue === 'beforekW') {
                             vm.DevNumberFormat = `#,##0.## kW`
@@ -718,12 +716,5 @@
                 return Value;
             },
         },
-        watch: {
-            radialOption: {
-                deep: true,
-                handler(val) {
-                }
-            },
-        }
     };
 </script>

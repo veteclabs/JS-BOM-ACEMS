@@ -57,12 +57,10 @@
                         .then(() => {
                             vm.msgData.show = true;
                             vm.msgData.msg = '제어 명령이 완료되었습니다.';
-                        })
-                        .catch(() => {
+                        }).catch(() => {
                             vm.msgData.show = true;
                             vm.msgData.msg = '제어에 실패했습니다. 잠시 후 다시 시도해주세요.';
-                        })
-                        .finally(() => {
+                        }).finally(() => {
                             vm.loadingData.show = false;
                         });
                 } else {

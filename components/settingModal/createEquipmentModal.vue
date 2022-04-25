@@ -78,7 +78,7 @@
                         </label>
                         <label class="input-100" v-else>
                             <select v-model="params.groupId">
-                                <option :value="null" selected >미지정</option>
+                                <option :value="null" selected>미지정</option>
                                 <option v-for="group in groupList" :value="group.id" :key="group.id">
                                     {{group.name}}
                                 </option>
@@ -161,8 +161,8 @@
             'params.groupId': function (value) {
                 const vm = this;
                 return Validator.value(value).custom(function () {
-                    if(vm.params.type === '전력') {
-                        if(value === null || value === '' || value === undefined) {
+                    if (vm.params.type === '전력') {
+                        if (value === null || value === '' || value === undefined) {
                             return '필수 입력 항목입니다.'
                         }
                     }
@@ -186,7 +186,7 @@
                     vm.groupList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             getCompressor() {
@@ -198,7 +198,7 @@
                     vm.airCompressorList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             submit() {

@@ -244,7 +244,7 @@
                             vm.successModal.msg = res.data.message;
                         }).catch((error) => {
                             vm.msgData.show = true;
-                            vm.msgData.msg = error;
+                            vm.msgData.msg = error.response.data.error;
                         });
                     }
                 });

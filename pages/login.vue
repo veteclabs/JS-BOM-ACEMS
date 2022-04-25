@@ -1,8 +1,5 @@
 <template>
     <div id="loginWrap">
-        <div class="logo">
-          <!--  <img src="~assets/images/common/icn_common_logo.png" alt="jsolution" width="96"/>-->
-        </div>
         <div class="login-bg">
         </div>
         <div id="login">

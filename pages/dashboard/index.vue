@@ -336,7 +336,7 @@
                         vm.setLiveChart();
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -364,7 +364,7 @@
                 }).then((res) => {
                     vm.airCompressorList = res.data
                 }).catch((error) => {
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -377,7 +377,7 @@
                 }).then((res) => {
                     vm.equipmentList = res.data;
                 }).catch((error) => {
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });

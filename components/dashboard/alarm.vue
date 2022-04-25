@@ -47,7 +47,6 @@
     import axios from 'axios';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
-    import blockGridUnitTemplate from '~/components/blockGridUnitTemplate.vue';
 
 
     export default {

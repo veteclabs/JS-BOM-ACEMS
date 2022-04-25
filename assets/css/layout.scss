@@ -20,7 +20,7 @@ body {
   font-family: "BOM-font", sans-serif;
   font-weight: 500;
   color: $gray-7;
-  background:$gray-0;
+  background: $gray-0;
   line-height: 1.6em;
   word-break: break-all;
   width: 100%;
@@ -295,48 +295,48 @@ summary {
 
 
 .blue-0-bg {
-  background-color:$blue-0;
+  background-color: $blue-0;
 }
 
 .skyblue-0-bg {
-  background-color:$skyblue-0;
+  background-color: $skyblue-0;
 }
 
 .green-0-bg {
-  background-color:$green-0;
+  background-color: $green-0;
 }
 
 .red-0-bg {
-  background-color:$red-0;
+  background-color: $red-0;
 }
 
 .orange-0-bg {
-  background-color:$orange-0;
+  background-color: $orange-0;
 }
 
 .gray-1-bg {
-  background-color:$gray-1;
+  background-color: $gray-1;
 }
 
 
 .blue-bg {
-  background-color:$blue-3;
+  background-color: $blue-3;
 }
 
 .skyblue-bg {
-  background-color:$skyblue-3;
+  background-color: $skyblue-3;
 }
 
 .green-bg {
-  background-color:$green-3;
+  background-color: $green-3;
 }
 
 .red-bg {
-  background-color:$red-3;
+  background-color: $red-3;
 }
 
 .orange-bg {
-  background-color:$orange-3;
+  background-color: $orange-3;
 }
 
 
@@ -365,25 +365,24 @@ summary {
 h1 {
   font-size: 32px;
   font-weight: 600;
-  margin:0;
+  margin: 0;
 }
 
 h2 {
   font-size: 28px;
   font-weight: 600;
-  margin:0;
+  margin: 0;
 }
 
 h3 {
   font-size: 24px;
   font-weight: 600;
-  margin:0;
+  margin: 0;
 }
 
 .font-48 {
   font-size: 48px;
 }
-
 
 
 .font-32 {
@@ -425,13 +424,6 @@ h3 {
   font-size: 12px;
   font-weight: 700;
 }
-
-
-
-
-
-
-
 
 
 .font1-1 {
@@ -489,7 +481,7 @@ h3 {
   align-items: center;
   @include tabletAndMobile() {
     padding: 20px;
-    display:block;
+    display: block;
   }
 
   .user {
@@ -505,9 +497,9 @@ h3 {
     color: #fff;
   }
 
-  .right-header-menu{
-    position:relative;
-    display:flex;
+  .right-header-menu {
+    position: relative;
+    display: flex;
     align-items: center;
 
     @include tabletAndMobile() {
@@ -516,37 +508,40 @@ h3 {
     }
   }
 
-  .nowTime{
+  .nowTime {
     @include mobile-mini() {
-      display:none;
+      display: none;
     }
     @extend .font-20;
-    position:relative;
-    display:flex;
-    background:url("~assets/images/common/icn_common_calendar.svg") no-repeat center left;
-    color:$gray-5;
-    padding:0 24px 0 30px;
-    margin:0 24px 0 0;
-    font-weight:500;
+    position: relative;
+    display: flex;
+    background: url("~assets/images/common/icn_common_calendar.svg") no-repeat center left;
+    color: $gray-5;
+    padding: 0 24px 0 30px;
+    margin: 0 24px 0 0;
+    font-weight: 500;
+
     &:after {
-      position:absolute;
-      top:50%;
+      position: absolute;
+      top: 50%;
       transform: translateY(-50%);
-      right:0;
-      content:'';
-      display:block;
-      width:1px;
-      height:24px;
-      background:$gray-2;
+      right: 0;
+      content: '';
+      display: block;
+      width: 1px;
+      height: 24px;
+      background: $gray-2;
     }
-    span{
+
+    span {
       @extend .font-24;
-      color:$gray-7;
-      font-weight:600;
-      padding:0 0 0 8px;
+      color: $gray-7;
+      font-weight: 600;
+      padding: 0 0 0 8px;
     }
 
   }
+
   #downMenu {
     position: absolute;
     top: 50px;
@@ -585,7 +580,7 @@ h3 {
       height: 40px;
       color: $gray-4;
       border-radius: 8px;
-      border:solid 1px $gray-2;
+      border: solid 1px $gray-2;
       padding: 0 16px 4px 40px;
       background-color: #fff;
       background-image: url("~assets/images/common/icn_common_logout-g0.svg");
@@ -595,7 +590,7 @@ h3 {
 
       &:hover {
         background-color: $gray-0;
-        border:solid 1px $gray-0;
+        border: solid 1px $gray-0;
         color: $gray-5;
         background-image: url("~assets/images/common/icn_common_logout.svg");
       }
@@ -608,7 +603,7 @@ h3 {
   .header-nav {
     list-style: none;
     display: flex;
-    margin:16px 0 0 0;
+    margin: 16px 0 0 0;
 
     li {
       @extend .font-16;
@@ -664,8 +659,8 @@ h3 {
   width: $mini-nav-width;
   min-width: $mini-nav-width;
   background: #fff;
-  min-height:100vh;
-  padding:40px 0;
+  min-height: 100vh;
+  padding: 40px 0;
 
   @include mobile() {
     display: block;
@@ -680,17 +675,19 @@ h3 {
       display: none
     }
   }
+
   ul#side-menu {
     > li.active {
-      position:relative;
+      position: relative;
+
       &::before {
-        content:"";
-        position:absolute;
-        top:18px;
-        display:block;
-        width:4px;
-        height:24px;
-        background:$red-0;
+        content: "";
+        position: absolute;
+        top: 18px;
+        display: block;
+        width: 4px;
+        height: 24px;
+        background: $red-0;
 
       }
     }
@@ -783,14 +780,14 @@ h3 {
     }
 
     li.active {
-      >ul {
+      > ul {
         li.nuxt-link-active, li.active {
           background: $blue-0;
           border-radius: 4px;
 
           a {
             font-weight: bold;
-            color:#fff;
+            color: #fff;
             background-color: transparent;
           }
         }
@@ -906,8 +903,8 @@ body.full-navbar {
 
 .filter {
   position: absolute;
-  top:0;
-  right:0;
+  top: 0;
+  right: 0;
 
   .filter-toggle-btn {
     position: fixed;
@@ -922,6 +919,7 @@ body.full-navbar {
     background-color: #ffffff;
     z-index: 999;
     transition: all .3s ease;
+
     img {
       vertical-align: top;
     }
@@ -944,68 +942,18 @@ body.full-navbar {
     border-radius: 8px 0 0 8px;
   }
 
-  #searchFilter, #DashboardCollapse {
+  #searchFilter {
     right: -$filter-width;
-  }
-  #DashboardCollapse {
-    .filter-toggle-btn {
-      img {
-        transition: all ease .3s;
-        transform: rotate(-180deg);
-      }
-    }
   }
 }
 
 .dashboard-box-8 {
-  width:calc(100% - 276px);
+  width: calc(100% - 276px);
 }
+
 .dashboard-box-12 {
-  width:100%;
+  width: 100%;
 }
-
-#DashboardCollapse {
-  position:absolute;
-  width: $filter-width;
-  min-height: 100vh;
-  right:0;
-  z-index: 500;
-  box-shadow: -4px 0 8px 0 rgba(59, 70, 86, 0.08);
-  background-color: #ffffff;
-  transition: all .3s ease;
-
-  @include mobile() {
-    width: 90%;
-  }
-
-  .collapse-box {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 40px;
-    overflow: auto;
-    .title {
-      color:$gray-5;
-      font-weight:600;
-      padding:16px 0;
-    }
-    .title.flex-box {
-      border-bottom: 1px solid $gray-2;
-      padding:24px 0;
-    }
-    .content {
-      border-bottom: 1px solid $gray-2;
-      padding: 0 0 16px 0;
-      h1 {
-        margin:0;
-        font-weight:800;
-        text-align:right;
-      }
-    }
-  }
-}
-
-
 
 #searchFilter {
   position: fixed;

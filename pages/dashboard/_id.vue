@@ -388,9 +388,9 @@
                 },
                 airCompressorBar: 0,
                 alarmList: [
-                    {id: 1, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                    {id: 2, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                    {id: 3, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 1, type: 'trip', msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 2, type: 'warning', msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
+                    {id: 3, type: 'error', msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
                     {id: 4, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
                     {id: 5, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
                 ],
@@ -434,7 +434,7 @@
                         vm.setLiveChart();
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -447,7 +447,7 @@
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
                 }).catch((error) => {
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             replaceImg(e) {

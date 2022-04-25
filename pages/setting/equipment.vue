@@ -122,7 +122,7 @@
                     vm.equipmentList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.error;
                 });
             },
             createEquipment() {
@@ -148,7 +148,7 @@
                         vm.getEquipment();
                     }).catch((error) => {
                         vm.msgData.show = true;
-                        vm.msgData.msg = error;
+                        vm.msgData.msg = error.response.data.error;
                     })
                 }
             },

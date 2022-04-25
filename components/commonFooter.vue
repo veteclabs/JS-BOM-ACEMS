@@ -1,5 +1,5 @@
 <template>
 <footer id="footer">
-        Copyrightⓒ SAMWHA Co., Ltd. All rights reserved.
+        Copyrightⓒ VETEC Co., Ltd. All rights reserved.
 </footer>
 </template>
