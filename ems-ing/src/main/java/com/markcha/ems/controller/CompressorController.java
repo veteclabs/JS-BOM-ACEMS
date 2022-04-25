@@ -62,7 +62,7 @@ public class CompressorController {
     @GetMapping(value="/compressors", headers="setting=true")
     public List<CompressorDto> compressors(
     ) {
-        List<CompressorDto> collect = deviceDslRepository.findAllCompressors(AIR_COMPRESSOR).stream()
+        List<CompressorDto> collect = deviceDslRepository.findAllCompressors(AIR_COMPRESSOR, null).stream()
                 .map(CompressorDto::new)
                 .collect(toList());
 

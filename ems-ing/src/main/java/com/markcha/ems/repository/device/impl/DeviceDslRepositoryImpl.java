@@ -99,20 +99,20 @@ public class DeviceDslRepositoryImpl {
                 .orderBy(device.id.desc())
                 .fetch();
     }
-    public List<Tag> getCompressorTags(List<Long> compIds) {
+    public List<Tag> getCompressorTags(List<Long> compIds, BooleanExpression tagEqIsAlarm) {
         return query.selectFrom(tag)
                 .leftJoin(tag.device, device).fetchJoin()
                 .where(
                          device.id.in(compIds)
-//                        ,tag.tagName.in(new ArrayList<>(List.of("COMP_StartPre", "COMP_StopPre")))
+                        ,tagEqIsAlarm
                 ).fetch();
     }
-    public List<Device> findAllCompressors(EquipmentType typeName) {
+    public List<Device> findAllCompressors(EquipmentType typeName, BooleanExpression tagEqIsAlarm) {
         List<Device> compressor = getCompressor(typeName);
         List<Long> compIds = compressor.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        List<Tag> tags = getCompressorTags(compIds);
+        List<Tag> tags = getCompressorTags(compIds,tagEqIsAlarm);
         Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tags.stream()
                 .map(t -> t.getTagName()).collect(toList()));
         tags.forEach(t->t.setValue(tagValues.get(t.getTagName())));
@@ -126,6 +126,48 @@ public class DeviceDslRepositoryImpl {
         });
 
         return compressor;
+    }
+    public List<Tag> findAllAlarmTags() {
+        List<Tag> tags = getAlarmTags();
+        List<String> tagNames = new ArrayList<>();
+        tagNames.addAll(tags.stream()
+                .map(t -> t.getTagName()).collect(toList()));
+        tagNames.addAll(tags.stream()
+                .map(t -> t.getDevice().getGroup().getDeviceSet().stream()
+                        .map(k -> {
+                            return k.getTags().stream()
+                                    .map(Tag::getTagName)
+                                    .collect(toList());
+                        }).collect(toList()))
+                .flatMap(List::stream)
+                .flatMap(List::stream)
+                .collect(toList()));
+
+
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+        tags.forEach(t->{
+            t.setValue(tagValues.get(t.getTagName()));
+            t.getDevice().getGroup().getDeviceSet().forEach(k->{
+                k.getTags().forEach(g->g.setValue(tagValues.get(g.getTagName())));
+            });
+        });
+        return tags;
+    }
+    public List<Tag> getAlarmTags() {
+        QDevice groupDevices = new QDevice("groupDevices");
+        QTag groupTags = new QTag("groupTags");
+        QEquipment groupEquipment = new QEquipment("groupEquipment");
+        return query.selectFrom(tag)
+                .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.deviceSet, groupDevices).fetchJoin()
+                .leftJoin(groupDevices.tags, groupTags)
+                .leftJoin(groupDevices.equipment, groupEquipment).fetchJoin()
+                .where(
+                         equipment.type.eq(AIR_COMPRESSOR)
+                        ,groupEquipment.type.ne(AIR_COMPRESSOR)
+                ).fetch();
     }
     public List<Device> findAllCompressorsByIds(EquipmentType typeName, List<Long> ids) {
         QGroup parentGroup = new QGroup("pGroup");
