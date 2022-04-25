@@ -1,6 +1,5 @@
 package com.markcha.ems.controller;
 
-import com.markcha.ems.domain.Equipment;
 import com.markcha.ems.dto.alarm.TripDto;
 import com.markcha.ems.repository.TripDataRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.groupingBy;
 
 @RestController
 @RequestMapping("/api")
@@ -31,10 +29,10 @@ public class AlarmController {
     private final TripDataRepository tripDataRepository;
 
     @GetMapping(value="/trip")
-    public List<TripDto> etc(
+    public Map<Integer, List<TripDto>> etc(
     ) {
         return tripDataRepository.findAll().stream()
                 .map(TripDto::new)
-                .collect(toList());
+                .collect(groupingBy(t->t.getCode()));
     }
 }
