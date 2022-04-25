@@ -17,6 +17,7 @@ import com.markcha.ems.repository.dayofweekmapper.impl.DayOfWeekMapperDslReposit
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
+import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import com.markcha.ems.service.InsertSampleData;
@@ -53,6 +54,8 @@ public class CompressorServiceImpl {
     private final AlarmMapper alarmMapper;
     private final TagDataRepository tagDataRepository;
     private final WebaccessApiServiceImpl webaccessApiService;
+    private final OrderDataRepository orderDataRepository;
+    private final OrderDslRepositoryImpl orderDslRepository;
 
 
     public Boolean createCompressor(CompressorInsertDto compressorInsertDto) {
@@ -218,11 +221,15 @@ public class CompressorServiceImpl {
                 .collect(toList());
         webaccessApiService.setTagValues(minMaxTag);
         deviceDataRepository.save(seletedDevice);
+        List<Order> allByDeviceId = orderDslRepository.findAllByDeviceId(compressorInsertDto.getId());
+        orderDataRepository.deleteAllInBatch(allByDeviceId);
         return true;
     }
 
     public void deleteAllById(List<Long> ids) {
         List<Device> compressors = deviceDslRepository.findAllCompressorsByIds(AIR_COMPRESSOR, ids);
+        List<Order> allByDeviceId = orderDslRepository.findAllByDeviceIds(ids);
+        allByDeviceId.forEach(t-> System.out.println(t.getGroup().getName()));
         List<Device> orphanDevices = new ArrayList<>();
         List<DayOfWeekMapper> dayOfWeekMappers = new ArrayList<>();
         List<WeekMapper> weekMappers = new ArrayList<>();
@@ -255,6 +262,7 @@ public class CompressorServiceImpl {
         tagDataRepository.deleteAllInBatch(tags);
         deviceDataRepository.deleteAllInBatch(compressors);
         deviceDataRepository.saveAll(orphanDevices);
+        orderDataRepository.deleteAllInBatch(allByDeviceId);
         groupDataRepository.deleteAllInBatch(groups);
         scheduleDataRepository.saveAll(schedules);
         scheduleDataRepository.deleteAllInBatch(schedules);

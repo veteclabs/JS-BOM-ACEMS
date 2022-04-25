@@ -144,9 +144,8 @@ public class GroupServiceImpl {
 
         // 주차 관계 생성
 
-        Set<WeekMapper> weekMappers = newSchedule.getWeekMappers();
-        List<WeekGroupDto> weekOrdes = scheduleDto.getWeekDevices();
-        List<Long> weekIds = weekOrdes.stream()
+        List<WeekGroupDto> weekDevices = scheduleDto.getWeekDevices();
+        List<Long> weekIds = weekDevices.stream()
                 .map(t -> t.getId())
                 .collect(toList());
 
@@ -154,11 +153,10 @@ public class GroupServiceImpl {
         List<WeekMapper> weekMappers1 = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, newSchedule.getId());
         weekMappers1.forEach(t->{
             t.getOrders().clear();
-            weekOrdes.forEach(k->{
+            weekDevices.forEach(k->{
                 if(k.getId().equals(t.getWeek().getId())) {
                     int orderNum = 1;
                     for (CompressorSimpleDto compressorSimpleDto : k.getWorking()) {
-                        compressorSimpleDto.getId();
                         Group group = workingGroups.stream()
                                 .filter(z -> z.getId().equals(compressorSimpleDto.getId()))
                                 .findFirst()
@@ -213,7 +211,6 @@ public class GroupServiceImpl {
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
                 List<Group> deletedCompressor = new ArrayList<>();
                 deletedCompressor.addAll(ordCompressors);
-//                ordCompressors.forEach(t->deletedCompressor.add(t));
                 deletedCompressor.removeAll(newCompressors);
                 ordCompressors.forEach(t -> t.setParent(null));
                 ordDevices.forEach(t -> t.setGroup(null));

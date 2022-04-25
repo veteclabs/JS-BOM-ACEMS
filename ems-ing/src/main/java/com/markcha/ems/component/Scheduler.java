@@ -1,32 +1,37 @@
-//package com.markcha.ems.component;
-//
-//import com.markcha.ems.domain.*;
-//import com.markcha.ems.repository.AlarmDataRepository;
-//import com.markcha.ems.repository.TripDataRepository;
-//import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
-//import lombok.RequiredArgsConstructor;
-//import org.hibernate.mapping.Array;
-//import org.springframework.scheduling.annotation.Scheduled;
-//import org.springframework.stereotype.Component;
-//import org.springframework.util.StopWatch;
-//
-//import java.time.LocalDate;
-//import java.time.LocalTime;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Map;
-//
-//import static com.markcha.ems.domain.QTag.tag;
-//import static java.util.Objects.isNull;
-//import static java.util.stream.Collectors.*;
-//
-//@Component
-//@RequiredArgsConstructor
-//public class Scheduler {
-//    private final DeviceDslRepositoryImpl deviceDslRepository;
-//    private final TripDataRepository tripDataRepository;
-//    private final AlarmDataRepository alarmDataRepository;
-//
+package com.markcha.ems.component;
+
+import com.markcha.ems.domain.*;
+import com.markcha.ems.repository.AlarmDataRepository;
+import com.markcha.ems.repository.TripDataRepository;
+import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class Scheduler {
+    private final DeviceDslRepositoryImpl deviceDslRepository;
+    private final TripDataRepository tripDataRepository;
+    private final AlarmDataRepository alarmDataRepository;
+
+    private static final List<Tag> savedTags = new ArrayList<>();
+
+
+
+    @Scheduled(fixedDelay = 1000)
+    public void test() {
+        if (savedTags.size() == 0) {
+            Tag tag = new Tag();
+            tag.setId(12L);
+            tag.setTagName("Ef");
+            savedTags.add(tag);
+        }
+//        savedTags.forEach(t-> System.out.println(t.getId()));
+    }
 //    @Scheduled(fixedDelay = 1000)
 //    public void alarmFixedRateTask() {
 //        List<Tag> tags = deviceDslRepository.findAllAlarmTags();
@@ -106,4 +111,4 @@
 //        }
 //        alarmDataRepository.saveAll(newAlarms);
 //    }
-//}
+}
