@@ -14,8 +14,7 @@ import java.util.Map;
 
 import static com.markcha.ems.domain.QTag.tag;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 
 @Component
 @RequiredArgsConstructor
@@ -31,17 +30,19 @@ public class Scheduler {
 
         List<Tag> tags = deviceDslRepository.findAllAlarmTags();
         List<Alarm> newAlarms = new ArrayList<>();
-        Map<String, Tag> takenAlarmTags = tags.stream()
+        Map<String, List<Tag>> takenAlarmTags = tags.stream()
                 .filter(t -> t.getIsAlarm().equals(true))
-                .filter(t -> t.getValue().equals(1))
-                .collect(toMap(Tag::getType, tag->tag));
+                .filter(t -> new Double(t.getValue().toString()).intValue() == 1)
+                .collect(groupingBy(t->t.getType()));
         if (!isNull(takenAlarmTags.get("COMP_Trip"))) {
-            List<Tag> tripCodeTag = takenAlarmTags.get("COMP_Trip").getDevice().getTags().stream()
-                    .filter(t -> t.getType().equals("COMP_ActTripCode"))
-                    .collect(toList());
-            if (tripCodeTag.size() == 1) {
-                tripCodeTag.get(0).getValue();
-            }
+            List<Tag> tripCodeTag = takenAlarmTags.get("COMP_Trip").forEach(z-> {
+                z.stream()
+                        .filter(t -> t.getType().equals("COMP_ActTripCode"))
+                        .collect(toList());
+                if (tripCodeTag.size() == 1) {
+                    System.out.println(tripCodeTag.get(0).getValue());
+                }
+            })
         }
 //        takenAlarmTags.forEach(t->{
 //            if (t.getType().equals("COMP_Trip")) {
