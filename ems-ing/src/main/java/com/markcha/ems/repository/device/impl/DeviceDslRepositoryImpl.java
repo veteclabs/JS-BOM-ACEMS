@@ -149,6 +149,9 @@ public class DeviceDslRepositoryImpl {
                 .orderBy(device.id.desc())
                 .fetch();
     }
+
+
+
     public List<Group> findAllCompressorsJoinEquipment(EquipmentType typeName, BooleanExpression groupEqId) {
         QGroup parentGroup = new QGroup("pGroup");
         return query.select(group)

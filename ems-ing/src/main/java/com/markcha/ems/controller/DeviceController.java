@@ -1,7 +1,6 @@
 package com.markcha.ems.controller;
 
 import com.markcha.ems.domain.*;
-import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.device.CompressorSimpleDto;
 import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.dto.device.TemplcateDto;
@@ -9,23 +8,17 @@ import com.markcha.ems.dto.group.GroupsSimpleDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
-import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
-import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.impl.DeviceServiceImpl;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
@@ -60,7 +53,7 @@ public class DeviceController {
                 .collect(Collectors.toList());
     }
     @GetMapping(value="/etcs")
-    public List<DeviceConDto> etc2(
+    public Map<String, List<DeviceConDto>> etc2(
     ){
         List<Device> allTemplcates = deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR);
         List<String> tagNames = new ArrayList<>();
@@ -70,7 +63,7 @@ public class DeviceController {
         allTemplcates.forEach(t->t.getTags().forEach(tag->tag.setValue(tagValuesV2.get(tag.getTagName()))));
         return allTemplcates.stream()
                 .map(DeviceConDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(t->t.getEquipmentType().getNickname()));
     }
     @GetMapping(value="/device/groups")
     public List<GroupsSimpleDto> group(
