@@ -31,7 +31,7 @@ router.get('/WaLogin', (req, res) => {
 });
 
 // WEBACCESS DATA 가져오기 (대시보드용)
-router.post('/dashboard/port/getTagValue', async (req, res) => {
+router.post('/wa/port/getTagValue', async (req, res) => {
     const myUserName = process.env.WA_ID;
     const myPassword = process.env.WA_PASSWORD;
     const myProjName = process.env.WA_PROJECT;
@@ -94,7 +94,7 @@ router.post('/dashboard/port/getTagValue', async (req, res) => {
 
 
 // WEBACCESS DATA 가져오기 (대시보드용)
-router.post('/dashboard/tag/getTagValue', async (req, res) => {
+router.post('/wa/tag/getTagValue', async (req, res) => {
     const UserName = process.env.WA_ID;
     const Password = process.env.WA_PASSWORD;
     const URL = process.env.WA_IP;

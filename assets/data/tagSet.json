@@ -15,13 +15,26 @@
       "COMP_SumpPre"
     ]
   },
+  "airKeyTag" : {
+    "description" : "에어 컴프레셔 주요정보",
+    "tags" : [
+      "COMP_ACDisPre",
+      "COMP_PackInTemp"
+    ]
+  },
+  "powerKeyTag" : {
+    "description" : "전력 주요정보",
+    "tags" : [
+      "PWR_KW",
+      "PWR_KWh"
+    ]
+  },
   "dashboardAccuraSet" : {
     "description" : "아큐라 대시보드 태그 셋",
     "tags" : [
       "PWR_A",
-      "PWR_V",
-      "PWR_KWh",
-      "PWR_KW"
+      "PWR_KW",
+      "PWR_KWh"
     ]
   },
   "accuraSet" : {
@@ -44,6 +57,38 @@
       "PWR_KWh",
       "PWR_PF",
       "PWR_V"
+    ]
+  },
+  "airCompSet" : {
+    "description" : "에어컴프레셔 전체 정보",
+    "tags" : [
+      "COMP_ACDisPre",
+      "COMP_ActTripCode",
+      "COMP_ActWarCode",
+      "COMP_AirDisTemp",
+      "COMP_CoolInPre",
+      "COMP_CoolOutPre",
+      "COMP_CoolPreDrop",
+      "COMP_InCoolTemp",
+      "COMP_InletVacuum",
+      "COMP_InterPre",
+      "COMP_Load",
+      "COMP_Local",
+      "COMP_LodeHours",
+      "COMP_PackDisPre",
+      "COMP_PackInTemp",
+      "COMP_Power",
+      "COMP_PowerOnHour",
+      "COMP_RatedPre",
+      "COMP_RemotePre",
+      "COMP_RunHours",
+      "COMP_SepPreDrop",
+      "COMP_StartPre",
+      "COMP_StopPre",
+      "COMP_SumpPre",
+      "COMP_SystemPre",
+      "COMP_Trip",
+      "COMP_Warning"
     ]
   }
 }

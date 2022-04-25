@@ -88,7 +88,7 @@
                             </li>
                         </ul>
                         <ul class="tag-box">
-                            <li v-for="type in compTagSet">
+                            <li v-for="type in compTagSet" :key="type.tagName">
                                 <div v-if="device.tags[type] !== undefined">
                                     {{device.tags[type].description}}
                                 </div>
@@ -98,7 +98,7 @@
                             </li>
                         </ul>
 
-                        <ul v-for="power in device.devices.power" class="tag-box">
+                        <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
                             <li v-for="type in powerTagSet">
                                 <div v-if="power.tags[type] !== undefined">
                                     {{power.tags[type].description}}
@@ -126,7 +126,6 @@
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
-    import TPArray from '~/assets/data/TPCode.json';
     import waTagSet from '~/assets/data/tagSet.json';
 
 
@@ -147,7 +146,7 @@
         },
         data() {
             return {
-                TPCode: TPArray.list,
+                TPCode:'',
                 compTagSet: waTagSet.airCompressorGroupDeshboardSet.tags,
                 powerTagSet: waTagSet.dashboardAccuraSet.tags,
                 msgData: {
@@ -313,6 +312,7 @@
             this.resetInterval();
             this.getCompressor();
             this.getEquipment();
+            this.getTrip();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -346,6 +346,15 @@
             },
             replaceImg(e) {
                 e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
+            },
+            async getTrip() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/trip'
+                }).then((res) => {
+                    vm.TPCode = res.data
+                })
             },
             async getCompressor() {
                 const vm = this;

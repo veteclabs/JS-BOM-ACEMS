@@ -55,28 +55,30 @@
                         공기압축기 전체 정보
                     </div>
                     <div class="ibox-content">
-                        <ul class="tag-box">
-                            <li v-for="tag in airTagList" :key="tag.id">
-                                <div class="tagname">{{tag.name}}</div>
-                                <div>
-                                    {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`, 'Value')}}
-                                    {{tag.unit}}
+                        <ul class="tag-box" v-if="airCompressor.tags">
+                            <li v-for="type in compTagSet" :key="type.tagName">
+                                <div v-if="airCompressor.tags[type] !== undefined">
+                                    {{airCompressor.tags[type].description}}
+                                </div>
+                                <div v-if="airCompressor.tags[type] !== undefined">
+                                    {{airCompressor.tags[type].value.toFixed(2)}} {{airCompressor.tags[type].unit}}
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class="ibox">
+                <div class="ibox" v-if="airCompressor.devices">
                     <div class="ibox-title">
                         전력 정보
                     </div>
                     <div class="ibox-content">
-                        <ul class="tag-box">
-                            <li v-for="tag in powerTagList" :key="tag.id">
-                                <div class="tagname">{{tag.name}}</div>
-                                <div>
-                                    {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`, 'Value')}}
-                                    {{tag.unit}}
+                        <ul v-for="power in airCompressor.devices.power" :key="power.id" class="tag-box">
+                            <li v-for="type in powerTagSet">
+                               <div v-if="power.tags[type] !== undefined">
+                                    {{power.tags[type].description}}
+                                </div>
+                                <div v-if="power.tags[type] !== undefined">
+                                    {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
                                 </div>
                             </li>
                         </ul>
@@ -84,10 +86,12 @@
                 </div>
             </div>
             <div class="col-lg-8">
-                <div class="ibox">
-                    <div class="ibox-content flex-box">
-                        <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                        <div>{{tagVal | pickErrorDescription('Name',`${airCompressor.unitId}_COMP_WC`, 'Value')}}</div>
+                <div v-if="airCompressor.state">
+                    <div class="ibox" v-if="airCompressor.state['COMP_Trip'].value === 1">
+                        <div class="ibox-content flex-box">
+                            <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                            <div>{{TPCode[airCompressor.state['COMP_ActTripCode'].value.toString()]}}</div>
+                        </div>
                     </div>
                 </div>
                 <div class="ibox">
@@ -122,11 +126,25 @@
                                 공기압축기 주요 정보
                             </div>
                             <div class="ibox-content">
-                                <ul class="tag-box">
-                                    <li v-for="tag in mainTagList" :key="tag.id">
-                                        <div class="tagname">{{tag.name}}</div>
-                                        <div>
-                                            {{tagVal | pickValue('Name',`${airCompressor.unitId}_${tag.tagName}`, 'Value')}} {{tag.unit}}
+                                <ul class="tag-box" v-if="airCompressor.tags">
+                                    <li v-for="type in compKeyTag" :key="type.tagName">
+                                        <div v-if="airCompressor.tags[type] !== undefined">
+                                            {{airCompressor.tags[type].description}}
+                                        </div>
+                                        <div v-if="airCompressor.tags[type] !== undefined">
+                                            {{airCompressor.tags[type].value.toFixed(2)}}
+                                            {{airCompressor.tags[type].unit}}
+                                        </div>
+                                    </li>
+                                </ul>
+
+                                <ul v-for="power in airCompressor.devices.power" :key="power.id" class="tag-box">
+                                    <li v-for="type in powerKeyTag">
+                                        <div v-if="power.tags[type] !== undefined">
+                                            {{power.tags[type].description}}
+                                        </div>
+                                        <div v-if="power.tags[type] !== undefined">
+                                            {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
                                         </div>
                                     </li>
                                 </ul>
@@ -174,6 +192,7 @@
     import dataGridTemplate from '~/components/gridTemplate/dataGridTemplate.vue';
     import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
+    import waTagSet from '~/assets/data/tagSet.json';
     import {
         DxDataGrid,
         DxColumn,
@@ -181,7 +200,6 @@
         DxPager,
         DxSearchPanel,
     } from 'devextreme-vue/data-grid';
-    import TPArray from '~/assets/data/TPCode.json';
 
     export default {
         fetch({store, redirect}) {
@@ -203,6 +221,7 @@
             DxPaging,
             DxPager,
             DxSearchPanel,
+            waTagSet,
         },
         data() {
             return {
@@ -219,8 +238,11 @@
                     show: false,
                 },
                 tagVal: '',
-                airCompressor: {},
-                compressorImage:'',
+                TPCode: '',
+                airCompressor: {
+                    devices: {},
+                },
+                compressorImage: '',
                 mainTagList: [
                     {id: 1, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
                     {id: 2, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
@@ -229,28 +251,13 @@
                     {id: 5, name: '에어앤드온도', tagName: 'COMP_AT', unit: ''},
                     {id: 7, name: '총 시간', tagName: 'COMP_TH', unit: ''},
                 ],
-                airTagList: [
-                    {id: 8, name: '패키지 배출 압력', tagName: 'COMP_PDP', unit: ''},
-                    {id: 9, name: '압력에서 냉각수 필터', tagName: 'COMP_CFIP', unit: ''},
-                    {id: 10, name: '냉각수에서 필터 아웃 압력', tagName: 'COMP_CFOP', unit: ''},
-                    {id: 11, name: '원격압력', tagName: 'COMP_RP', unit: ''},
-                    {id: 12, name: '퍼센트 용량', tagName: 'COMP_PCY', unit: ''},
-                    {id: 13, name: 'KW시간', tagName: 'COMP_KWH', unit: ''},
-                    {id: 14, name: '목표 압력', tagName: 'COMP_TP', unit: ''},
-                    {id: 15, name: '자동 정지 압력', tagName: 'COMP_ASP', unit: ''},
-                    {id: 16, name: '즉시 정지 압력', tagName: 'COMP_ISP', unit: ''},
-                    {id: 17, name: '시동장치 코드', tagName: 'COMP_TC', unit: ''},
-                ],
-                powerTagList: [
-                    {id: 18, name: '무효전력량', tagName: 'PWR_Kvarh', unit: 'Kvarh'},
-                    {id: 19, name: '전압', tagName: 'PWR_V', unit: 'V'},
-                    {id: 20, name: '전류', tagName: 'PWR_A', unit: 'A'},
-                    {id: 21, name: '역률', tagName: 'PWR_PF', unit: '%'},
-                ],
+                compKeyTag: waTagSet.airKeyTag.tags,
+                powerKeyTag: waTagSet.powerKeyTag.tags,
+                compTagSet: waTagSet.airCompSet.tags,
+                powerTagSet: waTagSet.accuraSet.tags,
                 timeCategories: [],
                 nowTime: '',
                 liveChartData: [{name: '실시간 유효전력', data: []}], // 데이터 변수
-
                 liveChartOption: {
                     chart: {
                         toolbar: {
@@ -403,12 +410,35 @@
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
+            this.getTrip();
             this.loadingData.show = true;
         },
         beforeDestroy() {
             this.removeInterval();
         },
         methods: {
+            async WaLogin() {
+                await axios.get('/nuxt/WaLogin')
+            },
+            async getTagValues() {
+                const vm = this;
+                axios.post('/nuxt/wa/port/getTagValue', {
+                    portId: [1, 2, 3, 4, 5],
+                }, {
+                    timeout: vm.intervalTime,
+                }).then((res) => {
+                    if (res.data.Result.Total > 0) {
+                        vm.tagVal = res.data.Values;
+                        vm.totalFlow = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_FLOW`, 'Value');
+                        vm.totalCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_PRE `, 'Value');
+                        vm.setLiveChart();
+                    }
+                }).catch((error) => {
+                    vm.msgData.msg = error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
             async getAirCompressor() {
                 const vm = this;
                 const id = this.$route.params.id;
@@ -423,29 +453,17 @@
             replaceImg(e) {
                 e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
             },
-            async WaLogin() {
-                await axios.get('/api/WaLogin')
-            },
-            async getTagValues() {
-                const vm = this;
-                axios.post('/api/wa/port/getTagValue', {
-                    portId: [1, 5],
-                }, {
-                    timeout: vm.intervalTime,
-                }).then((res) => {
-                    if (res.data.Result.Total > 0) {
-                        vm.tagVal = res.data.Values;
-                        vm.airCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `${vm.airCompressor.unitId}_COMP_PDP`, 'Value');
-                    }
-                    vm.setLiveChart();
-                }).catch((error) => {
-                    vm.msgData.msg = error;
-                }).finally(() => {
-                    vm.loadingData.show = false;
-                });
-            },
             getNowTime: function () {
                 this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
+            },
+            async getTrip() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/trip'
+                }).then((res) => {
+                    vm.TPCode = res.data
+                })
             },
             settingModalOpen(device) {
                 this.$refs.settingEquipmentModal.updateModal(device);
@@ -524,9 +542,7 @@
                     } else {
                         const codeArray = TPArray.list;
                         let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
-                        if (targetError.length === 0) {
-                            return
-                        } else {
+                        if (targetError.length !== 0) {
                             return targetError[0].description
                         }
                     }
