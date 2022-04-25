@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 
 @RestController
 @RequestMapping("/api")
@@ -29,10 +30,10 @@ public class AlarmController {
     private final TripDataRepository tripDataRepository;
 
     @GetMapping(value="/trip")
-    public Map<Integer, List<TripDto>> etc(
+    public Map<Integer, String> etc(
     ) {
         return tripDataRepository.findAll().stream()
                 .map(TripDto::new)
-                .collect(groupingBy(t->t.getCode()));
+                .collect(toMap(TripDto::getCode, t->t.getMessage()));
     }
 }
