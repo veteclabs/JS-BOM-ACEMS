@@ -56,22 +56,22 @@ public class AirCompressorDto {
                         this.state = collect.stream()
                                 .filter(k -> {
                                     if (new ArrayList<String>(List.of(
-                                            "COMP_Poser"
-                                            , "COMP_Local"
-                                            , "COMP_ActTripCode"
-                                            , "COMP_Trip"
-                                            , "COMP_Load"
+                                            "COMP_Power"
+                                            ,"COMP_Local"
+                                            ,"COMP_ActTripCode"
+                                            ,"COMP_Trip"
+                                            ,"COMP_Load"
                                     )).contains(k.getType())) {
                                         k.setValue(Math.round(new Double(k.getValue().toString())));
                                     }
                                     return new ArrayList<String>(List.of(
-                                            "COMP_Poser"
-                                            , "COMP_StartPre"
-                                            , "COMP_StopPre"
-                                            , "COMP_Local"
-                                            , "COMP_ActTripCode"
-                                            , "COMP_Trip"
-                                            , "COMP_Load"
+                                            "COMP_Power"
+                                            ,"COMP_StartPre"
+                                            ,"COMP_StopPre"
+                                            ,"COMP_Local"
+                                            ,"COMP_ActTripCode"
+                                            ,"COMP_Trip"
+                                            ,"COMP_Load"
                                     )).contains(k.getType());
                                 })
                                 .collect(Collectors.toMap(TagDto::getType, tagDto -> tagDto));
