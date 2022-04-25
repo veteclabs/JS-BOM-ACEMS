@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,5 +47,6 @@ public class Tag {
     @Column(length = 20)
     private String type;
 
-
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag")
+    private List<Alarm> alarms = new ArrayList<>();
 }
