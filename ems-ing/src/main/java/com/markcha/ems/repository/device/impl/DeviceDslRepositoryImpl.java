@@ -289,6 +289,7 @@ public class DeviceDslRepositoryImpl {
         return query.select(device)
                 .from(device)
                 .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
@@ -296,7 +297,8 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(
-                        group.id.eq(id)
+                         group.id.eq(id)
+                        ,equipment.type.eq(AIR_COMPRESSOR)
                 ).fetchOne();
     }
     public List<Device> findAllByIds(List<Long> ids) {
