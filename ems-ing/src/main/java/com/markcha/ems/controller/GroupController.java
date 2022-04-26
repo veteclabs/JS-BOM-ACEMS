@@ -160,8 +160,10 @@ public class GroupController {
             @RequestBody GroupInsertDto groupInsertDto,
             @PathVariable("groupId") Long groupId
     ) {
-        if (groupDslRepository.countPressure(groupId) != 1 && groupInsertDto.getSchedule().getIsActive()) {
-            throw new MethodNotAllowedException("그룹 안에는 하나의 압력계만 연결할 수 있습니다.");
+        if (groupDslRepository.countPressure(groupId) == 0 && groupInsertDto.getSchedule().getIsActive()) {
+            throw new MethodNotAllowedException("장비관리에서 압력계에 그룹 연동을 먼저 진행해주세요.\n(해당 그룹에 압력계가 한 개도 없을 경우 스케줄 제어가 불가능합니다.)");
+        } else if (groupDslRepository.countPressure(groupId) > 1 && groupInsertDto.getSchedule().getIsActive()) {
+            throw new MethodNotAllowedException("그룹 스케줄 제어를 위한 압력계를 하나만 연결해주세요.\n(그룹에 연결된 압력계가 2개 이상일 경우 스케줄 제어가 불가능합니다.)");
         }
         groupInsertDto.setId(groupId);
         groupService.updateCompressor(groupInsertDto);
@@ -173,7 +175,7 @@ public class GroupController {
     ) {
         groupInsertDtos.forEach(t->{
             if(t.getDevices().get("pressure").size() != 1) {
-                throw new MethodNotAllowedException(" 안에는 하나의 압력계만 연결할 수 있습니다.");
+                throw new MethodNotAllowedException("그룹 안에는 압력계를 하나만 연결해주세요.\n(각 그룹에 연결된 압력계가 2개 이상이거나, 한 개도 없을 경우 그룹 수정이 불가능합니다.");
             }
         });
         groupInsertDtos.forEach(t->t.setDeviceList(t));

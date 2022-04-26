@@ -69,8 +69,8 @@ public class CompressorController {
         collect.forEach(t->{
             if(!isNull(t.getSchedule())) {
                 ScheduleDto scheduleDto = t.getSchedule();
-                scheduleDto.setMin(t.getTags().get("COMP_StartPre").getValue());
-                scheduleDto.setMax(t.getTags().get("COMP_StopPre").getValue());
+                if(!isNull(t.getTags().get("COMP_StartPre"))) scheduleDto.setMin(t.getTags().get("COMP_StartPre").getValue());
+                if(!isNull(t.getTags().get("COMP_StopPre"))) scheduleDto.setMax(t.getTags().get("COMP_StopPre").getValue());
                 scheduleDto.setMinMax();
             }
         });
