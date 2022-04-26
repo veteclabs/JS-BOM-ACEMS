@@ -333,7 +333,7 @@
                     }
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.LoadingData.show = false;
                 });

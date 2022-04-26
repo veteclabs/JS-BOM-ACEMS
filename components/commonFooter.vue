@@ -1,5 +1,5 @@
 <template>
 <footer id="footer">
-        Copyrightⓒ VETEC Co., Ltd. All rights reserved.
+        Copyrightⓒ 정석엔지니어링 Co., Ltd. All rights reserved.
 </footer>
 </template>

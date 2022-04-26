@@ -126,7 +126,7 @@
                     vm.groupList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
             // 신규 장비 등록
@@ -149,7 +149,7 @@
                         vm.getGroup();
                     }).catch((error) => {
                         vm.msgData.show = true;
-                        vm.msgData.msg = error.response.data.message;
+                        vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                     })
                 }
             },

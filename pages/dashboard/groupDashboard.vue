@@ -282,7 +282,8 @@
                 }).then((res) => {
                     vm.groupList = res.data
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -297,7 +298,8 @@
                 }).then((res) => {
                     vm.freeGroupList = res.data
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -314,7 +316,8 @@
                     vm.msgData.show = true;
                     vm.msgData.msg = res.data.message;
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -330,7 +333,7 @@
                         vm.tagVal = res.data.Values;
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });

@@ -411,6 +411,7 @@
             this.getTagValues();
             this.resetInterval();
             this.getTrip();
+            this.getAlarm();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -434,7 +435,7 @@
                         vm.setLiveChart();
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
@@ -447,7 +448,7 @@
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
             replaceImg(e) {
@@ -463,6 +464,16 @@
                     url: '/api/trip'
                 }).then((res) => {
                     vm.TPCode = res.data
+                })
+            },
+            async getAlarm() {
+                const id = this.$route.params.id;
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: `/api/alarms/${id}`
+                }).then((res) => {
+                    vm.alarmList = res.data
                 })
             },
             settingModalOpen(device) {

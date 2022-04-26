@@ -26,7 +26,8 @@
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
-                        <DxColumn data-field="type" caption="type" alignment="center" cell-template="blockGridTemplate"/>
+                        <DxColumn data-field="type" caption="type" alignment="center"
+                                  cell-template="blockGridTemplate"/>
                         <DxColumn data-field="groupId" caption="groupId" :visible="false"/>
                         <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
                         <DxColumn data-field="name" caption="장비명"/>
@@ -122,7 +123,7 @@
                     vm.equipmentList = res.data
                 }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error.response.data.message;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
             createEquipment() {
@@ -139,8 +140,8 @@
                 const vm = this;
                 if (confirm("정말로 삭제 하시겠습니까? 삭제된 데이터는 복원되지 않습니다.")) {
                     axios({
-                        url:'/api/etcs',
-                        method:'delete',
+                        url: '/api/etcs',
+                        method: 'delete',
                         data: vm.selectedKeys
                     }).then((res) => {
                         vm.msgData.show = true;
@@ -148,7 +149,7 @@
                         vm.getEquipment();
                     }).catch((error) => {
                         vm.msgData.show = true;
-                        vm.msgData.msg = error.response.data.message;
+                        vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                     })
                 }
             },
