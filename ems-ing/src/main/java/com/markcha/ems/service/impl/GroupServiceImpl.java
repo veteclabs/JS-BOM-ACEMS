@@ -210,10 +210,14 @@ public class GroupServiceImpl {
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
                 List<Group> deletedCompressor = new ArrayList<>();
+                List<Group> deleted2Compressor = new ArrayList<>();
                 deletedCompressor.addAll(ordCompressors);
+                deleted2Compressor.addAll(newCompressors);
+                deleted2Compressor.removeAll(ordCompressors);
                 deletedCompressor.removeAll(newCompressors);
                 ordCompressors.forEach(t -> t.setParent(null));
                 ordDevices.forEach(t -> t.setGroup(null));
+                deletedCompressor.addAll(deleted2Compressor);
                 List<Order> orders = orderDslRepository.findAllByIds(
                         deletedCompressor.stream()
                                 .map(t->t.getId())
@@ -232,7 +236,7 @@ public class GroupServiceImpl {
                 groupDataRepository.save(group);
                 groupDataRepository.saveAll(ordCompressors);
 
-
+                newCompressors.forEach(t->t.getDeviceSet().forEach(k-> System.out.println(k.getName())));
                 group.setChildren(new HashSet<>(newCompressors));
                 newCompressors.forEach(t -> t.setParent(group));
                 group.setDeviceSet(new HashSet<>(newDevices));

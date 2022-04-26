@@ -36,8 +36,8 @@ public class CompressorDto {
         }
         if(!isNull(device.getGroup())) {
             Group group = device.getGroup();
-            this.id = device.getId();
-            this.name = device.getName();
+            this.id = device.getGroup().getId();
+            this.name = device.getGroup().getName();
             if (!isNull(group.getParent())) {
                 Group parentGroup = group.getParent();
                 this.groupId = parentGroup.getId();

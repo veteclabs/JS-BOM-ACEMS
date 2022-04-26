@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
-import static com.markcha.ems.domain.EquipmentType.POWER_METER;
+import static com.markcha.ems.domain.EquipmentType.*;
+import static com.markcha.ems.domain.GroupType.GROUP;
 import static com.markcha.ems.domain.GroupType.OBJECT;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
@@ -76,7 +76,23 @@ public class DeviceDslRepositoryImpl {
                          equipment.type.eq(POWER_METER)
                         ,group.type.eq(OBJECT)
                 ).fetchCount();
-
+    }
+    public long countingGroupHavePressureDevice(Long groupId) {
+        BooleanExpression groupEqId = null;
+        if(isNull(groupId)) {
+            groupEqId = group.id.eq(-1L);
+        } else {
+            groupEqId = group.id.eq(groupId);
+        }
+        return query.select(device).distinct()
+                .from(group)
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .where(
+                         equipment.type.eq(PRESSURE_GAUGE)
+                        ,group.type.eq(GROUP)
+                        ,groupEqId
+                ).fetchCount();
     }
     public List<Device> getCompressor(EquipmentType typeName) {
         QGroup parentGroup = new QGroup("pGroup");
@@ -186,7 +202,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .where(
                          equipment.type.eq(typeName)
-                        ,device.id.in(ids)
+                        ,childGroup.id.in(ids)
                 )
                 .orderBy(device.id.desc())
                 .fetch();
@@ -280,7 +296,7 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
                 .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(
-                        device.id.eq(id)
+                        group.id.eq(id)
                 ).fetchOne();
     }
     public List<Device> findAllByIds(List<Long> ids) {

@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static com.markcha.ems.domain.GroupType.OBJECT;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
 import static com.markcha.ems.domain.QDevice.device;
@@ -286,7 +287,9 @@ public class GroupDslRepositoryImpl{
         Map<Long, List<Tag>> groupByTag = tags.stream()
                 .collect(groupingBy(t -> t.getDevice().getId()));
         groups.forEach(g->{
-            g.getDeviceSet().forEach(d->d.setTags(new HashSet<>(groupByTag.get(d.getId()))));
+            g.getDeviceSet().forEach(d->{
+                if(!isNull(groupByTag.get(d.getId()))) d.setTags(new HashSet<>(groupByTag.get(d.getId())));
+            });
             g.getChildren().forEach(c->c.getDeviceSet().forEach(d->{
                     if (!isNull(groupByTag.get(d.getId()))) {
                         d.setTags(new HashSet<>(groupByTag.get(d.getId())));
@@ -302,9 +305,11 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(group.parent, parentGroup).fetchJoin()
                 .leftJoin(group.deviceSet, device).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
+//                .leftJoin(device.tags, tag).fetchJoin()
                 .where(
                          parentGroup.id.in(parentGroupIds)
-                        ,equipment.type.eq(AIR_COMPRESSOR)
+                        ,group.type.eq(OBJECT)
+//                        ,equipment.type.eq(AIR_COMPRESSOR)
                 )
                 .fetch();
     }
@@ -326,6 +331,9 @@ public class GroupDslRepositoryImpl{
         }
         return query.selectFrom(group).distinct()
                 .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(group.deviceSet, device).fetchJoin()
+//                .leftJoin(device.equipment, equipment).fetchJoin()
+//                .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
                 .leftJoin(weekMapper.week, week).fetchJoin()
                 .leftJoin(weekMapper.orders, order1).fetchJoin()
