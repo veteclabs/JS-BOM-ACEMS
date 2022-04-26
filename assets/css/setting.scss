@@ -50,6 +50,19 @@
         }
       }
     }
+    @include desktop-mid() {
+      flex-wrap: wrap;
+      .setting-space-box {
+        width: 0;
+        padding: 0;
+      }
+      .setting-nav-box {
+        width: 100%;
+      }
+      .setting-content-box {
+        width: 100%;
+      }
+    }
     @include tabletAndMobile() {
       flex-wrap: wrap;
       .setting-space-box {

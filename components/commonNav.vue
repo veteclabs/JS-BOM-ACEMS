@@ -20,7 +20,7 @@
                     <ul class="nav nav-second-level" v-if="item.subMenu">
                         <li class="title-li">
                             {{item.class | toUpperCase}}
-                            <img src="~assets/images/menu/icn_menu_arrow.svg" alt="arrow" width="16"/>
+                            <img src="~assets/images/common/icn_down_arrow.svg" alt="arrow" width="16"/>
                         </li>
                         <li v-for="(subitem, index) in item.subMenu" :key="index"
                             :class="[subitem.link === path ? 'active' : '']">

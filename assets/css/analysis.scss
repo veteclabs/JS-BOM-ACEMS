@@ -38,58 +38,6 @@
   }
 }
 
-.standard-box {
-  .warning {
-    @extend .red-bg;
-
-    .bom-badge {
-      background: $red-2;
-      color: $red-0;
-      flex: 0 0 50px;
-    }
-  }
-
-  .normal {
-    @extend .green-bg;
-
-    .bom-badge {
-      background: $green-2;
-      color: $green-0;
-      flex: 0 0 50px;
-    }
-  }
-
-  .standard-chart {
-    height: 100px;
-  }
-
-  .ibox-2Depth {
-    .flex-box {
-      flex-wrap: wrap;
-    }
-  }
-
-  h1 {
-    margin: 0;
-    padding: 0 4px 0 0;
-  }
-}
-
-.temp-box {
-  .flex-box {
-    .icon-box {
-      flex: 0 0 40px;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 8px;
-      padding: 0;
-    }
-  }
-}
-
 
 .pricing-summary {
   .flex-box {
@@ -152,78 +100,6 @@
     .flex-box {
       flex-wrap: wrap;
     }
-  }
-}
-
-/***Location***/
-#analysisLocationPieChart {
-  height: 150px;
-}
-
-.location-rate-box {
-  .ibox-content {
-    padding: 24px 0 0 0;
-  }
-}
-
-.location-piechart-ul {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin: 24px 0 0 0;
-
-  li {
-    flex: 0 0 50%;
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-    color: $gray-6;
-
-    span {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin: 0 4px 0 0;
-    }
-  }
-}
-
-.location-minmax-box {
-  > div {
-    margin: 0;
-    padding: 0 8px 0 0;
-    width: 50%;
-
-    &:last-child {
-      margin: 0;
-      padding: 0 0 0 8px;
-    }
-
-    .location-min-box, .location-max-box {
-      @extend .font1-1;
-      background-repeat: no-repeat;
-      background-position: center right 10px;
-      background-size: 80px;
-
-      p {
-        span {
-          @extend .font-18;
-        }
-      }
-    }
-  }
-
-  .location-min-box {
-    padding: 16px;
-    background-color: $green-3;
-    background-image: url("~assets/images/analysis/img_analysis_good@2x.png");
-  }
-
-  .location-max-box {
-    padding: 16px;
-    background-color: $red-3;
-    background-image: url("~assets/images/analysis/img_analysis_bad@2x.png");
   }
 }
 
