@@ -319,6 +319,9 @@
                 axios({
                     method: 'get',
                     url: '/api/analysis/data',
+                    headers: {
+                        "X-API-VERSION": 1
+                    },
                     params: params,
                 }).then((res) => {
                     vm.chartData = [];
