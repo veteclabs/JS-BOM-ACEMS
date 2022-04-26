@@ -145,11 +145,22 @@ public class DeviceDslRepositoryImpl {
     }
     public List<Tag> findAllAlarmTags() {
         List<Tag> tags = getAlarmTags();
+
+        Map<Long, List<Device>> alarmGroupDevices = getAlarmGroupDevices(tags.stream()
+                .map(t -> t.getDevice().getGroup().getId())
+                .collect(toList())).stream()
+                .collect(groupingBy(t->t.getGroup().getId(), toList()));
+        tags.forEach(t->{
+            if(!isNull(alarmGroupDevices.get(t.getDevice().getGroup().getId()))) {
+                Group group = t.getDevice().getGroup();
+                group.setDevices(new HashSet<>(alarmGroupDevices.get(t.getDevice().getGroup().getId())));
+            }
+        });
         List<String> tagNames = new ArrayList<>();
         tagNames.addAll(tags.stream()
                 .map(t -> t.getTagName()).collect(toList()));
         tagNames.addAll(tags.stream()
-                .map(t -> t.getDevice().getGroup().getDeviceSet().stream()
+                .map(t -> t.getDevice().getGroup().getDevices().stream()
                         .map(k -> {
                             return k.getTags().stream()
                                     .map(Tag::getTagName)
@@ -163,26 +174,31 @@ public class DeviceDslRepositoryImpl {
         Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
         tags.forEach(t->{
             t.setValue(tagValues.get(t.getTagName()));
-            t.getDevice().getGroup().getDeviceSet().forEach(k->{
+            t.getDevice().getGroup().getDevices().forEach(k->{
                 k.getTags().forEach(g->g.setValue(tagValues.get(g.getTagName())));
             });
         });
         return tags;
     }
     public List<Tag> getAlarmTags() {
-        QDevice groupDevices = new QDevice("groupDevices");
-        QTag groupTags = new QTag("groupTags");
-        QEquipment groupEquipment = new QEquipment("groupEquipment");
+        QTag compTags = new QTag("compTags");
         return query.selectFrom(tag).distinct()
                 .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(device.tags, compTags).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
-                .leftJoin(group.deviceSet, groupDevices).fetchJoin()
-                .leftJoin(groupDevices.tags, groupTags)
-                .leftJoin(groupDevices.equipment, groupEquipment).fetchJoin()
                 .where(
                          equipment.type.eq(AIR_COMPRESSOR)
-                        ,groupEquipment.type.eq(POWER_METER)
+                ).fetch();
+    }
+    public List<Device> getAlarmGroupDevices(List<Long> groupIds) {
+        return query.selectFrom(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
+                .where(
+                         group.id.in(groupIds)
+                        ,equipment.type.eq(POWER_METER)
                 ).fetch();
     }
     public List<Device> findAllCompressorsByIds(EquipmentType typeName, List<Long> ids) {
@@ -260,10 +276,15 @@ public class DeviceDslRepositoryImpl {
     }
     public List<Device> findAllAirOrphs() {
         QGroup parentGroup = new QGroup("pg");
+        QDevice groupDevice = new QDevice("gd");
+        QTag groupTags = new QTag("groupTags");
         return query.selectFrom(device)
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(group.parent, parentGroup).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(group.deviceSet, groupDevice).fetchJoin()
+                .leftJoin(groupDevice.tags, groupTags).fetchJoin()
                 .where(
                         parentGroup.isNull(),
                         group.type.eq(OBJECT)

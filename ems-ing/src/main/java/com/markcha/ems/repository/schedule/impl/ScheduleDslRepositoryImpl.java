@@ -43,10 +43,9 @@ public class ScheduleDslRepositoryImpl {
 
     public Group findRootGroupId(Long id) {
         return query.select(group)
-                .from(group)
+                .from(group).distinct()
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .where(schedule.id.eq(id))
-                .limit(1)
                 .fetchOne();
     }
     public List<Schedule> findAllJoinMapper() {

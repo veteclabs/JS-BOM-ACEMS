@@ -71,5 +71,5 @@ public class Device {
     @Transient
     private List<TagDto> tagList = new ArrayList<>();
     @Transient
-    private TagDto pressure;
+    private Object pressure;
 }

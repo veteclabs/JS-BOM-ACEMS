@@ -1,6 +1,7 @@
 package com.markcha.ems.dto.device;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.Group;
@@ -18,6 +19,7 @@ import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeviceDto {
     private Long id;
     private String name;
@@ -28,6 +30,7 @@ public class DeviceDto {
     private Map<String, TagDto> tags = new HashMap<>();
     @JsonIgnore
     private Long groupId;
+    Map<String, List<DeviceDto>> devices = new HashMap<>();
     public DeviceDto(Device device) {
         this.id = device.getId();
         this.name = device.getName();

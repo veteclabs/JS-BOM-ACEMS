@@ -87,7 +87,6 @@ public class DeviceController {
             @RequestBody DeviceInsertDto deviceInsert
     ) {
         long l = deviceDslRepository.countingGroupHavePressureDevice(deviceInsert.getGroupId());
-        System.out.println(l);
         if (deviceDslRepository.countingCompressorHavePowerDevice() == 0 && isNull(deviceInsert.getGroupId())) {
             throw new MethodNotAllowedException("전체 전력계 중 하나 이상의 컴프레셔 그룹이 필요합니다.");
         }

@@ -129,7 +129,7 @@ public class CompressorController {
     ) {
         compressorInsertDto.setId(compressorId);
         compressorService.updateCompressor(compressorInsertDto);
-        return new ApiResponseDto(dbInsertMsg);
+        return new ApiResponseDto(dbUpdateMsg);
     }
     @DeleteMapping(value="/compressors")
     public ApiResponseDto delete(

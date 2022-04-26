@@ -4,7 +4,7 @@ const app = express();
 // 라우터폴더
 const login = require('./Login/index');
 const webaccess = require('./webaccess/index');
-// const scheduleController = require('./scheduleController');
+const scheduleController = require('./scheduleController');
 // 로그인 - Login
 app.post('/user/login', login);
 app.get('/user/logout', login);

@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static com.markcha.ems.domain.EquipmentType.PRESSURE_GAUGE;
 import static com.markcha.ems.domain.GroupType.OBJECT;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
@@ -64,7 +65,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(group.deviceSet, device).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
-                         equipment.type.eq(EquipmentType.PRESSURE_GAUGE)
+                         equipment.type.eq(PRESSURE_GAUGE)
                         ,group.id.eq(groupId)
                 ).fetchCount();
     }
@@ -169,43 +170,30 @@ public class GroupDslRepositoryImpl{
         List<Long> groupIds = groups.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        List<Device> devices = query.selectFrom(device)
+        Device devices = query.selectFrom(device)
                 .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                         device.group.id.in(groupIds)
                         , tag.type.eq("AIR_PRE")
-                ).fetch();
+                        ,equipment.type.eq(PRESSURE_GAUGE)
+                ).limit(1).fetchOne();
 
-        List<Long> deviceIds = devices.stream()
-                .map(t->t.getId())
-                .collect(toList());
-
-        List<TagDto> tags = getTagsByDeviceIdsOnlyBar(deviceIds).stream()
-                .map(TagDto::new)
-                .collect(toList());
         // webaccess 태그 이름으로 조회 //
-        List<String> tagNames = tags.stream()
-                .map(k -> k.getTagName())
-                .collect(toList());
-        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
-
-        tags.forEach(a ->a.setValue(tagValues.get(a.getTagName())));
-
-        devices.forEach(t-> {
-            tags.forEach(k->{
-                if(k.getDeviceId().equals(t.getId())) {
-                    t.setPressure(k);
-                }
+        if(!isNull(devices)) {
+            List<String> tagNames = devices.getTags().stream()
+                    .map(k -> k.getTagName())
+                    .collect(toList());
+            Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+            devices.getTags().forEach(k->{
+                devices.setPressure(tagValues.get(k.getTagName()));
             });
-        });
-        groups.forEach(t-> {
-            devices.forEach(k->{
-                if(k.getGroup().getId().equals(t.getId())) {
-                    t.setTagetDevice(k);
-                }
-            });
-        });
+
+
+            groups.forEach(t->t.setTagetDevice(devices));
+        }
+
 
         return groups;
     }

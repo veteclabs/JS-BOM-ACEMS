@@ -61,6 +61,7 @@ public class InsertSampleData {
                 value = random.doubles(min,max).findFirst().getAsDouble();
                 break;
             case "int":
+                max = max+1;
                 value = random.ints(new Double(min.toString()).intValue(),new Double(max.toString()).intValue())
                         .findFirst().getAsInt();
                 break;

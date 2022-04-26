@@ -37,7 +37,6 @@ public class Scheduler {
                 .filter(t -> new Double(t.getValue().toString()).intValue() == 1)
                 .collect(toList());
 
-        takenAlarmTags.forEach(t-> System.out.println(t.getTagName()));
         List<Tag> newTags = new ArrayList<>();
         newTags.addAll(takenAlarmTags);
         if(!isNull(savedTags)) newTags.removeIf(t->{
@@ -56,8 +55,8 @@ public class Scheduler {
                             ,"COMP_AirDisTemp"
                     )).contains(t.getType()))
                     .collect(toMap(Tag::getType, tag->tag));
-            if (!isNull(newTag.getDevice().getGroup().getDeviceSet())) {
-                Map<String, List<Tag>> powerTagMap = new ArrayList<>(newTag.getDevice().getGroup().getDeviceSet()).stream()
+            if (!isNull(newTag.getDevice().getGroup().getDevices())) {
+                Map<String, List<Tag>> powerTagMap = new ArrayList<>(newTag.getDevice().getGroup().getDevices()).stream()
                         .map(t->{
                             return t.getTags().stream()
                                     .filter(k->k.getType().equals("PWR_KWh"))

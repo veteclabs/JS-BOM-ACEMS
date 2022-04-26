@@ -89,8 +89,6 @@ public class DataAnalysisController {
                     .map(t->t.getTagName())
                     .collect(toList()));
         }
-        System.out.println(historySearchDto.getTagNames());
-        System.out.println(historySearchDto.getSecondTagNames());
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);
         } else if(historySearchDto.getTimeType().equals("D")) {
@@ -144,7 +142,6 @@ public class DataAnalysisController {
                     .peek(t -> historySearchDto.getSecondTagNames().addAll(t.getTagNames()))
                     .collect(toList());
         }
-        System.out.println(historySearchDto.getTagNames());
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);
         } else if(historySearchDto.getTimeType().equals("D")) {

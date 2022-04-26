@@ -16,6 +16,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static com.markcha.ems.domain.QTag.tag;
@@ -52,6 +54,7 @@ public class ScheduleController {
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
     private final OrderDslRepositoryImpl orderDslRepository;
     private final DayOfWeekDataRepository dayOfWeekDataRepository;
+    private final WebaccessApiServiceImpl webaccessApiService;
 
     @GetMapping(value="/schedules")
     public List<ScheduleSimpleDto> schedules(
@@ -65,7 +68,8 @@ public class ScheduleController {
     public List<ScheduleDto> schedule(
             @PathVariable("scheduleId") Long scheduleId
     ) {
-        return groupDslRepository.findAllJoinScheduleByScheduleId(scheduleId).stream()
+        List<Group> collect = groupDslRepository.findAllJoinScheduleByScheduleId(scheduleId);
+        return collect.stream()
                 .map(ScheduleDto::new)
                 .collect(toList());
     }
@@ -101,6 +105,18 @@ public class ScheduleController {
                 .map(t -> new GroupQueryDto(t, false))
                 .forEach(k->devices.addAll(k.getAllDevices().stream()
                 .map(DeviceConDto::new).collect(toList())));
+        List<String> tagNames = new ArrayList<>();
+        devices.forEach(t->{
+            t.getTags().forEach((k,v)->{
+                tagNames.add(v.getTagName());
+            });
+        });
+        Map<String, Object> tagValuesV2 = webaccessApiService.getTagValuesV2(tagNames);
+        devices.forEach(t->{
+            t.getTags().forEach((k,v)->{
+                v.setValue(new Double(tagValuesV2.get(v.getTagName()).toString()).intValue());
+            });
+        });
         return devices;
     }
     @Data
@@ -172,7 +188,7 @@ public class ScheduleController {
             }
             if(!isNull(group.getTagetDevice())) {
                 if(!isNull(group.getTagetDevice().getPressure())) {
-                    this.pressure = group.getTagetDevice().getPressure().getValue();
+                    this.pressure = group.getTagetDevice().getPressure();
                 }
             }
         }

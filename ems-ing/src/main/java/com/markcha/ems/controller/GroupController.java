@@ -189,7 +189,7 @@ public class GroupController {
             @RequestBody List<Long> ids
     ) {
         groupService.deleteGroups(ids);
-        return new ApiResponseDto(dbUpdateMsg);
+        return new ApiResponseDto(dbDeleteMsg);
     }
     @Data
     @NoArgsConstructor
