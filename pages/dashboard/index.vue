@@ -42,7 +42,7 @@
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
                 Air Compressor
             </h2>
-        </div>
+    </div>
         <div class="row dashboard-item-box">
             <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
                 <div class="ibox">
@@ -61,7 +61,7 @@
                         </nuxt-link>
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(device)"/>
+                             @click="settingModalOpen(device.id)"/>
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="device.state"/>

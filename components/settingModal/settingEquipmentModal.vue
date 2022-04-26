@@ -11,105 +11,104 @@
                 </button>
             </div>
             <div class="modal-overflow">
-                <h4 class="modal-h4-title first">공기압축기 정보</h4>
-                <table class="bom-table">
-                    <tr>
-                        <td>
-                            <div class="td-label">그룹</div>
-                            <label class="input-100">
-                                <select v-model="params.groupId"  @change="groupCheck">
-                                    <option :value="null" selected >미지정</option>
-                                    <option v-for="group in groupList" :value="group.id" :key="group.id">
-                                        {{group.name}}
-                                    </option>
-                                </select>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="td-label">공기압축기명</div>
-                            <label class="input-100">
-                                <input type="text" v-model="params.name" class="input-100" placeholder="공기압축기명을 입력하세요"/>
-                            </label>
-                            <div class="err-message" v-if="validation !== undefined">
-                                {{ validation.firstError('params.name') }}
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-                <h4 class="modal-h4-title">공기압축기 압력 제어 범위</h4>
-                <table class="bom-table">
-                    <tr>
+            <h4 class="modal-h4-title first">공기압축기 정보</h4>
+            <table class="bom-table">
+                <tr>
+                    <td>
+                        <div class="td-label">그룹</div>
+                        <label class="input-100">
+                            <select v-model="params.groupId"  @change="groupCheck">
+                                <option :value="null" selected >미지정</option>
+                                <option v-for="group in groupList" :value="group.id" :key="group.id">
+                                    {{group.name}}
+                                </option>
+                            </select>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="td-label">공기압축기명</div>
+                        <label class="input-100">
+                            <input type="text" v-model="params.name" class="input-100" placeholder="공기압축기명을 입력하세요"/>
+                        </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('params.name') }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h4 class="modal-h4-title">공기압축기 압력 제어 범위</h4>
+            <table class="bom-table">
+                <tr>
                         <td>
                             <div class="td-label">Min</div>
                             <label class="input-100">
-                                <input type="number" v-model="schedule.min" class="input-100" placeholder="최소압력"/>
+                                <input type="number" v-model="params.schedule.min" class="input-100" placeholder="최소압력"/>
                             </label>
                         </td>
                         <td>~</td>
                         <td>
                             <div class="td-label">Max</div>
                             <label class="input-100">
-                                <input type="number" v-model="schedule.max" class="input-100" placeholder="최대압력"/>
+                                <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"/>
                             </label>
                         </td>
-                    </tr>
-                </table>
-                <div class="err-message" v-if="validation !== undefined">
-                    {{ validation.firstError('schedule.min') }}
-                </div>
-                <!--<VueSimpleRangeSlider id="bar-range" :min="0" :max="12" v-model="barRange"/>-->
-                <h4 class="modal-h4-title">공기압축기 스케줄</h4>
-                <div class="err-message" v-if="validation !== undefined">
-                    {{ validation.firstError('schedule.isActive') }}
-                </div>
-                <table class="bom-table">
-                    <tr>
-                        <td colspan="2">
-                            <div class="td-label">개별 스케줄 설정</div>
-                        </td>
-                        <td class="right">
-                            <label class="switch-box">
-                                <input type="checkbox" v-model="schedule.isActive" @change="groupCheck"
-                                ref="scheduleCheck"/>
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr :class="{'disabled-td' : !schedule.isActive}">
-                        <td colspan="3">
-                            <div class="td-label">Date</div>
-                            <ul class="date-ul">
-                                <li v-for="item in dateList">
-                                    <label>
-                                        <input type="checkbox" :value="item" v-model="schedule.dayOfWeeks"
-                                               :disabled="!schedule.isActive"/>
-                                        <div>{{item.name}}</div>
-                                    </label>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr :class="{'disabled-td' : !schedule.isActive}">
-                        <td style="vertical-align: bottom; position:relative;">
-                            <div class="td-label">시작시간</div>
-                            <label class="input-100">
-                                <date-picker v-model="schedule.startTime" :config="timeOptions"
-                                             :disabled="!schedule.isActive"/>
-                            </label>
-                        </td>
-                        <td>~</td>
-                        <td style="vertical-align: bottom; position:relative;">
-                            <div class="td-label">종료시간</div>
-                            <label class="input-100">
-                                <date-picker v-model="schedule.stopTime" :config="timeOptions"
-                                             :disabled="!schedule.isActive"/>
-                            </label>
-                        </td>
-                    </tr>
-                </table>
+                </tr>
+            </table>
+            <div class="err-message" v-if="validation !== undefined">
+                {{ validation.firstError('params.schedule.min') }}
             </div>
+            <h4 class="modal-h4-title">공기압축기 스케줄</h4>
+            <div class="err-message" v-if="validation !== undefined">
+                {{ validation.firstError('params.schedule.isActive') }}
+            </div>
+            <table class="bom-table">
+                <tr>
+                    <td colspan="2">
+                        <div class="td-label">개별 스케줄 설정</div>
+                    </td>
+                    <td class="right">
+                        <label class="switch-box">
+                            <input type="checkbox" v-model="params.schedule.isActive" @change="groupCheck"
+                                   ref="scheduleCheck"/>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                </tr>
+                <tr :class="{'disabled-td' : !params.schedule.isActive}">
+                    <td colspan="3">
+                        <div class="td-label">Date</div>
+                        <ul class="date-ul">
+                            <li v-for="item in dateList">
+                                <label>
+                                    <input type="checkbox" :value="item" v-model="params.schedule.dayOfWeeks"
+                                           :disabled="!params.schedule.isActive"/>
+                                    <div>{{item.name}}</div>
+                                </label>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr :class="{'disabled-td' : !params.schedule.isActive}">
+                    <td style="vertical-align: bottom; position:relative;">
+                        <div class="td-label">시작시간</div>
+                        <label class="input-100">
+                            <date-picker v-model="params.schedule.startTime" :config="timeOptions"
+                                         :disabled="!params.schedule.isActive"/>
+                        </label>
+                    </td>
+                    <td>~</td>
+                    <td style="vertical-align: bottom; position:relative;">
+                        <div class="td-label">종료시간</div>
+                        <label class="input-100">
+                            <date-picker v-model="params.schedule.stopTime" :config="timeOptions"
+                                         :disabled="!params.schedule.isActive"/>
+                        </label>
+                    </td>
+                </tr>
+            </table>
+        </div>
             <div class="modal-footer">
                 <button type="button" class="button cancel-button" @click="cancel">취소</button>
                 <button type="button" class="button submit-button" @click="submit">설정</button>
@@ -153,15 +152,16 @@
                     e: '',
                 },
                 state: 'new',
-                params: {},
-                schedule: {
-                    dayOfWeeks: [],
-                    id: '',
-                    isActive: false,
-                    min: 0,
-                    max: 0,
-                    startTime: '00:00:00',
-                    stopTime: '00:00:00',
+                params: {
+                    schedule: {
+                        dayOfWeeks: [],
+                        id: '',
+                        isActive: false,
+                        min: 0,
+                        max: 0,
+                        startTime: '00:00:00',
+                        stopTime: '00:00:00',
+                    },
                 },
                 id: '',
                 name: '',
@@ -177,7 +177,7 @@
             'params.name': function (value) {
                 return Validator.value(value).required();
             },
-            'schedule.min, schedule.max': function (min, max) {
+            'params.schedule.min, params.schedule.max': function (min, max) {
                 return Validator.value(min).required().custom(function () {
                     if ((min !== null && max !== null)) {
                         if (max < min) {
@@ -188,7 +188,7 @@
                     }
                 });
             },
-            'schedule.isActive, schedule.dayOfWeeks, schedule.startTime, schedule.stopTime':
+            'params.schedule.isActive, params.schedule.dayOfWeeks, params.schedule.startTime, params.schedule.stopTime':
                 function (active, day, start, stop) {
                     return Validator.value(active).required().custom(function () {
                         if (active) {
@@ -234,9 +234,9 @@
             groupCheck() {
                 const vm = this;
                 if(vm.params.groupId !== null) {
-                    if(vm.schedule.isActive) {
+                    if(vm.params.schedule.isActive) {
                         alert("그룹이 선택된 장비는 개별제어 설정이 불가합니다.");
-                        vm.schedule.isActive = false;
+                        vm.params.schedule.isActive = false;
                         vm.$refs.scheduleCheck.checked =false;
                     }
                 }
@@ -260,19 +260,20 @@
                         return;
                     }
                 }
-                vm.params.schedule = vm.schedule;
+
                 vm.params.schedule.min = Number( vm.params.schedule.min);
                 vm.params.schedule.max = Number( vm.params.schedule.max);
+
+                console.log(vm.params)
+
                 this.$validate()
                     .then((success) => {
                         if (success) {
-                            // form 입력완료
                             axios({
                                 method: method,
                                 url: url,
                                 data: vm.params
                             }).then((res) => {
-                                // 등록완료시 모달 닫고 초기화 안내메시지 일여주기
                                 modal.hide('createmodal');
                                 vm.msgData.show = true;
                                 vm.msgData.msg = res.data.message;
@@ -293,14 +294,14 @@
                 this.params = {
                     groupId:null,
                     name: '',
-                };
-                this.schedule = {
-                    dayOfWeeks: [],
-                    isActive: false,
-                    min: 0,
-                    max: 0,
-                    startTime: '00:00:00',
-                    stopTime: '00:00:00',
+                    schedule: {
+                        dayOfWeeks: [],
+                        isActive: false,
+                        min: 0,
+                        max: 0,
+                        startTime: '00:00:00',
+                        stopTime: '00:00:00',
+                    }
                 };
                 this.validation.reset();
             },
@@ -308,13 +309,17 @@
                 this.state = 'new';
                 this.reset();
             },
-            updateModal(e) {
-                this.validation.reset();
-                this.state = 'update';
-                this.params = JSON.parse(JSON.stringify(e));
-                if (e.schedule !== null) {
-                    this.schedule = this.params.schedule;
-                }
+            updateModal(id) {
+                const vm = this;
+                vm.validation.reset();
+                axios.get(`/api/compressor/${id}`
+                ).then((res) => {
+                    console.log(res.data)
+                    vm.state = 'update';
+                    vm.params = res.data;
+                }).catch((error) => {
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                });
             },
         },
     };

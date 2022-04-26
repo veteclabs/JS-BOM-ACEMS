@@ -13,7 +13,7 @@
 
                         <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                              class="setting-btn"
-                             @click="settingModalOpen(airCompressor)"/>
+                             @click="settingModalOpen(airCompressor.id)"/>
                     </div>
                     <div class="ibox-title center">
                         <img
@@ -387,13 +387,7 @@
                     labels: ['bar'],
                 },
                 airCompressorBar: 0,
-                alarmList: [
-                    {id: 1, type: 'trip', msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                    {id: 2, type: 'warning', msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                    {id: 3, type: 'error', msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                    {id: 4, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                    {id: 5, msg: '온도상향 알람', temp: '20', bar: '50', kWh: '120', state: 'Alarm'},
-                ],
+                alarmList: [],
                 pageSizes: [5, 10, 20], // 페이지사이즈
                 Interval1M: '',
                 interval: '',

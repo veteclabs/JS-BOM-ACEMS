@@ -93,7 +93,6 @@
                 </tr>
             </table>
         </div>
-
         <div class="ibox" v-if="groupData.schedule.weekDevices">
             <div class="ibox-title ibox-noborder-title">공기압축기 전체 스케줄 제어</div>
             <div class="ibox-content">
@@ -198,7 +197,7 @@
             this.getDayOfWeek();
         },
         methods: {
-            getDayOfWeek (){
+            getDayOfWeek() {
 
                 const vm = this;
                 axios({
@@ -230,8 +229,30 @@
                     }
                 }
 
-                params.schedule.min = Number( params.schedule.min);
-                params.schedule.max = Number( params.schedule.max);
+                params.schedule.min = Number(params.schedule.min);
+                params.schedule.max = Number(params.schedule.max);
+
+                if(params.schedule.isActive) {
+                    let deviceArray = params.schedule.weekDevices;
+                    let targetWeek ='';
+                    deviceArray.forEach(target => {
+                        console.log(target.working.length);
+                        if(target.working.length === 0) {
+                            targetWeek = `${targetWeek} ${target.name},`;
+                        }
+                    });
+                    if(targetWeek !== '') {
+                        targetWeek = targetWeek.slice(0, -1);
+                        console.log(targetWeek);
+                        if(confirm(`공기압축기가 지정되지 않은 스케줄 주차가 있습니다.
+이대로 실행할 경우 해당 주차에는 공기압축기가 동작하지 않습니다.
+
+스케줄 장비 미지정 주차 : ${targetWeek}`)) {}
+                        else {
+                            return false;
+                        }
+                    }
+                }
 
                 this.$validate().then((success) => {
                     if (success) {
@@ -250,9 +271,9 @@
                 });
             },
             handleOk: function () {
-                if(this.$route.name.indexOf('setting') !== -1) {
+                if (this.$route.name.indexOf('setting') !== -1) {
                     this.$router.push('/setting/group');
-                }else {
+                } else {
                     this.$emit('modalClose', 1);
                 }
             },

@@ -143,7 +143,7 @@
             },
             updateEquipment(e) {
                 if (e.columnIndex !== 0) {
-                    this.$refs.equipmentModal.updateModal(e.data);
+                    this.$refs.equipmentModal.updateModal(e.data.id);
                     this.modalData.show = true;
                 }
             },

@@ -185,11 +185,14 @@
 
 
 .setting-button {
-  background-color: $gray-2;
-  color: $gray-6;
-
+  width:auto;
+  background:none;
+  img {
+    width:32px;
+    margin:0;
+  }
   &:hover {
-    background-color: $gray-3;
+    background:$gray-1;
   }
 }
 

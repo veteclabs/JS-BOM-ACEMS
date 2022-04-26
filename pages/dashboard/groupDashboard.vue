@@ -62,7 +62,7 @@
                                                 <img src="~assets/images/dashboard/icn_dashboard_setting.svg"
                                                      alt="setting"
                                                      class="setting-btn"
-                                                     @click="settingModalOpen(device)"/>
+                                                     @click="settingModalOpen(device.id)"/>
                                             </div>
                                             <div class="ibox-content">
                                                 <div class="group-state flex-box">
@@ -144,7 +144,7 @@
                                     </nuxt-link>
                                     <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
                                          class="setting-btn"
-                                         @click="settingModalOpen(device)"/>
+                                         @click="settingModalOpen(device.id)"/>
                                 </div>
                                 <div class="ibox-content">
                                     <div class="group-state flex-box">
