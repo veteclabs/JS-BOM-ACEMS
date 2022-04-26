@@ -211,7 +211,7 @@ public class GroupDslRepositoryImpl{
     }
     private Group getRootGroup(BooleanExpression findById) {
         QGroup childGroup = new QGroup("childGroup");
-        return query.select(group)
+        return query.select(group).distinct()
                 .from(group)
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(group.children ,childGroup).fetchJoin()
@@ -301,7 +301,7 @@ public class GroupDslRepositoryImpl{
     }
     public List<Group> getChildGroups(List<Long> parentGroupIds) {
         QGroup parentGroup = new QGroup("cg");
-        return query.selectFrom(group)
+        return query.selectFrom(group).distinct()
                 .leftJoin(group.parent, parentGroup).fetchJoin()
                 .leftJoin(group.deviceSet, device).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()

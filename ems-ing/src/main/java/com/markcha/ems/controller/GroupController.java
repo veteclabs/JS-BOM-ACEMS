@@ -225,8 +225,6 @@ public class GroupController {
         @JsonIgnore
         private BooleanExpression tagInTypes;
         public GroupSearchDto() {
-            System.out.println(equipmentType);
-            System.out.println(tagTypes);
             if(!isNull(equipmentType)) this.equipmentEqType = equipment.type.eq(equipmentType);
             if(!isNull(energyId)) this.energyEqId = energy.id.eq(energyId);
             if(!isNull(tagType)) this.tagEqType = tag.type.eq(tagType);

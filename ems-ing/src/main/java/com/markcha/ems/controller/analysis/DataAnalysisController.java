@@ -91,6 +91,7 @@ public class DataAnalysisController {
                     .peek(t -> historySearchDto.getSecondTagNames().addAll(t.getTagNames()))
                     .collect(toList());
         }
+        System.out.println(historySearchDto.getTagNames());
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);
         } else if(historySearchDto.getTimeType().equals("D")) {

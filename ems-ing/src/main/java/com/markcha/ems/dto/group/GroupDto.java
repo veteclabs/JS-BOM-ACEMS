@@ -60,9 +60,7 @@ public class GroupDto {
         groupDto.setDeviceList(devices);
 
         groupDto.getAirCompressors().forEach(t->{
-            t.getAirCompressors().forEach(k->{
-                setDeviceList(t);
-            });
+            setDeviceList(t);
         });
 
     }
