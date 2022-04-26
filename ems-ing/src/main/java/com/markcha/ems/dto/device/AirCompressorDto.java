@@ -61,6 +61,8 @@ public class AirCompressorDto {
                                             ,"COMP_ActTripCode"
                                             ,"COMP_Trip"
                                             ,"COMP_Load"
+                                            ,"COMP_Warning"
+                                            ,"COMP_ActWarCode"
                                     )).contains(k.getType())) {
                                         k.setValue(Math.round(new Double(k.getValue().toString())));
                                     }
@@ -72,6 +74,8 @@ public class AirCompressorDto {
                                             ,"COMP_ActTripCode"
                                             ,"COMP_Trip"
                                             ,"COMP_Load"
+                                            ,"COMP_Warning"
+                                            ,"COMP_ActWarCode"
                                     )).contains(k.getType());
                                 })
                                 .collect(Collectors.toMap(TagDto::getType, tagDto -> tagDto));
