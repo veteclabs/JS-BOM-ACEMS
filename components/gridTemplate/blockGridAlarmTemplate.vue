@@ -20,10 +20,14 @@
             };
         },
         mounted() {
-            if(this.cellData.value === 'Alarm') {
-                this.colorType = 'bom-badge red-badge red';
+            if(this.cellData.value === 'trip') {
+                this.colorType = 'bom-badge red-bg-badge';
                 this.text = this.cellData.value
-            }else {
+            }else if(this.cellData.value === 'warning') {
+                this.colorType = 'bom-badge orange-bg-badge';
+                this.text = this.cellData.value
+            }
+            else {
                 this.colorType = 'red';
                 this.text =this.cellData.value
             }

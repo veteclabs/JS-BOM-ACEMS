@@ -33,7 +33,6 @@ module.exports = {
   */
   plugins: [
     { src: '~plugins/vue-client', ssr: false },
-    { src: '~plugins/html2canvas.js', ssr: false },
   ],
   /*
   ** Nuxt.js modules
@@ -61,13 +60,12 @@ module.exports = {
   */
 
   build: {
-    vendor: ['axios', 'jquery', 'html2canvas'],
+    vendor: ['axios', 'jquery'],
     plugins: [
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
         'window.jQuery': 'jquery',
-        html2canvas: 'html2canvas',
       }),
 
     ],

@@ -153,34 +153,11 @@
                     </div>
                 </div>
                 <div class="ibox">
-                    <div class="ibox-title">
-                        알람 정보
-                    </div>
-                    <div class="ibox-content">
-                        <DxDataGrid :data-source="alarmList" :show-borders="false" key-expr="id"
-                                    :column-min-width="100"
-                                    :column-auto-width="true">
-                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
-                            <DxColumn data-field="id" caption="No" alignment="center"/>
-                            <DxColumn data-field="msg" caption="Message" cell-template="blockGridAlarmTemplate"/>
-                            <DxColumn data-field="temp" caption="Data" cell-template="dataGridTemplate"/>
-                            <DxColumn data-field="state" caption="State" cell-template="blockGridAlarmTemplate"
-                                      :width="100"/>
-                            <DxPaging :enabled="true" :page-size="5"/>
-                            <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
-                            <template #blockGridAlarmTemplate="{ data: cellData }">
-                                <blockGridAlarmTemplate :cell-data="cellData"/>
-                            </template>
-                            <template #dataGridTemplate="{ data: cellData }">
-                                <dataGridTemplate :cell-data="cellData"/>
-                            </template>
-                        </DxDataGrid>
-
-                    </div>
+                    <alarm/>
                 </div>
             </div>
         </div>
-        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData" v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -189,17 +166,9 @@
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
-    import dataGridTemplate from '~/components/gridTemplate/dataGridTemplate.vue';
-    import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
+    import alarm from '~/components/dashboard/alarm.vue';
     import waTagSet from '~/assets/data/tagSet.json';
-    import {
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxPager,
-        DxSearchPanel,
-    } from 'devextreme-vue/data-grid';
 
     export default {
         fetch({store, redirect}) {
@@ -213,20 +182,13 @@
             dayjs,
             Loading,
             settingEquipmentModal,
-            dataGridTemplate,
-            blockGridAlarmTemplate,
             airCompressorState,
-            DxDataGrid,
-            DxColumn,
-            DxPaging,
-            DxPager,
-            DxSearchPanel,
+            alarm,
             waTagSet,
         },
         data() {
             return {
                 msgData: {
-                    // 알람모달
                     msg: '',
                     show: false,
                     e: '',
@@ -243,14 +205,6 @@
                     devices: {},
                 },
                 compressorImage: '',
-                mainTagList: [
-                    {id: 1, name: '유효전력량', tagName: 'PWR_KWh', unit: 'KWh'},
-                    {id: 2, name: '유효전력', tagName: 'PWR_KW', unit: 'kW'},
-                    {id: 3, name: '전압', tagName: 'PWR_V', unit: 'V'},
-                    {id: 4, name: '패키치 배출압력', tagName: 'COMP_PDP', unit: ''},
-                    {id: 5, name: '에어앤드온도', tagName: 'COMP_AT', unit: ''},
-                    {id: 7, name: '총 시간', tagName: 'COMP_TH', unit: ''},
-                ],
                 compKeyTag: waTagSet.airKeyTag.tags,
                 powerKeyTag: waTagSet.powerKeyTag.tags,
                 compTagSet: waTagSet.airCompSet.tags,
@@ -405,7 +359,6 @@
             this.getTagValues();
             this.resetInterval();
             this.getTrip();
-            this.getAlarm();
             this.loadingData.show = true;
         },
         beforeDestroy() {
@@ -430,8 +383,6 @@
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-                }).finally(() => {
-                    vm.loadingData.show = false;
                 });
             },
             async getAirCompressor() {
@@ -443,6 +394,8 @@
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
                 });
             },
             replaceImg(e) {
@@ -458,16 +411,6 @@
                     url: '/api/trip'
                 }).then((res) => {
                     vm.TPCode = res.data
-                })
-            },
-            async getAlarm() {
-                const id = this.$route.params.id;
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: `/api/alarms/${id}`
-                }).then((res) => {
-                    vm.alarmList = res.data
                 })
             },
             settingModalOpen(device) {

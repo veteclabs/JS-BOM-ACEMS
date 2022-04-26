@@ -1,0 +1,18 @@
+<svg id="icn_alamr_recover" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #09b77f;
+      }
+    </style>
+  </defs>
+  <rect id="사각형_16740" data-name="사각형 16740" class="cls-1" width="24" height="24"/>
+  <g id="done_black_24dp" transform="translate(2 2)">
+    <path id="패스_822" data-name="패스 822" class="cls-1" d="M0,0H20V20H0Z"/>
+    <path id="패스_823" data-name="패스 823" class="cls-2" d="M8.135,14.5,5.218,11.585a.825.825,0,1,0-1.167,1.167l3.492,3.492a.83.83,0,0,0,1.175,0l8.833-8.825a.825.825,0,0,0-1.167-1.167Z" transform="translate(-0.635 -1.001)"/>
+  </g>
+</svg>

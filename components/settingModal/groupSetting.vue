@@ -236,14 +236,12 @@
                     let deviceArray = params.schedule.weekDevices;
                     let targetWeek ='';
                     deviceArray.forEach(target => {
-                        console.log(target.working.length);
                         if(target.working.length === 0) {
                             targetWeek = `${targetWeek} ${target.name},`;
                         }
                     });
                     if(targetWeek !== '') {
                         targetWeek = targetWeek.slice(0, -1);
-                        console.log(targetWeek);
                         if(confirm(`공기압축기가 지정되지 않은 스케줄 주차가 있습니다.
 이대로 실행할 경우 해당 주차에는 공기압축기가 동작하지 않습니다.
 

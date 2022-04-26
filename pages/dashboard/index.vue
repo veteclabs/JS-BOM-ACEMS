@@ -115,7 +115,7 @@
         <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'Thermometer'" v-if="equipmentList.temperature"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'Pressure gauge'" v-if=" equipmentList.pressure"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'Flow gauge'" v-if=" equipmentList.flow"/>
-        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"/>
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"  v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -310,7 +310,7 @@
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
-            this.getCompressor();
+            this.getAirCompressor();
             this.getEquipment();
             this.getTrip();
             this.loadingData.show = true;
@@ -356,7 +356,7 @@
                     vm.TPCode = res.data
                 })
             },
-            async getCompressor() {
+            async getAirCompressor() {
                 const vm = this;
                 axios({
                     method: 'get',

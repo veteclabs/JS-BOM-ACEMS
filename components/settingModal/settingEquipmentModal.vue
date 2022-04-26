@@ -122,8 +122,6 @@
     import SimpleVueValidation from 'simple-vue-validator';
     import axios from 'axios';
     import flashModal from '~/components/flashmodal.vue';
-    import VueSimpleRangeSlider from 'vue-simple-range-slider';
-    import 'vue-simple-range-slider/dist/vueSimpleRangeSlider.css';
 
     const {Validator} = SimpleVueValidation;
 
@@ -142,7 +140,6 @@
             axios,
             flashModal,
             SimpleVueValidation,
-            VueSimpleRangeSlider,
         },
         data() {
             return {
@@ -264,8 +261,6 @@
                 vm.params.schedule.min = Number( vm.params.schedule.min);
                 vm.params.schedule.max = Number( vm.params.schedule.max);
 
-                console.log(vm.params)
-
                 this.$validate()
                     .then((success) => {
                         if (success) {
@@ -314,7 +309,6 @@
                 vm.validation.reset();
                 axios.get(`/api/compressor/${id}`
                 ).then((res) => {
-                    console.log(res.data)
                     vm.state = 'update';
                     vm.params = res.data;
                 }).catch((error) => {

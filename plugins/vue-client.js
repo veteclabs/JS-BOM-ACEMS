@@ -1,15 +1,10 @@
 import Vue from 'vue';
 // datepicker
 import datePicker from 'vue-bootstrap-datetimepicker';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 
 // Apex 그래프
 import VueApexCharts from 'vue-apexcharts';
-
-// date 기간선택
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 
 // 벨리데이션
 import SimpleVueValidation from 'simple-vue-validator';
@@ -20,9 +15,6 @@ import VueFilter from 'vue-filter';
 // 스크롤바
 import Vuebar from 'vuebar';
 
-// report
-import VueHtml2Canvas from 'vue-html2canvas';
-
 import VCalendar from 'v-calendar';
 import Dayjs from 'vue-dayjs';
 
@@ -30,7 +22,6 @@ Vue.use(datePicker);
 
 Vue.use(VueApexCharts);
 Vue.component('apexchart', VueApexCharts);
-Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 Vue.use(SimpleVueValidation);
 
 SimpleVueValidation.extendTemplates({
@@ -45,11 +36,9 @@ SimpleVueValidation.extendTemplates({
 });
 Vue.use(VueFilter);
 Vue.use(Vuebar);
-Vue.use(VueHtml2Canvas);
 
 // 쿠키
 Vue.use(require('vue-cookies'));
-
 
 Vue.use(VCalendar);
 

@@ -14,7 +14,6 @@
 </template>
 <script>
     import axios from 'axios';
-    import VueSimpleRangeSlider from 'vue-simple-range-slider';
     import draggable from 'vuedraggable';
     import flashModal from '~/components/flashmodal.vue';
     import groupSetting from '~/components/settingModal/groupSetting.vue';
@@ -24,7 +23,6 @@
         layout: 'settingTemplate',
         components: {
             axios,
-            VueSimpleRangeSlider,
             draggable,
             flashModal,
             groupSetting
