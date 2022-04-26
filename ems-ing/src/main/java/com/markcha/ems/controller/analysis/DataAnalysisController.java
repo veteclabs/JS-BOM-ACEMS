@@ -52,8 +52,61 @@ public class DataAnalysisController {
                 .map(DeviceDto::new)
                 .collect(toList());
     }
-    @GetMapping(value="/data")
+    @GetMapping(value="/data", headers="X-API-VERSION=1")
     public List<HashMap<String, Object>> create(
+            GroupSearchDto groupInsertDto,
+            HistorySearchDto historySearchDto,
+            @RequestParam @Nullable String deviceId
+    ) {
+        groupInsertDto.setDevoceIdT2(deviceId.replace("\"", ""));
+        groupInsertDto.setEnergyId(null);
+        groupInsertDto.setEnergyEqId(null);
+        Boolean isDuo = false;
+        if (!isNull(groupInsertDto.getTagType())) {
+            isDuo = groupInsertDto.getTagType().equals("FLOW") ? true : false;
+        }
+        if (!isNull(historySearchDto.getUsageType())) {
+            if (historySearchDto.getUsageType().equals("PF")) {
+                groupInsertDto.setTagType("PF");
+                historySearchDto.setUsageType("Usage");
+            }
+        }
+
+
+        groupInsertDto.convertTagTypeName();
+        historySearchDto.setEnergyId(28L);
+        groupInsertDto.setEnergyEqId(null);
+        historySearchDto.setIsDuo(isDuo);
+        historySearchDto.setTagNames(new ArrayList<>());
+        historySearchDto.setSecondTagNames(new ArrayList<>());
+        historySearchDto.setTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(groupInsertDto.getDeviceEqId(), groupInsertDto.getTagEqType()).stream()
+                .map(t->t.getTagName())
+                .collect(toList()));
+        if(isDuo) {
+            groupInsertDto.setTagType("PWR_KWh");
+            groupInsertDto.setDeviceEqId(null);
+            historySearchDto.setSecondTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(groupInsertDto.getDeviceEqId(), groupInsertDto.getTagEqType()).stream()
+                    .map(t->t.getTagName())
+                    .collect(toList()));
+        }
+        System.out.println(historySearchDto.getTagNames());
+        System.out.println(historySearchDto.getSecondTagNames());
+        if(historySearchDto.getTimeType().equals("H")) {
+            return dataMapper.getHistoryHour(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("D")) {
+            return dataMapper.getHistoryDay(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("15min")) {
+            return dataMapper.getHistoryMin(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("M")) {
+            return dataMapper.getHistoryMonth(historySearchDto);
+        } else if(historySearchDto.getTimeType().equals("Y")) {
+            return dataMapper.getHistoryYear(historySearchDto);
+        }
+        return null;
+    }
+
+    @GetMapping(value="/data", headers="X-API-VERSION=2")
+    public List<HashMap<String, Object>> show(
             GroupSearchDto groupInsertDto,
             HistorySearchDto historySearchDto,
             @RequestParam @Nullable String deviceId
@@ -105,6 +158,7 @@ public class DataAnalysisController {
         }
         return null;
     }
+
     @GetMapping(value="/core/{groupId}")
     public List<GroupQueryDto> create(
             GroupSearchDto groupInsertDto,

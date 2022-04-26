@@ -270,7 +270,7 @@ public class GroupController {
                     setTagType("PWR_KWh");
                     break;
                 case "FLOW":
-                    setTagType("AIR_PRE");
+                    setTagType("AIR_Con");
                     break;
             }
         }

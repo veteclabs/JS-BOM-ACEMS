@@ -311,4 +311,10 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.tags, tag).fetchJoin()
                 .where(deviceIdEq).fetch();
     }
+    public List<Tag> findAllByTagTypeAndIdsV2(BooleanExpression deviceEqId, BooleanExpression tagEqType) {
+        return query.select(tag).distinct()
+                .from(tag)
+                .leftJoin(tag.device, device).fetchJoin()
+                .where(deviceEqId, tagEqType).fetch();
+    }
 }
