@@ -172,10 +172,7 @@ exports.controllFacility = async (groupId, powerState) => {
                     }, 3000);
 
                 }
-
-
-                await conn.query(`INSERT INTO ing.alarm ('check_in', 'event_date', 'kwh_value', 'message', 'occurrence_time', 'prss_value', 'recover_date', 'recover_time', 'temp_value', 'type', 'tag_id', 'trip_id') VALUES ( 0, date(NOW()), NULL, 'Motor Winding Temperature Failure', TIME(NOW()), null, NULL, NULL, null, 'error', ${powerTag.id}, null);`);
-
+                await axios.get(`http://localhost:8031/api/alarm/${powerTag.id}`);
                 return false;
             }   else if (facilityState === 1 && powerState === 'OFF') {
                 // 정지 제어 신호 보내기
@@ -210,14 +207,14 @@ exports.controllFacility = async (groupId, powerState) => {
                         }
                     }, 3000);
                 }
-                await conn.query(`INSERT INTO ing.alarm ('check_in', 'event_date', 'kwh_value', 'message', 'occurrence_time', 'prss_value', 'recover_date', 'recover_time', 'temp_value', 'type', 'tag_id', 'trip_id') VALUES ( 0, date(NOW()), NULL, 'Motor Winding Temperature Failure', TIME(NOW()), null, NULL, NULL, null, 'error', ${powerTag.id}, null);`);
-
+                await axios.get(`http://localhost:8031/api/alarm/${powerTag.id}`);
                 return false;
             } else if (facilityState === 1 && powerState === 'ON') {
                 return false;
             } else if (facilityState === 0 && powerState === 'OFF') {
                 return false;
             }
+
 
         }
         return true;

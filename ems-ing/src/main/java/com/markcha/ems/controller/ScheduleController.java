@@ -7,15 +7,20 @@ import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.dto.order.OrderDto;
+import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
+import com.markcha.ems.exception.custom.MethodNotAllowedException;
+import com.markcha.ems.repository.AlarmDataRepository;
 import com.markcha.ems.repository.DayOfWeekDataRepository;
+import com.markcha.ems.repository.TagDataRepository;
 import com.markcha.ems.repository.group.dto.DeviceQueryDto;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
+import com.markcha.ems.repository.tag.TagDslRepositoryIml;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -54,6 +60,8 @@ public class ScheduleController {
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
     private final OrderDslRepositoryImpl orderDslRepository;
     private final DayOfWeekDataRepository dayOfWeekDataRepository;
+    private final AlarmDataRepository alarmDataRepositorya;
+    private final TagDslRepositoryIml tagDslRepositoryIml;
     private final WebaccessApiServiceImpl webaccessApiService;
 
     @GetMapping(value="/schedules")
@@ -117,6 +125,25 @@ public class ScheduleController {
             });
         });
         return devices;
+    }
+    @PostMapping(value="/alarm/{tagId}")
+    public ApiResponseDto etcCreate2(
+            @PathVariable("tagId") Long tagId
+    ) {
+
+        Alarm alarm = new Alarm();
+        alarm.setOccurrenceTime(LocalTime.now());
+        alarm.setCheckIn(false);
+        alarm.setTempValue(null);
+        alarm.setPrssValue(null);
+        alarm.setKwhValue(null);
+        alarm.setMessage("에어 컴프레셔 제어 실패");
+        alarm.setEventDate(LocalDate.now());
+        alarm.setType("error");
+        alarm.setTrip(null);
+        alarm.setTag(tagDslRepositoryIml.getOneById(tagId));
+        alarmDataRepositorya.save(alarm);
+        return new ApiResponseDto(dbInsertMsg);
     }
     @Data
     @NoArgsConstructor

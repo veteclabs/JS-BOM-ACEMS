@@ -34,9 +34,9 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
                 request.getDescription(false));
         ResponseEntity responseEntity = new ResponseEntity(exceptionResponse, NOT_FOUND);
-
         return responseEntity;
     }
+
     @ExceptionHandler(MethodNotAllowedException.class)
     public final ResponseEntity<Object> handleMethodNotAllowedException(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),

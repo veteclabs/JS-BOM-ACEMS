@@ -35,4 +35,9 @@ public class TagDslRepositoryIml {
                 ).fetchOne();
 
     }
+    public Tag getOneById(Long id) {
+        return query.selectFrom(tag)
+                .where(tag.id.eq(id))
+                .fetchOne();
+    }
 }

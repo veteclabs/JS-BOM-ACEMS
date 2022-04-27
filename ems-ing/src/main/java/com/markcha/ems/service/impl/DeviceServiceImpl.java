@@ -60,6 +60,7 @@ public class DeviceServiceImpl implements DeviceService {
         deviceDataRepository.save(save);
         return true;
     }
+
     @Override
     public Boolean updateDevice(DeviceInsertDto deviceInsert) {
         Device seletedDevice = deviceDslRepository.getOneById(deviceInsert.getId());
