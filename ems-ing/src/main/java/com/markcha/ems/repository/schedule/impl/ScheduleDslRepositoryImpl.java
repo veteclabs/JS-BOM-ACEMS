@@ -40,7 +40,12 @@ public class ScheduleDslRepositoryImpl {
                 .where(schedule.isActive.eq(true))
                 .fetch();
     }
-
+    public List<Schedule> findAllCoreSchedule() {
+        return query.selectFrom(schedule)
+                .leftJoin(schedule.groups, group).fetchJoin()
+                .where(group.isNotNull(),schedule.isActive.eq(true))
+                .fetch();
+    }
     public Group findRootGroupId(Long id) {
         return query.select(group)
                 .from(group).distinct()

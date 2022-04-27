@@ -2,19 +2,7 @@ const schedule = require("node-schedule");
 const axios = require("axios");
 const pool = require('../config/database.js');
 const Dayjs = require("dayjs");
-//const mariadb = require('mariadb');
-// require('dotenv').config();
-// const pool = mariadb.createPool({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     port: process.env.DB_PORT,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_DATABASE,
-//     multipleStatements: true,
-//     connectionLimit:5,
-// });
-// console.log(process.env.DB_HOST)
-// console.log(dbConfig);
+
 setInterval(async () => {
     let conn;
     try {
@@ -38,6 +26,7 @@ setInterval(async () => {
         // console.log(newThreadList)
         distoryThreadList.forEach(t=>{
             let scd = schedules.filter(k=>k.id === t)
+            console.log(t, "번 스레드 삭제")
             schedule.cancelJob(String(t));
         })
         newThreadList.forEach(t=>{
@@ -51,8 +40,7 @@ setInterval(async () => {
                     const now = Dayjs();
 
                     let dayOfWeek = now.day()
-                    console.log(typeof(parseInt(scd.id)))
-                    console.log(parseInt(scd.id))
+
                     let schedules = await axios.get(`http://localhost:8031/api/schedule/${parseInt(scd.id)}`);
                     let powerState = '';
                     for (let schedule of schedules.data) {
@@ -82,7 +70,7 @@ setInterval(async () => {
                             if (powerState !== 'STAY') {
 
                                 if (schedule.isGroup) {
-                                    await this.groupOrder(scd.scheduleId, week, powerState);
+                                    await this.groupOrder(schedule.scheduleId, week, powerState);
                                 } else {
                                     await this.controllFacility(schedule.groupId, powerState);
                                 }
@@ -103,57 +91,7 @@ setInterval(async () => {
     }
 }, 5000);
 
-exports.checkPoserState = async (scheduleId) => {
-    let conn;
-    try {
-        const now = Dayjs();
-        conn = await pool.getConnection();
-        let query = `SELECT (weekofyear("${now.format("YYYY-MM-DD")}" + INTERVAL 1 day) - WEEKOFYEAR(LAST_DAY(("${now.format("YYYY-MM-DD")}" + INTERVAL 1 DAY) - INTERVAL 1 MONTH) + interval 1 DAY)) + 1 AS \`WEEK\`;`
 
-        let week = await conn.query(query);
-        week = week === 6?1:week;
-        week = week[0].WEEK;
-        let dayOfWeek = now.day()
-        let schedules = await axios.get(`http://localhost:8031/api/schedule/${scheduleId}`);
-        let powerState = '';
-        for (let schedule of schedules.data) {
-
-            if (schedule.isActive) {
-                let startTime = new Date()
-                let now2 = new Date();
-                let endTime = new Date()
-
-                startTime.setHours(Number(schedule.startTime.substring(0, 2)), Number(schedule.startTime.substring(3, 5)), Number(schedule.startTime.substring(6, 8)))
-                endTime.setHours(Number(schedule.stopTime.substring(0, 2)), Number(schedule.stopTime.substring(3, 5)), Number(schedule.stopTime.substring(6, 8)))
-                if ((startTime <= now2 && now2 <= endTime) && schedule.dayOfWeeks.includes(dayOfWeek) && schedule.weeks.includes(week)) {
-                    if (schedule.isGroup) {
-                        if (schedule.min > schedule.pressure) {
-                            powerState = 'ON'
-                        } else if (schedule.max < schedule.pressure) {
-                            powerState = 'OFF'
-                        } else {
-                            powerState = 'STAY'
-                        }
-                    } else {
-                        powerState = "ON"
-                    }
-                } else {
-                    powerState = 'OFF'
-                }
-                if (powerState !== 'STAY') {
-
-                    if (schedule.isGroup) {
-                        await this.groupOrder(scheduleId, week, powerState);
-                    } else {
-                        await this.controllFacility(schedule.groupId, powerState);
-                    }
-                }
-            }
-        }
-    } catch (e) {
-        console.log(e)
-    }
-}
 exports.groupOrder = async (scheduleId, week, powerState) => {
     try {
         let orders = await axios.get(`http://localhost:8031/api/schedule/${scheduleId}/week/${week}`);
@@ -174,7 +112,9 @@ exports.groupOrder = async (scheduleId, week, powerState) => {
 }
 
 exports.controllFacility = async (groupId, powerState) => {
+    let conn;
     try {
+        conn = await pool.getConnection();
         let powerCode = "COMP_Power";
         let localCode = "COMP_Local";
         let devices = await axios.get(`http://localhost:8031/api/devices/${groupId}`, {data:{
@@ -234,7 +174,7 @@ exports.controllFacility = async (groupId, powerState) => {
                 }
 
 
-                // await conn.query('insert into alarm values()', now.toDate());
+                await conn.query(`INSERT INTO ing.alarm ('check_in', 'event_date', 'kwh_value', 'message', 'occurrence_time', 'prss_value', 'recover_date', 'recover_time', 'temp_value', 'type', 'tag_id', 'trip_id') VALUES ( 0, date(NOW()), NULL, 'Motor Winding Temperature Failure', TIME(NOW()), null, NULL, NULL, null, 'error', ${powerTag.id}, null);`);
 
                 return false;
             }   else if (facilityState === 1 && powerState === 'OFF') {
@@ -270,8 +210,7 @@ exports.controllFacility = async (groupId, powerState) => {
                         }
                     }, 3000);
                 }
-
-                // await conn.query('insert into alarm values()', now.toDate());
+                await conn.query(`INSERT INTO ing.alarm ('check_in', 'event_date', 'kwh_value', 'message', 'occurrence_time', 'prss_value', 'recover_date', 'recover_time', 'temp_value', 'type', 'tag_id', 'trip_id') VALUES ( 0, date(NOW()), NULL, 'Motor Winding Temperature Failure', TIME(NOW()), null, NULL, NULL, null, 'error', ${powerTag.id}, null);`);
 
                 return false;
             } else if (facilityState === 1 && powerState === 'ON') {
@@ -284,5 +223,9 @@ exports.controllFacility = async (groupId, powerState) => {
         return true;
     } catch (e) {
         console.log(e)
+    } finally {
+        if (conn) {
+            await conn.release();
+        }
     }
 }

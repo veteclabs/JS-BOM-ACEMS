@@ -6,6 +6,7 @@ import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Equipment;
 import com.markcha.ems.domain.Group;
 import com.markcha.ems.domain.Tag;
+import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.EquipmentDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
@@ -58,6 +59,13 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Boolean updateDevice(DeviceInsertDto deviceInsert) {
         Device seletedDevice = deviceDslRepository.getOneById(deviceInsert.getId());
+        long selectGroupPressureCount = deviceDslRepository.countingGroupHavePressureDevice(deviceInsert.getGroupId());
+
+
+        if(selectGroupPressureCount >= 1 && seletedDevice.getGroup().getId() != deviceInsert.getGroupId()) {
+            throw new MethodNotAllowedException("선택된 그룹은 이미 압력계가 존재합니다.\n(해당 그룹에 2개 이상의 압력계가 존재할 경우 그룹 스케줄 제어가 불가능합니다.)");
+        }
+
 
         Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),

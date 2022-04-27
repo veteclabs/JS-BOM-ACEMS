@@ -105,7 +105,6 @@ public class DeviceController {
             @RequestBody DeviceInsertDto deviceInsert,
             @PathVariable("deviceId") Long deviceId
     ) {
-//        long selectGroupPressureCount = deviceDslRepository.countingGroupHavePressureDevice(deviceInsert.getGroupId());
 
         Boolean haveGroup = !isNull(deviceDataRepository.getOne(deviceId).getGroup())? true: false;
         if (deviceDslRepository.countingCompressorHavePowerDevice() == 1
@@ -114,9 +113,7 @@ public class DeviceController {
         ) {
             throw new MethodNotAllowedException("전체 전력계 중 하나 이상의 컴프레셔 그룹이 필요합니다.");
         }
-//        if(selectGroupPressureCount >= 1) {
-//            throw new MethodNotAllowedException("선택된 그룹은 이미 압력계가 존재합니다.\n(해당 그룹에 2개 이상의 압력계가 존재할 경우 그룹 스케줄 제어가 불가능합니다.)");
-//        }
+
         deviceInsert.setId(deviceId);
         deviceService.updateDevice(deviceInsert);
         return new ApiResponseDto(dbUpdateMsg);

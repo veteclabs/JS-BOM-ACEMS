@@ -60,7 +60,7 @@ public class ScheduleController {
     public List<ScheduleSimpleDto> schedules(
     ) {
 
-        return scheduleDslRepository.getAll().stream()
+        return scheduleDslRepository.findAllCoreSchedule().stream()
                 .map(ScheduleSimpleDto::new)
                 .collect(toList());
     }
@@ -99,7 +99,6 @@ public class ScheduleController {
         groupSearchDto.getEquipmentType();
         List<Long> rootId = new ArrayList<>();
         rootId.add(groupId);
-//        groupSearchDto.setTagInTypes(tag.type.in(groupSearchDto.getTagTypes()));
         List<DeviceConDto> devices = new ArrayList<>();
         groupDynamicRepository.getAnalysisLocations(rootId, groupSearchDto, true).stream()
                 .map(t -> new GroupQueryDto(t, false))

@@ -180,7 +180,7 @@ public class GroupDslRepositoryImpl{
         List<Long> groupIds = groups.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        Device devices = query.selectFrom(device)
+        List<Device> devicesList = query.selectFrom(device)
                 .leftJoin(device.tags, tag).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
@@ -188,7 +188,9 @@ public class GroupDslRepositoryImpl{
                         device.group.id.in(groupIds)
                         , tag.type.eq("AIR_PRE")
                         ,equipment.type.eq(PRESSURE_GAUGE)
-                ).limit(1).fetchOne();
+                ).fetch();
+        Device devices = null;
+        if(!isNull(devicesList) && devicesList.size() > 0) devices = devicesList.get(0);
 
         // webaccess 태그 이름으로 조회 //
         if(!isNull(devices)) {
@@ -196,12 +198,15 @@ public class GroupDslRepositoryImpl{
                     .map(k -> k.getTagName())
                     .collect(toList());
             Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
-            devices.getTags().forEach(k->{
-                devices.setPressure(tagValues.get(k.getTagName()));
-            });
+            if(!isNull(devices)) {
+                Device finalDevices = devices;
+                devices.getTags().forEach(k -> {
+                    finalDevices.setPressure(tagValues.get(k.getTagName()));
+                });
+                Device finalDevices1 = devices;
+                groups.forEach(t->t.setTagetDevice(finalDevices1));
+            }
 
-
-            groups.forEach(t->t.setTagetDevice(devices));
         }
 
 

@@ -32,6 +32,6 @@ public class AlarmDslRepositoryImpl {
                 .leftJoin(device.group, group).fetchJoin()
                 .where(
                         group.id.eq(groupId)
-                ).fetch();
+                ).orderBy(alarm.id.desc()).fetch();
     }
 }
