@@ -30,6 +30,7 @@ public class TagDto {
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
         this.type = tag.getType();
+        this.value = tag.getValue();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
     }

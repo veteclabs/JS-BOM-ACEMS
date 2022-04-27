@@ -270,24 +270,24 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
-                         device.group.isNull()
+                         group.isNull()
                         ,equipment.type.ne(AIR_COMPRESSOR)
                 ).fetch();
     }
     public List<Device> findAllAirOrphs() {
         QGroup parentGroup = new QGroup("pg");
         QDevice groupDevice = new QDevice("gd");
-        QTag groupTags = new QTag("groupTags");
+        QEquipment groupEquipment = new QEquipment("groupEquipment");
         return query.selectFrom(device)
                 .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.deviceSet, groupDevice).fetchJoin()
+                .leftJoin(groupDevice.equipment, groupEquipment).fetchJoin()
                 .leftJoin(group.parent, parentGroup).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(device.tags, tag).fetchJoin()
-                .leftJoin(group.deviceSet, groupDevice).fetchJoin()
-                .leftJoin(groupDevice.tags, groupTags).fetchJoin()
                 .where(
-                        parentGroup.isNull(),
-                        group.type.eq(OBJECT)
+                         parentGroup.isNull()
+                        ,group.type.eq(OBJECT)
+                        ,groupEquipment.type.ne(AIR_COMPRESSOR)
                 ).fetch();
     }
     public Device getOneById(Long id) {

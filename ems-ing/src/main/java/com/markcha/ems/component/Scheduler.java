@@ -25,6 +25,7 @@ public class Scheduler {
     private final AlarmDataRepository alarmDataRepository;
 
     private static List<Tag> savedTags = null;
+    private static Boolean alarmInsert = false;
 
     @Scheduled(fixedDelay = 1000)
     public void alarmFixedRateTask() {
@@ -112,9 +113,12 @@ public class Scheduler {
             alarm.setTag(newTag);
             newAlarms.add(alarm);
         }
-        alarmDataRepository.saveAll(newAlarms);
+
+        if(alarmInsert) alarmDataRepository.saveAll(newAlarms);
+
         if(isNull(savedTags)){
             savedTags = new ArrayList<>(takenAlarmTags);
+            alarmInsert = true;
         } else {
             savedTags = new ArrayList<>();
             savedTags.addAll(takenAlarmTags);

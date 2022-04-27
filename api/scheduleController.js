@@ -1,6 +1,6 @@
 const schedule = require("node-schedule");
 const axios = require("axios");
-const pool = require('./database');
+const pool = require('../config/database');
 const Dayjs = require("dayjs");
 
 setInterval(async () => {
@@ -47,7 +47,7 @@ exports.checkPoserState = async (scheduleId) => {
         let schedules = await axios.get(`http://localhost:8031/api/schedule/${scheduleId}`);
         let powerState = '';
         for (let schedule of schedules.data) {
-            console.log(schedule)
+
             if (schedule.isActive) {
                 let startTime = new Date()
                 let now2 = new Date();
@@ -70,7 +70,6 @@ exports.checkPoserState = async (scheduleId) => {
                 } else {
                     powerState = 'OFF'
                 }
-                console.log(powerState);
                 if (powerState !== 'STAY') {
 
                     if (schedule.isGroup) {
@@ -89,17 +88,14 @@ exports.checkPoserState = async (scheduleId) => {
         }
     }
 }
-this.checkPoserState(29)
 exports.groupOrder = async (scheduleId, week, powerState) => {
     try {
         let orders = await axios.get(`http://localhost:8031/api/schedule/${scheduleId}/week/${week}`);
         orders = orders.data
-        console.log(orders)
         let controllerResult = null;
         if (!orders.length !== 0) {
             for (let order of orders) {
                 controllerResult = await this.controllFacility(order.groupId, powerState);
-                console.log(controllerResult);
                 if (controllerResult) {
                     return true;
                 }
@@ -126,7 +122,6 @@ exports.controllFacility = async (groupId, powerState) => {
 
         for (let device of devices.data) {
 
-            console.log(device);
             const localTag = device.tags[localCode];
             const powerTag = device.tags[powerCode];
             let facilityState = await axios.post(`http://localhost:8031/WaWebService/Json/GetTagValue/BOM`, {
