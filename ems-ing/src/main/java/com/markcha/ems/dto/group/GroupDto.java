@@ -95,15 +95,6 @@ public class GroupDto {
             }
         });
         if(devices.containsKey("airCompressor")) {
-            if(!isNull(group.getSchedule())) {
-                this.schedule = new ScheduleDto(group.getSchedule());
-                this.schedule.setDayOfWeeks(group.getSchedule().getDayOfWeekMappers().stream()
-                        .map((dowmp) -> {
-                            return new DayOfWeekDto(dowmp.getDayOfWeek());
-                        })
-                        .sorted(Comparator.comparing(DayOfWeekDto::getId))
-                        .collect(toList()));
-            }
             DeviceDto compressor = devices.get("airCompressor").get(0);
             devices.remove("airCompressor");
             this.tags = compressor.getTags();

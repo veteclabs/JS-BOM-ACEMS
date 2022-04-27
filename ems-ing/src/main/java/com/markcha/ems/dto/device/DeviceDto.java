@@ -30,7 +30,7 @@ public class DeviceDto {
     private Map<String, TagDto> tags = new HashMap<>();
     @JsonIgnore
     private Long groupId;
-    Map<String, List<DeviceDto>> devices = new HashMap<>();
+    Map<String, List<DeviceDto>> devices;
     public DeviceDto(Device device) {
         this.id = device.getId();
         this.name = device.getName();
@@ -44,6 +44,7 @@ public class DeviceDto {
         if (!isNull(device.getGroup())) {
             this.groupId = device.getGroup().getId();
         }
+
     }
     public DeviceDto(Device device, Boolean forGroup) {
         if(!isNull(device.getGroup())) {
@@ -54,6 +55,27 @@ public class DeviceDto {
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
         if (!isNull(device.getTagList())) {
             this.tags = device.getTagList().stream()
+                    .collect(toMap(TagDto::getType, t -> t));
+        }
+    }
+    public DeviceDto(Device device, Boolean forGroup, Boolean deviceShow) {
+        if(!isNull(device.getGroup())) {
+            this.id = device.getGroup().getId();
+            this.name = device.getGroup().getName();
+            if (!isNull(device.getGroup().getDeviceSet())) {
+                this.devices = device.getGroup().getDeviceSet().stream()
+                        .map(t->new DeviceDto(t))
+                        .collect(groupingBy(t->t.getType().getNickname()));
+            }
+        } else {
+            this.id = device.getId();
+            this.name = device.getName();
+        }
+        this.deviceId = device.getId();
+        if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
+        if (!isNull(device.getTags())) {
+            this.tags = device.getTags().stream()
+                    .map(TagDto::new)
                     .collect(toMap(TagDto::getType, t -> t));
         }
 

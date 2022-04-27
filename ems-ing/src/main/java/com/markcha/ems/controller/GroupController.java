@@ -27,10 +27,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.markcha.ems.domain.EquipmentType.POWER_METER;
@@ -85,44 +82,25 @@ public class GroupController {
     }
     @GetMapping(value="/orphans")
     public Map<String, List<DeviceDto>> orphans() {
-        List<DeviceDto> devices = new ArrayList<>();
+        List<Device> devices = new ArrayList<>();
         List<Long> deviceIds = new ArrayList<>();
+        devices.addAll(deviceDslRepository.findAllAirOrphs());
+        devices.addAll(deviceDslRepository.findAllEtcOrphs());
 
-        devices.addAll(deviceDslRepository.findAllAirOrphs().stream()
-                .map(t->{
-                    deviceIds.add(t.getId());
-                    return new DeviceDto(t,true);
-                })
-                .collect(toList()));
-        devices.addAll(deviceDslRepository.findAllEtcOrphs().stream()
-                .map(t-> {
-                    deviceIds.add(t.getId());
-                    return new DeviceDto(t);
-                })
-                .collect(toList()));
+        List<Tag> tags = groupDslRepository.getTagsByDeviceIds(devices.stream()
+                .map(t->t.getId()).collect(toList()));
 
-        List<TagDto> tags = groupDslRepository.getTagsByDeviceIds(deviceIds).stream()
-                .map(TagDto::new)
-                .collect(toList());
-
-        List<String> tagNames = tags.stream()
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tags.stream()
                 .map(k -> k.getTagName())
-                .collect(toList());
+                .collect(toList()));
+        tags.forEach(t ->  t.setValue(tagValues.get(t.getTagName())));
 
-        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
-        tags.forEach(t -> {
-            t.setValue(tagValues.get(t.getTagName()));
-        });
-
-        Map<Long, List<TagDto>> groupByTag = tags.stream()
-                .collect(groupingBy(t -> t.getDeviceId()));
-        devices.forEach(t->{
-            List<TagDto> tagDtos = groupByTag.get(t.getDeviceId());
-            t.setTags(tagDtos.stream()
-                    .collect(toMap(TagDto::getType, tagDto -> tagDto)));
-        });
+        Map<Long, List<Tag>> groupByTag = tags.stream()
+                .collect(groupingBy(t -> t.getDevice().getId()));
+        devices.forEach(t->t.setTags(new HashSet<>(groupByTag.get(t.getId()))));
 
         Map<String, List<DeviceDto>> collect = devices.stream()
+                .map(t->new DeviceDto(t , true, true))
                 .collect(groupingBy(t -> t.getType().getNickname()));
         List<String> typeList = new ArrayList<>();
         typeList.add("power");

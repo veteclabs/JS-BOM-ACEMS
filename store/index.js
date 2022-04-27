@@ -42,6 +42,7 @@ export const actions = {
         state.Snotify.error(message);
     },
     async login({commit}, {id, password}) {
+        console.log(id, password)
         return fetch('/nuxt/user/login', {
             credentials: 'same-origin',
             method: 'POST',
