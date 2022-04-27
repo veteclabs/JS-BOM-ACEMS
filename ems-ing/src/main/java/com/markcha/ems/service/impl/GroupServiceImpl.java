@@ -303,6 +303,11 @@ public class GroupServiceImpl {
         orderDataRepository.deleteAllInBatch(allByDeviceId);
         return true;
     }
+
+    public void unActiveSchedule(Group group) {
+
+    }
+
     public static <T> Collector<T, ?, T> toSingleton() {
         return Collectors.collectingAndThen(
                 Collectors.toList(),

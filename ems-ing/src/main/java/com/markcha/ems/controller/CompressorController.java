@@ -7,6 +7,7 @@ import com.markcha.ems.controller.analysis.DataAnalysisController;
 import com.markcha.ems.domain.EquipmentType;
 import com.markcha.ems.domain.Group;
 import com.markcha.ems.domain.QGroup;
+import com.markcha.ems.domain.Tag;
 import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
@@ -21,7 +22,9 @@ import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
+import com.markcha.ems.repository.tag.TagDslRepositoryIml;
 import com.markcha.ems.service.impl.CompressorServiceImpl;
+import com.markcha.ems.service.impl.GroupServiceImpl;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +61,8 @@ public class CompressorController {
     private final GroupDataRepository groupDataRepository;
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
     private final WebaccessApiServiceImpl webaccessApiService;
+    private final TagDslRepositoryIml tagDslRepositoryIml;
+    private final GroupServiceImpl groupService;
 
     @GetMapping(value="/compressors", headers="setting=true")
     public List<CompressorDto> compressors(
@@ -129,6 +134,18 @@ public class CompressorController {
     ) {
         compressorInsertDto.setId(compressorId);
         compressorService.updateCompressor(compressorInsertDto);
+        return new ApiResponseDto(dbUpdateMsg);
+    }
+    @PutMapping(value="/compressor/{groupId}/power/{powerCode}")
+    public ApiResponseDto create2(
+            @PathVariable("groupId") Long groupId,
+            @PathVariable("powerCode") Integer powerCode
+    ) {
+        TagDto tag = new TagDto(tagDslRepositoryIml.findAllByGroupId(groupId));
+        tag.setValue(powerCode);
+        webaccessApiService.setTagValues(new ArrayList<>(List.of(tag)));
+        List<Group> broGroups = groupDslRepository.findAllBroGroupByBroId(groupId);
+//        groupService.
         return new ApiResponseDto(dbUpdateMsg);
     }
     @DeleteMapping(value="/compressors")

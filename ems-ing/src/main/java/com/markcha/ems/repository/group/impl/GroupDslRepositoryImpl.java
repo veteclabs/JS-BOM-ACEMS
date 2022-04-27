@@ -112,7 +112,18 @@ public class GroupDslRepositoryImpl{
         groupEntity.setDeviceSet(new HashSet<>(devices));
         return groupEntity;
     }
-    
+    public List<Group> findAllBroGroupByBroId(Long id) {
+        QGroup childGroup = new QGroup("cg");
+        QGroup parentGroup = new QGroup("pg");
+        QGroup broGroup = new QGroup("bg");
+        return query.select(broGroup)
+                .from(childGroup)
+                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
+                .leftJoin(parentGroup.children, broGroup).fetchJoin()
+                .leftJoin(broGroup.schedule, schedule).fetchJoin()
+                .where(childGroup.id.eq(id))
+                .fetch();
+    }
     public Group getOneByDeviceId(Long id) {
         return query.select(group)
                 .from(group)

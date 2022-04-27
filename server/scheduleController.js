@@ -1,37 +1,107 @@
 const schedule = require("node-schedule");
 const axios = require("axios");
-const pool = require('../config/database');
+const pool = require('../config/database.js');
 const Dayjs = require("dayjs");
-
+//const mariadb = require('mariadb');
+// require('dotenv').config();
+// const pool = mariadb.createPool({
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     port: process.env.DB_PORT,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_DATABASE,
+//     multipleStatements: true,
+//     connectionLimit:5,
+// });
+// console.log(process.env.DB_HOST)
+// console.log(dbConfig);
 setInterval(async () => {
+    let conn;
     try {
+        const now = Dayjs();
         let schedules = await axios.get("http://localhost:8031/api/schedules");
         schedules = schedules.data
         let scheduleIds = schedules.map(t=>t.id)
 
 
         let threadList = Object.keys(schedule.scheduledJobs)
+        // console.log(schedule.scheduledJobs)
         let threaIds = threadList.map(t => parseInt(t, 10))
+        let query = `SELECT (weekofyear("${now.format("YYYY-MM-DD")}" + INTERVAL 1 day) - WEEKOFYEAR(LAST_DAY(("${now.format("YYYY-MM-DD")}" + INTERVAL 1 DAY) - INTERVAL 1 MONTH) + interval 1 DAY)) + 1 AS \`WEEK\`;`
+
+        conn = await pool.getConnection();
+        let week = await conn.query(query);
+        week = week[0].WEEK;
+        week = week === 6?1:week;
         let distoryThreadList = threaIds.filter(x => !scheduleIds.includes(x));
         let newThreadList = scheduleIds.filter(x => !threaIds.includes(x));
+        // console.log(newThreadList)
         distoryThreadList.forEach(t=>{
             let scd = schedules.filter(k=>k.id === t)
-            console.log("(" + t + ") 번 스래드 삭제")
             schedule.cancelJob(String(t));
         })
         newThreadList.forEach(t=>{
 
             let scd = schedules.filter(k=>k.id === t)[0]
-
             const rule = new schedule.RecurrenceRule();
+            console.log(t, "번 스레드 생성")
             rule.second = scd.interval
-            console.log("(" + t + ") 번 스래드 생성")
-            // schedule.scheduleJob(String(t), rule,this.checkPoserState(t));
+            schedule.scheduleJob(String(t), rule, async () => {
+                try {
+                    const now = Dayjs();
+
+                    let dayOfWeek = now.day()
+                    console.log(typeof(parseInt(scd.id)))
+                    console.log(parseInt(scd.id))
+                    let schedules = await axios.get(`http://localhost:8031/api/schedule/${parseInt(scd.id)}`);
+                    let powerState = '';
+                    for (let schedule of schedules.data) {
+
+                        if (schedule.isActive) {
+                            let startTime = new Date()
+                            let now2 = new Date();
+                            let endTime = new Date()
+
+                            startTime.setHours(Number(schedule.startTime.substring(0, 2)), Number(schedule.startTime.substring(3, 5)), Number(schedule.startTime.substring(6, 8)))
+                            endTime.setHours(Number(schedule.stopTime.substring(0, 2)), Number(schedule.stopTime.substring(3, 5)), Number(schedule.stopTime.substring(6, 8)))
+                            if ((startTime <= now2 && now2 <= endTime) && schedule.dayOfWeeks.includes(dayOfWeek) && schedule.weeks.includes(week)) {
+                                if (schedule.isGroup) {
+                                    if (schedule.min > schedule.pressure) {
+                                        powerState = 'ON'
+                                    } else if (schedule.max < schedule.pressure) {
+                                        powerState = 'OFF'
+                                    } else {
+                                        powerState = 'STAY'
+                                    }
+                                } else {
+                                    powerState = "ON"
+                                }
+                            } else {
+                                powerState = 'OFF'
+                            }
+                            if (powerState !== 'STAY') {
+
+                                if (schedule.isGroup) {
+                                    await this.groupOrder(scd.scheduleId, week, powerState);
+                                } else {
+                                    await this.controllFacility(schedule.groupId, powerState);
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.log(e)
+                }
+            });
         })
     } catch (e) {
         console.log(e)
+    } finally {
+        if (conn) {
+            await conn.release();
+        }
     }
-}, 5000)
+}, 5000);
 
 exports.checkPoserState = async (scheduleId) => {
     let conn;
@@ -82,10 +152,6 @@ exports.checkPoserState = async (scheduleId) => {
         }
     } catch (e) {
         console.log(e)
-    } finally {
-        if (conn) {
-            await conn.release();
-        }
     }
 }
 exports.groupOrder = async (scheduleId, week, powerState) => {
