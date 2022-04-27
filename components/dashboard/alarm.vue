@@ -7,9 +7,9 @@
             <DxDataGrid :data-source="alarmList"
                         :show-borders="false"
                         key-expr="id"
-                        :column-min-width="100"
                         :allow-column-resizing="true"
                         :allowColumnReordering="true"
+                        :column-min-width="100"
                         :column-auto-width="true"
                         @exporting="onExporting">
                 <DxScrolling mode="virtual"/>
@@ -21,7 +21,7 @@
                 <DxColumn data-field="prssValue" caption="압력" :visible="false"/>
                 <DxColumn data-field="kwhValue" caption="전기" :visible="false"/>
                 <DxColumn data-field="eventDate" caption="Date" alignment="center" cell-template="dateTimeTemplate"/>
-                <DxColumn data-field="checkIn"  cell-template="recoverTimeTemplate" width="170"/>
+                <DxColumn data-field="checkIn"  cell-template="recoverTimeTemplate"/>
                 <DxPaging :enabled="true" :page-size="20"/>
                 <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                 <DxExport :enabled="true" :allow-export-selected-data="true" file-name="alarmList"/>
@@ -120,12 +120,17 @@
 
                 const workbook = new Workbook();
                 const worksheet = workbook.addWorksheet('Sheet');
+                worksheet.columns = [
+                    { width: 'auto' }, { width: 'auto' }, { width: 'auto' }, { width: 21 }, { width: 21 },
+                    { width: 21 }, { width: 21 }, { width: 21 }
+                ];
                 exportDataGrid({
                     component: e.component,
                     worksheet,
                     customizeCell: ({gridCell, excelCell}) => {
                         if (gridCell.rowType === 'data') {
                             if (gridCell.column.dataField === 'eventDate') {
+                                console.log(excelCell.column);
                                 excelCell.value = `${gridCell.data.eventDate} ${gridCell.data.occurrenceTime}`;
                             }
                             if (gridCell.column.dataField === 'checkIn') {
