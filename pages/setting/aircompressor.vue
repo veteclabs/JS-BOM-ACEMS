@@ -22,19 +22,23 @@
                             @selection-changed="selectionChanged"
                             :onCellClick="updateEquipment"
                             key-expr="id"
+                            :allow-column-resizing="true"
+                            :allowColumnReordering="true"
+                            :column-min-width="100"
                     >
+                        <DxScrolling mode="virtual"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
-                        <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
+                        <DxColumn data-field="id" caption="id" alignment="center" :width="60"/>
                         <DxColumn data-field="groupName" caption="그룹명" alignment="center"/>
                         <DxColumn data-field="name" caption="공기압축기명" alignment="center"
                                   cell-template="blockGridTemplate"/>
-                        <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center" width="130"
+                        <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center" :width="130"
                                   cell-template="ONOFFTemplate"/>
-                        <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" width="100"/>
-                        <DxColumn data-field="schedule.max" caption="최대압력" alignment="center" width="100"/>
+                        <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" :width="50"/>
+                        <DxColumn data-field="schedule.max" caption="최대압력" alignment="center" :width="50"/>
                         <DxColumn data-field="schedule.dayOfWeeks" caption="요일" alignment="center"
-                                  cell-template="dayOfWeeksTemplate"/>
+                                  cell-template="dayOfWeeksTemplate" :width="260"/>
                         <DxColumn data-field="schedule.startTime" caption="시작시간" alignment="center" width="100"/>
                         <DxColumn data-field="schedule.stopTime" caption="종료시간" alignment="center" width="100"/>
                         <DxPaging :enabled="true" :page-size="20"/>
@@ -66,6 +70,7 @@
         DxSelection,
         DxLookup,
         DxPager,
+        DxScrolling,
         DxSearchPanel,
     } from 'devextreme-vue/data-grid';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
@@ -93,6 +98,7 @@
             DxSelection,
             DxLookup,
             DxPager,
+            DxScrolling,
             DxSearchPanel,
             blockGridTemplate,
             ONOFFTemplate,

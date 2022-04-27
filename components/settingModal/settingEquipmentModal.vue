@@ -235,8 +235,10 @@
                         alert("그룹이 선택된 장비는 개별제어 설정이 불가합니다.");
                         vm.params.schedule.isActive = false;
                         vm.$refs.scheduleCheck.checked =false;
+                        return false;
                     }
                 }
+                return true;
             },
             submit() {
                 const vm = this;
@@ -244,8 +246,8 @@
                 const {state} = this;
                 let url, method;
 
-
-                if (state === 'new') {
+                if(vm.groupCheck()) {
+                    if (state === 'new') {
                     url = `/api/compressor`;
                     method = 'post';
                 } else if (state === 'update') {
@@ -258,28 +260,31 @@
                     }
                 }
 
-                vm.params.schedule.min = Number( vm.params.schedule.min);
-                vm.params.schedule.max = Number( vm.params.schedule.max);
+                    vm.params.schedule.min = Number( vm.params.schedule.min);
+                    vm.params.schedule.max = Number( vm.params.schedule.max);
 
-                this.$validate()
-                    .then((success) => {
-                        if (success) {
-                            axios({
-                                method: method,
-                                url: url,
-                                data: vm.params
-                            }).then((res) => {
-                                modal.hide('createmodal');
-                                vm.msgData.show = true;
-                                vm.msgData.msg = res.data.message;
-                                vm.$emit('send-message', 1);
-                                vm.$emit('callSearch');
-                            }).catch((error) => {
-                                vm.msgData.show = true;
-                                vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-                            });
-                        }
-                    });
+                    this.$validate()
+                        .then((success) => {
+                            if (success) {
+                                axios({
+                                    method: method,
+                                    url: url,
+                                    data: vm.params
+                                }).then((res) => {
+                                    modal.hide('createmodal');
+                                    vm.msgData.show = true;
+                                    vm.msgData.msg = res.data.message;
+                                    vm.$emit('send-message', 1);
+                                    vm.$emit('callSearch');
+                                }).catch((error) => {
+                                    vm.msgData.show = true;
+                                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                                });
+                            }
+                        });
+                }else {
+                    return
+                }
             },
             cancel() {
                 this.$bvModal.hide('createmodal');

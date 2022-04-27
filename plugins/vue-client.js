@@ -43,3 +43,6 @@ Vue.use(require('vue-cookies'));
 Vue.use(VCalendar);
 
 Vue.use(Dayjs);
+
+import VueMasonry from 'vue-masonry-css'
+Vue.use(VueMasonry);

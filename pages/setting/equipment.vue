@@ -21,8 +21,12 @@
                             :onCellClick="updateEquipment"
                             :selected-row-keys="selectedKeys"
                             @selection-changed="selectionChanged"
+                            :allow-column-resizing="true"
+                            :allowColumnReordering="true"
+                            :column-min-width="150"
                             key-expr="id"
                     >
+                        <DxScrolling mode="virtual"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>
@@ -54,9 +58,9 @@
         DxSelection,
         DxLookup,
         DxPager,
+        DxScrolling,
         DxSearchPanel,
     } from 'devextreme-vue/data-grid';
-    import {DxButton} from 'devextreme-vue/button';
     import createEquipmentModal from '~/components/settingModal/createEquipmentModal.vue';
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
@@ -82,8 +86,8 @@
             DxSelection,
             DxLookup,
             DxPager,
+            DxScrolling,
             DxSearchPanel,
-            DxButton,
             blockGridAlarmTemplate,
             blockGridTemplate
         },

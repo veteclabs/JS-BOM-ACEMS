@@ -42,84 +42,84 @@
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
                 Air Compressor
             </h2>
-    </div>
-        <div class="row dashboard-item-box">
-            <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
-                <div class="ibox">
-                    <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
-                        <nuxt-link :to="`/dashboard/${device.id}`">
-                            <h3>
-                                <div class="img-box">
-                                    <img
-                                            :src="compressorImage"
-                                            @error="replaceImg"
-                                            :alt="device.equipmentId"
-                                            style="max-width:100%;"/>
-                                </div>
-                                {{device.name}}
-                            </h3>
-                        </nuxt-link>
-                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
-                             class="setting-btn"
-                             @click="settingModalOpen(device.id)"/>
-                    </div>
-                    <div class="ibox-content">
-                        <airCompressorState v-bind:propsdata="device.state"/>
-                        <!--<div :class="{'noti-box':true, 'alarm-box': device.alarm}">
-                            <div v-if="device.alarm" class="alarm">Alarm</div>
-                            <div v-else class="normal">Normal</div>
-                            <div class="text" v-if="device.alarm">
-                                {{device.alarmMention}}
-                            </div>
-                        </div>-->
-                        <ul class="tag-box">
-                            <li>
-                                <div class="tagname">부하율</div>
-                                <div style="display:flex; flex:1; justify-content: end; align-items: center;">
-                                    <div class="progressbar">
-                                        <div class="inner-bar" :style="`width:${getProgressBarValue(device.unitId)}%`"/>
+        </div>
+        <div class="dashboard-item-box">
+            <masonry :cols="4" :gutter="30">
+                <div v-for="device in airCompressorList" :key="device.id">
+                    <div class="ibox">
+                        <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
+                            <nuxt-link :to="`/dashboard/${device.id}`">
+                                <h3>
+                                    <div class="img-box">
+                                        <img
+                                                :src="compressorImage"
+                                                @error="replaceImg"
+                                                :alt="device.equipmentId"
+                                                style="max-width:100%;"/>
                                     </div>
-                                    <h3>{{tagVal | pickValue('Name',`${device.unitId}_COMP_PCY`, 'Value')}} %</h3>
-                                </div>
-                            </li>
-                            <li v-if="device.state['COMP_Trip'].value === 1">
-                                <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                                <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
-                            </li>
-                            <li v-if="device.state['COMP_Warning'].value === 1">
-                                <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
-                                <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
-                            </li>
-                        </ul>
-                        <ul class="tag-box">
-                            <li v-for="type in compTagSet" :key="type.tagName">
-                                <div v-if="device.tags[type] !== undefined">
-                                    {{device.tags[type].description}}
-                                </div>
-                                <div v-if="device.tags[type] !== undefined">
-                                    {{device.tags[type].value.toFixed(2)}} {{device.tags[type].unit}}
-                                </div>
-                            </li>
-                        </ul>
+                                    {{device.name}}
+                                </h3>
+                            </nuxt-link>
+                            <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                                 class="setting-btn"
+                                 @click="settingModalOpen(device.id)"/>
+                        </div>
+                        <div class="ibox-content">
+                            <airCompressorState v-bind:propsdata="device.state"/>
+                            <scheduleState v-bind:propsdata="device"/>
+                            <ul class="tag-box">
+                                <li>
+                                    <div class="tagname">부하율</div>
+                                    <div style="display:flex; flex:1; justify-content: end; align-items: center;">
+                                        <div class="progressbar">
+                                            <div class="inner-bar"
+                                                 :style="`width:${getProgressBarValue(device.unitId)}%`"/>
+                                        </div>
+                                        <h3>{{tagVal | pickValue('Name',`${device.unitId}_COMP_PCY`, 'Value')}} %</h3>
+                                    </div>
+                                </li>
+                                <li v-if="device.state['COMP_Trip'].value === 1">
+                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                    <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
+                                </li>
+                                <li v-if="device.state['COMP_Warning'].value === 1">
+                                    <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
+                                    <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
+                                </li>
+                            </ul>
+                            <ul class="tag-box">
+                                <li v-for="type in compTagSet" :key="type.tagName">
+                                    <div v-if="device.tags[type] !== undefined">
+                                        {{device.tags[type].description}}
+                                    </div>
+                                    <div v-if="device.tags[type] !== undefined">
+                                        {{device.tags[type].value.toFixed(2)}} {{device.tags[type].unit}}
+                                    </div>
+                                </li>
+                            </ul>
 
-                        <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
-                            <li v-for="type in powerTagSet">
-                                <div v-if="power.tags[type] !== undefined">
-                                    {{power.tags[type].description}}
-                                </div>
-                                <div v-if="power.tags[type] !== undefined">
-                                    {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
-                                </div>
-                            </li>
-                        </ul>
+                            <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
+                                <li v-for="type in powerTagSet">
+                                    <div v-if="power.tags[type] !== undefined">
+                                        {{power.tags[type].description}}
+                                    </div>
+                                    <div v-if="power.tags[type] !== undefined">
+                                        {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </masonry>
         </div>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'Thermometer'" v-if="equipmentList.temperature"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'Pressure gauge'" v-if=" equipmentList.pressure"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'Thermometer'"
+                           v-if="equipmentList.temperature"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'Pressure gauge'"
+                           v-if=" equipmentList.pressure"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'Flow gauge'" v-if=" equipmentList.flow"/>
-        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"  v-on:callSearch="getAirCompressor"/>
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
+                               v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -129,6 +129,7 @@
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
+    import scheduleState from '~/components/dashboard/scheduleState.vue';
     import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
     import waTagSet from '~/assets/data/tagSet.json';
 
@@ -146,11 +147,12 @@
             Loading,
             settingEquipmentModal,
             airCompressorState,
+            scheduleState,
             equipmentTagGroup
         },
         data() {
             return {
-                TPCode:'',
+                TPCode: '',
                 compTagSet: waTagSet.airCompressorGroupDeshboardSet.tags,
                 powerTagSet: waTagSet.dashboardAccuraSet.tags,
                 msgData: {
@@ -444,22 +446,6 @@
                         return -100;
                     } else {
                         return target[0][returnValue];
-                    }
-                }
-            },
-            pickErrorDescription: function (object, property, value, returnValue) {
-                if (object === undefined || object === null || object === "") {
-                    return -1;
-                } else {
-                    let target = object.filter(object => object[property] === value);
-                    if (target.length === 0) {
-                        return -100;
-                    } else {
-                        const codeArray = TPArray.list;
-                        let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
-                        if (targetError.length !== 0) {
-                            return targetError[0].description
-                        }
                     }
                 }
             },

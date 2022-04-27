@@ -40,6 +40,7 @@
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="airCompressor.state"/>
+                        <scheduleState v-bind:propsdata="airCompressor"/>
                     </div><!--
                     <div :class="{'noti-box':true, 'alarm-box': airCompressor.alarm}">
                         <div v-if="airCompressor.alarm" class="alarm">Alarm</div>
@@ -175,6 +176,7 @@
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import alarm from '~/components/dashboard/alarm.vue';
     import waTagSet from '~/assets/data/tagSet.json';
+    import scheduleState from '~/components/dashboard/scheduleState.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -191,6 +193,7 @@
             airCompressorState,
             alarm,
             waTagSet,
+            scheduleState
         },
         data() {
             return {
