@@ -1,13 +1,13 @@
 <template>
     <div v-if="propsdata">
         <ul class="state-box">
-            <li :class="{'active' : propsdata.COMP_Power.value === 1, 'set-btn run': true}"
-                @click="setAirCompressor(propsdata.COMP_Power.tagName, 1)">RUN
+            <li :class="{'active' : propsdata.state.COMP_Power.value === 1, 'set-btn run': true}"
+                @click="setAirCompressor(propsdata.id, 1)">RUN
             </li>
-            <li :class="{'active' : propsdata.COMP_Load.value === 1, 'load': true}">LOAD</li>
-            <li :class="{'active' : propsdata.COMP_Load.value === 0, 'unload': true}">UNLOAD</li>
-            <li :class="{'active' : propsdata.COMP_Power.value === 0, 'set-btn stop': true}"
-                @click="setAirCompressor(propsdata.COMP_Power.tagName, 0)">STOP
+            <li :class="{'active' : propsdata.state.COMP_Load.value === 1, 'load': true}">LOAD</li>
+            <li :class="{'active' : propsdata.state.COMP_Load.value === 0, 'unload': true}">UNLOAD</li>
+            <li :class="{'active' : propsdata.state.COMP_Power.value === 0, 'set-btn stop': true}"
+                @click="setAirCompressor(propsdata.id, 0)">STOP
             </li>
         </ul>
         <Loading v-bind:propsdata="loadingData"/>
@@ -42,24 +42,20 @@
             }
         },
         methods: {
-            async setAirCompressor(tagName, stateValue) {
+            async setAirCompressor(id, stateValue) {
                 const vm = this;
 
                 const confirmResult = confirm(`해당 컴프레셔 상태를 ${this.powerState[stateValue]}으로 변경합니다. 수동제어 명령 진행 시 스케줄 제어는 모두 해제 됩니다.진행하시겠습니까?`);
 
                 if (confirmResult) {
-                    const params = {
-                        tagName,
-                        stateValue
-                    };
                     vm.loadingData.show = true;
-                    axios.post('/nuxt/wa/tag/setTagValue', params)
-                        .then(() => {
+                    axios.put(`/api/compressor/${id}/power/${stateValue}`)
+                        .then((res) => {
                             vm.msgData.show = true;
-                            vm.msgData.msg = '제어 명령이 완료되었습니다.';
-                        }).catch(() => {
+                            vm.msgData.msg = res.data.message;
+                        }).catch((error) => {
                             vm.msgData.show = true;
-                            vm.msgData.msg = '제어에 실패했습니다. 잠시 후 다시 시도해주세요.';
+                            vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                         }).finally(() => {
                             vm.loadingData.show = false;
                         });

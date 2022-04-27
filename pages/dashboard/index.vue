@@ -65,7 +65,7 @@
                                  @click="settingModalOpen(device.id)"/>
                         </div>
                         <div class="ibox-content">
-                            <airCompressorState v-bind:propsdata="device.state"/>
+                            <airCompressorState v-bind:propsdata="device"/>
                             <scheduleState v-bind:propsdata="device"/>
                             <ul class="tag-box">
                                 <li>

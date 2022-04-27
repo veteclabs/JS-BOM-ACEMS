@@ -26,14 +26,14 @@ setInterval(async () => {
         // console.log(newThreadList)
         distoryThreadList.forEach(t=>{
             let scd = schedules.filter(k=>k.id === t)
-            console.log(t, "번 스레드 삭제")
-            schedule.cancelJob(String(t));
+            //console.log(t, "번 스레드 삭제")
+            //schedule.cancelJob(String(t));
         })
         newThreadList.forEach(t=>{
 
             let scd = schedules.filter(k=>k.id === t)[0]
             const rule = new schedule.RecurrenceRule();
-            console.log(t, "번 스레드 생성")
+            //console.log(t, "번 스레드 생성")
             rule.second = scd.interval
             schedule.scheduleJob(String(t), rule, async () => {
                 try {
@@ -222,7 +222,7 @@ exports.controllFacility = async (groupId, powerState) => {
         }
         return true;
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     } finally {
         if (conn) {
             await conn.release();
