@@ -86,7 +86,7 @@ public class GroupController {
         List<Long> deviceIds = new ArrayList<>();
         devices.addAll(deviceDslRepository.findAllAirOrphs());
         devices.addAll(deviceDslRepository.findAllEtcOrphs());
-
+        deviceDslRepository.findAllAirOrphs().forEach(t-> System.out.println(t.getName()));
         List<Tag> tags = groupDslRepository.getTagsByDeviceIds(devices.stream()
                 .map(t->t.getId()).collect(toList()));
 

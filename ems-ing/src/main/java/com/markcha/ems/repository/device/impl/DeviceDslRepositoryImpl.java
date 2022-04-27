@@ -278,17 +278,33 @@ public class DeviceDslRepositoryImpl {
         QGroup parentGroup = new QGroup("pg");
         QDevice groupDevice = new QDevice("gd");
         QEquipment groupEquipment = new QEquipment("groupEquipment");
-        return query.selectFrom(device)
+
+
+        List<Device> comp = query.selectFrom(device).distinct()
                 .leftJoin(device.group, group).fetchJoin()
-                .leftJoin(group.deviceSet, groupDevice).fetchJoin()
-                .leftJoin(groupDevice.equipment, groupEquipment).fetchJoin()
                 .leftJoin(group.parent, parentGroup).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                          parentGroup.isNull()
                         ,group.type.eq(OBJECT)
-                        ,groupEquipment.type.ne(AIR_COMPRESSOR)
                 ).fetch();
+        List<Long> groupIds = comp.stream()
+                .map(t -> t.getGroup().getId())
+                .collect(toList());
+        List<Device> devices = query.selectFrom(device).distinct()
+                .leftJoin(device.group, group).fetchJoin()
+                .innerJoin(device.equipment, equipment).fetchJoin()
+                .where(
+                        equipment.type.ne(AIR_COMPRESSOR)
+                        ,group.id.in(groupIds)
+                ).fetch();
+        Map<Long, List<Device>> goupingByDevice = devices.stream()
+                .collect(groupingBy(t -> t.getGroup().getId(), toList()));
+        comp.forEach(t->{
+            if(!isNull(goupingByDevice.get(t.getId())))
+                t.getGroup().setDeviceSet(new HashSet<>(goupingByDevice.get(t.getId())));
+        });
+        return comp;
     }
     public Device getOneById(Long id) {
         return query.select(device)
