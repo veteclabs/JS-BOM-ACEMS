@@ -130,6 +130,9 @@ public class GroupController {
     public ApiResponseDto create(
             @RequestBody GroupInsertDto groupInsertDto
     ) {
+        if (groupInsertDto.getSchedule().getIsActive()) {
+            throw new MethodNotAllowedException("장비관리에서 압력계에 그룹 연동을 먼저 진행해주세요.\n(해당 그룹에 압력계가 없을 경우 스케줄 제어가 불가능합니다.)");
+        }
         groupService.createGruops(groupInsertDto);
         return new ApiResponseDto(dbInsertMsg);
     }

@@ -44,7 +44,11 @@ public class DeviceServiceImpl implements DeviceService {
         if(!isNull(deviceInsert.getGroupId())) {
             Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
             newDevice.setGroup(seletedGroup);
+            if(deviceDslRepository.countingGroupHavePressureDevice(deviceInsert.getGroupId()) >= 1) {
+                throw new MethodNotAllowedException("선택된 그룹은 이미 압력계가 존재합니다.\n(해당 그룹에 2개 이상의 압력계가 존재할 경우 그룹 스케줄 제어가 불가능합니다.)");
+            }
         }
+
         newDevice.setName(deviceInsert.getName());
         newDevice.setEquipment(selectedEquipoment);
         newDevice.setCt(deviceInsert.getCt());
@@ -59,9 +63,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Boolean updateDevice(DeviceInsertDto deviceInsert) {
         Device seletedDevice = deviceDslRepository.getOneById(deviceInsert.getId());
+
         long selectGroupPressureCount = deviceDslRepository.countingGroupHavePressureDevice(deviceInsert.getGroupId());
-
-
         if(selectGroupPressureCount >= 1 && seletedDevice.getGroup().getId() != deviceInsert.getGroupId()) {
             throw new MethodNotAllowedException("선택된 그룹은 이미 압력계가 존재합니다.\n(해당 그룹에 2개 이상의 압력계가 존재할 경우 그룹 스케줄 제어가 불가능합니다.)");
         }
