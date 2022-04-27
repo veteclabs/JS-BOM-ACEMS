@@ -10,7 +10,7 @@ const session = require('express-session');
 // Import and Set Nuxt.js options
 const MySQLStore = require('express-mysql-session')(session);
 const config = require('../nuxt.config.js');
-// const df = require('./scheduleController.js');
+require('./scheduleController.js');
 config.dev = !(process.env.NODE_ENV === 'production');
 const { swaggerUi, specs } = require('../lib/swagger');
 

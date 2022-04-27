@@ -305,6 +305,20 @@ public class GroupServiceImpl {
     }
 
     public void unActiveSchedule(Group group) {
+        if(!isNull(group.getSchedule())) {
+            Schedule schedule = group.getSchedule();
+            schedule.setIsActive(false);
+            scheduleDataRepository.save(schedule);
+        }
+        if(!isNull(group.getChildren())) {
+            List<Long> broIds = group.getChildren().stream()
+                    .map(t -> t.getId())
+                    .collect(toList());
+            orderDataRepository.deleteAllInBatch(orderDslRepository.findAllByIds(broIds));
+            group.getChildren().forEach(t->t.setParent(null));
+            group.setChildren(null);
+            groupDataRepository.save(group);
+        }
 
     }
 

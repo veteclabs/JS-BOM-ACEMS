@@ -144,9 +144,9 @@ public class CompressorController {
         TagDto tag = new TagDto(tagDslRepositoryIml.findAllByGroupId(groupId));
         tag.setValue(powerCode);
         webaccessApiService.setTagValues(new ArrayList<>(List.of(tag)));
-        List<Group> broGroups = groupDslRepository.findAllBroGroupByBroId(groupId);
-//        groupService.
-        return new ApiResponseDto(dbUpdateMsg);
+        Group group = groupDslRepository.findAllBroGroupByBroId(groupId);
+        groupService.unActiveSchedule(group);
+        return new ApiResponseDto("dbUpdateMsg");
     }
     @DeleteMapping(value="/compressors")
     public ApiResponseDto delete(
