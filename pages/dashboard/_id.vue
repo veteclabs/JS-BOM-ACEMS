@@ -40,14 +40,14 @@
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="airCompressor.state"/>
-                    </div>
+                    </div><!--
                     <div :class="{'noti-box':true, 'alarm-box': airCompressor.alarm}">
                         <div v-if="airCompressor.alarm" class="alarm">Alarm</div>
                         <div v-else class="normal">Normal</div>
                         <div class="text" v-if="airCompressor.alarm">
                             {{airCompressor.alarmMention}}
                         </div>
-                    </div>
+                    </div>-->
                 </div>
 
                 <div class="ibox">
@@ -91,6 +91,12 @@
                         <div class="ibox-content flex-box">
                             <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
                             <div>{{TPCode[airCompressor.state['COMP_ActTripCode'].value.toString()]}}</div>
+                        </div>
+                    </div>
+                    <div class="ibox" v-if="airCompressor.state['COMP_Warning'].value === 1">
+                        <div class="ibox-content flex-box">
+                            <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
+                            <div>{{TPCode[airCompressor.state['COMP_ActWarCode'].value.toString()]}}</div>
                         </div>
                     </div>
                 </div>

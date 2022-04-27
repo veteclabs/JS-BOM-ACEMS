@@ -29,7 +29,6 @@ passport.use(
           let conn;
           try {
             conn = await pool.getConnection();
-            console.log(id)
             const result = await conn.query('CALL usp_get_users(?, ?)', [id, passwordHash(password)]);
             const user = result[0][0];
             if (typeof user === 'undefined') {

@@ -65,13 +65,13 @@
                     </div>
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="device.state"/>
-                        <div :class="{'noti-box':true, 'alarm-box': device.alarm}">
+                        <!--<div :class="{'noti-box':true, 'alarm-box': device.alarm}">
                             <div v-if="device.alarm" class="alarm">Alarm</div>
                             <div v-else class="normal">Normal</div>
                             <div class="text" v-if="device.alarm">
                                 {{device.alarmMention}}
                             </div>
-                        </div>
+                        </div>-->
                         <ul class="tag-box">
                             <li>
                                 <div class="tagname">부하율</div>
@@ -85,6 +85,10 @@
                             <li v-if="device.state['COMP_Trip'].value === 1">
                                 <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
                                 <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
+                            </li>
+                            <li v-if="device.state['COMP_Warning'].value === 1">
+                                <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
+                                <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
                             </li>
                         </ul>
                         <ul class="tag-box">
