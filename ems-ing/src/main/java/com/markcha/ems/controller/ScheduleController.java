@@ -55,6 +55,7 @@ public class ScheduleController {
     private String dbDeleteMsg;
     @Value("${response.jpa.DB_ERROR_MSG}")
     private String dbErrorMsg;
+
     private final ScheduleDslRepositoryImpl scheduleDslRepository;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final GroupDynamicRepositoryImpl groupDynamicRepository;

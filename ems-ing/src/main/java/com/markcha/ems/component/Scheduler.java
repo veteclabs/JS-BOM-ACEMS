@@ -45,6 +45,7 @@ public class Scheduler {
     private final TripDataRepository tripDataRepository;
     private final GroupDslRepositoryImpl groupDslRepository;
 
+
     private static List<Tag> savedTags = null;
     private static Boolean alarmInsert = false;
 
@@ -61,9 +62,16 @@ public class Scheduler {
         List<Long> difference = difference(collect, longs);
         schedules.forEach(schedule->{
             if(schedule.getIsActive() && difference.contains(schedule.getId())) {
-
+                System.out.println(schedule.getId()  + " 번 스레드 생성");
                 Timer timer = new Timer();
-                ScheduleTask scheduleTask = new ScheduleTask(groupDslRepository);
+                ScheduleTask scheduleTask = new ScheduleTask(
+                        groupDslRepository,
+                        scheduleDslRepository,
+                        orderDslRepository,
+                        groupDynamicRepository,
+                        webaccessApiService,
+                        tagDslRepositoryIml,
+                        alarmDataRepository);
                 scheduleTask.setScheduleId(schedule.getId());
                 timer.schedule(scheduleTask, 5000, 5000);
                 tasks.put(schedule.getId(), timer);
@@ -72,6 +80,7 @@ public class Scheduler {
         ArrayList<Long> taskRemover = difference(longs, collect);
         if(!isNull(taskRemover)) {
             taskRemover.forEach(t -> {
+                System.out.println(t  + " 번 스레드 삭제");
                 tasks.get(t).cancel();
                 tasks.remove(t);
             });

@@ -103,6 +103,8 @@ public class WebaccessApiServiceImpl {
         List<Map<String, Object >> tagObject = new ArrayList<Map<String, Object>>();
 
         for (TagDto propertyDto: propertyDtos) {
+            System.out.println("wa");
+            System.out.println(propertyDto.getValue());
             Map<String, Object> tagSet = new HashMap<>();
             tagSet.put(
                     "Name", propertyDto.getTagName()
