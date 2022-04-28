@@ -26,7 +26,7 @@
                             :column-min-width="150"
                             key-expr="id"
                     >
-                        <DxScrolling mode="virtual"/>
+                        <DxScrolling mode="standard"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" width="60"/>

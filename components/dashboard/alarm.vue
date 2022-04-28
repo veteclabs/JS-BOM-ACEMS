@@ -12,7 +12,7 @@
                         :column-min-width="100"
                         :column-auto-width="true"
                         @exporting="onExporting">
-                <DxScrolling mode="virtual"/>
+                <DxScrolling mode="standard"/>
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                 <DxColumn data-field="id" caption="No" alignment="center"/>
                 <DxColumn data-field="type" caption="Type" alignment="center" cell-template="blockGridAlarmTemplate"/>

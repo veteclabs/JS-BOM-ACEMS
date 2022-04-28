@@ -67,15 +67,17 @@
                         <div class="ibox-content">
                             <airCompressorState v-bind:propsdata="device"/>
                             <scheduleState v-bind:propsdata="device"/>
-                            <ul class="tag-box">
-                                <li>
+                            <ul class="tag-box"
+                                v-if="device.tags.COMP_LoadFactor || device.state['COMP_Trip'].value=== 1 ||
+                             device.state['COMP_ActWarCode'].value === 1">
+                                <li v-if="device.tags.COMP_LoadFactor">
                                     <div class="tagname">부하율</div>
                                     <div style="display:flex; flex:1; justify-content: end; align-items: center;">
                                         <div class="progressbar">
                                             <div class="inner-bar"
-                                                 :style="`width:${getProgressBarValue(device.unitId)}%`"/>
+                                                 :style="`width:${device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}%`"/>
                                         </div>
-                                        <h3>{{tagVal | pickValue('Name',`${device.unitId}_COMP_PCY`, 'Value')}} %</h3>
+                                        <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}}%</h3>
                                     </div>
                                 </li>
                                 <li v-if="device.state['COMP_Trip'].value === 1">
@@ -304,13 +306,8 @@
                 timeCategories: [],
                 Interval1M: '',
                 interval: '',
-                intervalTime: 20 * 1000,
+                intervalTime: 10 * 1000,
             };
-        },
-        computed: {
-            collapseState: function () {
-                return this.$store.getters.collapseMenu;
-            },
         },
         mounted() {
             this.WaLogin();
@@ -391,14 +388,6 @@
             settingModalOpen(device) {
                 this.$refs.settingEquipmentModal.updateModal(device);
                 this.settingModalData.show = true;
-            },
-            getProgressBarValue(unit) {
-                const vm = this;
-                let value = this.$options.filters.pickValue(vm.tagVal, 'Name', `${unit}_COMP_PCY`, 'Value');
-                if (value < 0) {
-                    value = 0;
-                }
-                return value;
             },
             setLiveChart: function () {
                 const vm = this;

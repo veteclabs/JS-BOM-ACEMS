@@ -39,7 +39,6 @@
                         </ul>
                     </div>
                     <div class="ibox-content">
-<!--                        <div>{{airCompressor}}</div>-->
                         <airCompressorState v-bind:propsdata="airCompressor"/>
                         <scheduleState v-bind:propsdata="airCompressor"/>
                     </div><!--
@@ -69,12 +68,12 @@
                         </ul>
                     </div>
                 </div>
-                <div class="ibox" v-if="airCompressor.devices">
+                <div class="ibox" v-if="powerData">
                     <div class="ibox-title">
                         전력 정보
                     </div>
                     <div class="ibox-content">
-                        <ul v-for="power in airCompressor.devices.power" :key="power.id" class="tag-box">
+                        <ul v-for="power in powerData" :key="power.id" class="tag-box">
                             <li v-for="type in powerTagSet">
                                <div v-if="power.tags[type] !== undefined">
                                     {{power.tags[type].description}}
@@ -224,7 +223,7 @@
                 powerTagSet: waTagSet.accuraSet.tags,
                 timeCategories: [],
                 nowTime: '',
-                liveChartData: [{name: '실시간 유효전력', data: []}], // 데이터 변수
+                liveChartData: [], // 데이터 변수
                 liveChartOption: {
                     chart: {
                         toolbar: {
@@ -239,7 +238,7 @@
                         }
                     },
                     dataLabels: {enabled: false},
-                    colors: ['#FFA100'],
+                    colors: ['#ffa100','#003CFF', '#27AEF3', '#81E400','#ff3a55', '#09c488', '#8ca7ff', '#3b4656'],
                     grid: {borderColor: '#e4e9f1'},
                     stroke: {curve: 'smooth', width: 3},
                     fill: {
@@ -257,7 +256,7 @@
                         y: {
                             show: true,
                             formatter: function (val) {
-                                return val + 'Bar'
+                                return val + 'kW'
                             }
                         }
                     },
@@ -354,22 +353,14 @@
                     labels: ['bar'],
                 },
                 airCompressorBar: 0,
-                alarmList: [],
-                pageSizes: [5, 10, 20], // 페이지사이즈
+                powerData:'',
                 Interval1M: '',
                 interval: '',
-                intervalTime: 5 * 1000,
+                intervalTime: 10 * 1000,
             };
-        },
-        computed: {
-            collapseState: function () {
-                return this.$store.getters.collapseMenu;
-            },
         },
         mounted() {
             this.getAirCompressor();
-            this.WaLogin();
-            this.getTagValues();
             this.resetInterval();
             this.getTrip();
             this.loadingData.show = true;
@@ -378,32 +369,15 @@
             this.removeInterval();
         },
         methods: {
-            async WaLogin() {
-                await axios.get('/nuxt/WaLogin')
-            },
-            async getTagValues() {
-                const vm = this;
-                axios.post('/nuxt/wa/port/getTagValue', {
-                    portId: [1, 2, 3, 4, 5],
-                }, {
-                    timeout: vm.intervalTime,
-                }).then((res) => {
-                    if (res.data.Result.Total > 0) {
-                        vm.tagVal = res.data.Values;
-                        vm.totalFlow = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_FLOW`, 'Value');
-                        vm.totalCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_PRE `, 'Value');
-                        vm.setLiveChart();
-                    }
-                }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-                });
-            },
             async getAirCompressor() {
                 const vm = this;
                 const id = this.$route.params.id;
                 axios.get(`/api/compressor/${id}`
                 ).then((res) => {
                     vm.airCompressor = res.data;
+                    vm.airCompressorBar = vm.airCompressor.tags.COMP_SumpPre.value;
+                    vm.powerData = vm.airCompressor.devices.power;
+                    vm.setLiveChart();
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
@@ -413,9 +387,6 @@
             },
             replaceImg(e) {
                 e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
-            },
-            getNowTime: function () {
-                this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
             },
             async getTrip() {
                 const vm = this;
@@ -432,20 +403,26 @@
             },
             setLiveChart: function () {
                 const vm = this;
-                vm.getNowTime();
+
+                let data;
+                vm.powerData.forEach((item, index) => {
+                    if(vm.liveChartData[index] === undefined) {
+                        vm.liveChartData[index] = {name: `${item.name} 실시간 유효전력`, data: []}
+                    }
+                    data = item.tags.PWR_KW.value;
+                    vm.liveChartData[index].data.push(data.toFixed(2));
+                });
+
+                this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
                 let liveChartXcount = this.liveChartData[0].data.length;
                 let maxCount = 150;
 
-                //X좌표 설정
                 if (liveChartXcount > maxCount) {
                     vm.timeCategories.shift();
                     vm.liveChartData[0].data.shift();
                 }
                 vm.timeCategories.push(vm.nowTime);
 
-                //Y좌표 설정
-                let data = this.$options.filters.pickValue(vm.tagVal, 'Name', `${vm.airCompressor.unitId}_PWR_KW`, 'Value');
-                vm.liveChartData[0].data.push(data);
                 vm.$refs.liveChart.updateOptions({
                     "xaxis": {"categories": vm.timeCategories}
                 });
@@ -455,7 +432,7 @@
                 clearInterval(this.interval);
                 vm.interval = null;
                 vm.interval = setInterval(() => {
-                    vm.getTagValues();
+                    vm.getAirCompressor();
                 }, vm.intervalTime);
             },
             removeInterval() {
@@ -468,46 +445,6 @@
                 value = parseFloat(value);
                 if (!value) return '0';
                 return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
-            },
-            pickTagValue: function (object, tag) {
-                if (object === undefined || object === null || object === "") {
-                    return -1;
-                } else {
-                    let target = object.filter(object => object.Name === tag);
-                    if (target.length === 0) {
-                        return -100;
-                    } else {
-                        return target[0].Value;
-                    }
-                }
-            },
-            pickValue: function (object, property, value, returnValue) {
-                if (object === undefined || object === null || object === "") {
-                    return -1;
-                } else {
-                    let target = object.filter(object => object[property] === value);
-                    if (target.length === 0) {
-                        return -100;
-                    } else {
-                        return target[0][returnValue];
-                    }
-                }
-            },
-            pickErrorDescription: function (object, property, value, returnValue) {
-                if (object === undefined || object === null || object === "") {
-                    return -1;
-                } else {
-                    let target = object.filter(object => object[property] === value);
-                    if (target.length === 0) {
-                        return -100;
-                    } else {
-                        const codeArray = TPArray.list;
-                        let targetError = codeArray.filter(codeTarget => codeTarget.code === target[0][returnValue]);
-                        if (targetError.length !== 0) {
-                            return targetError[0].description
-                        }
-                    }
-                }
             },
         },
     };
