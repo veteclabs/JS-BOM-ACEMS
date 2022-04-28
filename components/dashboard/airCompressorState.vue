@@ -1,12 +1,13 @@
 <template>
     <div v-if="propsdata">
         <ul class="state-box">
-            <li :class="{'active' : propsdata.state.COMP_Power.value === 1, 'set-btn run': true}"
+            <li :class="{'active' : propsdata.COMP_Power.value === 1, 'set-btn run': true}"
                 @click="setAirCompressor(propsdata.id, 1)">RUN
             </li>
-            <li :class="{'active' : propsdata.state.COMP_Load.value === 1, 'load': true}">LOAD</li>
-            <li :class="{'active' : propsdata.state.COMP_Load.value === 0, 'unload': true}">UNLOAD</li>
-            <li :class="{'active' : propsdata.state.COMP_Power.value === 0, 'set-btn stop': true}"
+            <li :class="{'active' : propsdata.COMP_Load.value === 1, 'load': true}">LOAD</li>
+            <li :class="{'active' : propsdata.COMP_Load.value === 0, 'unload': true}">UNLOAD</li>
+
+            <li :class="{'active' : propsdata.COMP_Power.value === 0, 'set-btn stop': true}"
                 @click="setAirCompressor(propsdata.id, 0)">STOP
             </li>
         </ul>

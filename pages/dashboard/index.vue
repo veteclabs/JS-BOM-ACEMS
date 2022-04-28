@@ -65,8 +65,8 @@
                                  @click="settingModalOpen(device.id)"/>
                         </div>
                         <div class="ibox-content">
-                            <airCompressorState v-bind:propsdata="device"/>
-                            <scheduleState v-bind:propsdata="device"/>
+                            <airCompressorState v-bind:propsdata="device.state"/>
+                            <scheduleState v-bind:propsdata="device.schedule"/>
                             <ul class="tag-box">
                                 <li>
                                     <div class="tagname">부하율</div>
