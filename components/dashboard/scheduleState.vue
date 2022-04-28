@@ -12,8 +12,8 @@
             </li>
             <li>
                 <div class="tagname">개별제어</div>
-                <div v-if="propsdata.isActive" class="bom-badge blue-badge blue">ON</div>
-                <div v-if="!propsdata.isActive" class="bom-badge red-badge red">OFF</div>
+                <div v-if="propsdata.schedule.isActive" class="bom-badge blue-badge blue">ON</div>
+                <div v-if="!propsdata.schedule.isActive" class="bom-badge red-badge red">OFF</div>
             </li>
         </ul>
     </div>

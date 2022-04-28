@@ -65,8 +65,8 @@
                                  @click="settingModalOpen(device.id)"/>
                         </div>
                         <div class="ibox-content">
-                            <airCompressorState v-bind:propsdata="device.state"/>
-                            <scheduleState v-bind:propsdata="device.schedule"/>
+                            <airCompressorState v-bind:propsdata="device"/>
+                            <scheduleState v-bind:propsdata="device"/>
                             <ul class="tag-box">
                                 <li>
                                     <div class="tagname">부하율</div>
@@ -304,7 +304,7 @@
                 timeCategories: [],
                 Interval1M: '',
                 interval: '',
-                intervalTime: 5 * 1000,
+                intervalTime: 20 * 1000,
             };
         },
         computed: {
@@ -424,6 +424,8 @@
                 vm.interval = null;
                 vm.interval = setInterval(() => {
                     vm.getTagValues();
+                    vm.getAirCompressor();
+                    vm.getEquipment();
                 }, vm.intervalTime);
             },
             removeInterval() {
