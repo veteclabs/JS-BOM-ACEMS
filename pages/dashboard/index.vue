@@ -44,7 +44,7 @@
             </h2>
         </div>
         <div class="dashboard-item-box">
-            <masonry :cols="4" :gutter="30">
+            <masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">
                 <div v-for="device in airCompressorList" :key="device.id">
                     <div class="ibox">
                         <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
