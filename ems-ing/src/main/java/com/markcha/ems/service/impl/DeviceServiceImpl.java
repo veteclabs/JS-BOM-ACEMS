@@ -66,8 +66,7 @@ public class DeviceServiceImpl implements DeviceService {
         Device seletedDevice = deviceDslRepository.getOneById(deviceInsert.getId());
 
             long selectGroupPressureCount = deviceDslRepository.countingGroupHavePressureDevice(deviceInsert.getGroupId());
-            System.out.println(selectGroupPressureCount);
-            System.out.println();
+
             if (selectGroupPressureCount > 0 && isNull(seletedDevice.getGroup())) {
                 throw new MethodNotAllowedException("선택된 그룹은 이미 압력계가 존재합니다.\n(해당 그룹에 2개 이상의 압력계가 존재할 경우 그룹 스케줄 제어가 불가능합니다.)");
             }

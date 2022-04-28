@@ -244,27 +244,6 @@ public class DeviceDslRepositoryImpl {
                 ).orderBy(group.id.desc())
                 .fetch();
     }
-//    public Device getOneCompressorsJoinEquipment(Long id, EquipmentType typeName) {
-//        QGroup parentGroup = new QGroup("pGroup");
-//        QGroup childGroup = new QGroup("cGroup");
-//        return query.select(device)
-//                .from(device).distinct()
-//                .leftJoin(device.equipment, equipment).fetchJoin()
-//                .leftJoin(device.tags, tag).fetchJoin()
-//                .leftJoin(device.group, childGroup).fetchJoin()
-//                .leftJoin(childGroup.parent, parentGroup).fetchJoin()
-//                .leftJoin(childGroup.schedule, schedule).fetchJoin()
-//                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
-//                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
-//                .leftJoin(schedule.weekMappers, weekMapper).fetchJoin()
-//                .leftJoin(weekMapper.week, week).fetchJoin()
-//                .where(
-//                         equipment.type.eq(typeName)
-//                        ,childGroup.id.eq(id)
-//                )
-//                .fetchOne();
-//    }
-//    public List<Group> getParentGroup(List<>)
     public List<Device> findAllEtcOrphs() {
         return query.selectFrom(device)
                 .leftJoin(device.group, group).fetchJoin()
@@ -348,6 +327,20 @@ public class DeviceDslRepositoryImpl {
         return query.selectFrom(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
+                .where(deviceIdEq).fetch();
+    }
+    public List<Device> findAllJoinGroupByIds(List<Long> ids) {
+        BooleanExpression deviceIdEq = null;
+        if(!isNull(ids)) {
+            deviceIdEq = device.id.in(ids);
+        } else {
+            deviceIdEq = device.id.eq(-1L);
+        }
+        return query.selectFrom(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.schedule, schedule).fetchJoin()
                 .where(deviceIdEq).fetch();
     }
     public List<Tag> findAllByTagTypeAndIdsV2(BooleanExpression deviceEqId, BooleanExpression tagEqType) {

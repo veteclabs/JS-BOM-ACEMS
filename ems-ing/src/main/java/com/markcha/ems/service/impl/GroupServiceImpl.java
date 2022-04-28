@@ -197,18 +197,10 @@ public class GroupServiceImpl {
 
                 Group group = groupDslRepository.getOneJoinChildsAndDevicesById(groupDto.getId());
 
-                System.out.println("---------------------------------");
-                System.out.println(group.getName());
                 List<Group> ordCompressors = groupDslRepository.getChildGroups(new ArrayList<>(List.of(groupDto.getId())));
-
-
-                System.out.println("기존 컴프레셔 그룹");
-                ordCompressors.forEach(t-> System.out.print(t.getName() + ","));
-
 
                 List<Device> ordDevices = new ArrayList<>(group.getDeviceSet());
                 List<Group> newCompressors = groupDslRepository.findAllByIds(newCompressorIds);
-                System.out.println(newDeviceIds);
                 List<Device> newDevices = deviceDslRepository.findAllByIds(newDeviceIds);
                 List<Group> deletedCompressor = new ArrayList<>();
                 List<Group> deleted2Compressor = new ArrayList<>();
@@ -224,20 +216,11 @@ public class GroupServiceImpl {
                                 .map(t->t.getId())
                                 .collect(Collectors.toList()));
 
-
-                System.out.println();
-                System.out.println("신규 컴프레셔 그룹");
-                newCompressors.forEach(t-> System.out.print(t.getName() + ","));
-                System.out.println();
-                System.out.println("삭제될 오더 그룹");
-                deletedCompressor.forEach(t-> System.out.print(t.getName() + ","));
-                System.out.println();
                 orderDataRepository.deleteAllInBatch(orders);
 
                 groupDataRepository.save(group);
                 groupDataRepository.saveAll(ordCompressors);
 
-                newDevices.forEach(t->System.out.println(t.getName()));
                 group.setChildren(new HashSet<>(newCompressors));
                 newCompressors.forEach(t -> t.setParent(group));
                 group.setDeviceSet(new HashSet<>(newDevices));

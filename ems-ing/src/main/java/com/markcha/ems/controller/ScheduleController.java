@@ -76,8 +76,7 @@ public class ScheduleController {
     public List<ScheduleDto> schedule(
             @PathVariable("scheduleId") Long scheduleId
     ) {
-        List<Group> collect = groupDslRepository.findAllJoinScheduleByScheduleId(scheduleId);
-        return collect.stream()
+        return groupDslRepository.findAllJoinScheduleByScheduleId(scheduleId).stream()
                 .map(ScheduleDto::new)
                 .collect(toList());
     }

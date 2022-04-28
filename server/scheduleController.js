@@ -13,7 +13,6 @@ setInterval(async () => {
 
 
         let threadList = Object.keys(schedule.scheduledJobs)
-        // console.log(schedule.scheduledJobs)
         let threaIds = threadList.map(t => parseInt(t, 10))
         let query = `SELECT (weekofyear("${now.format("YYYY-MM-DD")}" + INTERVAL 1 day) - WEEKOFYEAR(LAST_DAY(("${now.format("YYYY-MM-DD")}" + INTERVAL 1 DAY) - INTERVAL 1 MONTH) + interval 1 DAY)) + 1 AS \`WEEK\`;`
 
@@ -23,17 +22,15 @@ setInterval(async () => {
         week = week === 6?1:week;
         let distoryThreadList = threaIds.filter(x => !scheduleIds.includes(x));
         let newThreadList = scheduleIds.filter(x => !threaIds.includes(x));
-        // console.log(newThreadList)
         distoryThreadList.forEach(t=>{
             let scd = schedules.filter(k=>k.id === t)
-            //console.log(t, "번 스레드 삭제")
-            //schedule.cancelJob(String(t));
+            console.log(t, "번 스레드 삭제")
         })
         newThreadList.forEach(t=>{
 
             let scd = schedules.filter(k=>k.id === t)[0]
             const rule = new schedule.RecurrenceRule();
-            //console.log(t, "번 스레드 생성")
+            console.log(t, "번 스레드 생성")
             rule.second = scd.interval
             schedule.scheduleJob(String(t), rule, async () => {
                 try {

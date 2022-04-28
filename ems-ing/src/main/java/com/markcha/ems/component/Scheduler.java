@@ -1,18 +1,32 @@
 package com.markcha.ems.component;
 
-import com.markcha.ems.domain.*;
+import com.markcha.ems.controller.ScheduleController;
+import com.markcha.ems.controller.ScheduleController.ScheduleSimpleDto;
+
+import com.markcha.ems.domain.Alarm;
+import com.markcha.ems.domain.Tag;
+import com.markcha.ems.domain.Trip;
 import com.markcha.ems.repository.AlarmDataRepository;
+import com.markcha.ems.repository.DayOfWeekDataRepository;
 import com.markcha.ems.repository.TripDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
+import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
+import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
+import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
+import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
+import com.markcha.ems.repository.tag.TagDslRepositoryIml;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.*;
@@ -20,13 +34,54 @@ import static java.util.stream.Collectors.*;
 @Component
 @RequiredArgsConstructor
 public class Scheduler {
+    private final ScheduleDslRepositoryImpl scheduleDslRepository;
+    private final GroupDynamicRepositoryImpl groupDynamicRepository;
+    private final OrderDslRepositoryImpl orderDslRepository;
+    private final DayOfWeekDataRepository dayOfWeekDataRepository;
+    private final AlarmDataRepository alarmDataRepository;
+    private final TagDslRepositoryIml tagDslRepositoryIml;
+    private final WebaccessApiServiceImpl webaccessApiService;
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final TripDataRepository tripDataRepository;
-    private final AlarmDataRepository alarmDataRepository;
+    private final GroupDslRepositoryImpl groupDslRepository;
 
     private static List<Tag> savedTags = null;
     private static Boolean alarmInsert = false;
 
+    private static Map<Long, Timer> tasks = new HashMap<>();
+
+    @Scheduled(fixedDelay = 5000)
+    public void scheduleFixedRateTask() {
+
+        List<ScheduleSimpleDto> schedules = scheduleDslRepository.findAllCoreSchedule().stream()
+                .map(ScheduleSimpleDto::new)
+                .collect(toList());
+        System.out.println(getWeekNumber(LocalDate.now()));
+        ArrayList<Long> longs = new ArrayList<>(tasks.keySet());
+        ArrayList<Long> collect = new ArrayList<>(schedules.stream().map(s -> s.getId()).collect(toList()));
+        List<Long> difference = difference(collect, longs);
+        schedules.forEach(schedule->{
+            if(schedule.getIsActive() && difference.contains(schedule.getId())) {
+
+                Timer timer = new Timer();
+                ScheduleTask scheduleTask = new ScheduleTask(groupDslRepository);
+                scheduleTask.setScheduleId(schedule.getId());
+                timer.schedule(scheduleTask, 5000, 5000);
+                tasks.put(schedule.getId(), timer);
+            }
+        });
+        ArrayList<Long> taskRemover = difference(longs, collect);
+        if(!isNull(taskRemover)) {
+            taskRemover.forEach(t -> {
+                tasks.get(t).cancel();
+                tasks.remove(t);
+            });
+        }
+        System.out.println(tasks.keySet());
+        tasks.forEach((k, v) -> {
+            System.out.println("id : " + k + " value : " + v);
+        });
+    }
     @Scheduled(fixedDelay = 1000)
     public void alarmFixedRateTask() {
         List<Tag> tags = deviceDslRepository.findAllAlarmTags();
@@ -124,5 +179,28 @@ public class Scheduler {
             savedTags.addAll(takenAlarmTags);
         }
 
+    }
+    private static <T> ArrayList<T> difference(ArrayList<T> list1, ArrayList<T> list2) // 차집합
+    {
+        ArrayList<T> result = new ArrayList<>(100);
+        result.addAll(list1);
+        result.removeAll(list2);
+        return result;
+    }
+    public Integer getWeekNumber (LocalDate date) {
+        LocalDate firstMondayOfMonth = date.with(TemporalAdjusters.firstInMonth(DayOfWeek.SUNDAY));
+
+        // 첫 월요일이면 바로 리턴
+        if (firstMondayOfMonth.isEqual(date)) return 1;
+
+        if (date.isAfter(firstMondayOfMonth)) {
+            // 첫 월요일 이후일 때
+            int diffFromFirstMonday = date.getDayOfMonth() - firstMondayOfMonth.getDayOfMonth();
+            int weekNumber = (int) Math.ceil(diffFromFirstMonday / 7.0);
+            if (date.getDayOfWeek() == DayOfWeek.SUNDAY) weekNumber += 1;
+            return weekNumber;
+        }
+        // 첫 월요일 이전이면 회귀식으로 전 달 마지막 주차를 구함
+        return getWeekNumber(date.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()));
     }
 }
