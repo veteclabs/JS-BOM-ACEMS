@@ -56,7 +56,6 @@ public class Scheduler {
         List<ScheduleSimpleDto> schedules = scheduleDslRepository.findAllCoreSchedule().stream()
                 .map(ScheduleSimpleDto::new)
                 .collect(toList());
-        System.out.println(getWeekNumber(LocalDate.now()));
         ArrayList<Long> longs = new ArrayList<>(tasks.keySet());
         ArrayList<Long> collect = new ArrayList<>(schedules.stream().map(s -> s.getId()).collect(toList()));
         List<Long> difference = difference(collect, longs);
@@ -77,10 +76,7 @@ public class Scheduler {
                 tasks.remove(t);
             });
         }
-        System.out.println(tasks.keySet());
-        tasks.forEach((k, v) -> {
-            System.out.println("id : " + k + " value : " + v);
-        });
+
     }
     @Scheduled(fixedDelay = 1000)
     public void alarmFixedRateTask() {
