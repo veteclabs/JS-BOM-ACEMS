@@ -18,7 +18,7 @@
                         </button>
                     </div>
                     <div class="row group-content">
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <div class="td-label">압력계</div>
                             <draggable class="list-group" :list="group.devices.pressure" group="pressure">
                                 <div class="ibox" v-for="device in group.devices.pressure" :key="device.id">
@@ -50,7 +50,7 @@
                                 <div v-if="group.devices.flow.length === 0">유량계가 없습니다.</div>
                             </draggable>
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-9">
                             <div class="td-label">공기압축기</div>
                             <div class="row">
                                 <draggable class="list-group" :list="group.airCompressors" group="airCompressor">
