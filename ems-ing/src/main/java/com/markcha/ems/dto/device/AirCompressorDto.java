@@ -64,7 +64,7 @@ public class AirCompressorDto {
                                             ,"COMP_Warning"
                                             ,"COMP_ActWarCode"
                                     )).contains(k.getType())) {
-                                        k.setValue(Math.round(new Double(k.getValue().toString())));
+                                        k.setValue(new Double(k.getValue().toString()).intValue());
                                     }
                                     return new ArrayList<String>(List.of(
                                             "COMP_Power"

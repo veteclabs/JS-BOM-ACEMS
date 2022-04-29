@@ -229,7 +229,6 @@ public class CompressorServiceImpl {
     public void deleteAllById(List<Long> ids) {
         List<Device> compressors = deviceDslRepository.findAllCompressorsByIds(AIR_COMPRESSOR, ids);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceIds(ids);
-        allByDeviceId.forEach(t-> System.out.println(t.getGroup().getName()));
         List<Device> orphanDevices = new ArrayList<>();
         List<DayOfWeekMapper> dayOfWeekMappers = new ArrayList<>();
         List<WeekMapper> weekMappers = new ArrayList<>();

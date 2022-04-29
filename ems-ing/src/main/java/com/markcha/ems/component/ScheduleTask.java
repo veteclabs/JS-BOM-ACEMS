@@ -68,16 +68,8 @@ public class ScheduleTask extends TimerTask {
                 .collect(toList());
         LocalDate nowDate = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
-
         schedules.forEach(schedule-> {
-            System.out.println("------------");
-            System.out.println(schedule.getGroupId());
-            System.out.println(schedule.getPressure());
-            System.out.println(schedule.getDayOfWeeks());
-            System.out.println(nowDate.getDayOfWeek().getValue());
-            System.out.println(schedule.getDayOfWeeks().contains(nowDate.getDayOfWeek().getValue()));
-            System.out.println(schedule.getStartTime().isBefore(nowTime));
-            System.out.println(schedule.getStopTime().isAfter(nowTime));
+
             int powerState = 0;
             Integer weekNumber = getWeekNumber(nowDate);
             if(schedule.getStartTime().isBefore(nowTime)
@@ -97,13 +89,12 @@ public class ScheduleTask extends TimerTask {
                 } else {
                     powerState = 1;
                 }
-                System.out.println(schedule.getGroupId());
             } else {
                 powerState = 0;
             }
             if (powerState != 2) {
                 if (schedule.getIsGroup()) {
-                    groupControl(schedule.getGroupId(), weekNumber, powerState);
+                    groupControl(schedule.getScheduleId(), weekNumber, powerState);
                 } else {
                     targetControl(schedule.getGroupId(), powerState);
                 }
@@ -111,6 +102,23 @@ public class ScheduleTask extends TimerTask {
 
 
         });
+    }
+    private boolean groupControl(Long scheduleId, Integer week, int powerState) {
+        Long rootGroupId = scheduleDslRepository.findRootGroupId(scheduleId).getId();
+        List<OrderDto> orders = orderDslRepository.findAllByRootGroupIdWeekId(rootGroupId, new Long(week)).stream()
+                .map(OrderDto::new)
+                .sorted(comparing(OrderDto::getOrder))
+
+                .collect(toList());
+
+        for (OrderDto order : orders) {
+            boolean controlResult = targetControl(order.getGroupId(), powerState);
+
+            if (controlResult) {
+                return true;
+            }
+        }
+        return false;
     }
     private boolean targetControl(Long groupId, int powerState) {
         GroupSearchDto groupSearchDto = new GroupSearchDto();
@@ -129,37 +137,32 @@ public class ScheduleTask extends TimerTask {
             for (DeviceConDto device : devices) {
                 TagDto localTag = device.getTags().get(localCode);
                 TagDto powerTag = device.getTags().get(powerCode);
-                System.out.println(powerTag.getTagName());
-                Object objectState = webaccessApiService.getTagValuesV2(asList(powerTag.getTagName())).get(powerTag.getTagName());
-                System.out.println(objectState);
-                Integer objectStateInt = new Double(objectState.toString()).intValue();
-                System.out.println(objectStateInt);
+                Integer objectState = webaccessApiService.getTagValuesV2Int(powerTag.getTagName());
                 for (int i = 0; i < 3; i++) {
-                    if (objectState instanceof Integer) {
-
-                        if (objectStateInt == 0 && powerState == 1) {
-                            webaccessApiService.setTagValues(new ArrayList<>(List.of(localTag)));
-                            Thread.sleep(500);
-                            powerTag.setValue(1);
-                            webaccessApiService.setTagValues(new ArrayList<>(List.of(powerTag)));
-                            Thread.sleep(500);
-                            if(new Double(webaccessApiService.getTagValuesV2(asList(powerTag.getTagName())).get(powerTag.getTagName()).toString()).intValue() == 1) {
-                                return true;
-                            }
-                        } else if (objectStateInt == 1 && powerState == 0) {
-                            webaccessApiService.setTagValues(new ArrayList<>(List.of(localTag)));
-                            Thread.sleep(500);
-                            powerTag.setValue(0);
-                            webaccessApiService.setTagValues(new ArrayList<>(List.of(powerTag)));
-                            Thread.sleep(500);
-                            if(new Double(webaccessApiService.getTagValuesV2(asList(powerTag.getTagName())).get(powerTag.getTagName()).toString()).intValue() == 0) {
-                                return true;
-                            }
-                        } else if (objectStateInt == 0 && powerState == 0) {
-                            return true;
-                        } else if (objectStateInt == 1 && powerState == 1) {
+                    if (objectState == 0 && powerState == 1) {
+                        localTag.setValue(1);
+                        webaccessApiService.setTagValue(localTag);
+                        Thread.sleep(500);
+                        powerTag.setValue(1);
+                        webaccessApiService.setTagValue(powerTag);
+                        Thread.sleep(500);
+                        if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName()) == 1) {
                             return true;
                         }
+                    } else if (objectState == 1 && powerState == 0) {
+                        localTag.setValue(1);
+                        webaccessApiService.setTagValue(localTag);
+                        Thread.sleep(500);
+                        powerTag.setValue(0);
+                        webaccessApiService.setTagValue(powerTag);
+                        Thread.sleep(500);
+                        if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName())  == 0) {
+                            return true;
+                        }
+                    } else if (objectState == 0 && powerState == 0) {
+                        return false;
+                    } else if (objectState == 1 && powerState == 1) {
+                        return false;
                     }
                     Thread.sleep(1000);
                 }
@@ -178,20 +181,6 @@ public class ScheduleTask extends TimerTask {
             }
         }catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        return false;
-    }
-    private boolean groupControl(Long scheduleId, Integer week, int powerState) {
-        Long rootGroupId = scheduleDslRepository.findRootGroupId(scheduleId).getId();
-        List<OrderDto> orders = orderDslRepository.findAllByRootGroupIdWeekId(rootGroupId, new Long(week)).stream()
-                .map(OrderDto::new)
-                .sorted(comparing(OrderDto::getOrder))
-                .collect(toList());
-        for (OrderDto order : orders) {
-            boolean controlResult = targetControl(order.getGroupId(), powerState);
-            if (controlResult) {
-                return true;
-            }
         }
         return false;
     }

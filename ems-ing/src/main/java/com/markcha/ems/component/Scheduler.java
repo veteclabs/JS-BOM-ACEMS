@@ -62,8 +62,8 @@ public class Scheduler {
         List<Long> difference = difference(collect, longs);
         schedules.forEach(schedule->{
             if(schedule.getIsActive() && difference.contains(schedule.getId())) {
-                System.out.println(schedule.getId()  + " 번 스레드 생성");
                 Timer timer = new Timer();
+                Integer intever = 1000*schedule.getInterval();
                 ScheduleTask scheduleTask = new ScheduleTask(
                         groupDslRepository,
                         scheduleDslRepository,
@@ -73,14 +73,13 @@ public class Scheduler {
                         tagDslRepositoryIml,
                         alarmDataRepository);
                 scheduleTask.setScheduleId(schedule.getId());
-                timer.schedule(scheduleTask, 5000, 5000);
+                timer.schedule(scheduleTask, intever, intever);
                 tasks.put(schedule.getId(), timer);
             }
         });
         ArrayList<Long> taskRemover = difference(longs, collect);
         if(!isNull(taskRemover)) {
             taskRemover.forEach(t -> {
-                System.out.println(t  + " 번 스레드 삭제");
                 tasks.get(t).cancel();
                 tasks.remove(t);
             });

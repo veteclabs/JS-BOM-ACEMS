@@ -67,7 +67,6 @@ public class InsertSampleData {
                 break;
 
         }
-        System.out.println(value);
         return value;
     }
 }

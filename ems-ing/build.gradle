@@ -97,7 +97,15 @@ configurations {
 	}
 	querydsl.extendsFrom compileClasspath
 }
+bootJar {
 
+	archiveBaseName = '-'
+
+	archiveFileName = '-.jar'
+
+	archiveVersion = "0.0.0"
+
+}
 docker {
 	name 'vetec/ems'
 	tag 'Dockerhub', "vetec/ems:${project.version}"
