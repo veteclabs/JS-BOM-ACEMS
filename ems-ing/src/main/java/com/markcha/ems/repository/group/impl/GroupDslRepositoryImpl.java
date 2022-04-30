@@ -318,6 +318,20 @@ public class GroupDslRepositoryImpl{
                 .fetch();
     }
 
+    public List<Tag> findAllChildGruopMaxTags(Long parentId) {
+        QGroup parentGroup = new QGroup("parentGroup");
+        return query.selectFrom(tag)
+                .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(group.parent, parentGroup).fetchJoin()
+                .where(
+                         parentGroup.id.eq(parentId)
+                        ,equipment.type.eq(AIR_COMPRESSOR)
+                        ,tag.type.eq("COMP_StopPre")
+                ).fetch();
+    }
+
     public List<Group> findAllByIds(List<Long> ids) {
         BooleanExpression groupIdEq = null;
         if(!isNull(ids)) {

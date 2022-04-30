@@ -9,6 +9,7 @@ import com.markcha.ems.dto.device.CompressorSimpleDto;
 import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.dto.group.GroupDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
+import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.week.WeekDto;
 import com.markcha.ems.dto.week.WeekGroupDto;
 import com.markcha.ems.repository.*;
@@ -51,7 +52,7 @@ public class GroupServiceImpl {
     private final OrderDslRepositoryImpl orderDslRepository;
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final DeviceDataRepository deviceDataRepository;
-
+    private final WebaccessApiServiceImpl webaccessApiService;
 
     private final DayOfWeekMapperDataRepository dayOfWeekMapperDataRepository;
     private final WeekMapperDataRepository weekMapperDataRepository;
@@ -150,6 +151,7 @@ public class GroupServiceImpl {
                 .collect(toList());
 
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
+
         List<WeekMapper> weekMappers1 = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, newSchedule.getId());
         weekMappers1.forEach(t->{
             t.getOrders().clear();
@@ -175,7 +177,14 @@ public class GroupServiceImpl {
         weekMapperDataRepository.saveAll(weekMappers1);
 
         groupDataRepository.save(newGroup);
-
+        List<TagDto> maxTags = groupDslRepository.findAllChildGruopMaxTags(groupInsertDto.getId()).stream()
+                .map(t->{
+                    TagDto tag = new TagDto(t);
+                    tag.setValue(groupInsertDto.getSchedule().getMax());
+                    return tag;
+                })
+                .collect(toList());
+        webaccessApiService.setTagValues(maxTags);
         return true;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
