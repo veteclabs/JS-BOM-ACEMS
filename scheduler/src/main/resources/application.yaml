@@ -1,15 +1,15 @@
 server:
-  port: 8031
+  port: 8032
 spring:
   webaccess:
     #    host: http://112.216.32.4/WaWebService/Json/
-    host: http://localhost:8031/WaWebService/Json/
+    host: http://localhost:8032/WaWebService/Json/
     project: BOM
     node: BOM
   batch:
     initialize-schema=always:
   application:
-    name: ems-ing
+    name: scheduler
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true

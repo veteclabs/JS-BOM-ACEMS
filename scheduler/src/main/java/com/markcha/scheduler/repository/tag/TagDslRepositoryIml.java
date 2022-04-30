@@ -1,6 +1,6 @@
-package com.markcha.ems.repository.tag;
+package com.markcha.scheduler.repository.tag;
 
-import com.markcha.ems.domain.*;
+import com.markcha.scheduler.domain.Tag;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -8,11 +8,9 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.markcha.ems.domain.QDevice.device;
-import static com.markcha.ems.domain.QEquipment.equipment;
-import static com.markcha.ems.domain.QGroup.group;
-import static com.markcha.ems.domain.QSchedule.schedule;
-import static com.markcha.ems.domain.QTag.tag;
+import static com.markcha.scheduler.domain.QDevice.device;
+import static com.markcha.scheduler.domain.QGroup.group;
+import static com.markcha.scheduler.domain.QTag.tag;
 
 @Repository
 public class TagDslRepositoryIml {
@@ -24,16 +22,13 @@ public class TagDslRepositoryIml {
         this.query = new JPAQueryFactory(entityManager);
     }
 
-    public Device findAllByGroupId(Long id){
+    public Tag findAllByGroupId(Long id){
 
-        return query.selectFrom(device)
-                .leftJoin(device.tags, tag).fetchJoin()
+        return query.selectFrom(tag)
+                .leftJoin(tag.device, device).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
-                .leftJoin(group.schedule, schedule).fetchJoin()
-                .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                          group.id.eq(id)
-                        ,equipment.type.eq(EquipmentType.AIR_COMPRESSOR)
                         ,tag.type.in(new ArrayList<>(List.of("COMP_Power", "COMP_Local")))
                 ).fetchOne();
 

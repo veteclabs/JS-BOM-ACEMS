@@ -1,24 +1,19 @@
-package com.markcha.ems.component;
+package com.markcha.scheduler.component;
 
-import com.markcha.ems.controller.GroupController;
-import com.markcha.ems.controller.GroupController.GroupSearchDto;
-import com.markcha.ems.controller.ScheduleController;
-import com.markcha.ems.controller.ScheduleController.ScheduleDto;
-import com.markcha.ems.domain.Alarm;
-import com.markcha.ems.domain.EquipmentType;
-import com.markcha.ems.dto.device.DeviceConDto;
-import com.markcha.ems.dto.order.OrderDto;
-import com.markcha.ems.dto.response.ApiResponseDto;
-import com.markcha.ems.dto.tag.TagDto;
-import com.markcha.ems.repository.AlarmDataRepository;
-import com.markcha.ems.repository.group.dto.GroupQueryDto;
-import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
-import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
-import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
-import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
-import com.markcha.ems.repository.tag.TagDslRepositoryIml;
-import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
-import org.springframework.stereotype.Component;
+import com.markcha.scheduler.domain.Alarm;
+import com.markcha.scheduler.dto.device.DeviceConDto;
+import com.markcha.scheduler.dto.group.GroupSearchDto;
+import com.markcha.scheduler.dto.order.OrderDto;
+import com.markcha.scheduler.dto.schedule.ScheduleDto;
+import com.markcha.scheduler.dto.tag.TagDto;
+import com.markcha.scheduler.repository.AlarmDataRepository;
+import com.markcha.scheduler.repository.group.dto.GroupQueryDto;
+import com.markcha.scheduler.repository.group.impl.GroupDslRepositoryImpl;
+import com.markcha.scheduler.repository.group.impl.GroupDynamicRepositoryImpl;
+import com.markcha.scheduler.repository.order.OrderDslRepositoryImpl;
+import com.markcha.scheduler.repository.schedule.impl.ScheduleDslRepositoryImpl;
+import com.markcha.scheduler.repository.tag.TagDslRepositoryIml;
+import com.markcha.scheduler.WebaccessApiServiceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,8 +21,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Stream;
 
-import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static com.markcha.scheduler.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -93,26 +89,38 @@ public class ScheduleTask extends TimerTask {
                 powerState = 0;
             }
             if (powerState != 2) {
-                if (schedule.getIsGroup()) {
-                    groupControl(schedule.getScheduleId(), weekNumber, powerState);
-                } else {
-                    targetControl(schedule.getGroupId(), powerState);
+                try {
+                    if (schedule.getIsGroup()) {
+                            groupControl(schedule.getScheduleId(), weekNumber, powerState, schedule.getInterval());
+                    } else {
+                        targetControl(schedule.getGroupId(), powerState, schedule.getInterval());
+                    }
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
 
 
         });
     }
-    private boolean groupControl(Long scheduleId, Integer week, int powerState) {
+    private boolean groupControl(Long scheduleId, Integer week, int powerState, Integer intever) throws InterruptedException {
         Long rootGroupId = scheduleDslRepository.findRootGroupId(scheduleId).getId();
-        List<OrderDto> orders = orderDslRepository.findAllByRootGroupIdWeekId(rootGroupId, new Long(week)).stream()
-                .map(OrderDto::new)
-                .sorted(comparing(OrderDto::getOrder))
-
+        Stream<OrderDto> orderDtoStream = orderDslRepository.findAllByRootGroupIdWeekId(rootGroupId, new Long(week)).stream()
+                .map(OrderDto::new);
+        
+        if(powerState == 1) {
+            orderDtoStream = orderDtoStream
+                    .sorted(comparing(OrderDto::getOrder));
+        } else {
+            orderDtoStream = orderDtoStream
+                    .sorted(comparing(OrderDto::getOrder).reversed());
+        }
+        
+        List<OrderDto> orders = orderDtoStream
                 .collect(toList());
 
         for (OrderDto order : orders) {
-            boolean controlResult = targetControl(order.getGroupId(), powerState);
+            boolean controlResult = targetControl(order.getGroupId(), powerState, intever);
 
             if (controlResult) {
                 return true;
@@ -120,11 +128,11 @@ public class ScheduleTask extends TimerTask {
         }
         return false;
     }
-    private boolean targetControl(Long groupId, int powerState) {
+    private boolean targetControl(Long groupId, int powerState, Integer intever) throws InterruptedException {
         GroupSearchDto groupSearchDto = new GroupSearchDto();
-        String powerCode = "COMP_Power";
-        String localCode = "COMP_Local";
-        groupSearchDto.setTagTypes(asList(powerCode, localCode));
+        String powerType = "COMP_Power";
+        String localType = "COMP_Local";
+        groupSearchDto.setTagTypes(asList(powerType, localType));
         groupSearchDto.setEquipmentType(AIR_COMPRESSOR);
         groupSearchDto.setDetail(false);
         List<DeviceConDto> devices = new ArrayList<>();
@@ -133,54 +141,51 @@ public class ScheduleTask extends TimerTask {
                 .forEach(k->devices.addAll(k.getAllDevices().stream()
                         .map(DeviceConDto::new).collect(toList())));
         List<String> tagNames = new ArrayList<>();
-        try {
-            for (DeviceConDto device : devices) {
-                TagDto localTag = device.getTags().get(localCode);
-                TagDto powerTag = device.getTags().get(powerCode);
-                Integer objectState = webaccessApiService.getTagValuesV2Int(powerTag.getTagName());
-                for (int i = 0; i < 3; i++) {
-                    if (objectState == 0 && powerState == 1) {
-                        localTag.setValue(1);
-                        webaccessApiService.setTagValue(localTag);
-                        Thread.sleep(500);
-                        powerTag.setValue(1);
-                        webaccessApiService.setTagValue(powerTag);
-                        Thread.sleep(500);
-                        if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName()) == 1) {
-                            return true;
-                        }
-                    } else if (objectState == 1 && powerState == 0) {
-                        localTag.setValue(1);
-                        webaccessApiService.setTagValue(localTag);
-                        Thread.sleep(500);
-                        powerTag.setValue(0);
-                        webaccessApiService.setTagValue(powerTag);
-                        Thread.sleep(500);
-                        if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName())  == 0) {
-                            return true;
-                        }
-                    } else if (objectState == 0 && powerState == 0) {
-                        return false;
-                    } else if (objectState == 1 && powerState == 1) {
-                        return false;
+
+        for (DeviceConDto device : devices) {
+            TagDto localTag = device.getTags().get(localType);
+            TagDto powerTag = device.getTags().get(powerType);
+            Integer objectState = webaccessApiService.getTagValuesV2Int(powerTag.getTagName());
+            for (int i = 0; i < 3; i++) {
+                if (objectState == 0 && powerState == 1) {
+                    localTag.setValue(1);
+                    webaccessApiService.setTagValue(localTag);
+                    Thread.sleep(intever * 1000);
+                    powerTag.setValue(powerState);
+                    webaccessApiService.setTagValue(powerTag);
+                    Thread.sleep(intever * 1000);
+                    if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName()) == powerState) {
+                        return true;
                     }
-                    Thread.sleep(1000);
+                } else if (objectState == 1 && powerState == 0) {
+                    localTag.setValue(1);
+                    webaccessApiService.setTagValue(localTag);
+                    Thread.sleep(intever * 1000);
+                    powerTag.setValue(powerState);
+                    webaccessApiService.setTagValue(powerTag);
+                    Thread.sleep(intever * 1000);
+                    if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName())  == powerState) {
+                        return true;
+                    }
+                } else if (objectState == 0 && powerState == 0) {
+                    return false;
+                } else if (objectState == 1 && powerState == 1) {
+                    return false;
                 }
-                Alarm alarm = new Alarm();
-                alarm.setOccurrenceTime(LocalTime.now());
-                alarm.setCheckIn(false);
-                alarm.setTempValue(null);
-                alarm.setPrssValue(null);
-                alarm.setKwhValue(null);
-                alarm.setMessage("에어 컴프레셔 제어 실패");
-                alarm.setEventDate(LocalDate.now());
-                alarm.setType("error");
-                alarm.setTrip(null);
-                alarm.setTag(tagDslRepositoryIml.getOneById(device.getTags().get(powerCode).getId()));
-                alarmDataRepository.save(alarm);
+                Thread.sleep(1000);
             }
-        }catch (InterruptedException e) {
-            e.printStackTrace();
+            Alarm alarm = new Alarm();
+            alarm.setOccurrenceTime(LocalTime.now());
+            alarm.setCheckIn(false);
+            alarm.setTempValue(null);
+            alarm.setPrssValue(null);
+            alarm.setKwhValue(null);
+            alarm.setMessage("에어 컴프레셔 제어 실패");
+            alarm.setEventDate(LocalDate.now());
+            alarm.setType("error");
+            alarm.setTrip(null);
+            alarm.setTag(tagDslRepositoryIml.getOneById(device.getTags().get(powerType).getId()));
+            alarmDataRepository.save(alarm);
         }
         return false;
     }

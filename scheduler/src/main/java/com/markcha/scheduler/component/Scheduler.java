@@ -1,27 +1,24 @@
-package com.markcha.ems.component;
+package com.markcha.scheduler.component;
 
-import com.markcha.ems.controller.ScheduleController;
-import com.markcha.ems.controller.ScheduleController.ScheduleSimpleDto;
 
-import com.markcha.ems.domain.Alarm;
-import com.markcha.ems.domain.Tag;
-import com.markcha.ems.domain.Trip;
-import com.markcha.ems.repository.AlarmDataRepository;
-import com.markcha.ems.repository.DayOfWeekDataRepository;
-import com.markcha.ems.repository.TripDataRepository;
-import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
-import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
-import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
-import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
-import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
-import com.markcha.ems.repository.tag.TagDslRepositoryIml;
-import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
+import com.markcha.scheduler.domain.Alarm;
+import com.markcha.scheduler.domain.Tag;
+import com.markcha.scheduler.domain.Trip;
+import com.markcha.scheduler.dto.schedule.ScheduleSimpleDto;
+import com.markcha.scheduler.repository.AlarmDataRepository;
+import com.markcha.scheduler.repository.DayOfWeekDataRepository;
+import com.markcha.scheduler.repository.TripDataRepository;
+import com.markcha.scheduler.repository.device.impl.DeviceDslRepositoryImpl;
+import com.markcha.scheduler.repository.group.impl.GroupDslRepositoryImpl;
+import com.markcha.scheduler.repository.group.impl.GroupDynamicRepositoryImpl;
+import com.markcha.scheduler.repository.order.OrderDslRepositoryImpl;
+import com.markcha.scheduler.repository.schedule.impl.ScheduleDslRepositoryImpl;
+import com.markcha.scheduler.repository.tag.TagDslRepositoryIml;
+import com.markcha.scheduler.WebaccessApiServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -73,7 +70,7 @@ public class Scheduler {
                         tagDslRepositoryIml,
                         alarmDataRepository);
                 scheduleTask.setScheduleId(schedule.getId());
-                timer.schedule(scheduleTask, intever, intever);
+                timer.schedule(scheduleTask,1000, 1000);
                 tasks.put(schedule.getId(), timer);
             }
         });

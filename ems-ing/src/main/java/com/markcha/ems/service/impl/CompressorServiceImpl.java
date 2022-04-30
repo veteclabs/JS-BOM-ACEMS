@@ -23,6 +23,7 @@ import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import com.markcha.ems.service.InsertSampleData;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -56,6 +57,7 @@ public class CompressorServiceImpl {
     private final WebaccessApiServiceImpl webaccessApiService;
     private final OrderDataRepository orderDataRepository;
     private final OrderDslRepositoryImpl orderDslRepository;
+    private final AlarmDataRepository alarmDataRepository;
 
 
     public Boolean createCompressor(CompressorInsertDto compressorInsertDto) {
@@ -235,6 +237,8 @@ public class CompressorServiceImpl {
         List<Schedule> schedules = new ArrayList<>();
         List<Group> groups = new ArrayList<>();
         List<Tag> tags = new ArrayList<>();
+        List<Alarm> alarms = new ArrayList<>();
+
         compressors.forEach(t->{
             if(!isNull(t.getGroup())) {
                 Group group = t.getGroup();
@@ -254,10 +258,15 @@ public class CompressorServiceImpl {
             }
             if(!isNull(t.getTags())) {
                 tags.addAll(t.getTags());
+                t.getTags().forEach(k->{
+                    alarms.addAll(k.getAlarms());
+                });
             }
         });
         orphanDevices.forEach(t->t.setGroup(null));
+        alarmDataRepository.deleteAllInBatch(alarms);
         weekMapperDataRepository.deleteAllInBatch(weekMappers);
+        alarmDataRepository.deleteAllInBatch(alarms);
         tagDataRepository.deleteAllInBatch(tags);
         deviceDataRepository.deleteAllInBatch(compressors);
         deviceDataRepository.saveAll(orphanDevices);
@@ -295,67 +304,16 @@ public class CompressorServiceImpl {
                 t.setDeviceSet(new HashSet<>(groupingDevices.get(t.getId())));
             }
         });
-//        List<String> tagNames = new ArrayList<>();
-//        compressors.stream().forEach(t -> t.getTags().forEach(k->tagNames.add(k.getTagName())));
-//        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
-//        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
-//                .map(AlarmDto::new)
-//                .collect(groupingBy(t -> t.getTagName()));
-
-//        compressors.forEach(t->{
-//            t.getTags().forEach(k->{
-//                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
-//                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
-//                    t.setAlarm(true);
-//                    t.setAlarmMention(alarmDtos.get(0).getDescription());
-//                }
-//                k.setAlarms(alarmDtos);
-//            });
-//        });
 
         return compressors;
     }
+    @Async
+    public void controllPowerAsync(Integer intever, Map<String, TagDto> tagMap, Integer powerCode) throws InterruptedException {
+        tagMap.get("COMP_Local").setValue(1);
+        webaccessApiService.setTagValue(tagMap.get("COMP_Local"));
+        Thread.sleep(1000*intever);
+        tagMap.get("COMP_Power").setValue(powerCode);
+        webaccessApiService.setTagValue(tagMap.get("COMP_Power"));
 
-//    public AirCompressorDto getOneJoinAlarm(Long id) {
-//        AirCompressorDto compressor = new AirCompressorDto(deviceDslRepository.getOneCompressorsJoinEquipment(id, AIR_COMPRESSOR));
-//
-//        List<DeviceDto> devices = deviceDslRepository.getDeviceByGroupIds(new ArrayList<>(List.of(compressor.getId()))).stream()
-//                .map(t->{
-//                    t.setTagList(t.getTags().stream()
-//                            .map(TagDto::new)
-//                            .collect(toList()));
-//                    Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(
-//                            t.getTagList().stream()
-//                                    .map(g -> g.getTagName())
-//                                    .collect(toList()));
-//                    t.getTagList().forEach(k->{
-//                        k.setValue(tagValues.get(k.getTagName()));
-//                    });
-//                    return new DeviceDto(t);
-//                }).collect(toList());
-//        Map<Long, List<DeviceDto>> groupingDevices = devices.stream()
-//                .collect(groupingBy(t -> t.getGroupId()));
-//
-//        if(!isNull(groupingDevices.get(compressor.getId()))) {
-//            compressor.setDevices(groupingDevices.get(compressor.getId()).stream()
-//                    .collect(groupingBy(g -> g.getType().getNickname())));
-//        }
-//        List<String> tagNames = new ArrayList<>();
-////        compressor.getTags().forEach(k->tagNames.add(k.getTagName()));
-////        AlarmMapDto alarmMapDto = new AlarmMapDto(tagNames);
-////        Map<String, List<AlarmDto>> grouppingAlarm = alarmMapper.getTodayAlarmState(alarmMapDto).stream()
-////                .map(AlarmDto::new)
-////                .collect(groupingBy(t -> t.getTagName()));
-//
-////        compressor.getTags().forEach(k->{
-////                List<AlarmDto> alarmDtos = grouppingAlarm.get(k.getTagName());
-////                if(!isNull(alarmDtos) && alarmDtos.size() != 0) {
-////                    compressor.setAlarm(true);
-////                    compressor.setAlarmMention(alarmDtos.get(0).getDescription());
-////                }
-////                k.setAlarms(alarmDtos);
-////            });
-//
-//        return compressor;
-//    }
+    }
 }
