@@ -13,7 +13,7 @@ plugins {
 	id 'com.palantir.docker' version '0.22.1'
 
 }
-
+ext.projectName = "scheduler"
 group = 'com.markcha'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -68,14 +68,28 @@ configurations {
 	}
 	querydsl.extendsFrom compileClasspath
 }
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile
+sourceSets {
+	main.java.srcDir querydslDir
+	println profile
+	main {
+		resources {
+			srcDirs "src/main/resources", "src/main/resources-${profile}"
+		}
+	}
+}
 bootJar {
+	archiveBaseName = "${projectName}-${project.version}-${profile}"
+	archiveFileName = "${projectName}-${project.version}-${profile}.jar"
+	delete fileTree('../bin') {
+		include "${projectName}-${project.version}-${profile}.jar.jar"
+	}
+	copy {
+		from "$buildDir/libs/${projectName}-${project.version}-${profile}.jar"
+		into "../bin"
 
-	archiveBaseName = '-'
 
-	archiveFileName = '-.jar'
-
-	archiveVersion = "0.0.0"
-
+	}
 }
 docker {
 	name 'vetec/ems'

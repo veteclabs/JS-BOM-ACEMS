@@ -98,12 +98,13 @@ sourceSets {
 bootJar {
 	archiveBaseName = "${projectName}-${project.version}-${profile}"
 	archiveFileName = "${projectName}-${project.version}-${profile}.jar"
-
+	delete fileTree('../bin') {
+		include "${projectName}-${project.version}-${profile}.jar.jar"
+	}
 	copy {
 		from "$buildDir/libs/${projectName}-${project.version}-${profile}.jar"
 		into "../bin"
 	}
-
 }
 
 // 리소스 디렉토리 추가

@@ -38,7 +38,7 @@ mybatis:
 
 response:
   jpa:
-    DB_INSERT_MSG: 배포 환경 #successfully created!
+    DB_INSERT_MSG: successfully created!
     DB_UPDATE_MSG: successfully saved!
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
