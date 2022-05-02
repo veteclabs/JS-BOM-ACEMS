@@ -9,7 +9,7 @@ spring:
   batch:
     initialize-schema=always:
   application:
-    name: scheduler
+    name: ems-ing
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
