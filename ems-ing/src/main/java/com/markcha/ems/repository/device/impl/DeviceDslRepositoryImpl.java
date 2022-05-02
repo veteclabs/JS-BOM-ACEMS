@@ -85,8 +85,8 @@ public class DeviceDslRepositoryImpl {
             groupEqId = group.id.eq(groupId);
         }
         return query.select(device).distinct()
-                .from(group)
-                .leftJoin(group.deviceSet, device).fetchJoin()
+                .from(device)
+                .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                          equipment.type.eq(PRESSURE_GAUGE)

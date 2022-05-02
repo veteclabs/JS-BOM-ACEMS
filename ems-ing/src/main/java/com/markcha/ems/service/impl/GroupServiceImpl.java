@@ -238,7 +238,7 @@ public class GroupServiceImpl {
                 groupDataRepository.save(group);
                 groupDataRepository.saveAll(newCompressors);
                 deviceDataRepository.saveAll(newDevices);
-                updateGroups(groupDto.getAirCompressors());
+//                updateGroups(groupDto.getAirCompressors());
             }
             return true;
         }
