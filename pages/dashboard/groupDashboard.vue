@@ -2,9 +2,9 @@
     <div id="SubContentWrap">
         <div class="row">
             <div class="col-lg-12">
-                <div class="grid-header" style="padding:0 0 12px 0;">
+                <!--<div class="grid-header" style="padding:0 0 12px 0;">
                     <button class="button submit-button" @click="submit">저장</button>
-                </div>
+                </div>-->
             </div>
             <div class="col-lg-10 group-overflow-box">
                 <div class="group" v-for="group in groupList" :key="group.id">
@@ -20,7 +20,7 @@
                     <div class="row group-content">
                         <div class="col-lg-3">
                             <div class="td-label">압력계</div>
-                            <draggable class="list-group" :list="group.devices.pressure" group="pressure">
+                            <draggable @change="submit" class="list-group" :list="group.devices.pressure" group="pressure">
                                 <div class="ibox" v-for="device in group.devices.pressure" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
@@ -30,7 +30,7 @@
                                 <div v-if="group.devices.pressure.length === 0">등록된 압력계가 없습니다.</div>
                             </draggable>
                             <div class="td-label">온도계</div>
-                            <draggable class="list-group" :list="group.devices.temperature" group="temperature">
+                            <draggable @        @change="log"change="submit" class="list-group" :list="group.devices.temperature" group="temperature">
                                 <div class="ibox" v-for="device in group.devices.temperature" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
@@ -40,7 +40,7 @@
                                 <div v-if="group.devices.temperature.length === 0">온도계가 없습니다.</div>
                             </draggable>
                             <div class="td-label">유량계</div>
-                            <draggable class="list-group" :list="group.devices.flow" group="flow">
+                            <draggable @change="submit" class="list-group" :list="group.devices.flow" group="flow">
                                 <div class="ibox" v-for="device in group.devices.flow" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
@@ -53,7 +53,7 @@
                         <div class="col-lg-9">
                             <div class="td-label">공기압축기</div>
                             <div class="row">
-                                <draggable class="list-group" :list="group.airCompressors" group="airCompressor">
+                                <draggable @change="submit" class="list-group" :list="group.airCompressors" group="airCompressor">
                                     <div v-for="device in group.airCompressors" :key="device.id" class="col-lg-4"><div class="ibox">
                                             <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                                                 <nuxt-link :to="`/dashboard/${device.id}`">
@@ -107,7 +107,7 @@
                         </h2>
                     </div>
                     <div class="td-label">압력계</div>
-                    <draggable class="list-group" :list="freeGroupList.pressure" group="pressure">
+                    <draggable @change="submit" class="list-group" :list="freeGroupList.pressure" group="pressure">
                         <div class="ibox" v-for="device in freeGroupList.pressure" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
@@ -117,7 +117,7 @@
                         <div v-if="freeGroupList.pressure.length === 0">압력계가 없습니다.</div>
                     </draggable>
                     <div class="td-label">온도계</div>
-                    <draggable class="list-group" :list="freeGroupList.temperature" group="temperature">
+                    <draggable @change="submit" class="list-group" :list="freeGroupList.temperature" group="temperature">
                         <div class="ibox" v-for="device in freeGroupList.temperature" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
@@ -127,7 +127,7 @@
                         <div v-if="freeGroupList.temperature.length === 0">온도계가 없습니다.</div>
                     </draggable>
                     <div class="td-label">유량계</div>
-                    <draggable class="list-group" :list="freeGroupList.flow" group="flow">
+                    <draggable @change="submit" class="list-group" :list="freeGroupList.flow" group="flow">
                         <div class="ibox" v-for="device in freeGroupList.flow" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
@@ -137,7 +137,7 @@
                         <div v-if="freeGroupList.flow.length === 0">유량계가 없습니다.</div>
                     </draggable>
                     <div class="td-label">공기압축기</div>
-                    <draggable class="list-group" :list="freeGroupList.airCompressor" group="airCompressor">
+                    <draggable @change="submit" class="list-group" :list="freeGroupList.airCompressor" group="airCompressor">
                         <div v-for="device in freeGroupList.airCompressor" :key="device.id">
                             <div class="ibox">
                                 <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
@@ -187,14 +187,12 @@
     </div>
 </template>
 <script>
-    import dayjs from 'dayjs';
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
     import flashModal from '~/components/flashmodal.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
     import editGroupModal from '~/components/settingModal/editGroupModal.vue';
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
-    import TPArray from '~/assets/data/TPCode.json';
     import waTagSet from '~/assets/data/tagSet.json';
     import draggable from 'vuedraggable';
 
@@ -208,7 +206,6 @@
         },
         layout: 'dashboard',
         components: {
-            dayjs,
             Loading,
             flashModal,
             settingEquipmentModal,
@@ -304,6 +301,7 @@
                     vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
+                    vm.getGroup();
                     vm.loadingData.show = false;
                 });
             },
