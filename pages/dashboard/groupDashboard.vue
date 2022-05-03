@@ -294,9 +294,6 @@
                     method: 'put',
                     url: '/api/groups',
                     data: params
-                }).then((res) => {
-                    vm.msgData.show = true;
-                    vm.msgData.msg = res.data.message;
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;

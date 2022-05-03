@@ -34,19 +34,20 @@
                         <label class="input-100">
                             <input type="number" v-model="groupData.schedule.min" class="input-100" placeholder="최소압력"/>
                         </label>
-                        <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('groupData.schedule.min') }}
-                        </div>
                     </td>
                     <td>~</td>
                     <td>
                         <div class="td-label">Max</div>
                         <label class="input-100">
-                            <input type="number" v-model="groupData.schedule.max" class="input-100" placeholder="최대압력"/>
+                            <input type="number" v-model="groupData.schedule.max" class="input-100" placeholder="최대압력"
+                            @change="settingMin"/>
                         </label>
                     </td>
                 </tr>
             </table>
+            <div class="err-message" v-if="validation !== undefined">
+                {{ validation.firstError('groupData.schedule.min') }}
+            </div>
         </div>
         <div class="ibox">
             <div class="ibox-title ibox-noborder-title flex-box">
@@ -175,6 +176,8 @@
                             return 'Max 값을 더 높게 설정해주세요.'
                         } else if (min === max) {
                             return 'Min, Max 값을 다르게 설정해주세요.'
+                        } else if(((max-min).toFixed(1)) < 0.7)  {
+                            return `Min, Max값의 차이는 0.7 이상 필요합니다. Min값을 ${(max-0.7).toFixed(1)} 이하로 설정해주세요.`
                         }
                     }
                 });
@@ -197,6 +200,16 @@
             this.getDayOfWeek();
         },
         methods: {
+            settingMin() {
+                const vm = this;
+                const max = vm.groupData.schedule.max;
+                const min = vm.groupData.schedule.min;
+                if((max-min) < 0.7) {
+                    let gap  = vm.groupData.schedule.max -0.7;
+                    gap = gap.toFixed(1);
+                    vm.groupData.schedule.min = gap;
+                }
+            },
             getDayOfWeek() {
 
                 const vm = this;
