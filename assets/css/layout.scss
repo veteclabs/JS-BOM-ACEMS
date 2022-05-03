@@ -461,6 +461,8 @@ h3 {
   order: 2;
   flex: 1;
   width: calc(100% - 64px);
+  height:100vh;
+  overflow:auto;
 
 }
 
@@ -798,68 +800,6 @@ h3 {
   .full-nav-info {
     display: none;
     opacity: 0;
-  }
-}
-
-body.full-navbar {
-  #content {
-    width: calc(100% - 240px);
-  }
-
-  #LeftMenu {
-    width: $nav-width;
-    flex: 0 0 $nav-width;
-
-
-    .nav-info {
-      box-shadow: none;
-    }
-
-    .nav {
-
-      li {
-        width: 100%;
-        display: flex;
-
-        .mini-info {
-          flex: 0 0 $mini-nav-width;
-        }
-
-        .profile-element-detail {
-          display: block;
-          text-align: left;
-
-          .profile-title {
-            font-size: 16px;
-            font-weight: 900;
-          }
-
-          .profile-subtitle {
-            font-size: 12px;
-            color: $gray-6;
-          }
-        }
-
-        > a {
-          margin: 0 16px;
-        }
-
-        ul {
-          display: block;
-          position: relative;
-          top: 0;
-          left: 0;
-          box-shadow: none;
-          padding: 8px 8px 0 8px;
-
-          li {
-            a {
-              margin: 0;
-            }
-          }
-        }
-      }
-    }
   }
 }
 

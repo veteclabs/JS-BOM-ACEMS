@@ -126,6 +126,9 @@
 </template>
 <script>
     import dayjs from 'dayjs';
+    import 'dayjs/locale/ko';
+    dayjs.locale('ko');
+
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
     import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
