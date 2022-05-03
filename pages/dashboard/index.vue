@@ -5,11 +5,9 @@
                 <div class="ibox">
                     <div class="ibox-title flex-ibox-title">실시간 유량</div>
                     <div class="ibox-content">
-                        <client-only>
-                            <apexchart type="radialBar" height="240" ref="liveCTLineChart"
-                                       :options="radialChartOptions"
-                                       :series="[totalFlow]"/>
-                        </client-only>
+                        <apexchart type="radialBar" height="240" ref="flowRadialBar"
+                                   :options="flowRadialChartOptions"
+                                   :series="[totalFlow]"/>
                     </div>
                 </div>
             </div>
@@ -29,7 +27,7 @@
                     <div class="ibox-title flex-ibox-title">실시간 압력</div>
                     <div class="ibox-content">
                         <client-only>
-                            <apexchart type="radialBar" height="240" ref="liveCTLineChart"
+                            <apexchart type="radialBar" height="240" ref="barRadialBar"
                                        :options="radialChartOptions"
                                        :series="[totalCompressorBar]"/>
                         </client-only>
@@ -77,7 +75,8 @@
                                             <div class="inner-bar"
                                                  :style="`width:${device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}%`"/>
                                         </div>
-                                        <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}}%</h3>
+                                        <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 :
+                                            device.tags.COMP_LoadFactor.value}}%</h3>
                                     </div>
                                 </li>
                                 <li v-if="device.state['COMP_Trip'].value === 1">
@@ -253,9 +252,8 @@
                             track: {
                                 background: '#f5f5f5',
                                 strokeWidth: '67%',
-                                margin: 0, // margin is in pixels
+                                margin: 0,
                             },
-
                             dataLabels: {
                                 show: true,
                                 name: {
@@ -268,7 +266,8 @@
                                 },
                                 value: {
                                     formatter: function (val) {
-                                        return parseInt(val);
+                                        let origValue = (val / 100) * 15;
+                                        return origValue.toFixed(2)
                                     },
                                     offsetY: -10,
                                     color: '#1b1b1b',
@@ -299,6 +298,83 @@
                     },
                     labels: ['bar'],
                 },
+                flowRadialChartOptions: {
+                    chart: {
+                        type: 'radialBar',
+                        toolbar: {
+                            show: true
+                        },
+                        offsetY: -10,
+                        animations: {
+                            enabled: false,
+                        }
+                    },
+                    plotOptions: {
+                        radialBar: {
+                            startAngle: -135,
+                            endAngle: 135,
+                            hollow: {
+                                margin: 0,
+                                size: '70%',
+                                background: '#fff',
+                                position: 'front',
+                                dropShadow: {
+                                    enabled: true,
+                                    top: -3,
+                                    left: 0,
+                                    blur: 4,
+                                    opacity: 0.05
+                                }
+                            },
+                            track: {
+                                background: '#f5f5f5',
+                                strokeWidth: '67%',
+                                margin: 0,
+                            },
+                            dataLabels: {
+                                show: true,
+                                name: {
+                                    offsetY: 40,
+                                    show: true,
+                                    color: '#6c6c6c',
+                                    fontSize: '18px',
+                                    fontWeight: 500,
+                                    fontFamily: 'BOM-font", Sans-serif',
+                                },
+                                value: {
+                                    formatter: function (val) {
+                                        let origValue = (val / 100) * 5;
+                                        return origValue.toFixed(2)
+                                    },
+                                    offsetY: -10,
+                                    color: '#1b1b1b',
+                                    fontSize: '40px',
+                                    fontWeight: 600,
+                                    fontFamily: 'BOM-font", Sans-serif',
+                                    show: true,
+                                }
+                            }
+                        }
+                    },
+                    fill: {
+                        type: 'gradient',
+                        colors: ['#c24285'],
+                        gradient: {
+                            shade: 'dark',
+                            type: 'horizontal',
+                            shadeIntensity: 0.5,
+                            gradientToColors: ['#3363ff'],
+                            inverseColors: true,
+                            opacityFrom: 1,
+                            opacityTo: 1,
+                            stops: [0, 100]
+                        }
+                    },
+                    stroke: {
+                        lineCap: 'round'
+                    },
+                    labels: ['Nm3/min'],
+                },
                 totalFlow: 0,
                 totalCompressorBar: 0,
                 airCompressorList: [],
@@ -310,6 +386,7 @@
             };
         },
         mounted() {
+            this.chartSetting();
             this.WaLogin();
             this.getTagValues();
             this.resetInterval();
@@ -322,21 +399,29 @@
             this.removeInterval();
         },
         methods: {
+            chartSetting() {
+                const flowMaxValue = 5; //option formatter랑 맞추기
+                const barMaxValue = 15;
+                const Flow = this.$options.filters.pickValue(this.tagVal, 'Name', `AU_AIR_Flow`, 'Value');
+                const bar = this.$options.filters.pickValue(this.tagVal, 'Name', `AU_AIR_Pre`, 'Value');
+                this.totalFlow = (Flow * 100) / flowMaxValue;
+                this.totalCompressorBar = (bar * 100) / barMaxValue;
+            },
             async WaLogin() {
                 await axios.get('/nuxt/WaLogin')
             },
             async getTagValues() {
                 const vm = this;
+
                 axios.post('/nuxt/wa/port/getTagValue', {
-                    portId: [1, 2, 3, 4, 5],
+                    portId: [-1, -2],
                 }, {
                     timeout: vm.intervalTime,
                 }).then((res) => {
                     if (res.data.Result.Total > 0) {
                         vm.tagVal = res.data.Values;
-                        vm.totalFlow = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_FLOW`, 'Value');
-                        vm.totalCompressorBar = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_AIR_PRE `, 'Value');
                         vm.setLiveChart();
+                        vm.chartSetting();
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
@@ -412,6 +497,7 @@
                 clearInterval(this.interval);
                 vm.interval = null;
                 vm.interval = setInterval(() => {
+                    this.chartSetting();
                     vm.getTagValues();
                     vm.getAirCompressor();
                     vm.getEquipment();

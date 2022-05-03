@@ -321,7 +321,8 @@
                                 },
                                 value: {
                                     formatter: function (val) {
-                                        return parseInt(val);
+                                        let origValue = (val / 100) * 15;
+                                        return origValue.toFixed(2)
                                     },
                                     offsetY: -10,
                                     color: '#1b1b1b',
@@ -369,15 +370,20 @@
             this.removeInterval();
         },
         methods: {
+            chartSetting() {
+                const barMaxValue = 15;
+                const bar = this.airCompressor.tags.COMP_SumpPre.value;
+                this.airCompressorBar = (bar * 100) / barMaxValue;
+            },
             async getAirCompressor() {
                 const vm = this;
                 const id = this.$route.params.id;
                 axios.get(`/api/compressor/${id}`
                 ).then((res) => {
                     vm.airCompressor = res.data;
-                    vm.airCompressorBar = vm.airCompressor.tags.COMP_SumpPre.value;
                     vm.powerData = vm.airCompressor.devices.power;
                     vm.setLiveChart();
+                    vm.chartSetting();
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
