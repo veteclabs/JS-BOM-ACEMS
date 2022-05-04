@@ -20,7 +20,7 @@
                                 :src="compressorImage"
                                 @error="replaceImg"
                                 :alt="airCompressor.equipmentId"
-                                style="max-width:100%;"/>
+                                style="max-width:400px; width:100%;"/>
                     </div>
                     <div class="ibox-title">
                         <ul class="modal-info-box">
@@ -384,7 +384,7 @@
                     vm.powerData = vm.airCompressor.devices.power;
                     vm.setLiveChart();
                     vm.chartSetting();
-                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.jpg`);
+                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
@@ -392,7 +392,7 @@
                 });
             },
             replaceImg(e) {
-                e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
+                e.target.src = require(`~/assets/images/equipment/default.png`);
             },
             async getTrip() {
                 const vm = this;

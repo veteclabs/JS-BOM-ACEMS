@@ -53,7 +53,7 @@
                                                 :src="compressorImage"
                                                 @error="replaceImg"
                                                 :alt="device.equipmentId"
-                                                style="max-width:100%;"/>
+                                                style="width:100%;"/>
                                     </div>
                                     {{device.name}}
                                 </h3>
@@ -436,7 +436,7 @@
                 this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
             },
             replaceImg(e) {
-                e.target.src = require(`~/assets/images/equipment/ingersollrand100.jpg`);
+                e.target.src = require(`~/assets/images/equipment/default.png`);
             },
             async getTrip() {
                 const vm = this;
