@@ -33,7 +33,7 @@
                                 <p>{{airCompressor.name}}</p>
                             </li>
                             <li>
-                                <div class="title">Model</div>
+                                <div class="title">모델명</div>
                                 <p v-if="airCompressor.equipment">{{airCompressor.equipment.model}}</p>
                             </li>
                         </ul>
@@ -103,7 +103,7 @@
                 </div>
                 <div class="ibox">
                     <div class="ibox-title flex-ibox-title">
-                        실시간 전력 Chart
+                        실시간 전력(kW)
                     </div>
                     <div class="ibox-content">
                         <client-only>
@@ -116,7 +116,7 @@
                     <div class="col-lg-6">
                         <div class="ibox">
                             <div class="ibox-title">
-                                실시간 공기압축기 압력 Gauge
+                                실시간 공기압축기 압력 값
                             </div>
                             <div class="ibox-content">
                                 <client-only>

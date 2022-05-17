@@ -5,7 +5,7 @@
                 <div class="col-lg-7">
                     <div class="ibox">
                         <div class="ibox-title ibox-normal-title ibox-noborder-title">
-                            Chart
+                            차트
                         </div>
                         <div class="ibox-content">
                             <DxChart
@@ -59,7 +59,7 @@
                     </div>
                     <div class="ibox">
                         <div class="ibox-title ibox-normal-title ibox-noborder-title">
-                            Grid
+                            데이터 값
                         </div>
                         <div class="ibox-content">
                             <dx-data-grid
@@ -111,7 +111,7 @@
                 <div class="col-lg-5">
                     <div class="ibox summary">
                         <div class="ibox-title ibox-normal-title ibox-noborder-title">
-                            Summary
+                            요약
                         </div>
                         <div class="ibox-content">
                             <div v-for="item in searchResult" :key="item.name">

@@ -13,7 +13,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 전력 Chart</div>
+                    <div class="ibox-title flex-ibox-title">실시간 전력(kW)</div>
                     <div class="ibox-content">
                         <client-only>
                             <apexchart type="area" height="180" ref="liveChart" :options="liveChartOption"
@@ -38,7 +38,7 @@
         <div class="title-box flex-box">
             <h2>
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
-                Air Compressor
+                공기압축기
             </h2>
         </div>
         <div class="dashboard-item-box">
@@ -114,11 +114,11 @@
                 </div>
             </masonry>
         </div>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'Thermometer'"
+        <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
                            v-if="equipmentList.temperature"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'Pressure gauge'"
+        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'압력계'"
                            v-if=" equipmentList.pressure"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'Flow gauge'" v-if=" equipmentList.flow"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if=" equipmentList.flow"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
                                v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>

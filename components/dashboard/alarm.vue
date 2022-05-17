@@ -14,14 +14,14 @@
                         @exporting="onExporting">
                 <DxScrolling mode="standard"/>
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
-                <DxColumn data-field="id" caption="No" alignment="center"/>
-                <DxColumn data-field="type" caption="Type" alignment="center" cell-template="blockGridAlarmTemplate"/>
-                <DxColumn data-field="message" caption="message"/>
-                <DxColumn data-field="tempValue" caption="Data" alignment="center" cell-template="dataGridTemplate"/>
+                <DxColumn data-field="id" caption="No" alignment="center" width="100"/>
+                <DxColumn data-field="type" caption="알람타입" alignment="center" cell-template="blockGridAlarmTemplate"/>
+                <DxColumn data-field="message" caption="알람명"/>
+                <DxColumn data-field="tempValue" caption="발생값" alignment="center" cell-template="dataGridTemplate"/>
                 <DxColumn data-field="prssValue" caption="압력" :visible="false"/>
-                <DxColumn data-field="kwhValue" caption="전기" :visible="false"/>
-                <DxColumn data-field="eventDate" caption="Date" alignment="center" cell-template="dateTimeTemplate"/>
-                <DxColumn data-field="checkIn"  cell-template="recoverTimeTemplate"/>
+                <DxColumn data-field="kwhValue" caption="전력" :visible="false"/>
+                <DxColumn data-field="eventDate" caption="일시" alignment="center" cell-template="dateTimeTemplate"/>
+                <DxColumn data-field="checkIn"  caption="확인여부" cell-template="recoverTimeTemplate"/>
                 <DxPaging :enabled="true" :page-size="20"/>
                 <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                 <DxExport :enabled="true" :allow-export-selected-data="true" file-name="alarmList"/>

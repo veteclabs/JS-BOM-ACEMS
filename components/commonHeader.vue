@@ -45,7 +45,7 @@
         components: {
             axios,
             dayjs,
-            passwordChangeModal
+            passwordChangeModal,
         },
         data() {
             return {
@@ -81,9 +81,39 @@
         },
         methods: {
             routeSetting() {
-                this.routeName =  this.$route.name;
-                this.routeList =  this.$route.path.split("/");
-                this.routeList.shift();
+                let menus = {
+                    'dashboard' : {
+                        title:'전체대시보드',
+                        pathList: ['대시보드'],
+                    },
+                    'dashboard-id' : {
+                        title:'개별대시보드',
+                        pathList: ['대시보드', '개별대시보드'],
+                    },
+                    'dashboard-groupDashboard' : {
+                        title:'그룹별대시보드',
+                        pathList: ['대시보드', '그룹별대시보드'],
+                    },
+                    'analysis' : {
+                        title:'데이터 조회',
+                        pathList: ['분석', '데이터 조회'],
+                    },
+                    'setting-equipment' : {
+                        title:'장비관리',
+                        pathList: ['설정', '장비관리'],
+                    },
+                    'setting-group' : {
+                        title:'그룹관리',
+                        pathList: ['설정', '그룹관리'],
+                    },
+                    'setting-aircompressor' : {
+                        title:'공기압축기관리',
+                        pathList: ['설정', '공기압축기관리'],
+                    },
+                };
+                this.routeName =  menus[this.$route.name].title;
+                this.routeList =  menus[this.$route.name].pathList;
+                console.log(this.routeList)
             },
             downMenu() {
                 this.viewDownMenu = !this.viewDownMenu;
