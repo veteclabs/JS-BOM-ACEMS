@@ -72,12 +72,10 @@
       "COMP_InCoolTemp",
       "COMP_InletVacuum",
       "COMP_InterPre",
-      "COMP_Load",
       "COMP_Local",
       "COMP_LodeHours",
       "COMP_PackDisPre",
       "COMP_PackInTemp",
-      "COMP_Power",
       "COMP_PowerOnHour",
       "COMP_RatedPre",
       "COMP_RemotePre",
@@ -86,9 +84,7 @@
       "COMP_StartPre",
       "COMP_StopPre",
       "COMP_SumpPre",
-      "COMP_SystemPre",
-      "COMP_Trip",
-      "COMP_Warning"
+      "COMP_SystemPre"
     ]
   }
 }

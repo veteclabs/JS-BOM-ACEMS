@@ -21,7 +21,7 @@
                 <DxColumn data-field="prssValue" caption="압력" :visible="false"/>
                 <DxColumn data-field="kwhValue" caption="전력" :visible="false"/>
                 <DxColumn data-field="eventDate" caption="일시" alignment="center" cell-template="dateTimeTemplate"/>
-                <DxColumn data-field="checkIn"  caption="확인여부" cell-template="recoverTimeTemplate"/>
+                <!--<DxColumn data-field="checkIn"  caption="확인여부" cell-template="recoverTimeTemplate"/>-->
                 <DxPaging :enabled="true" :page-size="20"/>
                 <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                 <DxExport :enabled="true" :allow-export-selected-data="true" file-name="alarmList"/>

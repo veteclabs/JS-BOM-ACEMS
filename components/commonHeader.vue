@@ -106,14 +106,21 @@
                         title:'그룹관리',
                         pathList: ['설정', '그룹관리'],
                     },
+                    'setting-group-create' : {
+                        title:'그룹관리',
+                        pathList: ['설정', '그룹관리', '등록'],
+                    },
+                    'setting-group-id' : {
+                        title:'그룹관리',
+                        pathList: ['설정', '그룹관리', '수정'],
+                    },
                     'setting-aircompressor' : {
                         title:'공기압축기관리',
                         pathList: ['설정', '공기압축기관리'],
                     },
                 };
-                this.routeName =  menus[this.$route.name].title;
-                this.routeList =  menus[this.$route.name].pathList;
-                console.log(this.routeList)
+                this.routeName =  menus[this.$route.name] ?  menus[this.$route.name].title : '';
+                this.routeList =  menus[this.$route.name] ?  menus[this.$route.name].pathList : [];
             },
             downMenu() {
                 this.viewDownMenu = !this.viewDownMenu;

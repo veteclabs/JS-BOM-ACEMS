@@ -41,14 +41,7 @@
                     <div class="ibox-content">
                         <airCompressorState v-bind:propsdata="airCompressor"/>
                         <scheduleState v-bind:propsdata="airCompressor"/>
-                    </div><!--
-                    <div :class="{'noti-box':true, 'alarm-box': airCompressor.alarm}">
-                        <div v-if="airCompressor.alarm" class="alarm">Alarm</div>
-                        <div v-else class="normal">Normal</div>
-                        <div class="text" v-if="airCompressor.alarm">
-                            {{airCompressor.alarmMention}}
-                        </div>
-                    </div>-->
+                    </div>
                 </div>
 
                 <div class="ibox">
@@ -59,10 +52,20 @@
                         <ul class="tag-box" v-if="airCompressor.tags">
                             <li v-for="type in compTagSet" :key="type.tagName">
                                 <div v-if="airCompressor.tags[type] !== undefined">
-                                    {{airCompressor.tags[type].description}}
+                                    <span v-if="airCompressor.tags[type].tagName.includes('COMP_Local')">원격제어</span>
+                                    <span v-else>
+                                        {{airCompressor.tags[type].description}}</span>
                                 </div>
                                 <div v-if="airCompressor.tags[type] !== undefined">
-                                    {{airCompressor.tags[type].value.toFixed(2)}} {{airCompressor.tags[type].unit}}
+                                    <div v-if="airCompressor.tags[type].tagName.includes('COMP_Local')">
+                                        <div v-if="airCompressor.tags[type].value === 1"
+                                             class="bom-badge blue-badge blue">ON
+                                        </div>
+                                        <div v-else class="bom-badge red-badge red">OFF</div>
+                                    </div>
+                                    <div v-else>
+                                        {{airCompressor.tags[type].value.toFixed(2)}} {{airCompressor.tags[type].unit}}
+                                    </div>
                                 </div>
                             </li>
                         </ul>
@@ -75,7 +78,7 @@
                     <div class="ibox-content">
                         <ul v-for="power in powerData" :key="power.id" class="tag-box">
                             <li v-for="type in powerTagSet">
-                               <div v-if="power.tags[type] !== undefined">
+                                <div v-if="power.tags[type] !== undefined">
                                     {{power.tags[type].description}}
                                 </div>
                                 <div v-if="power.tags[type] !== undefined">
@@ -164,7 +167,8 @@
                 </div>
             </div>
         </div>
-        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData" v-on:callSearch="getAirCompressor"/>
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
+                               v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
@@ -213,7 +217,7 @@
                 airCompressor: {
                     devices: {},
                     schedule: {
-                        isActive:'',
+                        isActive: '',
                     }
                 },
                 compressorImage: '',
@@ -238,7 +242,7 @@
                         }
                     },
                     dataLabels: {enabled: false},
-                    colors: ['#ffa100','#003CFF', '#27AEF3', '#81E400','#ff3a55', '#09c488', '#8ca7ff', '#3b4656'],
+                    colors: ['#ffa100', '#003CFF', '#27AEF3', '#81E400', '#ff3a55', '#09c488', '#8ca7ff', '#3b4656'],
                     grid: {borderColor: '#e4e9f1'},
                     stroke: {curve: 'smooth', width: 3},
                     fill: {
@@ -354,7 +358,7 @@
                     labels: ['bar'],
                 },
                 airCompressorBar: 0,
-                powerData:'',
+                powerData: '',
                 Interval1M: '',
                 interval: '',
                 intervalTime: 10 * 1000,
@@ -412,7 +416,7 @@
 
                 let data;
                 vm.powerData.forEach((item, index) => {
-                    if(vm.liveChartData[index] === undefined) {
+                    if (vm.liveChartData[index] === undefined) {
                         vm.liveChartData[index] = {name: `${item.name} 실시간 유효전력`, data: []}
                     }
                     data = item.tags.PWR_KW.value;
