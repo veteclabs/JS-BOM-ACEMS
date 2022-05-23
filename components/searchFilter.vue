@@ -213,6 +213,7 @@
 
                 if (params.timeType === 'H' || params.timeType === '15min') {
                     params.date.start = dayjs(params.date.start).format('YYYY-MM-DD');
+                    params.date.end = dayjs(params.date.start).add(1, 'days').format('YYYY-MM-DD');
                 } else if (params.timeType === 'D') {
                     params.date.start = dayjs(params.date.start).format('YYYY-MM');
                 } else if (params.timeType === 'M') {

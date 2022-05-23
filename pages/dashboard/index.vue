@@ -205,7 +205,7 @@
                         y: {
                             show: true,
                             formatter: function (val) {
-                                return val + 'Bar'
+                                return val + 'kW'
                             }
                         }
                     },
