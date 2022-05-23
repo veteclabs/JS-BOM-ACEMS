@@ -123,21 +123,19 @@
                                     <div class="flex-box">
                                         <div :class="[ item.value - item.beforeValue > 0 ? 'warning' : 'normal']"
                                              v-show="params.timeType !== 'Y' && params.timeType !== 'R'">
-                                            <p v-show="params.usageType ==='Usage'">
-                                                {{ (item.value - item.beforeValue) | currencyAbs(0) }}
-                                            </p>
-                                            <p v-show="params.usageType !=='Usage'">
+                                            <p v-if="params.usageType ==='TOE' || params.usageType==='tCo2'">
                                                 {{ (item.value - item.beforeValue) | numberFormat(5) }}
                                             </p>
-                                            <div class="bom-badge">
-                                                {{ (((item.value - item.beforeValue) / item.value) * 100) | currency(2)
-                                                }}%
-                                            </div>
+                                            <p v-else>
+                                                {{ (item.value - item.beforeValue) | currencyAbs(0) }}</p>
+                                            <div class="bom-badge">{{ (((item.value - item.beforeValue) / item.value) * 100) | currency(2) }}%</div>
                                         </div>
-                                        <h3 v-show="params.usageType ==='Usage'">
-                                            {{ item.value | currency(0) }}{{unitArray[params.energy]}}
+                                        <h3 v-if="params.usageType ==='TOE' || params.usageType==='tCo2'">
+                                            {{ item.value | numberFormat(5)}} <span>{{ item.unit }}</span>
                                         </h3>
-                                        <h3 v-show="params.usageType !=='Usage'">{{ item.value | numberFormat(5) }}</h3>
+                                        <h3 v-else>
+                                            {{ item.value | numberFormat(2)}} <span>{{ item.unit }}</span>
+                                        </h3>
                                     </div>
                                 </div>
                             </div>
@@ -386,7 +384,10 @@
                             vm.DevNumberFormat = `#,##0.## ${this.unitArray[vm.params.usageType]}`;
                         }
                     } else if (vm.params.usageType === 'PF') {
-                        vm.DevNumberFormat = `#,##0.## %`
+                        vm.DevNumberFormat = {
+                            type: 'fixedPoint',
+                            precision: 2,
+                        }
                     } else {
                         vm.DevNumberFormat = `#,##0.#####`;
                     }
@@ -480,6 +481,7 @@
                 } else {
                     keyword = this.params.usageType;
                 }
+                console.log(keyword)
 
                 let beforeKeyWord;
                 if (vm.params.timeType === 'H' || vm.params.timeType === '15min') {
@@ -494,6 +496,9 @@
                 const chartDataArray = result;
                 const chartDataKey = Object.keys(chartDataArray);
                 const chartDataValue = Object.values(chartDataArray);
+
+                console.log(beforeKeyWord)
+                console.log(chartDataArray)
 
                 // 합계
                 vm.zeroCount = 0;
@@ -512,6 +517,7 @@
                 // max 값 구하기
                 vm.max = Math.max.apply(null, Object.keys(chartDataArray)
                     .map((key) => chartDataArray[key][keyword]));
+
 
                 // min 값구하기
                 vm.min = 9999999999999;
@@ -581,7 +587,7 @@
                     let {min} = this;
                     let {max} = this;
                     let format;
-                    if (vm.params.usageType === 'Usage') {
+                    if (vm.params.usageType === 'Usage' || vm.params.usageType === 'PF') {
                         vm.DevNumberFormat = 0;
                         format = '#,##0.##';
                     } else {
@@ -615,7 +621,7 @@
                     let {min} = this;
                     let {max} = this;
                     let format;
-                    if (vm.params.usageType === 'Usage') {
+                    if (vm.params.usageType === 'Usage' || vm.params.usageType === 'PF') {
                         vm.DevNumberFormat = 0;
                         format = '#,##0.##';
                     } else {

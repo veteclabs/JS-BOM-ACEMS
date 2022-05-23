@@ -63,7 +63,7 @@
                                         <div v-else class="bom-badge red-badge red">OFF</div>
                                     </div>
                                     <div v-else>
-                                        {{airCompressor.tags[type].value.toFixed(2)}} {{airCompressor.tags[type].unit}}
+                                        {{airCompressor.tags[type].value | numberFormat(2)}} {{airCompressor.tags[type].unit}}
                                     </div>
                                 </div>
                             </li>
@@ -81,7 +81,7 @@
                                     {{power.tags[type].description}}
                                 </div>
                                 <div v-if="power.tags[type] !== undefined">
-                                    {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
+                                    {{power.tags[type].value | numberFormat(2)}} {{power.tags[type].unit}}
                                 </div>
                             </li>
                         </ul>
@@ -141,7 +141,7 @@
                                             {{airCompressor.tags[type].description}}
                                         </div>
                                         <div v-if="airCompressor.tags[type] !== undefined">
-                                            {{airCompressor.tags[type].value.toFixed(2)}}
+                                            {{airCompressor.tags[type].value | numberFormat(2)}}
                                             {{airCompressor.tags[type].unit}}
                                         </div>
                                     </li>
@@ -153,7 +153,7 @@
                                             {{power.tags[type].description}}
                                         </div>
                                         <div v-if="power.tags[type] !== undefined">
-                                            {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
+                                            {{power.tags[type].value | numberFormat(2)}} {{power.tags[type].unit}}
                                         </div>
                                     </li>
                                 </ul>
