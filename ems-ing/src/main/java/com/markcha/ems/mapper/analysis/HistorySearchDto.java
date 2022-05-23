@@ -43,7 +43,7 @@ public class HistorySearchDto {
     private List<String> secondTagNames = new ArrayList<>();
     private String timeType;
     private String usageType;
-
+    private Boolean isPF;
     private String beforeOneDay;
     private String beforeOneMonth;
     private String beforeOneYear;
@@ -81,13 +81,13 @@ public class HistorySearchDto {
     private LocalDateTime convertStringToDate(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         if(date.length() > 10) {
-            return LocalDateTime.parse(date.substring(0, 10) + " 00:00", formatter).plusHours(-9);
+            return LocalDateTime.parse(date.substring(0, 10) + " 00:00", formatter);
         } else if(date.length() == 10) {
-            return LocalDateTime.parse(date+ " 00:00", formatter).plusHours(-9);
+            return LocalDateTime.parse(date+ " 00:00", formatter);
         } else if(date.length() == 7) {
-            return LocalDateTime.parse(date + "-01"+ " 00:00", formatter).plusHours(-9);
+            return LocalDateTime.parse(date + "-01"+ " 00:00", formatter);
         } else if(date.length() == 4) {
-            return LocalDateTime.parse(date + "-01-01"+ " 00:00", formatter).plusHours(-9);
+            return LocalDateTime.parse(date + "-01-01"+ " 00:00", formatter);
         }
         return null;
     }

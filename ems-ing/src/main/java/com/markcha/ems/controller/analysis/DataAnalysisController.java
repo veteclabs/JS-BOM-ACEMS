@@ -66,6 +66,9 @@ public class DataAnalysisController {
             if (historySearchDto.getUsageType().equals("PF")) {
                 groupInsertDto.setTagType("PF");
                 historySearchDto.setUsageType("Usage");
+                historySearchDto.setIsPF(true);
+            } else {
+                historySearchDto.setIsPF(false);
             }
         }
 
@@ -74,6 +77,7 @@ public class DataAnalysisController {
         historySearchDto.setEnergyId(28L);
         groupInsertDto.setEnergyEqId(null);
         historySearchDto.setIsDuo(isDuo);
+
         historySearchDto.setTagNames(new ArrayList<>());
         historySearchDto.setSecondTagNames(new ArrayList<>());
         historySearchDto.setTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(groupInsertDto.getDeviceEqId(), groupInsertDto.getTagEqType()).stream()

@@ -36,51 +36,73 @@
             </if>
         ,`shr`.timestamp
         FROM
-        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+        <if test="isPF.equals(false)">
+(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+</if>
         (SELECT logvalue AS h FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 0 AND logvalue <![CDATA[<=]]> 23) s
         LEFT JOIN
-        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
         FROM `tagdata`.history_hour
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
-        </foreach> AND timestamp <![CDATA[>]]> #{startDate}
-        AND TIMESTAMP <![CDATA[<=]]> #{endDate}
+        </foreach> AND timestamp <![CDATA[>=]]> #{startDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endDate}
         group by hour(`TIMESTAMP`)
         ) shr ON shr.h = s.h
         LEFT JOIN
-        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
         FROM `tagdata`.history_hour
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-        AND timestamp <![CDATA[>]]> #{startOneDayBeforeDate}
-        AND TIMESTAMP <![CDATA[<=]]> #{endOneDayBeforeDate}
+        AND timestamp <![CDATA[>=]]> #{startOneDayBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneDayBeforeDate}
         group by hour(`TIMESTAMP`)
         ) `bf` ON `bf`.h = s.h
         LEFT JOIN
-        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
         FROM `tagdata`.history_hour
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
         </foreach>
-        AND timestamp <![CDATA[>]]> #{startOneMomthBeforeDate}
-        AND TIMESTAMP <![CDATA[<=]]> #{endOneMomthBeforeDate}
+        AND timestamp <![CDATA[>=]]> #{startOneMomthBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneMomthBeforeDate}
         group by hour(`TIMESTAMP`)
         ) `LY` ON `LY`.h = s.h
         <if test="isDuo.equals(true)">
 
             LEFT JOIN
-            (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+            (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
             FROM `tagdata`.history_hour
             WHERE tagname in
             <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
                 #{secondtagname}
             </foreach>
-            AND timestamp <![CDATA[>]]> #{startDate}
-            AND TIMESTAMP <![CDATA[<=]]> #{endDate}
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}
             group by hour(`TIMESTAMP`)
             ) `EY` ON `EY`.h = s.h
         </if>
@@ -121,14 +143,21 @@
         </if>
 
         FROM
-        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+        <if test="isPF.equals(false)">
+(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+</if>
 
         (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> last_day(#{startDate})) s
 
 
 
         LEFT JOIN
-        (SELECT day(`TIMESTAMP`) d, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT day(`TIMESTAMP`) d, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -143,7 +172,12 @@
 
 
         LEFT JOIN
-        (SELECT day(`TIMESTAMP`) d, sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT day(`TIMESTAMP`) d, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -158,7 +192,12 @@
 
 
         LEFT JOIN
-        (SELECT day(`TIMESTAMP`) d,sum(`USAGE`) `usage`, TIMESTAMP, tagname
+        (SELECT day(`TIMESTAMP`) d,<if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -174,7 +213,12 @@
 
         <if test="isDuo.equals(true)">
             LEFT JOIN
-            (SELECT day(`TIMESTAMP`) d,sum(`USAGE`) `usage`, TIMESTAMP, tagname
+            (SELECT day(`TIMESTAMP`) d,<if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
             FROM `tagdata`.history_day
             WHERE tagname in
             <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
@@ -219,7 +263,9 @@
         </if>
 
         FROM
-        (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+        <if test="isPF.equals(false)">
+(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+</if>
         (SELECT logvalue AS m FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> 12) s
 
 
