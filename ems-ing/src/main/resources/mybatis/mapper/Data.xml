@@ -14,6 +14,11 @@
                 ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
                 ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
             </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+        </if>
 
             <if test="usageType.equals('TOE')">
                 , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
@@ -121,7 +126,11 @@ sum(`USAGE`) `usage`,
             ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
 
         </if>
-
+        <if test="usageType.equals('PF')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+        </if>
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
             <if test="isDuo.equals(true)">
@@ -242,6 +251,10 @@ sum(`USAGE`) `usage`,
             </if>
             ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneYear}
 
+        </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
         </if>
 
         <if test="usageType.equals('TOE')">
@@ -370,6 +383,10 @@ sum(`USAGE`) `usage`,
                 , IFNULL(b.kWh,0) AS #{beforeOneDay}
                 , IFNULL(b.kW,0) AS `beforekW`
             </if>
+        <if test="usageType.equals('PF')">
+            , IFNULL(f.kWh,0) AS #{usageType}
+            , IFNULL(b.kWh,0) AS #{beforeOneDay}
+        </if>
 
             <if test="usageType.equals('TOE')">
                 , ROUND(IFNULL(((`kWh` * 0.001) * (formula.TOE)), 0), 5) AS #{usageType}
