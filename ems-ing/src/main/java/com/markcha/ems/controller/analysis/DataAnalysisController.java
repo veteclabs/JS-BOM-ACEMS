@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
@@ -89,6 +86,8 @@ public class DataAnalysisController {
                     .map(t->t.getTagName())
                     .collect(toList()));
         }
+        System.out.println(historySearchDto.getStartDate());
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);
         } else if(historySearchDto.getTimeType().equals("D")) {

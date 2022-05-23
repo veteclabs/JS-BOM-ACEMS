@@ -34,7 +34,7 @@
                 , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
 
             </if>
-
+        ,`shr`.timestamp
         FROM
         (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
         (SELECT logvalue AS h FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 0 AND logvalue <![CDATA[<=]]> 23) s
@@ -44,7 +44,7 @@
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
             #{tagname}
-        </foreach> AND timestamp <![CDATA[>=]]> #{startDate}
+        </foreach> AND timestamp <![CDATA[>]]> #{startDate}
         AND TIMESTAMP <![CDATA[<=]]> #{endDate}
         group by hour(`TIMESTAMP`)
         ) shr ON shr.h = s.h
