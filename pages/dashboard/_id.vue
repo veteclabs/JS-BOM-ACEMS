@@ -53,8 +53,7 @@
                             <li v-for="type in compTagSet" :key="type.tagName">
                                 <div v-if="airCompressor.tags[type] !== undefined">
                                     <span v-if="airCompressor.tags[type].tagName.includes('COMP_Local')">원격제어</span>
-                                    <span v-else>
-                                        {{airCompressor.tags[type].description}}</span>
+                                    <span v-else>{{airCompressor.tags[type].description}}</span>
                                 </div>
                                 <div v-if="airCompressor.tags[type] !== undefined">
                                     <div v-if="airCompressor.tags[type].tagName.includes('COMP_Local')">
@@ -386,8 +385,10 @@
                 ).then((res) => {
                     vm.airCompressor = res.data;
                     vm.powerData = vm.airCompressor.devices.power;
-                    vm.setLiveChart();
                     vm.chartSetting();
+                    if(vm.powerData) {
+                        vm.setLiveChart();
+                    }
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
