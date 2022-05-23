@@ -11,14 +11,16 @@ spring:
   application:
     name: ems-ing
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
-    jdbc-url: jdbc:mariadb://ACEMS:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    jdbc:
+      time_zone: UTC
+#    driver-class-name: org.mariadb.jdbc.Driver
+#    url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:
       - always
-    platform: maria
 
   jpa:
     hibernate:
@@ -42,10 +44,15 @@ response:
     DB_UPDATE_MSG: successfully saved!
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
-#logging.level:
-#  org:
-#    hibernate:
-#      SQL: debug
-#      type: trace
-
-
+logging.level:
+  #  org:
+  #    hibernate:
+  #      SQL: debug
+  #      type: trace
+  jdbc:
+    sqlonly: off
+    sqltiming: info
+    resultsettable: info
+    audit: off
+    resultset: off
+    connection: off

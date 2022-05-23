@@ -192,6 +192,7 @@ public class GroupController {
         private Long deviceIdT;
 
 
+
         @JsonIgnore
         private BooleanExpression equipmentEqType;
         @JsonIgnore
