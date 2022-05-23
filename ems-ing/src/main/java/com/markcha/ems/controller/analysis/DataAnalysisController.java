@@ -121,7 +121,6 @@ public class DataAnalysisController {
         if (!isNull(historySearchDto.getUsageType())) {
             if (historySearchDto.getUsageType().equals("PF")) {
                 groupInsertDto.setTagType("PF");
-                historySearchDto.setUsageType("Usage");
             }
         }
 

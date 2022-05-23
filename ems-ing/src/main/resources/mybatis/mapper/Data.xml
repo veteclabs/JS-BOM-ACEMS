@@ -39,7 +39,6 @@
                 , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
 
             </if>
-        ,`shr`.timestamp
         FROM
         <if test="isPF.equals(false)">
 (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
@@ -254,7 +253,7 @@ sum(`USAGE`) `usage`,
         </if>
         <if test="usageType.equals('PF')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
-            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+            ,ifnull(`bf`.`USAGE`, 0)     AS     #{beforeOneYear}
         </if>
 
         <if test="usageType.equals('TOE')">
@@ -285,7 +284,12 @@ sum(`USAGE`) `usage`,
         LEFT JOIN
         (SELECT
         month(`TIMESTAMP`) m,
-        if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
+        <if test="isPF.equals(true)">
+            avg(`USAGE`) `usage`
+        </if>
+        <if test="isPF.equals(false)">
+            sum(`USAGE`) `usage`
+        </if>
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -303,7 +307,12 @@ sum(`USAGE`) `usage`,
         LEFT JOIN
         (SELECT
         month(`TIMESTAMP`) m,
-        if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
+        <if test="isPF.equals(true)">
+            avg(`USAGE`) `usage`
+        </if>
+        <if test="isPF.equals(false)">
+            sum(`USAGE`) `usage`
+        </if>
         FROM `tagdata`.history_day
         WHERE tagname in
         <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
@@ -321,7 +330,12 @@ sum(`USAGE`) `usage`,
             LEFT JOIN
             (SELECT
             month(`TIMESTAMP`) m,
-            if(#{tagType} = 'PF', avg(`usage`),sum(`usage`)) `USAGE`
+            <if test="isPF.equals(true)">
+                avg(`USAGE`) `usage`
+            </if>
+            <if test="isPF.equals(false)">
+                sum(`USAGE`) `usage`
+            </if>
             FROM `tagdata`.history_day
             WHERE tagname in
             <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
@@ -338,11 +352,14 @@ sum(`USAGE`) `usage`,
     <select id="getHistoryYear" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
         SELECT year(shr.`timestamp`) y
         <if test="usageType.equals('Usage')">
-            ,if(#{tagType} = 'PF', avg(shr.`usage`),sum(shr.`usage`)) #{usageType}
+            ,ifnull(sum(shr.`usage`), 0) #{usageType}
 
             <if test="isDuo.equals(true)">
                 ,if(#{tagType} = 'PF', avg(`EY`.`usage`),sum(`EY`.`usage`)) kWh
             </if>
+        </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(avg(shr.`usage`), 0) #{usageType}
         </if>
         <if test="usageType.equals('TOE')">
             , ROUND(IFNULL((if(#{tagType} = "PF", avg(shr.`usage`),sum(shr.`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
