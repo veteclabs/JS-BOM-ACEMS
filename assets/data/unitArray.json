@@ -9,13 +9,14 @@
     "도시가스(LNG)": "L",
     "수도": "L",
     "TOE": "TOE",
-    "tCo2":"tCo2",
-    "Usage":"kWh",
-    "kW" : "kW",
-    "PF" : "%",
-    "instantaneous_18": "L/min",
-    "instantaneous_27": "kW",
-    "instantaneous_28": "kW",
-    "instantaneous_30": "L/min"
+    "tCo2": "tCo2",
+    "Usage": {
+      "KWH": "kwh",
+      "kW": "kW",
+      "FLOW": "㎥"
+    },
+    "kW": "kW",
+    "PF": "%",
+    "flow": "㎥"
   }
 }

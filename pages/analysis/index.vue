@@ -378,16 +378,13 @@
                     if (vm.params.usageType === 'Usage') {
                         if (valueFieldValue === 'kW' || valueFieldValue === 'beforekW') {
                             vm.DevNumberFormat = `#,##0.## kW`
-                        } else if  (vm.params.tagTypeOption === 'FLOW') {
-                            vm.DevNumberFormat = `#,##0.## ㎥`
-                        } else {
-                            vm.DevNumberFormat = `#,##0.## ${this.unitArray[vm.params.usageType]}`;
+                        }else if (valueFieldValue === 'kWh') {
+                            vm.DevNumberFormat = `#,##0.## kWh`
+                        }else {
+                            vm.DevNumberFormat = `#,##0.## ${this.unitArray[vm.params.usageType][vm.params.tagType]}`;
                         }
                     } else if (vm.params.usageType === 'PF') {
-                        vm.DevNumberFormat = {
-                            type: 'fixedPoint',
-                            precision: 2,
-                        }
+                        vm.DevNumberFormat = `#,##0.##'%'`
                     } else {
                         vm.DevNumberFormat = `#,##0.#####`;
                     }
@@ -481,7 +478,6 @@
                 } else {
                     keyword = this.params.usageType;
                 }
-                console.log(keyword)
 
                 let beforeKeyWord;
                 if (vm.params.timeType === 'H' || vm.params.timeType === '15min') {
@@ -496,9 +492,6 @@
                 const chartDataArray = result;
                 const chartDataKey = Object.keys(chartDataArray);
                 const chartDataValue = Object.values(chartDataArray);
-
-                console.log(beforeKeyWord)
-                console.log(chartDataArray)
 
                 // 합계
                 vm.zeroCount = 0;
