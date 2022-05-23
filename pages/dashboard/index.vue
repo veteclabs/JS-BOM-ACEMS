@@ -94,7 +94,7 @@
                                         {{device.tags[type].description}}
                                     </div>
                                     <div v-if="device.tags[type] !== undefined">
-                                        {{device.tags[type].value.toFixed(2)}} {{device.tags[type].unit}}
+                                        {{device.tags[type].value | numberFormat(2)}} {{device.tags[type].unit}}
                                     </div>
                                 </li>
                             </ul>
@@ -105,7 +105,7 @@
                                         {{power.tags[type].description}}
                                     </div>
                                     <div v-if="power.tags[type] !== undefined">
-                                        {{power.tags[type].value.toFixed(2)}} {{power.tags[type].unit}}
+                                        {{power.tags[type].value| numberFormat(2)}} {{power.tags[type].unit}}
                                     </div>
                                 </li>
                             </ul>
