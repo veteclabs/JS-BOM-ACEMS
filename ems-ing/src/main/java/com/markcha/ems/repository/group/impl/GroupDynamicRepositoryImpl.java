@@ -71,6 +71,7 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
     }
 
     private List<Device> getDevices(List<Long> ids, GroupSearchDto locationSearchDto) {
+        System.out.println(locationSearchDto.getTagEqType());
         return queryFactory.select(device)
                 .from(device)
                 .leftJoin(device.energy, energy).fetchJoin()
