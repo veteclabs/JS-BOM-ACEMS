@@ -61,6 +61,7 @@ public class AirCompressorDto {
                                             ,"COMP_ActTripCode"
                                             ,"COMP_Trip"
                                             ,"COMP_Load"
+                                            ,"COMP_AutoStop"
                                             ,"COMP_Warning"
                                             ,"COMP_ActWarCode"
                                     )).contains(k.getType())) {
@@ -73,6 +74,7 @@ public class AirCompressorDto {
                                             ,"COMP_Local"
                                             ,"COMP_ActTripCode"
                                             ,"COMP_Trip"
+                                            ,"COMP_AutoStop"
                                             ,"COMP_Load"
                                             ,"COMP_Warning"
                                             ,"COMP_ActWarCode"

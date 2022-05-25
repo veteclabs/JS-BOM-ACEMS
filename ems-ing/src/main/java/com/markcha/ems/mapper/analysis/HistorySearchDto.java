@@ -68,8 +68,6 @@ public class HistorySearchDto {
         String end =  jsonObj.get("end").toString();
         this.startDate = convertStringToDate(start);
         this.endDate = convertStringToDate(end);
-        System.out.println(startDate);
-        System.out.println(endDate);
         this.startOneDayBeforeDate = this.startDate.plusDays(-1);
         this.endOneDayBeforeDate = this.endDate.plusDays(-1);
         this.startOneMomthBeforeDate = this.startDate.plusMonths(-1);

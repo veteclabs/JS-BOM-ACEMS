@@ -43,11 +43,9 @@ public class TestController {
     private final AlarmMapper alarmMapper;
     private final WebaccessApiServiceImpl webaccessApiService;
 
-    @GetMapping(value="/device/{id}")
+    @GetMapping(value="/totalValue")
     public Map<String, Object> compressor(@PathVariable("id") Long id) {
 
         return webaccessApiService.getTagValuesV2(new ArrayList<>(List.of("032_RPM", "031_STATE")));
-
-
     }
 }

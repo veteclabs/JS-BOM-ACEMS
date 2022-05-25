@@ -394,7 +394,7 @@ sum(`USAGE`) `usage`,
         SELECT
 
             if(s.f='00:00', '24:00:00',s.f) AS `H`
-            <if test="usageType.equals('Usage') or usageType.equals('PF')">
+            <if test="usageType.equals('Usage')">
                 , IFNULL(f.kWh,0) AS #{usageType}
                 , IFNULL(f.kW,0) AS `kW`
                 , IFNULL(b.kWh,0) AS #{beforeOneDay}

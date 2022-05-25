@@ -99,6 +99,7 @@ public class CompressorController {
     public AirCompressorDto compressor(
             @PathVariable("compressorId") Long compressorId
     ) {
+        System.out.println(23);
         List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(group.id.eq(compressorId)).stream()
                 .map(AirCompressorDto::new)
                 .collect(toList());
@@ -111,7 +112,6 @@ public class CompressorController {
             }
         });
         if(collect.size() == 1) {
-
             return collect.get(0);
         }
         return null;
