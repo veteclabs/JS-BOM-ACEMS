@@ -130,7 +130,6 @@
                     customizeCell: ({gridCell, excelCell}) => {
                         if (gridCell.rowType === 'data') {
                             if (gridCell.column.dataField === 'eventDate') {
-                                console.log(excelCell.column);
                                 excelCell.value = `${gridCell.data.eventDate} ${gridCell.data.occurrenceTime}`;
                             }
                             if (gridCell.column.dataField === 'checkIn') {
