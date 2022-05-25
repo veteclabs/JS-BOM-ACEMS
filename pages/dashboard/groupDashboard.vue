@@ -241,7 +241,7 @@
                 },
                 Interval1M: '',
                 interval: '',
-                intervalTime: 10 * 1000,
+                intervalTime: 30 * 1000,
             };
         },
         mounted() {

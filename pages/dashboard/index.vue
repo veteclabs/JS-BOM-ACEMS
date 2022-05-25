@@ -127,6 +127,7 @@
 <script>
     import dayjs from 'dayjs';
     import 'dayjs/locale/ko';
+
     dayjs.locale('ko');
 
     import axios from 'axios';
@@ -385,7 +386,7 @@
                 timeCategories: [],
                 Interval1M: '',
                 interval: '',
-                intervalTime: 10 * 1000,
+                intervalTime: 30 * 1000,
             };
         },
         mounted() {
@@ -405,7 +406,7 @@
             chartSetting() {
                 const flowMaxValue = 15; //option formatter랑 맞추기
                 const barMaxValue = 15;
-                if(this.tagVal !== '') {
+                if (this.tagVal !== '') {
                     const Flow = this.tagVal.AIR_Flow;
                     const bar = this.tagVal.AIR_PRE;
                     this.totalFlow = (Flow * 100) / flowMaxValue;
@@ -418,13 +419,12 @@
             async getTagValues() {
                 const vm = this;
 
-                axios.get('/api/totalValue',{
-                    timeout: vm.intervalTime,
-                }).then((res) => {
-                    vm.tagVal = res.data;
-                    vm.setLiveChart();
-                    vm.chartSetting();
-                }).catch((error) => {
+                axios.get('/api/totalValue')
+                    .then((res) => {
+                        vm.tagVal = res.data;
+                        vm.setLiveChart();
+                        vm.chartSetting();
+                    }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
@@ -477,7 +477,7 @@
             },
             setLiveChart: function () {
                 const vm = this;
-                if(this.tagVal !== '') {
+                if (this.tagVal !== '') {
                     vm.getNowTime();
                     let liveChartXcount = this.liveChartData[0].data.length;
                     let maxCount = 150;
@@ -488,7 +488,7 @@
                     }
                     vm.timeCategories.push(vm.nowTime);
 
-                    let data =  vm.tagVal.PWR_KW;
+                    let data = vm.tagVal.PWR_KW;
                     vm.liveChartData[0].data.push(data.toFixed(2));
                     vm.$refs.liveChart.updateOptions({
                         "xaxis": {"categories": vm.timeCategories}
