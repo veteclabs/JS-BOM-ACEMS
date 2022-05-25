@@ -45,10 +45,10 @@ response:
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
 logging.level:
-  #  org:
-  #    hibernate:
-  #      SQL: debug
-  #      type: trace
+#  org:
+#    hibernate:
+#      SQL: debug
+#      type: trace
   jdbc:
     sqlonly: off
     sqltiming: info

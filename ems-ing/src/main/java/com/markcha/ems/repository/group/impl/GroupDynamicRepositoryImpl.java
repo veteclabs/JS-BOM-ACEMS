@@ -5,6 +5,7 @@ import com.markcha.ems.controller.GroupController.GroupSearchDto;
 import com.markcha.ems.domain.*;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.repository.group.GroupRepository;
+import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -24,7 +25,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
+public class GroupDynamicRepositoryImpl {
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
     /**
@@ -33,11 +34,11 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
      * param domainClass must not be {@literal null}.
      */
     public GroupDynamicRepositoryImpl(EntityManager em) {
-        super(Group.class);
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
-    
+
+
     public List<Long> getLevelIds(Integer level) {
         return queryFactory.select(
                 Projections.constructor(
@@ -71,7 +72,6 @@ public class GroupDynamicRepositoryImpl extends QuerydslRepositorySupport {
     }
 
     private List<Device> getDevices(List<Long> ids, GroupSearchDto locationSearchDto) {
-        System.out.println(locationSearchDto.getTagEqType());
         return queryFactory.select(device)
                 .from(device)
                 .leftJoin(device.energy, energy).fetchJoin()

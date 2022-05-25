@@ -89,7 +89,6 @@ public class DataAnalysisController {
                     .map(t->t.getTagName())
                     .collect(toList()));
         }
-        System.out.println(historySearchDto.getStartDate());
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         if(historySearchDto.getTimeType().equals("H")) {
             return dataMapper.getHistoryHour(historySearchDto);

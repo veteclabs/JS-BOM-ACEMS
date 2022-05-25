@@ -58,7 +58,12 @@ public class Group {
         }
         return 0;
     }
-//    @Override
+    @Override
+    public String toString() {
+        return "Group [id=" + id +
+                 ", name=" + name;
+    }
+    //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
 //        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))

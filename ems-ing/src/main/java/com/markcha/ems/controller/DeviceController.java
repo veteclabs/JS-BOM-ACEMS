@@ -58,7 +58,6 @@ public class DeviceController {
     @GetMapping(value="/etcs")
     public Map<String, List<DeviceConDto>> etc2(
     ){
-        System.out.println(dbInsertMsg);
         List<Device> allTemplcates = deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR);
         List<String> tagNames = new ArrayList<>();
         allTemplcates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));

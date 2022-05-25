@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.markcha.ems.domain.QTag.tag;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
@@ -38,14 +39,14 @@ public class TestController {
 
     @GetMapping(value="/totalValue")
     public Map<String, Double> show(
-            GroupController.GroupSearchDto groupInsertDto
+
     ) {
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
         ResponseToTalValues result = new ResponseToTalValues();
         Map<String, Double> resultMap = new HashMap<>();
-        culcTotalRealTimeValue(groupInsertDto, rootGroupIds, result, "PWR_KW");
-        culcTotalRealTimeValue(groupInsertDto, rootGroupIds, result, "AIR_PRE");
-        culcTotalRealTimeValue(groupInsertDto, rootGroupIds, result, "AIR_Flow");
+        culcTotalRealTimeValue( rootGroupIds, result, "PWR_KW");
+        culcTotalRealTimeValue( rootGroupIds, result, "AIR_Flow");
+        culcTotalRealTimeValue( rootGroupIds, result, "AIR_PRE");
         result.getTypes().forEach((key,value) -> {
             resultMap.put(key, value.getValue());
         });
@@ -63,13 +64,12 @@ public class TestController {
 
     }
 
-    private void culcTotalRealTimeValue(GroupController.GroupSearchDto groupInsertDto, List<Long> rootGroupIds, ResponseToTalValues result,String tagType) {
-        groupInsertDto.setTagType(tagType);
-        System.out.println(groupInsertDto.getTagType());
-        System.out.println(groupInsertDto.getTagEqType());
-        List<Group> analysisLocations = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupInsertDto, true);
-        System.out.println(analysisLocations.stream()
-                .map(GroupQueryDto::new).collect(toList()));
+    private void culcTotalRealTimeValue(List<Long> rootGroupIds, ResponseToTalValues result,String tagType) {
+
+        GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
+        groupSearchDto.setTagEqType(tag.type.eq(tagType));
+        List<Group> analysisLocations = new ArrayList<>();
+        analysisLocations.addAll(groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true));
         List<String> tagNames = analysisLocations.stream()
                 .map(t -> {
                     GroupQueryDto groupQueryDto = new GroupQueryDto(t);
