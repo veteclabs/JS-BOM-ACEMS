@@ -403,12 +403,14 @@
         },
         methods: {
             chartSetting() {
-                const flowMaxValue = 5; //option formatter랑 맞추기
+                const flowMaxValue = 15; //option formatter랑 맞추기
                 const barMaxValue = 15;
-                const Flow = this.$options.filters.pickValue(this.tagVal, 'Name', `AU_AIR_Flow`, 'Value');
-                const bar = this.$options.filters.pickValue(this.tagVal, 'Name', `AU_AIR_Pre`, 'Value');
-                this.totalFlow = (Flow * 100) / flowMaxValue;
-                this.totalCompressorBar = (bar * 100) / barMaxValue;
+                if(this.tagVal !== '') {
+                    const Flow = this.tagVal.AIR_Flow;
+                    const bar = this.tagVal.AIR_PRE;
+                    this.totalFlow = (Flow * 100) / flowMaxValue;
+                    this.totalCompressorBar = (bar * 100) / barMaxValue;
+                }
             },
             async WaLogin() {
                 await axios.get('/nuxt/WaLogin')
@@ -416,16 +418,12 @@
             async getTagValues() {
                 const vm = this;
 
-                axios.post('/nuxt/wa/port/getTagValue', {
-                    portId: [-1, -2],
-                }, {
+                axios.get('/api/totalValue',{
                     timeout: vm.intervalTime,
                 }).then((res) => {
-                    if (res.data.Result.Total > 0) {
-                        vm.tagVal = res.data.Values;
-                        vm.setLiveChart();
-                        vm.chartSetting();
-                    }
+                    vm.tagVal = res.data;
+                    vm.setLiveChart();
+                    vm.chartSetting();
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
@@ -479,21 +477,23 @@
             },
             setLiveChart: function () {
                 const vm = this;
-                vm.getNowTime();
-                let liveChartXcount = this.liveChartData[0].data.length;
-                let maxCount = 150;
+                if(this.tagVal !== '') {
+                    vm.getNowTime();
+                    let liveChartXcount = this.liveChartData[0].data.length;
+                    let maxCount = 150;
 
-                if (liveChartXcount > maxCount) {
-                    vm.timeCategories.shift();
-                    vm.liveChartData[0].data.shift();
+                    if (liveChartXcount > maxCount) {
+                        vm.timeCategories.shift();
+                        vm.liveChartData[0].data.shift();
+                    }
+                    vm.timeCategories.push(vm.nowTime);
+
+                    let data =  vm.tagVal.PWR_KW;
+                    vm.liveChartData[0].data.push(data.toFixed(2));
+                    vm.$refs.liveChart.updateOptions({
+                        "xaxis": {"categories": vm.timeCategories}
+                    });
                 }
-                vm.timeCategories.push(vm.nowTime);
-
-                let data = this.$options.filters.pickValue(vm.tagVal, 'Name', `AU_PWR_KW`, 'Value');
-                vm.liveChartData[0].data.push(data);
-                vm.$refs.liveChart.updateOptions({
-                    "xaxis": {"categories": vm.timeCategories}
-                });
             },
             resetInterval() {
                 const vm = this;

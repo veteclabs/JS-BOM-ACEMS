@@ -4,8 +4,8 @@
             <li :class="{'active' : propsdata.state.COMP_Power.value === 1, 'set-btn run': true}"
                 @click="setAirCompressor(propsdata.id, 1)">RUN
             </li>
-            <li :class="{'active' : propsdata.state.COMP_Load.value === 1, 'load': true}">LOAD</li>
-            <li :class="{'active' : propsdata.state.COMP_Load.value === 0, 'unload': true}">UNLOAD</li>
+            <li v-if="propsdata.state.COMP_AutoStop"
+                    :class="{'active' : propsdata.state.COMP_AutoStop.value === 1, 'autostop': true}">AutoStop</li>
 
             <li :class="{'active' : propsdata.state.COMP_Power.value === 0, 'set-btn stop': true}"
                 @click="setAirCompressor(propsdata.id, 0)">STOP

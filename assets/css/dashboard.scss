@@ -56,7 +56,7 @@
 
   li {
     @extend .font-16;
-    width: 25%;
+    flex:1;
     text-align: center;
     padding: 11px 0;
     color: $gray-4;
@@ -94,13 +94,7 @@
     }
   }
 
-  li.load.active {
-    @extend .green-bg-gradient;
-    color: #fff;
-    font-weight: 600;
-  }
-
-  li.unload.active {
+  li.autostop.active {
     @extend .orange-bg-gradient;
     color: #fff;
     font-weight: 600;
