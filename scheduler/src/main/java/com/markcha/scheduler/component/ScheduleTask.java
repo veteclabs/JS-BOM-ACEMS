@@ -1,6 +1,7 @@
 package com.markcha.scheduler.component;
 
 import com.markcha.scheduler.domain.Alarm;
+import com.markcha.scheduler.domain.Tag;
 import com.markcha.scheduler.dto.device.DeviceConDto;
 import com.markcha.scheduler.dto.group.GroupSearchDto;
 import com.markcha.scheduler.dto.order.OrderDto;
@@ -15,6 +16,8 @@ import com.markcha.scheduler.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.scheduler.repository.tag.TagDslRepositoryIml;
 import com.markcha.scheduler.WebaccessApiServiceImpl;
 
+import java.time.temporal.TemporalUnit;
+import java.util.Queue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -39,6 +42,7 @@ public class ScheduleTask extends TimerTask {
     private final TagDslRepositoryIml tagDslRepositoryIml;
 
     private Long id;
+    private static List<Double> queue = new LinkedList();
 
     public ScheduleTask(GroupDslRepositoryImpl groupDslRepository,
                         ScheduleDslRepositoryImpl scheduleDslRepository,
@@ -58,26 +62,30 @@ public class ScheduleTask extends TimerTask {
 
     @Override
     public void run() {
-
+        if (queue.size() > 10) {
+            queue.remove(0);
+        }
         List<ScheduleDto> schedules = groupDslRepository.findAllJoinScheduleByScheduleId(this.id).stream()
                 .map(ScheduleDto::new)
                 .collect(toList());
         LocalDate nowDate = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
         schedules.forEach(schedule-> {
-
             int powerState = 0;
             Integer weekNumber = getWeekNumber(nowDate);
+            schedule.getStartTime().plusMinutes(-1);
+            schedule.getStopTime().plusMinutes(-1);
             if(schedule.getStartTime().isBefore(nowTime)
                     && schedule.getStopTime().isAfter(nowTime)
                     && schedule.getDayOfWeeks().contains(nowDate.getDayOfWeek().getValue())
                     && schedule.getWeeks().contains(weekNumber)) {
                 if(schedule.getIsGroup()){
-
                     Double pressor = new Double(schedule.getPressure().toString());
-                    if(schedule.getMax() < pressor) {
+                    queue.add(pressor);
+                    Double max = queue.stream().mapToDouble(t->t).max().orElseThrow(NoSuchElementException::new);
+                    if(schedule.getMax()-0.1 <= queue.stream().mapToDouble(t->t).max().orElseThrow(NoSuchElementException::new)) {
                         powerState = 0;
-                    } else if(schedule.getMin() > pressor) {
+                    } else if(schedule.getMin() >= queue.stream().mapToDouble(t->t).min().orElseThrow(NoSuchElementException::new)) {
                         powerState = 1;
                     } else {
                         powerState = 2;
@@ -93,7 +101,7 @@ public class ScheduleTask extends TimerTask {
                     if (schedule.getIsGroup()) {
                             groupControl(schedule.getScheduleId(), weekNumber, powerState, schedule.getInterval());
                     } else {
-                        targetControl(schedule.getGroupId(), powerState, schedule.getInterval());
+                        targetControl(schedule.getGroupId(), powerState, schedule.getInterval(), false);
                     }
                 }catch (InterruptedException e) {
                     e.printStackTrace();
@@ -120,15 +128,14 @@ public class ScheduleTask extends TimerTask {
                 .collect(toList());
 
         for (OrderDto order : orders) {
-            boolean controlResult = targetControl(order.getGroupId(), powerState, intever);
-
+            boolean controlResult = targetControl(order.getGroupId(), powerState, intever, true);
             if (controlResult) {
                 return true;
             }
         }
         return false;
     }
-    private boolean targetControl(Long groupId, int powerState, Integer intever) throws InterruptedException {
+    private boolean targetControl(Long groupId, int powerState, Integer intever, Boolean isGroup) throws InterruptedException {
         GroupSearchDto groupSearchDto = new GroupSearchDto();
         String powerType = "COMP_Power";
         String localType = "COMP_Local";
@@ -147,32 +154,29 @@ public class ScheduleTask extends TimerTask {
             TagDto powerTag = device.getTags().get(powerType);
             Integer objectState = webaccessApiService.getTagValuesV2Int(powerTag.getTagName());
             for (int i = 0; i < 3; i++) {
-                if (objectState == 0 && powerState == 1) {
+                if (powerState == 1) {
                     localTag.setValue(1);
                     webaccessApiService.setTagValue(localTag);
                     Thread.sleep(intever * 1000);
                     powerTag.setValue(powerState);
                     webaccessApiService.setTagValue(powerTag);
-                    Thread.sleep(intever * 1000);
                     if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName()) == powerState) {
                         return true;
                     }
-                } else if (objectState == 1 && powerState == 0) {
+                } else if (powerState == 0) {
                     localTag.setValue(1);
                     webaccessApiService.setTagValue(localTag);
                     Thread.sleep(intever * 1000);
                     powerTag.setValue(powerState);
                     webaccessApiService.setTagValue(powerTag);
-                    Thread.sleep(intever * 1000);
                     if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName())  == powerState) {
-                        return true;
+                        return isGroup? false: true;
                     }
                 } else if (objectState == 0 && powerState == 0) {
                     return false;
                 } else if (objectState == 1 && powerState == 1) {
                     return false;
                 }
-                Thread.sleep(1000);
             }
             Alarm alarm = new Alarm();
             alarm.setOccurrenceTime(LocalTime.now());

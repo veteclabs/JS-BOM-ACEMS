@@ -166,7 +166,7 @@ public class CompressorServiceImpl {
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
         newSchedule.setIsActive(scheduleDto.getIsActive());
-        newSchedule.setInterval(30);
+        newSchedule.setInterval(5);
         newSchedule.setType("interval");
         newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
         newSchedule.setMin(new Double(scheduleDto.getMin().toString()));

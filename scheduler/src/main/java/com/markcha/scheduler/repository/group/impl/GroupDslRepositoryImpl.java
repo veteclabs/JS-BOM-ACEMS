@@ -183,7 +183,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                         device.group.id.in(groupIds)
-                        , tag.type.eq("AIR_PRE")
+                        , tag.type.eq("AIR_Pre")
                         ,equipment.type.eq(PRESSURE_GAUGE)
                 ).fetch();
         Device devices = null;
@@ -192,7 +192,10 @@ public class GroupDslRepositoryImpl{
         // webaccess 태그 이름으로 조회 //
         if(!isNull(devices)) {
             List<String> tagNames = devices.getTags().stream()
-                    .map(k -> k.getTagName())
+                    .map(k -> {
+                        String tagName = k.getTagName();
+                        return tagName;
+                    })
                     .collect(toList());
             Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
             if(!isNull(devices)) {

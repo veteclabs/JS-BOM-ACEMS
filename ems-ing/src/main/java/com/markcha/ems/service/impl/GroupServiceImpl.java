@@ -116,7 +116,7 @@ public class GroupServiceImpl {
         ScheduleDto scheduleDto = groupInsertDto.getSchedule();
         newSchedule.setIsGroup(true);
         newSchedule.setIsActive(scheduleDto.getIsActive());
-        newSchedule.setInterval(30);
+        newSchedule.setInterval(5);
         newSchedule.setType("interval");
         newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
         newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
@@ -177,14 +177,21 @@ public class GroupServiceImpl {
         weekMapperDataRepository.saveAll(weekMappers1);
 
         groupDataRepository.save(newGroup);
-        List<TagDto> maxTags = groupDslRepository.findAllChildGruopMaxTags(groupInsertDto.getId()).stream()
+        List<TagDto> minMaxTags = groupDslRepository.findAllChildGruopMaxTags(groupInsertDto.getId()).stream()
                 .map(t->{
                     TagDto tag = new TagDto(t);
                     tag.setValue(groupInsertDto.getSchedule().getMax());
                     return tag;
                 })
                 .collect(toList());
-        webaccessApiService.setTagValues(maxTags);
+        minMaxTags.addAll(groupDslRepository.findAllChildGruopMinTags(groupInsertDto.getId()).stream()
+                .map(t->{
+                    TagDto tag = new TagDto(t);
+                    tag.setValue(groupInsertDto.getSchedule().getMin());
+                    return tag;
+                })
+                .collect(toList()));
+        webaccessApiService.setTagValues(minMaxTags);
         return true;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {

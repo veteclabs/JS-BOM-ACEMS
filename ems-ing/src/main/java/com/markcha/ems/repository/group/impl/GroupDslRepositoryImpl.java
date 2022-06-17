@@ -320,7 +320,7 @@ public class GroupDslRepositoryImpl{
 
     public List<Tag> findAllChildGruopMaxTags(Long parentId) {
         QGroup parentGroup = new QGroup("parentGroup");
-        return query.selectFrom(tag)
+        return query.selectFrom(tag).distinct()
                 .leftJoin(tag.device, device).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
@@ -328,7 +328,20 @@ public class GroupDslRepositoryImpl{
                 .where(
                          parentGroup.id.eq(parentId)
                         ,equipment.type.eq(AIR_COMPRESSOR)
-                        ,tag.type.eq("COMP_StopPre")
+                        ,tag.type.in("COMP_StopPre")
+                ).fetch();
+    }
+    public List<Tag> findAllChildGruopMinTags(Long parentId) {
+        QGroup parentGroup = new QGroup("parentGroup");
+        return query.selectFrom(tag).distinct()
+                .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(group.parent, parentGroup).fetchJoin()
+                .where(
+                        parentGroup.id.eq(parentId)
+                        ,equipment.type.eq(AIR_COMPRESSOR)
+                        ,tag.type.in("COMP_StartPre")
                 ).fetch();
     }
 
