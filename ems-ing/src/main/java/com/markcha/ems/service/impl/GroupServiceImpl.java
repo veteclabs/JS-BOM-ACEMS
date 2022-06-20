@@ -151,6 +151,21 @@ public class GroupServiceImpl {
                 .collect(toList());
 
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
+        workingGroups.forEach(t->{
+            List<DayOfWeek> childDayOfWeeks = t.getSchedule().getDayOfWeekMappers().stream()
+                    .map(k -> k.getDayOfWeek())
+                    .collect(toList());
+            List<DayOfWeekMapper> dayOfWeekMappers = childDayOfWeeks.stream()
+                    .filter(k -> !groupInsertDto.getSchedule().getDayOfWeeks().contains(childDayOfWeeks))
+                    .map(k-> new DayOfWeekMapper().builder()
+                            .dayOfWeek(k)
+                            .schedule(t.getSchedule())
+                            .build())
+                    .collect(toList());
+            t.getSchedule().getDayOfWeekMappers().clear();
+            t.getSchedule().getDayOfWeekMappers().addAll(dayOfWeekMappers);
+        });
+
 
         List<WeekMapper> weekMappers1 = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, newSchedule.getId());
         weekMappers1.forEach(t->{

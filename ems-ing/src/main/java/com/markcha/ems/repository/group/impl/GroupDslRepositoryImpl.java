@@ -7,6 +7,7 @@ import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.repository.group.GroupRepository;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -76,6 +77,14 @@ public class GroupDslRepositoryImpl{
                         group.type.eq(type)
                 )
                 .orderBy(group.id.desc())
+                .fetch();
+    }
+    public List<DayOfWeek> findAllByGroupId(Long id) {
+        return query.selectFrom(dayOfWeek)
+                .leftJoin(dayOfWeek.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.groups, group).fetchJoin()
+                .where(group.id.eq(id))
                 .fetch();
     }
     
@@ -314,6 +323,9 @@ public class GroupDslRepositoryImpl{
         QGroup parentGroup = new QGroup("parentGroup");
         return query.selectFrom(group)
                 .leftJoin(group.parent, parentGroup).fetchJoin()
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()
+                .leftJoin(dayOfWeekMapper.dayOfWeek, dayOfWeek).fetchJoin()
                 .where(parentGroup.id.eq(id))
                 .fetch();
     }

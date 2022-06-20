@@ -1,13 +1,14 @@
 package com.markcha.ems.domain;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name ="day_of_week_mapper")
 public class DayOfWeekMapper {

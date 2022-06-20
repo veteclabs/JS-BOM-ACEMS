@@ -22,10 +22,7 @@ import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,6 +84,21 @@ public class ScheduleController {
                 .map(DayOfWeekDto::new)
                 .collect(toList());
     }
+    @GetMapping(value="/dayOfWeek/{groupId}")
+    public List<DayOfWeekDto> dayOfWeek(
+            @PathVariable("groupId") Long groupId
+    ) {
+        List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAll();
+        return dayOfWeeks.stream()
+                .map(t->{
+                    DayOfWeekDto dayOfWeekDto = new DayOfWeekDto(t);
+                    if (groupDslRepository.findAllByGroupId(groupId).stream()
+                            .map(k->k.getIdx()).collect(toList()).contains(t.getIdx())) {
+                        dayOfWeekDto.setSelectable(false);
+                    }
+                    return dayOfWeekDto;
+                }).collect(toList());
+    }
     @GetMapping(value="/schedule/{scheduleId}/week/{weekId}")
     public List<OrderDto> weeks(
             @PathVariable("scheduleId") Long scheduleId,
@@ -111,7 +123,7 @@ public class ScheduleController {
         groupDynamicRepository.getAnalysisLocations(rootId, groupSearchDto, true).stream()
                 .map(t -> new GroupQueryDto(t, false))
                 .forEach(k->devices.addAll(k.getAllDevices().stream()
-                .map(DeviceConDto::new).collect(toList())));
+                        .map(DeviceConDto::new).collect(toList())));
         List<String> tagNames = new ArrayList<>();
         devices.forEach(t->{
             t.getTags().forEach((k,v)->{
@@ -145,7 +157,8 @@ public class ScheduleController {
         alarmDataRepositorya.save(alarm);
         return new ApiResponseDto(dbInsertMsg);
     }
-    @Data
+    @Getter
+    @Setter
     @NoArgsConstructor
     public static class ScheduleSimpleDto {
         private Long id;
@@ -161,7 +174,7 @@ public class ScheduleController {
             this.isActive = schedule.getIsActive();
         }
     }
-    @Data
+    @Getter @Setter
     @NoArgsConstructor
     public static class ScheduleDto {
 
@@ -180,7 +193,7 @@ public class ScheduleController {
         private LocalDateTime updated;
         private List<Integer> dayOfWeeks;
         private List<Integer> weeks;
-//        private List<TagDto> tags = new ArrayList<>();
+        //        private List<TagDto> tags = new ArrayList<>();
         private Object pressure;
         public ScheduleDto(Group group) {
             if(!isNull(group.getDeviceSet())) {
