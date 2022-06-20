@@ -125,6 +125,14 @@ public class GroupController {
                 .map(g->new GroupDto(g, typeList, true))
                 .collect(toList());
     }
+    @PutMapping(value="/groups/check/schedule/{groupId}", headers = "setting=true")
+    public List<GroupServiceImpl.RemoveDayOfWeekDto> checkSchedule(
+            @RequestBody GroupInsertDto groupInsertDto,
+            @PathVariable("groupId") Long groupId
+    )  {
+        groupInsertDto.setId(groupId);
+        return groupService.checkSchedule(groupInsertDto);
+    }
     @PostMapping(value="/group")
     public ApiResponseDto create(
             @RequestBody GroupInsertDto groupInsertDto

@@ -321,7 +321,7 @@ public class GroupDslRepositoryImpl{
     
     public List<Group> findAllChildGroupsById(Long id) {
         QGroup parentGroup = new QGroup("parentGroup");
-        return query.selectFrom(group)
+        return query.selectFrom(group).distinct()
                 .leftJoin(group.parent, parentGroup).fetchJoin()
                 .leftJoin(group.schedule, schedule).fetchJoin()
                 .leftJoin(schedule.dayOfWeekMappers, dayOfWeekMapper).fetchJoin()

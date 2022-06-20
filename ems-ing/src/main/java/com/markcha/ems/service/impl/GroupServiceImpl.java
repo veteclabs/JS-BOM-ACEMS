@@ -19,8 +19,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.order.OrderDslRepositoryImpl;
 import com.markcha.ems.repository.weekmapper.impl.WeekMapperDslRepositoryImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import lombok.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -108,8 +107,45 @@ public class GroupServiceImpl {
 
         return true;
     }
-
-    public Boolean updateCompressor(GroupInsertDto groupInsertDto) {
+    public List<RemoveDayOfWeekDto> checkSchedule(GroupInsertDto groupInsertDto) {
+        List<RemoveDayOfWeekDto> removeDayOfWeekDtos = new ArrayList<>();
+        for (Group workingGroup : groupDslRepository.findAllChildGroupsById(groupInsertDto.getId())) {
+            RemoveDayOfWeekDto removeDayOfWeekDto = new RemoveDayOfWeekDto();
+            removeDayOfWeekDto.setName(workingGroup.getName());
+            List<DayOfWeek> childDayOfWeeks = workingGroup.getSchedule().getDayOfWeekMappers().stream()
+                    .map(k -> k.getDayOfWeek())
+                    .collect(toList());
+            List<DayOfWeekMapper> dayOfWeekMappers = childDayOfWeeks.stream()
+                    .filter(k -> {
+                        if(groupInsertDto.getSchedule().getDayOfWeeks().stream()
+                                .map(s->s.getId()).collect(toList()).contains(k.getId())) {
+                            removeDayOfWeekDto.getDayOfWeekName().add(k.getName());
+                            removeDayOfWeekDtos.add(removeDayOfWeekDto);
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    })
+                    .map(k-> new DayOfWeekMapper().builder()
+                            .dayOfWeek(k)
+                            .schedule(workingGroup.getSchedule())
+                            .build())
+                    .collect(toList());
+            workingGroup.getSchedule().getDayOfWeekMappers().clear();
+            workingGroup.getSchedule().getDayOfWeekMappers().addAll(dayOfWeekMappers);
+        }
+        return removeDayOfWeekDtos;
+    }
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @Builder
+    @AllArgsConstructor
+    public static class  RemoveDayOfWeekDto {
+        private String name;
+        private List<String> dayOfWeekName = new ArrayList<>();
+    }
+    public String updateCompressor(GroupInsertDto groupInsertDto) {
         Group newGroup = groupDslRepository.getOneJoinScheduleById(groupInsertDto.getId());
         newGroup.setName(groupInsertDto.getName());
         Schedule newSchedule = newGroup.getSchedule();
@@ -151,20 +187,30 @@ public class GroupServiceImpl {
                 .collect(toList());
 
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
-        workingGroups.forEach(t->{
-            List<DayOfWeek> childDayOfWeeks = t.getSchedule().getDayOfWeekMappers().stream()
+        StringBuilder message = new StringBuilder();
+        for (Group workingGroup : workingGroups) {
+
+            List<DayOfWeek> childDayOfWeeks = workingGroup.getSchedule().getDayOfWeekMappers().stream()
                     .map(k -> k.getDayOfWeek())
                     .collect(toList());
             List<DayOfWeekMapper> dayOfWeekMappers = childDayOfWeeks.stream()
-                    .filter(k -> !groupInsertDto.getSchedule().getDayOfWeeks().contains(childDayOfWeeks))
+                    .filter(k -> {
+                        if(groupInsertDto.getSchedule().getDayOfWeeks().stream()
+                                .map(s->s.getId()).collect(toList()).contains(k.getId())) {
+                            message.append(workingGroup.getName() + "스케쥴 " + k.getName() + "요일이 삭제되었습니다.");
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    })
                     .map(k-> new DayOfWeekMapper().builder()
                             .dayOfWeek(k)
-                            .schedule(t.getSchedule())
+                            .schedule(workingGroup.getSchedule())
                             .build())
                     .collect(toList());
-            t.getSchedule().getDayOfWeekMappers().clear();
-            t.getSchedule().getDayOfWeekMappers().addAll(dayOfWeekMappers);
-        });
+            workingGroup.getSchedule().getDayOfWeekMappers().clear();
+            workingGroup.getSchedule().getDayOfWeekMappers().addAll(dayOfWeekMappers);
+        }
 
 
         List<WeekMapper> weekMappers1 = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, newSchedule.getId());
@@ -207,7 +253,7 @@ public class GroupServiceImpl {
                 })
                 .collect(toList()));
         webaccessApiService.setTagValues(minMaxTags);
-        return true;
+        return message.toString();
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
 
