@@ -53,8 +53,7 @@
                             <div class="td-label">Max</div>
                             <label class="input-100">
                                 <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"
-                                       @change="settingMin"
-                                       :readonly="params.groupId !== null && groupScheduleActive"/>
+                                       @change="settingMin"/>
                             </label>
                         </td>
                     </tr>
@@ -223,7 +222,7 @@
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/dayOfWeek ',
+                    url: '/api/dayOfWeek',
                 }).then((res) => {
                     vm.dateList = res.data
                 }).catch((error) => {
