@@ -115,24 +115,13 @@ public class GroupServiceImpl {
             List<DayOfWeek> childDayOfWeeks = workingGroup.getSchedule().getDayOfWeekMappers().stream()
                     .map(k -> k.getDayOfWeek())
                     .collect(toList());
-            List<DayOfWeekMapper> dayOfWeekMappers = childDayOfWeeks.stream()
-                    .filter(k -> {
-                        if(groupInsertDto.getSchedule().getDayOfWeeks().stream()
-                                .map(s->s.getId()).collect(toList()).contains(k.getId())) {
-                            removeDayOfWeekDto.getDayOfWeekName().add(k.getName());
-                            removeDayOfWeekDtos.add(removeDayOfWeekDto);
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    })
-                    .map(k-> new DayOfWeekMapper().builder()
-                            .dayOfWeek(k)
-                            .schedule(workingGroup.getSchedule())
-                            .build())
-                    .collect(toList());
-            workingGroup.getSchedule().getDayOfWeekMappers().clear();
-            workingGroup.getSchedule().getDayOfWeekMappers().addAll(dayOfWeekMappers);
+            childDayOfWeeks.forEach(k -> {
+                    if(groupInsertDto.getSchedule().getDayOfWeeks().stream()
+                            .map(s->s.getId()).collect(toList()).contains(k.getId())) {
+                        removeDayOfWeekDto.getDayOfWeekName().add(k.getName());
+                    }
+            });
+            removeDayOfWeekDtos.add(removeDayOfWeekDto);
         }
         return removeDayOfWeekDtos;
     }
