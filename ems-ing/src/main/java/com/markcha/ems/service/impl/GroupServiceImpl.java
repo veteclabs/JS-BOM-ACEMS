@@ -190,7 +190,7 @@ public class GroupServiceImpl {
         });
 
         weekMapperDataRepository.saveAll(weekMappers1);
-
+        groupDataRepository.saveAll(workingGroups);
         groupDataRepository.save(newGroup);
         List<TagDto> minMaxTags = groupDslRepository.findAllChildGruopMaxTags(groupInsertDto.getId()).stream()
                 .map(t->{
