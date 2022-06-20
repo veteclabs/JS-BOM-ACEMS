@@ -17,7 +17,7 @@
                         <td>
                             <div class="td-label">그룹</div>
                             <label class="input-100">
-                                <select v-model="params.groupId" @change="groupCheck">
+                                <select v-model="params.groupId">
                                     <option :value="null" selected>미지정</option>
                                     <option v-for="group in groupList" :value="group.id" :key="group.id">
                                         {{group.name}}
@@ -72,7 +72,7 @@
                         </td>
                         <td class="right">
                             <label class="switch-box">
-                                <input type="checkbox" v-model="params.schedule.isActive" @change="groupCheck"
+                                <input type="checkbox" v-model="params.schedule.isActive"
                                        ref="scheduleCheck"/>
                                 <span class="slider round"></span>
                             </label>
@@ -183,8 +183,8 @@
                             return 'Max 값을 더 높게 설정해주세요.'
                         } else if (min === max) {
                             return 'Min, Max 값을 다르게 설정해주세요.'
-                        } else if(((max-min).toFixed(1)) < 0.7)  {
-                            return `Min, Max값의 차이는 0.7 이상 필요합니다. Min값을 ${(max-0.7).toFixed(1)} 이하로 설정해주세요.`
+                        } else if (((max - min).toFixed(1)) < 0.7) {
+                            return `Min, Max값의 차이는 0.7 이상 필요합니다. Min값을 ${(max - 0.7).toFixed(1)} 이하로 설정해주세요.`
                         }
                     }
                 });
@@ -212,8 +212,8 @@
                 const vm = this;
                 const max = vm.params.schedule.max;
                 const min = vm.params.schedule.min;
-                if((max-min) < 0.7) {
-                    let gap  = vm.params.schedule.max -0.7;
+                if ((max - min) < 0.7) {
+                    let gap = vm.params.schedule.max - 0.7;
                     gap = gap.toFixed(1);
                     vm.params.schedule.min = gap;
                 }
@@ -242,7 +242,7 @@
                     vm.msgData.msg = error;
                 });
             },
-            groupCheck() {
+            /*groupCheck() {
                 const vm = this;
                 if (vm.params.groupId !== null) {
                     this.getGroupInfo(vm.params.groupId);
@@ -254,52 +254,49 @@
                     }
                 }
                 return true;
-            },
+            },*/
             submit() {
                 const vm = this;
                 const modal = this.$bvModal;
                 const {state} = this;
                 let url, method;
 
-                if (vm.groupCheck()) {
-                    if (state === 'new') {
-                        url = `/api/compressor`;
-                        method = 'post';
-                    } else if (state === 'update') {
-                        url = `/api/compressor/${vm.params.id}`;
-                        method = 'put';
-                        if (!vm.params.id) {
-                            vm.msgData.show = true;
-                            vm.msgData.msg = '에러가 발생했습니다. 새로고침 후 다시 시도해주세요';
-                            return;
-                        }
+                if (state === 'new') {
+                    url = `/api/compressor`;
+                    method = 'post';
+                } else if (state === 'update') {
+                    url = `/api/compressor/${vm.params.id}`;
+                    method = 'put';
+                    if (!vm.params.id) {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = '에러가 발생했습니다. 새로고침 후 다시 시도해주세요';
+                        return;
                     }
-
-                    vm.params.schedule.min = Number(vm.params.schedule.min);
-                    vm.params.schedule.max = Number(vm.params.schedule.max);
-
-                    this.$validate()
-                        .then((success) => {
-                            if (success) {
-                                axios({
-                                    method: method,
-                                    url: url,
-                                    data: vm.params
-                                }).then((res) => {
-                                    modal.hide('createmodal');
-                                    vm.msgData.show = true;
-                                    vm.msgData.msg = res.data.message;
-                                    vm.$emit('send-message', 1);
-                                    vm.$emit('callSearch');
-                                }).catch((error) => {
-                                    vm.msgData.show = true;
-                                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-                                });
-                            }
-                        });
-                } else {
-                    return
                 }
+
+                vm.params.schedule.min = Number(vm.params.schedule.min);
+                vm.params.schedule.max = Number(vm.params.schedule.max);
+
+                this.$validate()
+                    .then((success) => {
+                        if (success) {
+                            axios({
+                                method: method,
+                                url: url,
+                                data: vm.params
+                            }).then((res) => {
+                                modal.hide('createmodal');
+                                vm.msgData.show = true;
+                                vm.msgData.msg = res.data.message;
+                                vm.$emit('send-message', 1);
+                                vm.$emit('callSearch');
+                            }).catch((error) => {
+                                vm.msgData.show = true;
+                                vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                            });
+                        }
+                    });
+
             },
             cancel() {
                 this.$bvModal.hide('createmodal');
@@ -348,7 +345,7 @@
                     url: `/api/group/${id}`,
                 }).then((res) => {
                     vm.groupScheduleActive = res.data.schedule.isActive;
-                    if(vm.groupScheduleActive) {
+                    if (vm.groupScheduleActive) {
                         vm.params.schedule.max = res.data.schedule.max;
                     }
                 }).catch((error) => {
