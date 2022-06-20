@@ -116,7 +116,7 @@ public class GroupServiceImpl {
         ScheduleDto scheduleDto = groupInsertDto.getSchedule();
         newSchedule.setIsGroup(true);
         newSchedule.setIsActive(scheduleDto.getIsActive());
-        newSchedule.setInterval(30);
+        newSchedule.setInterval(5);
         newSchedule.setType("interval");
         newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
         newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
@@ -151,6 +151,21 @@ public class GroupServiceImpl {
                 .collect(toList());
 
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
+        workingGroups.forEach(t->{
+            List<DayOfWeek> childDayOfWeeks = t.getSchedule().getDayOfWeekMappers().stream()
+                    .map(k -> k.getDayOfWeek())
+                    .collect(toList());
+            List<DayOfWeekMapper> dayOfWeekMappers = childDayOfWeeks.stream()
+                    .filter(k -> !groupInsertDto.getSchedule().getDayOfWeeks().contains(childDayOfWeeks))
+                    .map(k-> new DayOfWeekMapper().builder()
+                            .dayOfWeek(k)
+                            .schedule(t.getSchedule())
+                            .build())
+                    .collect(toList());
+            t.getSchedule().getDayOfWeekMappers().clear();
+            t.getSchedule().getDayOfWeekMappers().addAll(dayOfWeekMappers);
+        });
+
 
         List<WeekMapper> weekMappers1 = weekMapperDslRepository.findAllByWeekIdsAndScheduleId(weekIds, newSchedule.getId());
         weekMappers1.forEach(t->{
@@ -175,16 +190,23 @@ public class GroupServiceImpl {
         });
 
         weekMapperDataRepository.saveAll(weekMappers1);
-
+        groupDataRepository.saveAll(workingGroups);
         groupDataRepository.save(newGroup);
-        List<TagDto> maxTags = groupDslRepository.findAllChildGruopMaxTags(groupInsertDto.getId()).stream()
+        List<TagDto> minMaxTags = groupDslRepository.findAllChildGruopMaxTags(groupInsertDto.getId()).stream()
                 .map(t->{
                     TagDto tag = new TagDto(t);
                     tag.setValue(groupInsertDto.getSchedule().getMax());
                     return tag;
                 })
                 .collect(toList());
-        webaccessApiService.setTagValues(maxTags);
+        minMaxTags.addAll(groupDslRepository.findAllChildGruopMinTags(groupInsertDto.getId()).stream()
+                .map(t->{
+                    TagDto tag = new TagDto(t);
+                    tag.setValue(groupInsertDto.getSchedule().getMin());
+                    return tag;
+                })
+                .collect(toList()));
+        webaccessApiService.setTagValues(minMaxTags);
         return true;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {

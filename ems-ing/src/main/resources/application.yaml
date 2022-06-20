@@ -1,5 +1,5 @@
 server:
-  port: 8035
+  port: 8031
 spring:
   webaccess:
     #    host: http://112.216.32.4/WaWebService/Json/

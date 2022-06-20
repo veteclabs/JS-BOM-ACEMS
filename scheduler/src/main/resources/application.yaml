@@ -1,19 +1,19 @@
 server:
-  port: 8032
+  port: 8039
 spring:
   webaccess:
     #    host: http://112.216.32.4/WaWebService/Json/
-    host: http://localhost:8032/WaWebService/Json/
-    project: BOM
-    node: BOM
+    host: http://192.168.1.80/WaWebService/Json/
+    project: ACEMS
+    node: ACEMS
   batch:
     initialize-schema=always:
   application:
     name: scheduler
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
-    jdbc-url: jdbc:mariadb://ACEMS:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://192.168.1.80:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    jdbc-url: jdbc:mariadb://localhst:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:
@@ -27,7 +27,7 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 1000
-#        show_sql: true
+        #        show_sql: true
         format_sql: true
     defer-datasource-initialization: true
     generate-ddl: false

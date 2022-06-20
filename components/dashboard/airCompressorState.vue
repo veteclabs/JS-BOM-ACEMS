@@ -1,7 +1,8 @@
 <template>
     <div v-if="propsdata.state">
         <ul class="state-box">
-            <li :class="{'active' : propsdata.state.COMP_Power.value === 1, 'set-btn run': true}"
+            <li v-if="propsdata.state.COMP_AutoStop"
+                    :class="{'active' : propsdata.state.COMP_Power.value === 1, 'set-btn run': true}"
                 @click="setAirCompressor(propsdata.id, 1)">RUN
             </li>
             <li v-if="propsdata.state.COMP_AutoStop"

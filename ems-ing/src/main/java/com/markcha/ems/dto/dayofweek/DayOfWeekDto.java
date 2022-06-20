@@ -13,9 +13,11 @@ import lombok.NoArgsConstructor;
 public class DayOfWeekDto {
     private Long id;
     private String name;
+    private Boolean selectable;
     public DayOfWeekDto(DayOfWeek dayOfWeek) {
         this.id = dayOfWeek.getId();
         this.name = dayOfWeek.getName();
+        this.selectable = true;
     }
 
 }

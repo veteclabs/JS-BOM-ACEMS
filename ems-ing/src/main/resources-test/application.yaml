@@ -1,9 +1,9 @@
 server:
-  port: 8032
+  port: 8031
 spring:
   webaccess:
     #    host: http://112.216.32.4/WaWebService/Json/
-    host: http://localhost:8032/WaWebService/Json/
+    host: http://192.168.1.80/WaWebService/Json/
     project: ACEMS
     node: ACEMS
   batch:
@@ -12,7 +12,7 @@ spring:
     name: ems-ing
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://112.216.32.6:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://192.168.1.80:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     jdbc-url: jdbc:mariadb://localhst:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721

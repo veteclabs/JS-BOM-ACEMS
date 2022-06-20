@@ -60,7 +60,7 @@ public class Scheduler {
         schedules.forEach(schedule->{
             if(schedule.getIsActive() && difference.contains(schedule.getId())) {
                 Timer timer = new Timer();
-                Integer intever = 1000*schedule.getInterval();
+                Integer intever = 1000;
                 ScheduleTask scheduleTask = new ScheduleTask(
                         groupDslRepository,
                         scheduleDslRepository,
@@ -70,7 +70,7 @@ public class Scheduler {
                         tagDslRepositoryIml,
                         alarmDataRepository);
                 scheduleTask.setScheduleId(schedule.getId());
-                timer.schedule(scheduleTask,1000, 1000);
+                timer.schedule(scheduleTask,100, 100);
                 tasks.put(schedule.getId(), timer);
             }
         });
