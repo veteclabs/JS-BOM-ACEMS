@@ -234,10 +234,11 @@ input[type="text"], input[type="password"], input[type="number"] {
     background-color: $gray-1;
   }
 }
-input:disabled, input:read-only {
+input:disabled, input:read-only,
+label.disabled {
   opacity:0.4;
-
 }
+
 
 select {
   min-width: 160px;

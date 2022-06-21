@@ -211,13 +211,30 @@
                 }
             },
             getDayOfWeek() {
-
                 const vm = this;
                 axios({
                     method: 'get',
                     url: '/api/dayOfWeek ',
                 }).then((res) => {
                     vm.dateList = res.data
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
+            validationCheck() {
+                const vm = this;
+                const params = this.groupData;
+                axios({
+                    method: 'PUT',
+                    url: `/api/groups/check/schedule/${params.id}`,
+                    headers: {
+                        setting: true,
+                    },
+                    data: params
+                }).then((res) => {
+                    console.log(res.data)
+
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;

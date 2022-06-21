@@ -19,7 +19,8 @@
                             <label class="input-100">
                                 <select v-model="params.groupId">
                                     <option :value="null" selected>미지정</option>
-                                    <option v-for="group in groupList" :value="group.id" :key="group.id">
+                                    <option v-for="group in groupList" :value="group.id" :key="group.id"
+                                            @change="getDayOfWeek">
                                         {{group.name}}
                                     </option>
                                 </select>
@@ -83,9 +84,9 @@
                             <div class="td-label">Date</div>
                             <ul class="date-ul">
                                 <li v-for="item in dateList">
-                                    <label>
+                                    <label :class="{'disabled' :!item.selectable}">
                                         <input type="checkbox" :value="item" v-model="params.schedule.dayOfWeeks"
-                                               :disabled="!params.schedule.isActive"/>
+                                               :disabled="!params.schedule.isActive || !item.selectable"/>
                                         <div>{{item.name}}</div>
                                     </label>
                                 </li>
@@ -205,7 +206,6 @@
         },
         mounted() {
             this.getGroup();
-            this.getDayOfWeek();
         },
         methods: {
             settingMin() {
@@ -220,9 +220,15 @@
             },
             getDayOfWeek() {
                 const vm = this;
+                let url = '';
+                if (this.params.groupId) {
+                    url = `/api/dayOfWeek/${this.params.groupId}`
+                } else {
+                    url = `/api/dayOfWeek`
+                }
                 axios({
                     method: 'get',
-                    url: '/api/dayOfWeek',
+                    url: url
                 }).then((res) => {
                     vm.dateList = res.data
                 }).catch((error) => {
@@ -236,7 +242,8 @@
                     method: 'get',
                     url: '/api/device/groups',
                 }).then((res) => {
-                    vm.groupList = res.data
+                    vm.groupList = res.data;
+                    this.getDayOfWeek();
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
@@ -329,6 +336,7 @@
                 ).then((res) => {
                     vm.state = 'update';
                     vm.params = res.data;
+                    vm.getDayOfWeek();
                     if (vm.params) {
                         if (res.data.groupId !== null) {
                             vm.getGroupInfo(res.data.groupId);
