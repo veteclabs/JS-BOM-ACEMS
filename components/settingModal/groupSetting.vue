@@ -233,7 +233,27 @@
                     },
                     data: params
                 }).then((res) => {
-                    console.log(res.data)
+                    if(res.data.length === 0) {
+                         vm.submit("update");
+                    }else {
+                        let duplicationDate = '';
+                        res.data.forEach(item => {
+                            duplicationDate = `${duplicationDate} ${item.name} (${item.dayOfWeekName}),`
+                        });
+                        if(confirm(`
+그룹 스케줄 제어 요일 중 개별 공기압축기에서 제어 중인 요일이 포함되어있습니다. 저장 시 개별 공기압축기 제어에서 해당 요일은 제외 됩니다.
+
+중복 공기압축기 :
+${duplicationDate}
+
+계속 진행하시겠습니가?
+                        `)) {
+                            vm.submit("update");
+
+                        }else {
+                            alert("취소 되었습니다.")
+                        }
+                    }
 
                 }).catch((error) => {
                     vm.msgData.show = true;
