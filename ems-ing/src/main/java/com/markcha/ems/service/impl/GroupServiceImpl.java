@@ -176,9 +176,7 @@ public class GroupServiceImpl {
                 .collect(toList());
 
         List<Group> workingGroups = groupDslRepository.findAllChildGroupsById(groupInsertDto.getId());
-        StringBuilder message = new StringBuilder();
         for (Group workingGroup : workingGroups) {
-
             List<DayOfWeek> childDayOfWeeks = workingGroup.getSchedule().getDayOfWeekMappers().stream()
                     .map(k -> k.getDayOfWeek())
                     .collect(toList());
@@ -186,7 +184,6 @@ public class GroupServiceImpl {
                     .filter(k -> {
                         if(groupInsertDto.getSchedule().getDayOfWeeks().stream()
                                 .map(s->s.getId()).collect(toList()).contains(k.getId())) {
-                            message.append(workingGroup.getName() + "스케쥴 " + k.getName() + "요일이 삭제되었습니다.");
                             return false;
                         } else {
                             return true;
