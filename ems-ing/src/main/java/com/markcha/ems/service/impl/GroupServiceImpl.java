@@ -109,6 +109,8 @@ public class GroupServiceImpl {
     }
     public List<RemoveDayOfWeekDto> checkSchedule(GroupInsertDto groupInsertDto) {
         List<RemoveDayOfWeekDto> removeDayOfWeekDtos = new ArrayList<>();
+        List<Long> dayOfWeekIds = groupInsertDto.getSchedule().getDayOfWeeks().stream()
+                .map(s -> s.getId()).collect(toList());
         for (Group workingGroup : groupDslRepository.findAllChildGroupsById(groupInsertDto.getId())) {
             RemoveDayOfWeekDto removeDayOfWeekDto = new RemoveDayOfWeekDto();
             removeDayOfWeekDto.setName(workingGroup.getName());
@@ -116,12 +118,11 @@ public class GroupServiceImpl {
                     .map(k -> k.getDayOfWeek())
                     .collect(toList());
             childDayOfWeeks.forEach(k -> {
-                    if(groupInsertDto.getSchedule().getDayOfWeeks().stream()
-                            .map(s->s.getId()).collect(toList()).contains(k.getId())) {
+                    if(dayOfWeekIds.contains(k.getId())) {
                         removeDayOfWeekDto.getDayOfWeekName().add(k.getName());
                     }
             });
-            removeDayOfWeekDtos.add(removeDayOfWeekDto);
+            if(removeDayOfWeekDto.getDayOfWeekName().size() != 0) removeDayOfWeekDtos.add(removeDayOfWeekDto);
         }
         return removeDayOfWeekDtos;
     }
@@ -239,7 +240,7 @@ public class GroupServiceImpl {
                 })
                 .collect(toList()));
         webaccessApiService.setTagValues(minMaxTags);
-        return message.toString();
+        return null;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {
 
