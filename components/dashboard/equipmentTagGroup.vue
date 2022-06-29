@@ -39,11 +39,11 @@
             },
             pickValue: function (object, property, value, returnValue) {
                 if (object === undefined || object === null || object === "") {
-                    return -1;
+                    return '-';
                 } else {
                     let target = object.filter(object => object[property] === value);
                     if (target.length === 0) {
-                        return -100;
+                        return '-';
                     } else {
                         return target[0][returnValue];
                     }

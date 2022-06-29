@@ -2,16 +2,16 @@
   "airCompressorDeshboardSet" : {
     "description" : "에어 컴프레셔 대시보드 태그 셋",
     "tags" : [
-      "COMP_InCoolTemp",
-      "COMP_CoolInPre",
+      "COMP_OilOutTemp",
+      "COMP_SystemPre",
       "COMP_SumpPre"
     ]
   },
   "airCompressorGroupDeshboardSet" : {
     "description" : "에어 컴프레셔 그룹 대시보드 태그 셋",
     "tags" : [
-      "COMP_InCoolTemp",
-      "COMP_CoolInPre",
+      "COMP_OilOutTemp",
+      "COMP_SystemPre",
       "COMP_SumpPre"
     ]
   },

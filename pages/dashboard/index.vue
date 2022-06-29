@@ -1,7 +1,7 @@
 <template>
     <div id="SubContentWrap">
         <div class="row">
-            <div class="col-lg-3">
+            <!--<div class="col-lg-3">
                 <div class="ibox">
                     <div class="ibox-title flex-ibox-title">실시간 유량</div>
                     <div class="ibox-content">
@@ -10,10 +10,10 @@
                                    :series="[totalFlow]"/>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-6">
+            </div>-->
+            <div class="col-lg-9">
                 <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 전력(kW)</div>
+                    <div class="ibox-title flex-ibox-title">실시간 전력(kW)/ 유량(Nm3/min)</div>
                     <div class="ibox-content">
                         <client-only>
                             <apexchart type="area" height="180" ref="liveChart" :options="liveChartOption"
@@ -24,17 +24,20 @@
             </div>
             <div class="col-lg-3">
                 <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 압력</div>
+                    <div class="ibox-title flex-ibox-title">Specific Power - Air Cooled</div>
                     <div class="ibox-content">
                         <client-only>
                             <apexchart type="radialBar" height="240" ref="barRadialBar"
-                                       :options="radialChartOptions"
-                                       :series="[totalCompressorBar]"/>
+                                       :options="basicUnitOptions"
+                                       :series="[basicUnit]"/>
                         </client-only>
                     </div>
                 </div>
             </div>
         </div>
+
+        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'압력계'"
+                           v-if=" equipmentList.pressure"/>
         <div class="title-box flex-box">
             <h2>
                 <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
@@ -116,8 +119,6 @@
         </div>
         <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
                            v-if="equipmentList.temperature"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'압력계'"
-                           v-if=" equipmentList.pressure"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if=" equipmentList.flow"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
                                v-on:callSearch="getAirCompressor"/>
@@ -173,7 +174,10 @@
                 },
                 compressorImage: '',
                 tagVal: '',
-                liveChartData: [{name: '실시간 유효전력', data: []}],
+                liveChartData: [
+                    {name: '실시간 유효전력', data: []},
+                    {name: '실시간 유량', data: []}
+                    ],
                 liveChartOption: { //차트옵션 변수
                     chart: {
                         toolbar: {
@@ -188,7 +192,7 @@
                         }
                     },
                     dataLabels: {enabled: false},
-                    colors: ['#FFA100'],
+                    colors: ['#FFA100', '#3363FF'],
                     grid: {borderColor: '#e4e9f1'},
                     stroke: {curve: 'smooth', width: 3},
                     fill: {
@@ -225,7 +229,7 @@
                     },
                     legend: {show: true, fontSize: '10px', fontFamily: 'BOM-font', offsetY: -5}
                 },
-                radialChartOptions: {
+                basicUnitOptions: {
                     chart: {
                         type: 'radialBar',
                         toolbar: {
@@ -300,87 +304,9 @@
                     stroke: {
                         lineCap: 'round'
                     },
-                    labels: ['bar'],
+                    labels: ['kW/m3/min'],
                 },
-                flowRadialChartOptions: {
-                    chart: {
-                        type: 'radialBar',
-                        toolbar: {
-                            show: true
-                        },
-                        offsetY: -10,
-                        animations: {
-                            enabled: false,
-                        }
-                    },
-                    plotOptions: {
-                        radialBar: {
-                            startAngle: -135,
-                            endAngle: 135,
-                            hollow: {
-                                margin: 0,
-                                size: '70%',
-                                background: '#fff',
-                                position: 'front',
-                                dropShadow: {
-                                    enabled: true,
-                                    top: -3,
-                                    left: 0,
-                                    blur: 4,
-                                    opacity: 0.05
-                                }
-                            },
-                            track: {
-                                background: '#f5f5f5',
-                                strokeWidth: '67%',
-                                margin: 0,
-                            },
-                            dataLabels: {
-                                show: true,
-                                name: {
-                                    offsetY: 40,
-                                    show: true,
-                                    color: '#6c6c6c',
-                                    fontSize: '18px',
-                                    fontWeight: 500,
-                                    fontFamily: 'BOM-font", Sans-serif',
-                                },
-                                value: {
-                                    formatter: function (val) {
-                                        let origValue = (val / 100) * 5;
-                                        return origValue.toFixed(2)
-                                    },
-                                    offsetY: -10,
-                                    color: '#1b1b1b',
-                                    fontSize: '40px',
-                                    fontWeight: 600,
-                                    fontFamily: 'BOM-font", Sans-serif',
-                                    show: true,
-                                }
-                            }
-                        }
-                    },
-                    fill: {
-                        type: 'gradient',
-                        colors: ['#c24285'],
-                        gradient: {
-                            shade: 'dark',
-                            type: 'horizontal',
-                            shadeIntensity: 0.5,
-                            gradientToColors: ['#3363ff'],
-                            inverseColors: true,
-                            opacityFrom: 1,
-                            opacityTo: 1,
-                            stops: [0, 100]
-                        }
-                    },
-                    stroke: {
-                        lineCap: 'round'
-                    },
-                    labels: ['Nm3/min'],
-                },
-                totalFlow: 0,
-                totalCompressorBar: 0,
+                basicUnit: 0,
                 airCompressorList: [],
                 equipmentList: [],
                 timeCategories: [],
@@ -404,14 +330,20 @@
         },
         methods: {
             chartSetting() {
-                const flowMaxValue = 15; //option formatter랑 맞추기
+                /*const flowMaxValue = 15; //option formatter랑 맞추기
                 const barMaxValue = 15;
                 if (this.tagVal !== '') {
                     const Flow = this.tagVal.AIR_Flow;
                     const bar = this.tagVal.AIR_PRE;
                     this.totalFlow = (Flow * 100) / flowMaxValue;
                     this.totalCompressorBar = (bar * 100) / barMaxValue;
+                }*/
+                if (this.tagVal !== '') {
+                    const Flow = this.tagVal.AIR_Flow;
+                    const kW = this.tagVal.PWR_KW;
+                    this.basicUnit = kW / Flow;
                 }
+
             },
             async WaLogin() {
                 await axios.get('/nuxt/WaLogin')
@@ -485,11 +417,17 @@
                     if (liveChartXcount > maxCount) {
                         vm.timeCategories.shift();
                         vm.liveChartData[0].data.shift();
+                        vm.liveChartData[1].data.shift();
                     }
                     vm.timeCategories.push(vm.nowTime);
 
-                    let data = vm.tagVal.PWR_KW;
-                    vm.liveChartData[0].data.push(data.toFixed(2));
+                    let kWData = vm.tagVal.PWR_KW;
+                    vm.liveChartData[0].data.push(kWData.toFixed(2));
+
+
+                    let flowData = vm.tagVal.AIR_Flow;
+                    vm.liveChartData[1].data.push(flowData.toFixed(2));
+
                     vm.$refs.liveChart.updateOptions({
                         "xaxis": {"categories": vm.timeCategories}
                     });
@@ -519,11 +457,11 @@
             },
             pickValue: function (object, property, value, returnValue) {
                 if (object === undefined || object === null || object === "") {
-                    return -1;
+                    return '-';
                 } else {
                     let target = object.filter(object => object[property] === value);
                     if (target.length === 0) {
-                        return -100;
+                        return '-';
                     } else {
                         return target[0][returnValue];
                     }
