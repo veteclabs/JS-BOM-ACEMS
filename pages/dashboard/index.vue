@@ -177,7 +177,7 @@
                 liveChartData: [
                     {name: '실시간 유효전력', data: []},
                     {name: '실시간 유량', data: []}
-                    ],
+                ],
                 liveChartOption: { //차트옵션 변수
                     chart: {
                         toolbar: {
@@ -330,6 +330,11 @@
         },
         methods: {
             chartSetting() {
+                axios.get('/api/specificalPower')
+                    .then((res) => {
+                        this.basicUnit = res.data;
+                    });
+
                 /*const flowMaxValue = 15; //option formatter랑 맞추기
                 const barMaxValue = 15;
                 if (this.tagVal !== '') {
@@ -338,11 +343,6 @@
                     this.totalFlow = (Flow * 100) / flowMaxValue;
                     this.totalCompressorBar = (bar * 100) / barMaxValue;
                 }*/
-                if (this.tagVal !== '') {
-                    const Flow = this.tagVal.AIR_Flow;
-                    const kW = this.tagVal.PWR_KW;
-                    this.basicUnit = kW / Flow;
-                }
 
             },
             async WaLogin() {
