@@ -50,9 +50,7 @@ public class AirCompressorDto {
                         this.equipment = new EquipmentDto(t.getEquipment());
                         List<TagDto> collect = t.getTags().stream()
                                 .map(k -> new TagDto(k, true))
-
                                 .collect(toList());
-//
                         this.state = collect.stream()
                                 .filter(k -> {
                                     if (new ArrayList<String>(List.of(

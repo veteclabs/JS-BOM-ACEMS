@@ -31,15 +31,26 @@ public class TagDto {
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
         this.type = tag.getType();
-        this.value = tag.getValue();
+        Double value = new Double(tag.getValue().toString());
+        if (-113 <= value && value <= -100) {
+            this.value = "-";
+        } else {
+            this.value = tag.getValue();
+        }
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
     }
+
     public TagDto(Tag tag, Boolean tagValue) {
         this.id = tag.getId();
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
-        this.value = tag.getValue();
+        Double value = new Double(tag.getValue().toString());
+        if (-113 <= value && value <= -100) {
+            this.value = "-";
+        } else {
+            this.value = tag.getValue();
+        }
         this.type = tag.getType();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
