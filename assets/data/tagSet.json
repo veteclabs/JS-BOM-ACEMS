@@ -2,17 +2,17 @@
   "airCompressorDeshboardSet" : {
     "description" : "에어 컴프레셔 대시보드 태그 셋",
     "tags" : [
-      "COMP_OilOutTemp",
-      "COMP_SystemPre",
-      "COMP_SumpPre"
+      "COMP_SystemPre ",
+      "COMP_AirendTemp",
+      "COMP_ServiceHour"
     ]
   },
   "airCompressorGroupDeshboardSet" : {
     "description" : "에어 컴프레셔 그룹 대시보드 태그 셋",
     "tags" : [
-      "COMP_OilOutTemp",
-      "COMP_SystemPre",
-      "COMP_SumpPre"
+      "COMP_SystemPre ",
+      "COMP_AirendTemp",
+      "COMP_ServiceHour"
     ]
   },
   "airKeyTag" : {
@@ -84,7 +84,9 @@
       "COMP_StartPre",
       "COMP_StopPre",
       "COMP_SumpPre",
-      "COMP_SystemPre"
+      "COMP_SystemPre",
+      "COMP_AirendTemp",
+      "COMP_ServiceHour"
     ]
   }
 }
