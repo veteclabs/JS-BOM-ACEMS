@@ -3,16 +3,16 @@
     "description" : "에어 컴프레셔 대시보드 태그 셋",
     "tags" : [
       "COMP_SystemPre ",
-      "COMP_AirendTemp",
-      "COMP_ServiceHour"
+      "COMP_OilTemp",
+      "COMP_InspectHour"
     ]
   },
   "airCompressorGroupDeshboardSet" : {
     "description" : "에어 컴프레셔 그룹 대시보드 태그 셋",
     "tags" : [
       "COMP_SystemPre ",
-      "COMP_AirendTemp",
-      "COMP_ServiceHour"
+      "COMP_OilTemp",
+      "COMP_InspectHour"
     ]
   },
   "airKeyTag" : {
@@ -85,8 +85,8 @@
       "COMP_StopPre",
       "COMP_SumpPre",
       "COMP_SystemPre",
-      "COMP_AirendTemp",
-      "COMP_ServiceHour"
+      "COMP_OilTemp",
+      "COMP_InspectHour"
     ]
   }
 }

@@ -103,7 +103,7 @@
                             </ul>
 
                             <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
-                                <li v-for="type in powerTagSet">
+                                <li v-for="type in powerTagSet" :key="type.description">
                                     <div v-if="power.tags[type] !== undefined">
                                         {{power.tags[type].description}}
                                     </div>
