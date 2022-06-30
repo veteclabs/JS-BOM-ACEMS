@@ -24,7 +24,7 @@
                                 <div class="ibox" v-for="device in group.devices.pressure" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
-                                        <h3 v-if="device.tags['AIR_PRE'] !== undefined">{{device.tags["AIR_PRE"].value.toFixed(2)}} {{device.tags["AIR_PRE"].unit}}</h3>
+                                        <h3 v-if="device.tags['AIR_PRE'] !== undefined">{{device.tags["AIR_PRE"].value| valueFormat(2)}} {{device.tags["AIR_PRE"].unit}}</h3>
                                     </div>
                                 </div>
                                 <div v-if="group.devices.pressure.length === 0">등록된 압력계가 없습니다.</div>
@@ -34,7 +34,7 @@
                                 <div class="ibox" v-for="device in group.devices.temperature" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
-                                        <h3 v-if="device.tags['WAR_Temp'] !== undefined" >{{device.tags["WAR_Temp"].value.toFixed(2)}} {{device.tags["WAR_Temp"].unit}}</h3>
+                                        <h3 v-if="device.tags['WAR_Temp'] !== undefined" >{{device.tags["WAR_Temp"].value| valueFormat(2)}} {{device.tags["WAR_Temp"].unit}}</h3>
                                     </div>
                                 </div>
                                 <div v-if="group.devices.temperature.length === 0">온도계가 없습니다.</div>
@@ -44,7 +44,7 @@
                                 <div class="ibox" v-for="device in group.devices.flow" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
-                                        <h3 v-if="device.tags['AIR_Flow'] !== undefined">{{device.tags["AIR_Flow"].value.toFixed(2)}} {{device.tags["AIR_Flow"].unit}}</h3>
+                                        <h3 v-if="device.tags['AIR_Flow'] !== undefined">{{device.tags["AIR_Flow"].value| valueFormat(2)}} {{device.tags["AIR_Flow"].unit}}</h3>
                                     </div>
                                 </div>
                                 <div v-if="group.devices.flow.length === 0">유량계가 없습니다.</div>
@@ -84,7 +84,7 @@
                                                             {{device.tags[type].description}}
                                                         </div>
                                                         <div v-if="device.tags[type] !== undefined">
-                                                            {{device.tags[type].value.toFixed(2)}} {{device.tags[type].unit}}
+                                                            {{device.tags[type].value| valueFormat(2)}} {{device.tags[type].unit}}
                                                         </div>
                                                     </li>
                                                 </ul>
@@ -111,7 +111,7 @@
                         <div class="ibox" v-for="device in freeGroupList.pressure" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
-                                <h3 v-if="device.tags['AIR_PRE'] !== undefined">{{device.tags["AIR_PRE"].value.toFixed(2)}} {{device.tags["AIR_PRE"].unit}}</h3>
+                                <h3 v-if="device.tags['AIR_PRE'] !== undefined">{{device.tags["AIR_PRE"].value | valueFormat(2)}} {{device.tags["AIR_PRE"].unit}}</h3>
                             </div>
                         </div>
                         <div v-if="freeGroupList.pressure.length === 0">압력계가 없습니다.</div>
@@ -121,7 +121,7 @@
                         <div class="ibox" v-for="device in freeGroupList.temperature" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
-                                <h3 v-if="device.tags['WAR_Temp'] !== undefined" >{{device.tags["WAR_Temp"].value.toFixed(2)}} {{device.tags["WAR_Temp"].unit}}</h3>
+                                <h3 v-if="device.tags['WAR_Temp'] !== undefined" >{{device.tags["WAR_Temp"].value| valueFormat(2)}} {{device.tags["WAR_Temp"].unit}}</h3>
                             </div>
                         </div>
                         <div v-if="freeGroupList.temperature.length === 0">온도계가 없습니다.</div>
@@ -131,7 +131,7 @@
                         <div class="ibox" v-for="device in freeGroupList.flow" :key="device.id">
                             <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                 <div>{{device.name}}</div>
-                                <h3 v-if="device.tags['AIR_Flow'] !== undefined">{{device.tags["AIR_Flow"].value.toFixed(2)}} {{device.tags["AIR_Flow"].unit}}</h3>
+                                <h3 v-if="device.tags['AIR_Flow'] !== undefined">{{device.tags["AIR_Flow"].value| valueFormat(2)}} {{device.tags["AIR_Flow"].unit}}</h3>
                             </div>
                         </div>
                         <div v-if="freeGroupList.flow.length === 0">유량계가 없습니다.</div>
@@ -168,7 +168,7 @@
                                                 {{device.tags[type].description}}
                                             </div>
                                             <div v-if="device.tags[type] !== undefined">
-                                                {{device.tags[type].value.toFixed(2)}} {{device.tags[type].unit}}
+                                                {{device.tags[type].value | valueFormat(2)}} {{device.tags[type].unit}}
                                             </div>
                                         </li>
                                     </ul>
@@ -324,6 +324,16 @@
             },
         },
         filters: {
+            valueFormat: (value, numFix) => {
+                value = parseFloat(value);
+                if (!value) {
+                    return '0';
+                }else if(value <= -101 && value >= -113) {
+                    return '-'
+                }else {
+                    return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
+                }
+            },
             numberFormat: (value, numFix) => {
                 value = parseFloat(value);
                 if (!value) return '0';

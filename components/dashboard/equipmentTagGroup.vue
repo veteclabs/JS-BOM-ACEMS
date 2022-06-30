@@ -16,7 +16,7 @@
                             <li v-for="tag in item.tags" :key="tag.id">
                                 <div class="tagname">{{tag.description}}</div>
                                 <div>
-                                    {{tag.value| numberFormat(2)}}{{tag.unit}}
+                                    {{tag.value| valueFormat(2)}}{{tag.unit}}
                                 </div>
                             </li>
                         </ul>
@@ -32,21 +32,14 @@
         props: ['propsdata', 'title'],
 
         filters: {
-            numberFormat: (value, numFix) => {
+            valueFormat: (value, numFix) => {
                 value = parseFloat(value);
-                if (!value) return '0';
-                return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
-            },
-            pickValue: function (object, property, value, returnValue) {
-                if (object === undefined || object === null || object === "") {
-                    return '-';
-                } else {
-                    let target = object.filter(object => object[property] === value);
-                    if (target.length === 0) {
-                        return '-';
-                    } else {
-                        return target[0][returnValue];
-                    }
+                if (!value) {
+                    return '0';
+                }else if(value <= -101 && value >= -113) {
+                    return '-'
+                }else {
+                    return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
                 }
             },
         }

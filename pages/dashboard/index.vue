@@ -97,7 +97,7 @@
                                         {{device.tags[type].description}}
                                     </div>
                                     <div v-if="device.tags[type] !== undefined">
-                                        {{device.tags[type].value | numberFormat(2)}} {{device.tags[type].unit}}
+                                        {{device.tags[type].value | valueFormat(2)}} {{device.tags[type].unit}}
                                     </div>
                                 </li>
                             </ul>
@@ -108,7 +108,7 @@
                                         {{power.tags[type].description}}
                                     </div>
                                     <div v-if="power.tags[type] !== undefined">
-                                        {{power.tags[type].value| numberFormat(2)}} {{power.tags[type].unit}}
+                                        {{power.tags[type].value| valueFormat(2)}} {{power.tags[type].unit}}
                                     </div>
                                 </li>
                             </ul>
@@ -332,7 +332,11 @@
             chartSetting() {
                 axios.get('/api/specificalPower')
                     .then((res) => {
-                        this.basicUnit = res.data;
+                        if(isNaN(res.data)) {
+                            this.basicUnit = 0
+                        }else {
+                            this.basicUnit = res.data;
+                        }
                     });
 
                 /*const flowMaxValue = 15; //option formatter랑 맞추기
@@ -454,6 +458,16 @@
                 value = parseFloat(value);
                 if (!value) return '0';
                 return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
+            },
+            valueFormat: (value, numFix) => {
+                value = parseFloat(value);
+                if (!value) {
+                    return '0';
+                }else if(value <= -101 && value >= -113) {
+                    return '-'
+                }else {
+                    return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
+                }
             },
             pickValue: function (object, property, value, returnValue) {
                 if (object === undefined || object === null || object === "") {
