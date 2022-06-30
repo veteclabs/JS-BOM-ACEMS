@@ -31,12 +31,7 @@ public class TagDto {
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
         this.type = tag.getType();
-        Double value = new Double(tag.getValue().toString());
-        if (-113 <= value && value <= -100) {
-            this.value = "-";
-        } else {
-            this.value = tag.getValue();
-        }
+        this.value = tag.getValue();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();
     }
@@ -45,12 +40,7 @@ public class TagDto {
         this.id = tag.getId();
         this.tagName = tag.getTagName();
         this.description = tag.getTagDescription();
-        Double value = new Double(tag.getValue().toString());
-        if (-113 <= value && value <= -100) {
-            this.value = "-";
-        } else {
-            this.value = tag.getValue();
-        }
+        this.value = tag.getValue();
         this.type = tag.getType();
         this.unit = isNull(tag.getUnit())?"":tag.getUnit();
         if(!isNull(tag.getDevice())) this.deviceId = tag.getDevice().getId();

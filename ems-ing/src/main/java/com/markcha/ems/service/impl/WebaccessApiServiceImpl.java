@@ -234,7 +234,6 @@ public class WebaccessApiServiceImpl {
         return true;
     }
     public Boolean setTagValue(TagDto propertyDto) {
-        System.out.println(propertyDto);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic YWRtaW46dmV0ZWMx"); //YWRtaW46dmV0ZWMx
