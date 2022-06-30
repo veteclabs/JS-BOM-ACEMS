@@ -59,27 +59,34 @@ public class TestController {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
         groupSearchDto.setTagEqType(tag.type.eq("PWR_KWh"));
-        double pwr_kWh = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
-                .map(t -> {
-                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
-                    return groupQueryDto.getTagNames();
-                }).flatMap(List::stream)
-                .map(t -> historyHourMapper.getHistoryHour(t)).mapToDouble(t -> t).average().getAsDouble();
-        System.out.println(pwr_kWh);
-        groupSearchDto.setTagEqType(tag.type.eq("AIR_Flow"));
-        double air_flow = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
+        Double pwr_kWh = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
                 .map(t -> {
                     GroupQueryDto groupQueryDto = new GroupQueryDto(t);
                     return groupQueryDto.getTagNames();
                 }).flatMap(List::stream)
                 .map(t -> {
-                    double historyHour = historyHourMapper.getHistoryHour(t);
+                    Double historyHour = historyHourMapper.getHistoryHour(t);
                     if(isNull(historyHour)) {
                         return 0.0;
                     } else {
                         return historyHour;
                     }
-                }).mapToDouble(k -> k).average().getAsDouble();
+                })
+                .mapToDouble(t -> t).sum();
+        groupSearchDto.setTagEqType(tag.type.eq("AIR_Con"));
+        Double air_flow = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
+                .map(t -> {
+                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
+                    return groupQueryDto.getTagNames();
+                }).flatMap(List::stream)
+                .map(t -> {
+                    Double historyHour = historyHourMapper.getHistoryHour(t);
+                    if(isNull(historyHour)) {
+                        return 0.0;
+                    } else {
+                        return historyHour;
+                    }
+                }).mapToDouble(k -> k).sum();
         return pwr_kWh/air_flow;
 
     }
@@ -109,10 +116,14 @@ public class TestController {
         result.getTypes().put(tagType, new Type(tagNames));
         result.getTypes().get(tagType).setUnits(webaccessApiService.getTagValuesV2(tagNames));
         Stream<Double> objectStream = result.getTypes().get(tagType).getUnits().values().stream()
-                .map(t -> {
+                .filter(t -> {
                     Double aDouble = new Double(t.toString());
-                    return aDouble;
-                });
+                    if (!(-113 <= aDouble && aDouble <= -100)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }).map(t->new Double(t.toString()));
         switch(tagType) {
             case "PWR_KW":
                 result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).sum());
@@ -130,7 +141,6 @@ public class TestController {
     @NoArgsConstructor
     public static class ResponseToTalValues {
         private Map<String, Type> types = new HashMap<>();
-
 
     }
     @Data

@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 @Mapper
 public interface HistoryHourMapper {
-    double getHistoryHour(String tagType);
+    Double getHistoryHour(String tagType);
 }
