@@ -209,8 +209,15 @@
                         x: {show: true},
                         y: {
                             show: true,
-                            formatter: function (val) {
-                                return val + 'kW'
+                            formatter: function (val, target) {
+                                let unit = '';
+                                if(target.seriesIndex === 0) {
+                                    unit = 'kW'
+                                }
+                                if(target.seriesIndex === 1) {
+                                    unit = 'N㎥/min'
+                                }
+                                return val + unit
                             }
                         }
                     },
