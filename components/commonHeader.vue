@@ -15,8 +15,17 @@
                 </div>
             </div>
             <div class="right-header-menu">
+                <div class="manual">
+                    <a title="매뉴얼"
+                       href="/manual.pdf"
+                       data-tooltip-text="매뉴얼"
+                       target="_blank">
+                        <img src="~assets/images/header/icn_header_manual.svg" width="32"/>
+                    </a>
+                </div>
+
                 <div class="nowTime">
-                    {{nowTime  | dateFormat('YYYY-MM-DD ddd')}}
+                    {{nowTime | dateFormat('YYYY-MM-DD ddd')}}
                     <span>{{nowTime | dateFormat('HH:mm:ss')}}</span>
                 </div>
                 <a class="user" title="계정" @click="downMenu()">I</a>
@@ -57,11 +66,11 @@
                 passwordModalData: {
                     show: false,
                 },
-                nowTime:new Date(),
+                nowTime: new Date(),
                 user: '',
                 viewDownMenu: false,
-                routeName:'',
-                routeList:[],
+                routeName: '',
+                routeList: [],
                 interval: '',
                 intervalTime: 1000,
             };
@@ -82,45 +91,45 @@
         methods: {
             routeSetting() {
                 let menus = {
-                    'dashboard' : {
-                        title:'전체대시보드',
+                    'dashboard': {
+                        title: '전체대시보드',
                         pathList: ['대시보드'],
                     },
-                    'dashboard-id' : {
-                        title:'개별대시보드',
+                    'dashboard-id': {
+                        title: '개별대시보드',
                         pathList: ['대시보드', '개별대시보드'],
                     },
-                    'dashboard-groupDashboard' : {
-                        title:'그룹별대시보드',
+                    'dashboard-groupDashboard': {
+                        title: '그룹별대시보드',
                         pathList: ['대시보드', '그룹별대시보드'],
                     },
-                    'analysis' : {
-                        title:'데이터 조회',
+                    'analysis': {
+                        title: '데이터 조회',
                         pathList: ['분석', '데이터 조회'],
                     },
-                    'setting-equipment' : {
-                        title:'장비관리',
+                    'setting-equipment': {
+                        title: '장비관리',
                         pathList: ['설정', '장비관리'],
                     },
-                    'setting-group' : {
-                        title:'그룹관리',
+                    'setting-group': {
+                        title: '그룹관리',
                         pathList: ['설정', '그룹관리'],
                     },
-                    'setting-group-create' : {
-                        title:'그룹관리',
+                    'setting-group-create': {
+                        title: '그룹관리',
                         pathList: ['설정', '그룹관리', '등록'],
                     },
-                    'setting-group-id' : {
-                        title:'그룹관리',
+                    'setting-group-id': {
+                        title: '그룹관리',
                         pathList: ['설정', '그룹관리', '수정'],
                     },
-                    'setting-aircompressor' : {
-                        title:'공기압축기관리',
+                    'setting-aircompressor': {
+                        title: '공기압축기관리',
                         pathList: ['설정', '공기압축기관리'],
                     },
                 };
-                this.routeName =  menus[this.$route.name] ?  menus[this.$route.name].title : '';
-                this.routeList =  menus[this.$route.name] ?  menus[this.$route.name].pathList : [];
+                this.routeName = menus[this.$route.name] ? menus[this.$route.name].title : '';
+                this.routeList = menus[this.$route.name] ? menus[this.$route.name].pathList : [];
             },
             downMenu() {
                 this.viewDownMenu = !this.viewDownMenu;

@@ -375,7 +375,7 @@
         methods: {
             chartSetting() {
                 const barMaxValue = 15;
-                const bar = this.airCompressor.tags.COMP_SumpPre.value;
+                const bar = this.airCompressor.tags.COMP_SystemPre.value;
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },
             async getAirCompressor() {
