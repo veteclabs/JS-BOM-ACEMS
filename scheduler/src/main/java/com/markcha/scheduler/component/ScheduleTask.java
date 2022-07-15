@@ -186,7 +186,7 @@ public class ScheduleTask extends TimerTask {
             alarm.setKwhValue(null);
             alarm.setMessage("에어 컴프레셔 제어 실패");
             alarm.setEventDate(LocalDate.now());
-            alarm.setType("error");
+            alarm.setType("fail");
             alarm.setTrip(null);
             alarm.setTag(tagDslRepositoryIml.getOneById(device.getTags().get(powerType).getId()));
             alarmDataRepository.save(alarm);
