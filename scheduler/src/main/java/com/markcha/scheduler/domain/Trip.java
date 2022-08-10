@@ -22,4 +22,7 @@ public class Trip {
     private Boolean isWarning;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
     private List<Alarm> alarms = new ArrayList<Alarm>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="equipment_id")
+    private Equipment equipment;
 }

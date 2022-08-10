@@ -86,8 +86,8 @@ public class Scheduler {
     @Scheduled(fixedDelay = 1000)
     public void alarmFixedRateTask() {
         List<Tag> tags = deviceDslRepository.findAllAlarmTags();
-        Map<Integer, Trip> tripMap = tripDataRepository.findAll().stream()
-                .collect(toMap(Trip::getCode, trip->trip));
+        Map<Integer, List<Trip>> tripMap = tripDataRepository.findAll().stream()
+                .collect(groupingBy(Trip::getCode, toList()));
         List<Alarm> newAlarms = new ArrayList<>();
         List<Tag> takenAlarmTags = tags.stream()
                 .filter(t -> t.getIsAlarm().equals(true))
@@ -136,18 +136,18 @@ public class Scheduler {
             if(newTag.getType().equals("COMP_Trip")) {
                 if (!isNull(alarmDataTagMap.get("COMP_ActTripCode"))) {
                     int actTripCode = new Double(alarmDataTagMap.get("COMP_ActTripCode").getValue().toString()).intValue();
-                    String tripMesasge = tripMap.get(actTripCode).getMessage();
-                    alarm.setTrip(tripMap.get(actTripCode));
-                    alarm.setMessage(tripMesasge);
+                    Trip trip = tripMap.get(actTripCode).stream().filter(t -> t.getEquipment().getId() == newTag.getDevice().getEquipment().getId()).findFirst().get();
+                    alarm.setTrip(trip);
+                    alarm.setMessage(trip.getMessage());
                     alarm.setType("trip");
                 }
             }
             if(newTag.getType().equals("COMP_Warning")) {
                 if (!isNull(alarmDataTagMap.get("COMP_ActWarCode"))) {
                     int actWarningCode = new Double(alarmDataTagMap.get("COMP_ActWarCode").getValue().toString()).intValue();
-                    String tripMesasge = tripMap.get(actWarningCode).getMessage();
-                    alarm.setTrip(tripMap.get(actWarningCode));
-                    alarm.setMessage(tripMesasge);
+                    Trip trip = tripMap.get(actWarningCode).stream().filter(t -> t.getEquipment().getId() == newTag.getDevice().getEquipment().getId()).findFirst().get();
+                    alarm.setTrip(trip);
+                    alarm.setMessage(trip.getMessage());
                     alarm.setType("warning");
                 }
             }

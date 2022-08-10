@@ -22,7 +22,7 @@
     ],
     "env": {
     },
-    "script": "C:/Program Files/Java/jdk-11.0.15/bin/java.exe",
+    "script": "C:/Program Files/Java/jdk-11/bin/java.exe",
     "max_memory_restart": "650M",
     "log_date_format": "YYYY-MM-DD HH:mm Z",
     "exec_interpreter": "none",
@@ -38,7 +38,7 @@
     ],
     "env": {
     },
-    "script": "C:/Program Files/Java/jdk-11.0.15/bin/java.exe",
+    "script": "C:/Program Files/Java/jdk-11/bin/java.exe",
     "max_memory_restart": "650M",
     "log_date_format": "YYYY-MM-DD HH:mm Z",
     "exec_interpreter": "none",

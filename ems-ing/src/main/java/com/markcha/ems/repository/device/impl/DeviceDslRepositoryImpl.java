@@ -22,6 +22,9 @@ import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QSchedule.schedule;
 import static com.markcha.ems.domain.QTag.tag;
+import static com.markcha.ems.domain.QTagList.tagList;
+import static com.markcha.ems.domain.QTagSet.tagSet;
+import static com.markcha.ems.domain.QTagSetMapper.tagSetMapper;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Objects.isNull;
@@ -295,13 +298,17 @@ public class DeviceDslRepositoryImpl {
                         device.id.eq(id)
                 ).fetchOne();
     }
-    public List<Device> getDeviceByGroupIds(List<Long> groupIds) {
+    public List<Device> getDeviceByGroupIds(List<Long> groupIds, String tagSetName) {
         return query.selectFrom(device).distinct()
-                .join(device.tags, tag).fetchJoin()
-                .join(device.group, group).fetchJoin()
+//                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(tag.tagList, tagList).fetchJoin()
+                .leftJoin(tagList.tagSetMappers, tagSetMapper).fetchJoin()
+                .leftJoin(tagSetMapper.tagSet, tagSet).fetchJoin()
                 .where(
-                        tag.showAble.eq(true)
-                        ,group.id.in(groupIds)
+//                        tag.showAble.eq(true)
+                        device.group.id.in(groupIds)
+                        ,tagSet.nickname.eq(tagSetName)
                 ).fetch();
     }
     public Device getOneByIdJoinGroupSchedule(Long id) {

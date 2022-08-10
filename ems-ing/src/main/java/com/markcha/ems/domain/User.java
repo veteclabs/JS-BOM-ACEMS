@@ -25,8 +25,18 @@ public class User {
     @Column(length = 50)
     private String phone;
     private Boolean isAlarm;
-    @Column(name="timestamp", columnDefinition = "DATETIME")
+    @Column(name="last_password_changed", columnDefinition = "DATETIME")
     private LocalDateTime lastPasswordChanged;
-    @Column(length = 15)
+    @Column(name="last_update_ip", length = 15)
     private String lastUpdateIp;
+    @Column(name="withdraw_dtm", columnDefinition = "DATETIME")
+    private LocalDateTime withdrawDtm;
+    @Column(name="enable_marketing_At", columnDefinition = "DATETIME")
+    private LocalDateTime enableMarketingAt;
+    @Column(name="disable_marketing_At", columnDefinition = "DATETIME")
+    private LocalDateTime disbleMarketingAt;
+    @Column(name="updatedAt", columnDefinition = "DATETIME")
+    private LocalDateTime updatedAt;
+    @Column(name="createdAt", columnDefinition = "DATETIME")
+    private LocalDateTime createdAt;
 }

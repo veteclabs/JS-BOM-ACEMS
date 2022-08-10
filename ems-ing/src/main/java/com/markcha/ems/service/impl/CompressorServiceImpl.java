@@ -282,7 +282,7 @@ public class CompressorServiceImpl {
         List<Long> compIds = compressors.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds);
+        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds, "mainDashBoardTagSet");
         List<String> tagNames = new ArrayList<>();
         devices.forEach(t->{
             if(!isNull(t.getTags())) {

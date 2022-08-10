@@ -46,7 +46,9 @@ public class Tag {
     private Boolean showAble;
     @Column(length = 20)
     private String type;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="tag_list_id")
+    private TagList tagList;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag")
     private List<Alarm> alarms = new ArrayList<>();
 }
