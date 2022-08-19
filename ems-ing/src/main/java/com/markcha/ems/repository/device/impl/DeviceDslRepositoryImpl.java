@@ -299,6 +299,7 @@ public class DeviceDslRepositoryImpl {
                 ).fetchOne();
     }
     public List<Device> getDeviceByGroupIds(List<Long> groupIds, String tagSetName) {
+        entityManager.clear();
         return query.selectFrom(device).distinct()
 //                .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
