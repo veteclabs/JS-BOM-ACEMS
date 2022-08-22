@@ -31,7 +31,7 @@ public class AirCompressorDto {
     private EquipmentDto equipment;
     private ScheduleDto schedule;
     private Map<String, TagDto> state = new HashMap<>();
-    private Map<String, TagDto> tags = new HashMap<>();
+    private List<TagDto> tags = new ArrayList<>();
     private Map<String, List<DeviceDto>> devices = new HashMap<>();
     public AirCompressorDto(Group compGroup) {
         if (!isNull(compGroup)) {
@@ -80,7 +80,7 @@ public class AirCompressorDto {
                                 })
                                 .collect(Collectors.toMap(TagDto::getType, tagDto -> tagDto));
                         this.tags = collect.stream()
-                                .collect(Collectors.toMap(TagDto::getType, tagDto -> tagDto));
+                                .collect(Collectors.toList());
                     }
                 }
             });
