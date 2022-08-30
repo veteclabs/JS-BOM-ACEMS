@@ -47,6 +47,7 @@
         <div class="dashboard-item-box">
             <masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">
                 <div v-for="device in airCompressorList" :key="device.id">
+                <!-- {{device}} -->
                     <div class="ibox">
                         <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                             <nuxt-link :to="`/dashboard/${device.id}`">
@@ -92,13 +93,13 @@
                                 </li>
                             </ul>
                             <ul class="tag-box">
-                                <li v-for="type in compTagSet" :key="type.tagName">
-                                    <div v-if="device.tags[type] !== undefined">
-                                        {{device.tags[type].description}}
-                                    </div>
-                                    <div v-if="device.tags[type] !== undefined">
-                                        {{device.tags[type].value | valueFormat(2)}} {{device.tags[type].unit}}
-                                    </div>
+                                <li v-for="tag in device.tags" :key="device.tags">
+                                     <div>
+                                         {{tag.description}}
+                                     </div>
+                                     <div>
+                                         {{tag.value | valueFormat(2)}} {{tag.unit}}
+                                     </div>
                                 </li>
                             </ul>
 
@@ -129,6 +130,7 @@
     import dayjs from 'dayjs';
     import 'dayjs/locale/ko';
 
+
     dayjs.locale('ko');
 
     import axios from 'axios';
@@ -138,6 +140,7 @@
     import scheduleState from '~/components/dashboard/scheduleState.vue';
     import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
     import waTagSet from '~/assets/data/tagSet.json';
+    import qs from "qs";
 
 
     export default {
@@ -390,9 +393,14 @@
             },
             async getAirCompressor() {
                 const vm = this;
-                axios({
-                    method: 'get',
-                    url: '/api/compressors'
+                axios.get('/api/compressors',
+                {
+                    params: {
+                        components: ["stateComponent", "mainInfoComponent"]
+
+                    }, paramsSerializer: params => {
+                        return qs.stringify(params)
+                    }
                 }).then((res) => {
                     vm.airCompressorList = res.data
                 }).catch((error) => {

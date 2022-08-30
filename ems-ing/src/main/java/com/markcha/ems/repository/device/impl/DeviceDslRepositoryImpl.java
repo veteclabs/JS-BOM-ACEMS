@@ -298,7 +298,7 @@ public class DeviceDslRepositoryImpl {
                         device.id.eq(id)
                 ).fetchOne();
     }
-    public List<Device> getDeviceByGroupIds(List<Long> groupIds, String tagSetName) {
+    public List<Device> getDeviceByGroupIds(List<Long> groupIds, List<String> tagSetName) {
         entityManager.clear();
         return query.selectFrom(device).distinct()
 //                .leftJoin(device.group, group).fetchJoin()
@@ -309,7 +309,7 @@ public class DeviceDslRepositoryImpl {
                 .where(
 //                        tag.showAble.eq(true)
                         device.group.id.in(groupIds)
-                        ,tagSet.nickname.eq(tagSetName)
+                        ,tagSet.nickname.in(tagSetName)
                 ).fetch();
     }
     public Device getOneByIdJoinGroupSchedule(Long id) {
