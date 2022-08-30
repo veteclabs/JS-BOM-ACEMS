@@ -50,21 +50,12 @@
                     </div>
                     <div class="ibox-content">
                         <ul class="tag-box" v-if="airCompressor.tags">
-                            <li v-for="type in compTagSet" :key="type.tagName">
-                                <div v-if="airCompressor.tags[type] !== undefined">
-                                    <span v-if="airCompressor.tags[type].tagName.includes('COMP_Local')">원격제어</span>
-                                    <span v-else>{{airCompressor.tags[type].description}}</span>
+                            <li v-for="tag in airCompressor.tagByComponents.wholeInfoComponent" :key="airCompressor.tagByComponents.wholeInfoComponent">
+                                <div>
+                                    {{tag.description}}
                                 </div>
-                                <div v-if="airCompressor.tags[type] !== undefined">
-                                    <div v-if="airCompressor.tags[type].tagName.includes('COMP_Local')">
-                                        <div v-if="airCompressor.tags[type].value === 1"
-                                             class="bom-badge blue-badge blue">ON
-                                        </div>
-                                        <div v-else class="bom-badge red-badge red">OFF</div>
-                                    </div>
-                                    <div v-else>
-                                        {{airCompressor.tags[type].value | valueFormat(2)}} {{airCompressor.tags[type].unit}}
-                                    </div>
+                                <div>
+                                    {{tag.value | valueFormat(2)}} {{tag.unit}}
                                 </div>
                             </li>
                         </ul>
@@ -136,17 +127,16 @@
                             </div>
                             <div class="ibox-content">
                                 <ul class="tag-box" v-if="airCompressor.tags">
-                                    <li v-for="type in compKeyTag" :key="type.tagName">
-                                        <div v-if="airCompressor.tags[type] !== undefined">
-                                            {{airCompressor.tags[type].description}}
+                                    <li v-for="tag in airCompressor.tagByComponents.importantInfoComponent" :key="airCompressor.tagByComponents.importantInfoComponent">
+                                        <div>
+                                            {{tag.description}}
                                         </div>
-                                        <div v-if="airCompressor.tags[type] !== undefined">
-                                            {{airCompressor.tags[type].value | valueFormat(2)}}
-                                            {{airCompressor.tags[type].unit}}
+                                        <div>
+                                            {{tag.value | valueFormat(2)}} {{tag.unit}}
                                         </div>
                                     </li>
-                                </ul>
 
+                                </ul>
                                 <ul v-for="power in airCompressor.devices.power" :key="power.id" class="tag-box">
                                     <li v-for="type in powerKeyTag">
                                         <div v-if="power.tags[type] !== undefined">
@@ -180,7 +170,7 @@
     import alarm from '~/components/dashboard/alarm.vue';
     import waTagSet from '~/assets/data/tagSet.json';
     import scheduleState from '~/components/dashboard/scheduleState.vue';
-
+    import qs from 'qs';
     export default {
         fetch({store, redirect}) {
             if (!store.state.authUser) {
@@ -381,8 +371,15 @@
             async getAirCompressor() {
                 const vm = this;
                 const id = this.$route.params.id;
-                axios.get(`/api/compressor/${id}`
-                ).then((res) => {
+                axios.get(`/api/compressor/${id}`,
+                 {
+                    params: {
+                        components: ["stateComponent", "wholeInfoComponent", "importantInfoComponent"]
+
+                    }, paramsSerializer: params => {
+                        return qs.stringify(params)
+                    }
+                }).then((res) => {
                     vm.airCompressor = res.data;
                     vm.powerData = vm.airCompressor.devices.power;
                     vm.chartSetting();
