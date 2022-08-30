@@ -1,8 +1,6 @@
 package com.markcha.ems.dto.device;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.*;
-import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +11,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.data.util.Pair.toMap;
 
 @Data
 @NoArgsConstructor
@@ -31,6 +27,8 @@ public class AirCompressorDto {
     private Map<String, TagDto> state = new HashMap<>();
     private List<TagDto> tags = new ArrayList<>();
     private Map<String, List<DeviceDto>> devices = new HashMap<>();
+    private Map<String, List<TagDto>> tagByComponents;
+
 
     public AirCompressorDto(Group compGroup) {
         if (!isNull(compGroup)) {
@@ -47,41 +45,23 @@ public class AirCompressorDto {
                 if (!isNull(t.getEquipment())) {
                     if (t.getEquipment().getType().equals(EquipmentType.AIR_COMPRESSOR)) {
                         this.equipment = new EquipmentDto(t.getEquipment());
-                        List<TagDto> collect = t.getTags().stream()
-                                .map(k -> new TagDto(k, true))
-                                .collect(toList());
-                        List<TagDto> stateTags = collect.stream()
-                                .filter(k -> {
-                                    if (new ArrayList<String>(List.of(
-                                            "COMP_Power"
-                                            , "COMP_Local"
-                                            , "COMP_ActTripCode"
-                                            , "COMP_Trip"
-                                            , "COMP_Load"
-                                            , "COMP_AutoStop"
-                                            , "COMP_Warning"
-                                            , "COMP_ActWarCode"
-                                    )).contains(k.getType())) {
-                                        k.setValue(new Double(k.getValue().toString()).intValue());
-                                    }
-                                    return new ArrayList<String>(List.of(
-                                            "COMP_Power"
-                                            , "COMP_StartPre"
-                                            , "COMP_StopPre"
-                                            , "COMP_Local"
-                                            , "COMP_ActTripCode"
-                                            , "COMP_Trip"
-                                            , "COMP_AutoStop"
-                                            , "COMP_Load"
-                                            , "COMP_Warning"
-                                            , "COMP_ActWarCode"
-                                    )).contains(k.getType());
-                                })
-                                .collect(toList());
-                        this.state = stateTags.stream()
+                        Map<String, List<TagDto>> groupingTags = new HashMap<>();
+
+                        for (Tag tag : t.getTags()) {
+                            for (TagSetMapper tagSetMapper : tag.getTagList().getTagSetMappers()) {
+                                if(!groupingTags.containsKey(tagSetMapper.getTagSet().getNickname())) {
+                                    groupingTags.put(tagSetMapper.getTagSet().getNickname(), new ArrayList<>());
+                                }
+                                groupingTags.get(tagSetMapper.getTagSet().getNickname())
+                                        .add(TagDto.of(tag));
+                            }
+                        }
+
+                        this.state = groupingTags.get("stateComponent").stream()
                                 .collect(Collectors.toMap(k -> k.getType(), k -> k));
-                        collect.removeAll(stateTags);
-                        this.tags = collect;
+                        groupingTags.remove("stateComponent");
+                        this.tagByComponents = groupingTags;
+
                     }
                 }
             });
