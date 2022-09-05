@@ -2,13 +2,11 @@ package com.markcha.ems.service.impl;
 
 import com.markcha.ems.controller.CompressorController;
 import com.markcha.ems.controller.DeviceController.DeviceInsertDto;
-import com.markcha.ems.domain.Device;
-import com.markcha.ems.domain.Equipment;
-import com.markcha.ems.domain.Group;
-import com.markcha.ems.domain.Tag;
+import com.markcha.ems.domain.*;
 import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.EquipmentDataRepository;
+import com.markcha.ems.repository.TagListDataRepository;
 import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
@@ -32,6 +30,7 @@ public class DeviceServiceImpl implements DeviceService {
     private final EquipmentDslRepositoryImpl equipmentDslRepository;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final InsertSampleData insertSampleData;
+    private final TagListDataRepository tagListDataRepository;
 
 
     @Override

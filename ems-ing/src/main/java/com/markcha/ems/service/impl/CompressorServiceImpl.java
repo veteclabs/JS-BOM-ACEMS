@@ -6,6 +6,7 @@ import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.alarm.AlarmDto;
 import com.markcha.ems.dto.dayofweek.DayOfWeekDto;
 import com.markcha.ems.dto.device.AirCompressorDto;
+import com.markcha.ems.dto.device.ComponentsDto;
 import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
@@ -276,13 +277,13 @@ public class CompressorServiceImpl {
         scheduleDataRepository.deleteAllInBatch(schedules);
     }
 
-    public List<Group> findAllJoinAlarm(BooleanExpression groupEqId) {
+    public List<Group> findAllJoinAlarm(BooleanExpression groupEqId, ComponentsDto components) {
 
         List<Group> compressors = deviceDslRepository.findAllCompressorsJoinEquipment(AIR_COMPRESSOR, groupEqId);
         List<Long> compIds = compressors.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds);
+        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds, components.getComponents());
         List<String> tagNames = new ArrayList<>();
         devices.forEach(t->{
             if(!isNull(t.getTags())) {

@@ -23,7 +23,7 @@ public class InsertSampleData {
 
         List<Tag> tags = new ArrayList<>();
         String deviceUnit = new String(String.format("U%03d", device.getId().intValue()) + "_");
-        List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipment_Type(type);
+        List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipomentType(type);
 
 
         List<TagValue> tagValues = new ArrayList<>();
@@ -41,6 +41,7 @@ public class InsertSampleData {
             tag.setUnit(t.getUnit());
             tag.setUnitConversion(t.getUnitConversion());
             tag.setDevice(device);
+            tag.setTagList(t);
             tags.add(tag);
             TagValue tagValue = new TagValue();
             tagValue.setName(deviceUnit + t.getType());

@@ -2,7 +2,7 @@
   "airCompressorDeshboardSet" : {
     "description" : "에어 컴프레셔 대시보드 태그 셋",
     "tags" : [
-      "COMP_SystemPre ",
+      "COMP_SystemPre",
       "COMP_OilTemp",
       "COMP_InspectHour"
     ]
@@ -10,7 +10,7 @@
   "airCompressorGroupDeshboardSet" : {
     "description" : "에어 컴프레셔 그룹 대시보드 태그 셋",
     "tags" : [
-      "COMP_SystemPre ",
+      "COMP_SystemPre",
       "COMP_OilTemp",
       "COMP_InspectHour"
     ]

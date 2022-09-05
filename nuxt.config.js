@@ -32,7 +32,8 @@ module.exports = {
   ** Plugins to load before mounnpm ting the App
   */
   plugins: [
-    { src: '~plugins/vue-client', ssr: false },
+    {src: '~plugins/vue-client', ssr: false},
+    {src: '~plugins/axios', ssr: false},
   ],
   /*
   ** Nuxt.js modules

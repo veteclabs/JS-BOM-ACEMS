@@ -1,22 +1,15 @@
 package com.markcha.ems.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.markcha.ems.controller.GroupController.GroupSearchDto;
-import com.markcha.ems.controller.analysis.DataAnalysisController;
 import com.markcha.ems.domain.*;
+import com.markcha.ems.dto.device.ComponentsDto;
 import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
-import com.markcha.ems.dto.tag.response.TagResultDto;
-import com.markcha.ems.mapper.alarm.AlarmMapDto;
-import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.GroupDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
-import com.markcha.ems.repository.group.dto.GroupQueryDto;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
@@ -27,9 +20,6 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,8 +71,9 @@ public class CompressorController {
 
     @GetMapping(value="/compressors")
     public List<AirCompressorDto> compressor(
+            ComponentsDto components
     ) {
-        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(null).stream()
+        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(null, components).stream()
                 .map(AirCompressorDto::new)
                 .collect(toList());
         collect.forEach(t->{
@@ -97,9 +88,10 @@ public class CompressorController {
     }
     @GetMapping(value="/compressor/{compressorId}")
     public AirCompressorDto compressor(
-            @PathVariable("compressorId") Long compressorId
+            @PathVariable("compressorId") Long compressorId,
+            ComponentsDto components
     ) {
-        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(group.id.eq(compressorId)).stream()
+        List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(group.id.eq(compressorId), components).stream()
                 .map(AirCompressorDto::new)
                 .collect(toList());
         collect.forEach(t->{

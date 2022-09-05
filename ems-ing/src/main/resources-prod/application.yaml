@@ -4,21 +4,21 @@ spring:
   webaccess:
     #    host: http://112.216.32.4/WaWebService/Json/
     host: http://localhost/WaWebService/Json/
-    project: ACEMS
-    node: ACEMS
+    project: BOM
+    node: BOM
   batch:
     initialize-schema=always:
   application:
     name: ems-ing
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
-    jdbc-url: jdbc:mariadb://localhst:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://localhost:3721/ing?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:
       - always
     platform: maria
+    sql-script-encoding: UTF-8
 
   jpa:
     hibernate:
