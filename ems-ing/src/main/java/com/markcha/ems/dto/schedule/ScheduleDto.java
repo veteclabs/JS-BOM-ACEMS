@@ -1,5 +1,6 @@
 package com.markcha.ems.dto.schedule;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.markcha.ems.domain.Device;
@@ -39,7 +40,9 @@ public class ScheduleDto {
     private Boolean isActive;
     @JsonIgnore
     private String type;
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime stopTime;
     private Object min;
     private Object max;
