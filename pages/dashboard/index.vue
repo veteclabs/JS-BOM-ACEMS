@@ -47,7 +47,6 @@
         <div class="dashboard-item-box">
             <masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">
                 <div v-for="device in airCompressorList" :key="device.id">
-                <!-- {{device}} -->
                     <div class="ibox">
                         <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                             <nuxt-link :to="`/dashboard/${device.id}`">
