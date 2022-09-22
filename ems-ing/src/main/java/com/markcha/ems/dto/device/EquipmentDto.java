@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class EquipmentDto {
+    private Long equipmentId;
     private String model;
     private String maker;
     private EquipmentType type;
     private String description;
     public EquipmentDto(Equipment equipment) {
+        this.equipmentId = equipment.getId();
         this.model = equipment.getModel();
         this.description = equipment.getDescription();
         this.maker = equipment.getMaker();

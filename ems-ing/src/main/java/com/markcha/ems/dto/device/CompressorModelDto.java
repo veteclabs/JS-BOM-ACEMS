@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CompressorModelDto {
-    private Long id;
+    private Long equipmentId;
     private String model;
 }
