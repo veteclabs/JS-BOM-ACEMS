@@ -123,7 +123,7 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
 
-        // 디바이스 생성 및 그룹과 연
+        // 디바이스 생성 및 그룹과 연동
         Device newDevice = new Device();
         Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         newDevice.setName(compressorInsertDto.getName());
@@ -202,9 +202,10 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
+        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
+//        tagDataRepository.deleteAll(seletedDevice.getTags());
 
         List<TagDto> tags = seletedDevice.getTags().stream()
                 .map(TagDto::new)

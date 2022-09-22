@@ -156,6 +156,7 @@ public class CompressorController {
         private String name;
         private Long groupId;
         private ScheduleDto schedule;
+        private Long equipmentId;
         private List<String> dayOfWeeks;
         private List<String> weeks;
     }
