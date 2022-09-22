@@ -366,9 +366,11 @@
 
                 axios.get('/api/totalValue')
                     .then((res) => {
-                        vm.tagVal = res.data;
-                        vm.setLiveChart();
-                        vm.chartSetting();
+                        if(res.status === 200) {
+                            vm.tagVal = res.data;
+                            vm.setLiveChart();
+                            vm.chartSetting();
+                        }
                     }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
@@ -401,7 +403,9 @@
                         return qs.stringify(params)
                     }
                 }).then((res) => {
-                    vm.airCompressorList = res.data
+                    if(res.status === 200) {
+                        vm.airCompressorList = res.data
+                    }
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {

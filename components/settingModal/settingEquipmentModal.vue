@@ -49,8 +49,8 @@
                                 </select>
                             </label>
                             <label>
-                                <select v-model="params.equipment.model">
-                                    <option v-for="model in modelList" :value="model.model" :key="model.id">
+                                <select v-model="params.equipment.equipmentId">
+                                    <option v-for="model in modelList" :value="model.equipmentId" :key="model.equipmentId">
                                         {{model.model}}
                                     </option>
                                 </select>
@@ -59,7 +59,7 @@
                                 {{ validation.firstError('params.equipment.maker') }}
                             </div>
                             <div class="err-message" v-if="validation !== undefined">
-                                {{ validation.firstError('params.equipment.model') }}
+                                {{ validation.firstError('params.equipment.equipmentId') }}
                             </div>
                         </td>
                     </tr>
@@ -188,7 +188,7 @@
                 state: 'new',
                 params: {
                     equipment: {
-                        maker: '',
+                        equipmentId:'',
                         model: '',
                     },
                     state: {
@@ -223,7 +223,7 @@
             'params.equipment.maker': function (value) {
                 return Validator.value(value).required();
             },
-            'params.equipment.model': function (value) {
+            'params.equipment.equipmentId': function (value) {
                 return Validator.value(value).required();
             },
             'params.schedule.min, params.schedule.max, params.state.COMP_StartPre': function (min, max, range) {
@@ -291,7 +291,7 @@
                     if (res.status === 200) {
                         vm.modelList = res.data;
                         if(self &&  vm.modelList.length !== 0 ) {
-                            vm.params.equipment.model = vm.modelList[0].model;
+                            vm.params.equipment.equipmentId = vm.modelList[0].equipmentId;
                         }
                     }
                 }).catch((error) => {
@@ -406,8 +406,8 @@
                     groupId: null,
                     name: '',
                     equipment: {
+                        equipmentId:'',
                         maker: '',
-                        model: '',
                     },
                     state: {
                         COMP_StartPre:'',
