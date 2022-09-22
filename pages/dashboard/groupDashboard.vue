@@ -69,26 +69,33 @@
                                                 <div>
                                                     <span>상태</span>
                                                     <div class="flex-box">
-                                                        <div v-if="device.state.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
-                                                        <div v-if="device.state.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
+                                                        <div v-if="device.tags.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
+                                                        <div v-if="device.tags.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
                                                     </div>
                                                 </div>
-                                                <div class="percent" v-if="device.state.COMP_LoadFactor">
+                                                <div class="percent" v-if="device.tags.COMP_LoadFactor">
                                                     <span>부하율</span>
-                                                    <h3>{{device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}}%</h3>
+                                                    <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}}%</h3>
                                                 </div>
                                             </div>
                                             <ul class="tag-box" v-if="device.tags">
-                                                <li v-for="type in compTagSet">
-                                                    {{type}}
-                                                    <div v-if="device.tags[type] !== undefined">
-                                                        {{device.tags[type].description}}
-                                                    </div>
-                                                    <div v-if="device.tags[type] !== undefined">
-                                                        {{device.tags[type].value| valueFormat(2)}} {{device.tags[type].unit}}
+                                                <li v-for="tag in device.tags" :key="tag.tagName">
+                                                    <div>{{tag.description}}</div>
+                                                    <div>
+                                                        {{tag.value| valueFormat(2)}} {{tag.unit}}
                                                     </div>
                                                 </li>
                                             </ul>
+                                            <div v-if="device.devices">
+                                                <ul class="tag-box" v-for="power in device.devices.power" :key="power.name">
+                                                    <li v-for="tag in power.tags" :key="tag.tagName">
+                                                        <div>{{tag.description}}</div>
+                                                        <div>
+                                                            {{tag.value| valueFormat(2)}} {{tag.unit}}
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     </div>
@@ -150,29 +157,37 @@
                                          @click="settingModalOpen(device.id)"/>
                                 </div>
                                 <div class="ibox-content">
-                                    <div class="group-state flex-box">
+                                    <div class="group-state flex-box" v-if="device.tags">
                                         <div>
                                             <span>상태</span>
                                             <div class="flex-box">
-                                                <div v-if="device.state.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
-                                                <div v-if="device.state.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
+                                                <div v-if="device.tags.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
+                                                <div v-if="device.tags.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
                                             </div>
                                         </div>
-                                        <div class="percent" v-if="device.state.COMP_LoadFactor">
+                                        <div class="percent" v-if="device.tags.COMP_LoadFactor">
                                             <span>부하율</span>
-                                            <h3>{{device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}}% %</h3>
+                                            <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}}%</h3>
                                         </div>
                                     </div>
-                                    <ul class="tag-box">
-                                        <li v-for="type in compTagSet">
-                                            <div v-if="device.tags[type] !== undefined">
-                                                {{device.tags[type].description}}
-                                            </div>
-                                            <div v-if="device.tags[type] !== undefined">
-                                                {{device.tags[type].value | valueFormat(2)}} {{device.tags[type].unit}}
+                                    <ul class="tag-box" v-if="device.tags">
+                                        <li v-for="tag in device.tags" :key="tag.tagName">
+                                            <div>{{tag.description}}</div>
+                                            <div>
+                                                {{tag.value| valueFormat(2)}} {{tag.unit}}
                                             </div>
                                         </li>
                                     </ul>
+                                    <div v-if="device.devices">
+                                        <ul class="tag-box" v-for="power in device.devices.power" :key="power.name">
+                                            <li v-for="tag in power.tags" :key="tag.tagName">
+                                                <div>{{tag.description}}</div>
+                                                <div>
+                                                    {{tag.value| valueFormat(2)}} {{tag.unit}}
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
