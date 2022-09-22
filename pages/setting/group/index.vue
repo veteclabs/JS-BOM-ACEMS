@@ -53,6 +53,7 @@
                 <flashModal v-bind:propsdata="msgData"/>
             </div>
         </div>
+        <Loading v-bind:propsdata="LoadingData"/>
     </div>
 </template>
 <script>
@@ -65,6 +66,7 @@
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import ONOFFTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
     import dayOfWeeksTemplate from '~/components/gridTemplate/dayOfWeeksTemplate.vue';
+    import Loading from '~/components/loading.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -88,11 +90,15 @@
             DxButton,
             blockGridTemplate,
             ONOFFTemplate,
-            dayOfWeeksTemplate
+            dayOfWeeksTemplate,
+            Loading
         },
         data() {
             return {
                 id: '',
+                LoadingData: {
+                    show: false,
+                },
                 modalData: { // 계측기등록모달
                     show: false,
                     state: '',
@@ -116,6 +122,7 @@
         methods: {
             getGroup() {
                 const vm = this;
+                vm.LoadingData.show = true;
                 axios({
                     method: 'get',
                     url: '/api/groups',
@@ -127,6 +134,8 @@
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.LoadingData.show = false;
                 });
             },
             // 신규 장비 등록

@@ -58,6 +58,7 @@
             <settingEquipmentModal ref="equipmentModal" v-bind:propsdata="modalData" v-on:callSearch="getCompressor"/>
             <flashModal v-bind:propsdata="msgData"/>
         </div>
+        <Loading v-bind:propsdata="LoadingData"/>
     </div>
 </template>
 <script>
@@ -78,6 +79,7 @@
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import ONOFFTemplate from '~/components/gridTemplate/ONOFFTemplate.vue';
     import dayOfWeeksTemplate from '~/components/gridTemplate/dayOfWeeksTemplate.vue';
+    import Loading from '~/components/loading.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -102,11 +104,15 @@
             DxSearchPanel,
             blockGridTemplate,
             ONOFFTemplate,
-            dayOfWeeksTemplate
+            dayOfWeeksTemplate,
+            Loading
         },
         data() {
             return {
                 id: '',
+                LoadingData: {
+                    show: false,
+                },
                 msgData: {
                     msg: '',
                     show: false,
@@ -132,6 +138,7 @@
         methods: {
             getCompressor() {
                 const vm = this;
+                vm.LoadingData.show = true;
                 axios({
                     method: 'get',
                     url: '/api/compressors',
@@ -141,6 +148,8 @@
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.LoadingData.show = false;
                 });
             },
             createEquipment() {

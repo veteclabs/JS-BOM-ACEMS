@@ -46,6 +46,7 @@
             <createEquipmentModal v-bind:propsdata="modalData" v-on:callSearch="getEquipment" ref="equipmentModal"/>
             <flashModal v-bind:propsdata="msgData"/>
         </div>
+        <Loading v-bind:propsdata="LoadingData"/>
     </div>
 </template>
 <script>
@@ -65,6 +66,7 @@
     import flashModal from '~/components/flashmodal.vue';
     import blockGridTemplate from '~/components/gridTemplate/blockGridTemplate.vue';
     import blockGridAlarmTemplate from '~/components/gridTemplate/blockGridAlarmTemplate.vue';
+    import Loading from '~/components/loading.vue';
 
     export default {
         fetch({store, redirect}) {
@@ -89,11 +91,15 @@
             DxScrolling,
             DxSearchPanel,
             blockGridAlarmTemplate,
-            blockGridTemplate
+            blockGridTemplate,
+            Loading
         },
         data() {
             return {
                 id: '',
+                LoadingData: {
+                    show: false,
+                },
                 msgData: {
                     msg: '',
                     show: false,
@@ -119,6 +125,7 @@
         methods: {
             async getEquipment() {
                 const vm = this;
+                vm.LoadingData.show = true;
                 axios({
                     method: 'get',
                     url: '/api/etcs',
@@ -128,6 +135,8 @@
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.LoadingData.show = false;
                 });
             },
             createEquipment() {
