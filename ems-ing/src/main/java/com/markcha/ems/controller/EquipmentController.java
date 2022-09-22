@@ -46,7 +46,11 @@ public class EquipmentController {
 
     @GetMapping("/compressor/model")
     public ResponseEntity<?> getModels(String maker) {
-        List<CompressorModelDto> models = equipmentDslRepository.getModels(maker);
+        if(isNull(maker)) {
+            List<String> emptyArray = new ArrayList<>();
+            return ResponseEntity.ok(emptyArray);
+        }
+        List<CompressorModelDto> models = models = equipmentDslRepository.getModels(maker);
         return ResponseEntity.ok(models);
     }
 }
