@@ -2,6 +2,7 @@ package com.markcha.ems.repository.equipment.impl;
 
 import com.markcha.ems.domain.Equipment;
 import com.markcha.ems.domain.EquipmentType;
+import com.markcha.ems.dto.device.CompressorModelDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -60,6 +61,26 @@ public class EquipmentDslRepositoryImpl  {
         return queryFactory.select(
                 constructor(EquipmentType.class, equipment.type))
                 .from(equipment)
+                .fetch();
+    }
+
+    public List<String> getMakers() {
+        return queryFactory.select(equipment.maker)
+                .distinct()
+                .from(equipment)
+                .where(equipment.maker.isNotNull(),
+                        equipment.type.eq(EquipmentType.AIR_COMPRESSOR))
+                .fetch();
+    }
+
+    public List<CompressorModelDto> getModels(String maker) {
+        return queryFactory.select(
+                constructor(CompressorModelDto.class, equipment.id, equipment.model))
+                .distinct()
+                .from(equipment)
+                .where(equipment.model.isNotNull(),
+                        equipment.type.eq(EquipmentType.AIR_COMPRESSOR),
+                        equipment.maker.eq(maker))
                 .fetch();
     }
 }

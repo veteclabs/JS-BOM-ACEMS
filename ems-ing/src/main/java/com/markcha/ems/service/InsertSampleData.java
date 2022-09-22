@@ -19,11 +19,11 @@ import static java.util.stream.Collectors.toList;
 public class InsertSampleData {
     private final TagValueDataRepository tagValueDataRepository;
     private final TagListDataRepository tagListDataRepository;
-    public List<Tag> createTags(EquipmentType type, Device device) {
+    public List<Tag> createTags(Long equipmentId, Device device) {
 
         List<Tag> tags = new ArrayList<>();
         String deviceUnit = new String(String.format("U%03d", device.getId().intValue()) + "_");
-        List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipomentType(type);
+        List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipmentId(equipmentId);
 
 
         List<TagValue> tagValues = new ArrayList<>();

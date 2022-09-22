@@ -16,11 +16,11 @@ public class TagListWithEquipmentRepositoryImpl implements TagListWithEquipmentR
     @Autowired
     private JPAQueryFactory query;
     @Override
-    public List<TagList> findAllByEquipomentType(EquipmentType type) {
+    public List<TagList> findAllByEquipmentId(Long equipmentId) {
         return query.selectFrom(tagList)
                 .leftJoin(tagList.equipment, equipment).fetchJoin()
                 .where(
-                        tagList.equipment.type.eq(type)
+                        tagList.equipment.id.eq(equipmentId)
                 ).fetch();
     }
 }
