@@ -45,15 +45,55 @@ public class TestController {
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
         ResponseToTalValues result = new ResponseToTalValues();
         Map<String, Double> resultMap = new HashMap<>();
-        culcTotalRealTimeValue( rootGroupIds, result, "PWR_KW");
-        culcTotalRealTimeValue( rootGroupIds, result, "AIR_Flow");
-        culcTotalRealTimeValue( rootGroupIds, result, "AIR_PRE");
+        if (!rootGroupIds.isEmpty()) {
+            culcTotalRealTimeValue(rootGroupIds, result, "PWR_KW");
+            culcTotalRealTimeValue(rootGroupIds, result, "AIR_Flow");
+            culcTotalRealTimeValue(rootGroupIds, result, "AIR_PRE");
+        }
         result.getTypes().forEach((key,value) -> {
             resultMap.put(key, value.getValue());
         });
+
         return resultMap;
 
     }
+    private void culcTotalRealTimeValue(List<Long> rootGroupIds, ResponseToTalValues result,String tagType) {
+
+        GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
+        groupSearchDto.setTagEqType(tag.type.eq(tagType));
+        List<Group> analysisLocations = new ArrayList<>();
+        analysisLocations.addAll(groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true));
+        List<String> tagNames = analysisLocations.stream()
+                .map(t -> {
+                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
+                    return groupQueryDto.getTagNames();
+                }).flatMap(List::stream)
+                .collect(toList());
+        result.getTypes().put(tagType, new Type(tagNames));
+        result.getTypes().get(tagType).setUnits(webaccessApiService.getTagValuesV2(tagNames));
+        Stream<Double> objectStream = result.getTypes().get(tagType).getUnits().values().stream()
+                .filter(t -> {
+                    Double aDouble = new Double(t.toString());
+                    if (!(-113 <= aDouble && aDouble <= -100)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }).map(t->new Double(t.toString()));
+        switch(tagType) {
+            case "PWR_KW":
+                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).sum());
+                break;
+            case "AIR_PRE":
+                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
+                break;
+            case "AIR_Flow":
+                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
+                break;
+        }
+    }
+
+
     @GetMapping(value="/specificalPower")
     public Double specificalPower() {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
@@ -101,41 +141,6 @@ public class TestController {
 
     }
 
-    private void culcTotalRealTimeValue(List<Long> rootGroupIds, ResponseToTalValues result,String tagType) {
-
-        GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
-        groupSearchDto.setTagEqType(tag.type.eq(tagType));
-        List<Group> analysisLocations = new ArrayList<>();
-        analysisLocations.addAll(groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true));
-        List<String> tagNames = analysisLocations.stream()
-                .map(t -> {
-                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
-                    return groupQueryDto.getTagNames();
-                }).flatMap(List::stream)
-                .collect(toList());
-        result.getTypes().put(tagType, new Type(tagNames));
-        result.getTypes().get(tagType).setUnits(webaccessApiService.getTagValuesV2(tagNames));
-        Stream<Double> objectStream = result.getTypes().get(tagType).getUnits().values().stream()
-                .filter(t -> {
-                    Double aDouble = new Double(t.toString());
-                    if (!(-113 <= aDouble && aDouble <= -100)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }).map(t->new Double(t.toString()));
-        switch(tagType) {
-            case "PWR_KW":
-                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).sum());
-                break;
-            case "AIR_PRE":
-                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
-                break;
-            case "AIR_Flow":
-                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
-                break;
-        }
-    }
 
     @Data
     @NoArgsConstructor
