@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
+import static java.util.Objects.isNull;
 
 @RestController
 @RequestMapping("/api")
@@ -50,7 +52,7 @@ public class EquipmentController {
             List<String> emptyArray = new ArrayList<>();
             return ResponseEntity.ok(emptyArray);
         }
-        List<CompressorModelDto> models = models = equipmentDslRepository.getModels(maker);
+        List<CompressorModelDto> models = equipmentDslRepository.getModels(maker);
         return ResponseEntity.ok(models);
     }
 }
