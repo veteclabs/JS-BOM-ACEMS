@@ -38,10 +38,35 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <div class="td-label">공기압축기 모델</div>
+                            <label>
+                                <select v-model="params.equipment.maker" @change="getModel">
+                                    <option v-for="maker in makerList" :value="maker" :key="maker">
+                                        {{maker}}
+                                    </option>
+                                </select>
+                            </label>
+                            <label>
+                                <select v-model="params.equipment.model">
+                                    <option v-for="model in modelList" :value="model.model" :key="model.id">
+                                        {{model.model}}
+                                    </option>
+                                </select>
+                            </label>
+                            <div class="err-message" v-if="validation !== undefined">
+                                {{ validation.firstError('params.equipment.maker') }}
+                            </div>
+                            <div class="err-message" v-if="validation !== undefined">
+                                {{ validation.firstError('params.equipment.model') }}
+                            </div>
+                        </td>
+                    </tr>
                 </table>
                 <h4 class="modal-h4-title">공기압축기 압력 제어 범위</h4>
                 <table class="bom-table">
-                    <tr>
+                    <tr v-if="params.state.COMP_StartPre">
                         <td>
                             <div class="td-label">Min</div>
                             <label class="input-100">
@@ -51,6 +76,15 @@
                         </td>
                         <td>~</td>
                         <td>
+                            <div class="td-label">Max</div>
+                            <label class="input-100">
+                                <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"
+                                       @change="settingMin"/>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan="4">
                             <div class="td-label">Max</div>
                             <label class="input-100">
                                 <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"
@@ -137,7 +171,6 @@
     });
 
     export default {
-
         props: ['propsdata'],
         components: {
             axios,
@@ -153,6 +186,13 @@
                 },
                 state: 'new',
                 params: {
+                    equipment: {
+                        maker: '',
+                        model: '',
+                    },
+                    state: {
+                        COMP_StartPre:'',
+                    },
                     schedule: {
                         dayOfWeeks: [],
                         id: '',
@@ -166,6 +206,8 @@
                 id: '',
                 groupScheduleActive: false,
                 dateList: [],
+                makerList: [],
+                modelList: [],
                 timeOptions: {
                     format: 'HH:mm:00',
                 },
@@ -177,37 +219,82 @@
             'params.name': function (value) {
                 return Validator.value(value).required();
             },
-            'params.schedule.min, params.schedule.max': function (min, max) {
-                return Validator.value(min).required().custom(function () {
-                    if ((min !== null && max !== null)) {
-                        if (max < min) {
-                            return 'Max 값을 더 높게 설정해주세요.'
-                        } else if (min === max) {
-                            return 'Min, Max 값을 다르게 설정해주세요.'
-                        } else if (((max - min).toFixed(1)) < 0.7) {
-                            return `Min, Max값의 차이는 0.7 이상 필요합니다. Min값을 ${(max - 0.7).toFixed(1)} 이하로 설정해주세요.`
-                        }
+            'params.equipment.maker': function (value) {
+                return Validator.value(value).required();
+            },
+            'params.equipment.model': function (value) {
+                return Validator.value(value).required();
+            },
+            'params.schedule.min, params.schedule.max, params.state.COMP_StartPre': function (min, max, range) {
+                if (min !== undefined && max !== undefined) {
+                    if(range !== undefined) {
+                        return Validator.value(min).required().custom(function () {
+                            if ((min !== null && max !== null)) {
+                                if (max < min) {
+                                    return 'Max 값을 더 높게 설정해주세요.'
+                                } else if (min === max) {
+                                    return 'Min, Max 값을 다르게 설정해주세요.'
+                                } else if (((max - min).toFixed(1)) < 0.7) {
+                                    return `Min, Max값의 차이는 0.7 이상 필요합니다. Min값을 ${(max - 0.7).toFixed(1)} 이하로 설정해주세요.`
+                                }
+                            }
+                        });
                     }
-                });
+                }
             },
             'params.schedule.isActive, params.schedule.dayOfWeeks, params.schedule.startTime, params.schedule.stopTime':
                 function (active, day, start, stop) {
-                    return Validator.value(active).required().custom(function () {
-                        if (active) {
-                            if (day.length === 0) {
-                                return '요일을 선택해주세요'
+                    if (active !== undefined && day !== undefined && start !== undefined && stop !== undefined) {
+                        return Validator.value(active).required().custom(function () {
+                            if (active) {
+                                if (day.length === 0) {
+                                    return '요일을 선택해주세요'
+                                }
+                                if (start === null || stop === null || start === undefined || stop === undefined) {
+                                    return '시간을 선택해주세요'
+                                }
                             }
-                            if (start === null || stop === null || start === undefined || stop === undefined) {
-                                return '시간을 선택해주세요'
-                            }
-                        }
-                    });
+                        });
+                    }
                 },
         },
         mounted() {
+            this.getMaker();
             this.getGroup();
         },
         methods: {
+            getMaker() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/compressor/maker'
+                }).then((res) => {
+                    if (res.status === 200) {
+                        vm.makerList = res.data;
+                        vm.getModel();
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
+            getModel() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/compressor/model',
+                    params: {
+                        maker: 'INGERSOLL RAND'
+                    }
+                }).then((res) => {
+                    if (res.status === 200) {
+                        vm.modelList = res.data;
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error;
+                });
+            },
             settingMin() {
                 const vm = this;
                 const max = vm.params.schedule.max;
@@ -242,8 +329,10 @@
                     method: 'get',
                     url: '/api/device/groups',
                 }).then((res) => {
-                    vm.groupList = res.data;
-                    this.getDayOfWeek();
+                    if (res.status === 200) {
+                        vm.groupList = res.data;
+                        this.getDayOfWeek();
+                    }
                 }).catch((error) => {
                     vm.msgData.show = true;
                     vm.msgData.msg = error;
@@ -280,10 +369,10 @@
                         return;
                     }
                 }
-
                 vm.params.schedule.min = Number(vm.params.schedule.min);
                 vm.params.schedule.max = Number(vm.params.schedule.max);
 
+                console.log(vm.params);
                 this.$validate()
                     .then((success) => {
                         if (success) {
@@ -313,6 +402,13 @@
                 this.params = {
                     groupId: null,
                     name: '',
+                    equipment: {
+                        maker: '',
+                        model: '',
+                    },
+                    state: {
+                        COMP_StartPre:'',
+                    },
                     schedule: {
                         dayOfWeeks: [],
                         isActive: false,
