@@ -131,7 +131,7 @@ public class CompressorServiceImpl {
         newDevice.setGroup(newGroup);
 
         Device save = deviceDataRepository.save(newDevice);
-        List<Tag> tags = insertSampleData.createTags(AIR_COMPRESSOR, save);
+        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipmentId(), save);
 
         List<TagDto> tagDtos = tags.stream()
                 .map(TagDto::new)
@@ -201,16 +201,17 @@ public class CompressorServiceImpl {
         newGroup.setLevel(2);
         groupDataRepository.save(newGroup);
 
-        // 디바이스 생성 및 그룹과 연
+        // 디바이스 생성 및 그룹과 연동
         Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
-//        tagDataRepository.deleteAll(seletedDevice.getTags());
+        tagDataRepository.deleteAll(seletedDevice.getTags());
+        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipmentId(), seletedDevice);
 
-        List<TagDto> tags = seletedDevice.getTags().stream()
+        List<TagDto> tagsDto = tags.stream()
                 .map(TagDto::new)
                 .collect(toList());
-        List<TagDto> minMaxTag = tags.stream()
+        List<TagDto> minMaxTag = tagsDto.stream()
                 .filter(t -> {
                     boolean isMax = t.getType().equals("COMP_StopPre");
                     boolean isMin = t.getType().equals("COMP_StartPre");

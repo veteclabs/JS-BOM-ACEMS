@@ -18,7 +18,7 @@ public class TagList {
     @Column(name="tagname", length = 32)
     private String tagName;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "equipment_id")
     private Equipment equipment;
 

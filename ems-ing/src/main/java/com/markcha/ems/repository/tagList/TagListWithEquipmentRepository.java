@@ -6,5 +6,5 @@ import com.markcha.ems.domain.TagList;
 import java.util.List;
 
 public interface TagListWithEquipmentRepository {
-    List<TagList> findAllByEquipomentType(EquipmentType type);
+    List<TagList> findAllByEquipmentId(Long equipmentId);
 }
