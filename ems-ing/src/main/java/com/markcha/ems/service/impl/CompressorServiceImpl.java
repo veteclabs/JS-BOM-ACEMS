@@ -131,7 +131,7 @@ public class CompressorServiceImpl {
         newDevice.setGroup(newGroup);
 
         Device save = deviceDataRepository.save(newDevice);
-        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipmentId(), save);
+        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipment().getEquipmentId(), save);
 
         List<TagDto> tagDtos = tags.stream()
                 .map(TagDto::new)
@@ -202,11 +202,11 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연동
-        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
+        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipment().getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
         tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
-        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipmentId(), seletedDevice);
+        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipment().getEquipmentId(), seletedDevice);
         seletedDevice.setTags(new HashSet<>(tags));
         List<TagDto> tagsDto = tags.stream()
                 .map(TagDto::new)

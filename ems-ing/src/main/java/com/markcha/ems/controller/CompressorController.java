@@ -156,8 +156,15 @@ public class CompressorController {
         private String name;
         private Long groupId;
         private ScheduleDto schedule;
-        private Long equipmentId;
         private List<String> dayOfWeeks;
         private List<String> weeks;
+        private Equipment equipment;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class Equipment {
+        private Long equipmentId;
+        private String maker;
     }
 }
