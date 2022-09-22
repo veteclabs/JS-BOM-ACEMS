@@ -79,8 +79,8 @@ public class CompressorController {
         collect.forEach(t->{
             if(!isNull(t.getSchedule())) {
                 ScheduleDto scheduleDto = t.getSchedule();
-                scheduleDto.setMin(t.getState().get("COMP_StartPre").getValue());
-                scheduleDto.setMax(t.getState().get("COMP_StopPre").getValue());
+                scheduleDto.setMin(isNull(t.getState().get("COMP_StartPre")) ? null : t.getState().get("COMP_StartPre").getValue());
+                scheduleDto.setMax(isNull(t.getState().get("COMP_StoptPre")) ? null : t.getState().get("COMP_StopPre").getValue());
                 scheduleDto.setMinMax();
             }
         });
@@ -98,8 +98,8 @@ public class CompressorController {
         collect.forEach(t->{
             if(!isNull(t.getSchedule())) {
                 ScheduleDto scheduleDto = t.getSchedule();
-                scheduleDto.setMin(t.getState().get("COMP_StartPre").getValue());
-                scheduleDto.setMax(t.getState().get("COMP_StopPre").getValue());
+                scheduleDto.setMin(isNull(t.getState().get("COMP_StartPre")) ? null : t.getState().get("COMP_StartPre").getValue());
+                scheduleDto.setMax(isNull(t.getState().get("COMP_StoptPre")) ? null : t.getState().get("COMP_StopPre").getValue());
                 scheduleDto.setMinMax();
             }
         });

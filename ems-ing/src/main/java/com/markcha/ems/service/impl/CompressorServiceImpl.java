@@ -205,9 +205,9 @@ public class CompressorServiceImpl {
         Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
-        tagDataRepository.deleteAll(seletedDevice.getTags());
+        tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
         List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipmentId(), seletedDevice);
-
+        seletedDevice.setTags(new HashSet<>(tags));
         List<TagDto> tagsDto = tags.stream()
                 .map(TagDto::new)
                 .collect(toList());

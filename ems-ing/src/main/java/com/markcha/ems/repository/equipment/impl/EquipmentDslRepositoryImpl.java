@@ -79,7 +79,7 @@ public class EquipmentDslRepositoryImpl  {
                 .distinct()
                 .from(equipment)
                 .where(equipment.model.isNotNull(),
-//                        equipment.type.eq(EquipmentType.AIR_COMPRESSOR),
+                        equipment.type.eq(EquipmentType.AIR_COMPRESSOR),
                         equipment.maker.eq(maker))
                 .fetch();
     }
