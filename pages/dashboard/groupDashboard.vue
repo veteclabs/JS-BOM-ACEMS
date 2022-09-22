@@ -30,7 +30,7 @@
                                 <div v-if="group.devices.pressure.length === 0">등록된 압력계가 없습니다.</div>
                             </draggable>
                             <div class="td-label">온도계</div>
-                            <draggable @        @change="log"change="submit" class="list-group" :list="group.devices.temperature" group="temperature">
+                            <draggable @change="submit" change="submit" class="list-group" :list="group.devices.temperature" group="temperature">
                                 <div class="ibox" v-for="device in group.devices.temperature" :key="device.id">
                                     <div class="ibox-title ibox-noborder-title ibox-normal-title flex-box">
                                         <div>{{device.name}}</div>
@@ -55,41 +55,42 @@
                             <div class="row">
                                 <draggable @change="submit" class="list-group" :list="group.airCompressors" group="airCompressor">
                                     <div v-for="device in group.airCompressors" :key="device.id" class="col-lg-4"><div class="ibox">
-                                            <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
-                                                <nuxt-link :to="`/dashboard/${device.id}`">
-                                                    <h3>{{device.name}}</h3>
-                                                </nuxt-link>
-                                                <img src="~assets/images/dashboard/icn_dashboard_setting.svg"
-                                                     alt="setting"
-                                                     class="setting-btn"
-                                                     @click="settingModalOpen(device.id)"/>
-                                            </div>
-                                            <div class="ibox-content">
-                                                <div class="group-state flex-box" v-if="device.tags">
-                                                    <div>
-                                                        <span>상태</span>
-                                                        <div class="flex-box">
-                                                            <div v-if="device.tags.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
-                                                            <div v-if="device.tags.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="percent" v-if="device.tags.COMP_LoadFactor">
-                                                        <span>부하율</span>
-                                                        <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}}%</h3>
+                                        <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
+                                            <nuxt-link :to="`/dashboard/${device.id}`">
+                                                <h3>{{device.name}}</h3>
+                                            </nuxt-link>
+                                            <img src="~assets/images/dashboard/icn_dashboard_setting.svg"
+                                                 alt="setting"
+                                                 class="setting-btn"
+                                                 @click="settingModalOpen(device.id)"/>
+                                        </div>
+                                        <div class="ibox-content">
+                                            <div class="group-state flex-box" v-if="device.tags">
+                                                <div>
+                                                    <span>상태</span>
+                                                    <div class="flex-box">
+                                                        <div v-if="device.state.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
+                                                        <div v-if="device.state.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
                                                     </div>
                                                 </div>
-                                                <ul class="tag-box" v-if="device.tags">
-                                                    <li v-for="type in compTagSet">
-                                                        <div v-if="device.tags[type] !== undefined">
-                                                            {{device.tags[type].description}}
-                                                        </div>
-                                                        <div v-if="device.tags[type] !== undefined">
-                                                            {{device.tags[type].value| valueFormat(2)}} {{device.tags[type].unit}}
-                                                        </div>
-                                                    </li>
-                                                </ul>
+                                                <div class="percent" v-if="device.state.COMP_LoadFactor">
+                                                    <span>부하율</span>
+                                                    <h3>{{device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}}%</h3>
+                                                </div>
                                             </div>
+                                            <ul class="tag-box" v-if="device.tags">
+                                                <li v-for="type in compTagSet">
+                                                    {{type}}
+                                                    <div v-if="device.tags[type] !== undefined">
+                                                        {{device.tags[type].description}}
+                                                    </div>
+                                                    <div v-if="device.tags[type] !== undefined">
+                                                        {{device.tags[type].value| valueFormat(2)}} {{device.tags[type].unit}}
+                                                    </div>
+                                                </li>
+                                            </ul>
                                         </div>
+                                    </div>
                                     </div>
                                     <div v-if="group.airCompressors.length === 0">공기압축기가 없습니다.</div>
                                 </draggable>
@@ -153,13 +154,13 @@
                                         <div>
                                             <span>상태</span>
                                             <div class="flex-box">
-                                                <div v-if="device.tags.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
-                                                <div v-if="device.tags.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
+                                                <div v-if="device.state.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
+                                                <div v-if="device.state.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
                                             </div>
                                         </div>
-                                        <div class="percent" v-if="device.tags.COMP_LoadFactor">
+                                        <div class="percent" v-if="device.state.COMP_LoadFactor">
                                             <span>부하율</span>
-                                            <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}}% %</h3>
+                                            <h3>{{device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}}% %</h3>
                                         </div>
                                     </div>
                                     <ul class="tag-box">

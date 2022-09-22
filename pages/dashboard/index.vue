@@ -68,37 +68,40 @@
                         <div class="ibox-content">
                             <airCompressorState v-bind:propsdata="device"/>
                             <scheduleState v-bind:propsdata="device"/>
-                            <ul class="tag-box"
-                                v-if="device.tags.COMP_LoadFactor || device.state['COMP_Trip'].value=== 1 ||
-                             device.state['COMP_ActWarCode'].value === 1">
-                                <li v-if="device.tags.COMP_LoadFactor">
-                                    <div class="tagname">부하율</div>
-                                    <div style="display:flex; flex:1; justify-content: end; align-items: center;">
-                                        <div class="progressbar">
-                                            <div class="inner-bar"
-                                                 :style="`width:${device.tags.COMP_LoadFactor.value === null ? 0 : device.tags.COMP_LoadFactor.value}%`"/>
+                            <div v-if="device.state">
+                                <ul class="tag-box">
+                                    <li v-if="device.state.COMP_LoadFactor">
+                                        <div class="tagname">부하율</div>
+                                        <div style="display:flex; flex:1; justify-content: end; align-items: center;">
+                                            <div class="progressbar">
+                                                <div class="inner-bar"
+                                                     :style="`width:${device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}%`"/>
+                                            </div>
+                                            <h3>{{device.state.COMP_LoadFactor.value === null ? 0 :
+                                                device.state.COMP_LoadFactor.value}}%</h3>
                                         </div>
-                                        <h3>{{device.tags.COMP_LoadFactor.value === null ? 0 :
-                                            device.tags.COMP_LoadFactor.value}}%</h3>
-                                    </div>
-                                </li>
-                                <li v-if="device.state['COMP_Trip'].value === 1">
-                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                                    <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
-                                </li>
-                                <li v-if="device.state['COMP_Warning'].value === 1">
-                                    <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
-                                    <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
-                                </li>
-                            </ul>
+                                    </li>
+                                    <li v-if="device.state['COMP_Trip'].value === 1">
+                                        <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                        <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
+                                    </li>
+                                    <li v-if="device.state['COMP_Warning'].value === 1">
+                                        <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
+                                        <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
+                                    </li>
+                                    <li v-if="device.state['COMP_Trip'].value !== 1 && device.state['COMP_Warning'].value !== 1">
+                                        <div class="bom-badge green-bg-badge" style="margin:0 8px 0 0;">Normal</div>정상
+                                    </li>
+                                </ul>
+                            </div>
                             <ul class="tag-box">
-                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="device.tagByComponents.mainInfoComponent">
-                                     <div>
-                                         {{tag.description}}
-                                     </div>
-                                     <div>
-                                         {{tag.value | valueFormat(2)}} {{tag.unit}}
-                                     </div>
+                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="device.tagByComponents.mainInfoComponent.tagName">
+                                    <div>
+                                        {{tag.description}}
+                                    </div>
+                                    <div>
+                                        {{tag.value | valueFormat(2)}} {{tag.unit}}
+                                    </div>
                                 </li>
                             </ul>
 
@@ -326,7 +329,6 @@
         },
         mounted() {
             this.chartSetting();
-            this.WaLogin();
             this.getTagValues();
             this.resetInterval();
             this.getAirCompressor();
@@ -357,9 +359,6 @@
                     this.totalCompressorBar = (bar * 100) / barMaxValue;
                 }*/
 
-            },
-            async WaLogin() {
-                await axios.get('/nuxt/WaLogin')
             },
             async getTagValues() {
                 const vm = this;
@@ -395,14 +394,14 @@
             async getAirCompressor() {
                 const vm = this;
                 axios.get('/api/compressors',
-                {
-                    params: {
-                        components: ["stateComponent", "mainInfoComponent"]
+                    {
+                        params: {
+                            components: ["stateComponent", "mainInfoComponent"]
 
-                    }, paramsSerializer: params => {
-                        return qs.stringify(params)
-                    }
-                }).then((res) => {
+                        }, paramsSerializer: params => {
+                            return qs.stringify(params)
+                        }
+                    }).then((res) => {
                     if(res.status === 200) {
                         vm.airCompressorList = res.data
                     }
