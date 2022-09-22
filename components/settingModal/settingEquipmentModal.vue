@@ -42,7 +42,7 @@
                         <td>
                             <div class="td-label">공기압축기 모델</div>
                             <label>
-                                <select v-model="params.equipment.maker" @change="getModel">
+                                <select v-model="params.equipment.maker" @change="getModel(true)">
                                     <option v-for="maker in makerList" :value="maker" :key="maker">
                                         {{maker}}
                                     </option>
@@ -85,11 +85,12 @@
                     </tr>
                     <tr v-else>
                         <td colspan="4">
-                            <div class="td-label">Max</div>
+                            <div class="td-label">기준압력</div>
                             <label class="input-100">
                                 <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"
                                        @change="settingMin"/>
                             </label>
+                            <p class="td-label red">해당 장비는 최소, 최대 압력 설정이 불가능한 장비입니다.</p>
                         </td>
                     </tr>
                 </table>
@@ -278,17 +279,20 @@
                     vm.msgData.msg = error;
                 });
             },
-            getModel() {
+            getModel(self) {
                 const vm = this;
                 axios({
                     method: 'get',
                     url: '/api/compressor/model',
                     params: {
-                        maker: 'INGERSOLL RAND'
+                        maker: vm.params.equipment.maker
                     }
                 }).then((res) => {
                     if (res.status === 200) {
                         vm.modelList = res.data;
+                        if(self &&  vm.modelList.length !== 0 ) {
+                            vm.params.equipment.model = vm.modelList[0].model;
+                        }
                     }
                 }).catch((error) => {
                     vm.msgData.show = true;
@@ -372,7 +376,6 @@
                 vm.params.schedule.min = Number(vm.params.schedule.min);
                 vm.params.schedule.max = Number(vm.params.schedule.max);
 
-                console.log(vm.params);
                 this.$validate()
                     .then((success) => {
                         if (success) {
@@ -433,6 +436,7 @@
                     vm.state = 'update';
                     vm.params = res.data;
                     vm.getDayOfWeek();
+                    vm.getModel();
                     if (vm.params) {
                         if (res.data.groupId !== null) {
                             vm.getGroupInfo(res.data.groupId);
