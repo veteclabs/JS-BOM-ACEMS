@@ -218,12 +218,15 @@
         },
         validators: {
             'params.name': function (value) {
+                console.log(value, 'name')
                 return Validator.value(value).required();
             },
             'params.equipment.maker': function (value) {
+                console.log(value, 'maker')
                 return Validator.value(value).required();
             },
             'params.equipment.equipmentId': function (value) {
+                console.log(value, 'equipmentId')
                 return Validator.value(value).required();
             },
             'params.schedule.min, params.schedule.max, params.state.COMP_StartPre': function (min, max, range) {
@@ -433,14 +436,18 @@
                 vm.validation.reset();
                 axios.get(`/api/compressor/${id}`
                 ).then((res) => {
-                    vm.state = 'update';
-                    vm.params = res.data;
-                    vm.getDayOfWeek();
-                    vm.getModel();
-                    if (vm.params) {
-                        if (res.data.groupId !== null) {
-                            vm.getGroupInfo(res.data.groupId);
+                    if(res.status === 200) {
+                        vm.state = 'update';
+                        vm.params = res.data;
+                        vm.getDayOfWeek();
+                        vm.getModel();
+                        if (vm.params) {
+                            if (res.data.groupId !== null) {
+                                vm.getGroupInfo(res.data.groupId);
+                            }
                         }
+                    }else {
+                        vm.msgData.msg = res.error;
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
