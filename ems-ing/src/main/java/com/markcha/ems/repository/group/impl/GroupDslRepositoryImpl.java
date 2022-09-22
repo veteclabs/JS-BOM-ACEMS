@@ -253,12 +253,17 @@ public class GroupDslRepositoryImpl{
                 .where(group.id.in(ids))
                 .fetch();
     }
+    //ㄷ
     public List<Tag> getTagsByDeviceIds(List<Long> deviceIds) {
         return query.selectFrom(tag).distinct()
-                .join(tag.device, device).fetchJoin()
+                .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(tag.tagList, QTagList.tagList).fetchJoin()
+                .leftJoin(QTagList.tagList.tagSetMappers, QTagSetMapper.tagSetMapper).fetchJoin()
+                .leftJoin(QTagSetMapper.tagSetMapper.tagSet, QTagSet.tagSet).fetchJoin()
                 .where(
                          tag.showAble.eq(true)
-                        ,device.id.in(deviceIds))
+                        ,device.id.in(deviceIds)
+                        ,QTagSet.tagSet.nickname.eq("groupDashboardComponent"))
                 .fetch();
     }
     public List<Tag> getTagsByDeviceIdsOnlyBar(List<Long> deviceIds) {
