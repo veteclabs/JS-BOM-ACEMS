@@ -48,7 +48,7 @@ public class AirCompressorDto {
                         Map<String, List<TagDto>> groupingTags = new HashMap<>();
 
                         for (Tag tag : t.getTags().stream()
-                                    .sorted(Comparator.comparing(q->q.getId()))
+                                    .sorted(Comparator.comparing(q->q.getTagList().getId()))
                                     .collect(Collectors.toList())) {
                             for (TagSetMapper tagSetMapper : tag.getTagList().getTagSetMappers()) {
                                 if(!groupingTags.containsKey(tagSetMapper.getTagSet().getNickname())) {
