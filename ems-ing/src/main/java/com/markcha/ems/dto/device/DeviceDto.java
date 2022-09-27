@@ -9,10 +9,7 @@ import com.markcha.ems.dto.tag.TagDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.*;
@@ -38,6 +35,7 @@ public class DeviceDto {
         if (!isNull(device.getEquipment())) this.type = device.getEquipment().getType();
         if (!isNull(device.getTags())) {
             this.tags = device.getTags().stream()
+                    .sorted(Comparator.comparing(k->k.getTagList().getId()))
                     .map(t->new TagDto(t,true))
                     .collect(toMap(TagDto::getType, t -> t));
         }

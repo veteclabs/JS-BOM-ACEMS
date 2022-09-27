@@ -91,7 +91,6 @@ public class CompressorController {
             @PathVariable("compressorId") Long compressorId,
             ComponentsDto components
     ) {
-        components.setComponents(List.of("stateComponent"));
         List<AirCompressorDto> collect = compressorService.findAllJoinAlarm(group.id.eq(compressorId), components).stream()
                 .map(AirCompressorDto::new)
                 .collect(toList());
