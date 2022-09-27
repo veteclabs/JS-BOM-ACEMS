@@ -50,7 +50,8 @@
                             </label>
                             <label>
                                 <select v-model="params.equipment.equipmentId">
-                                    <option v-for="model in modelList" :value="model.equipmentId" :key="model.equipmentId">
+                                    <option v-for="model in modelList" :value="model.equipmentId"
+                                            :key="model.equipmentId">
                                         {{model.model}}
                                     </option>
                                 </select>
@@ -188,11 +189,11 @@
                 state: 'new',
                 params: {
                     equipment: {
-                        equipmentId:'',
+                        equipmentId: '',
                         model: '',
                     },
                     state: {
-                        COMP_StartPre:'',
+                        COMP_StartPre: '',
                     },
                     schedule: {
                         dayOfWeeks: [],
@@ -231,7 +232,7 @@
             },
             'params.schedule.min, params.schedule.max, params.state.COMP_StartPre': function (min, max, range) {
                 if (min !== undefined && max !== undefined) {
-                    if(range !== undefined) {
+                    if (range !== undefined) {
                         return Validator.value(min).required().custom(function () {
                             if ((min !== null && max !== null)) {
                                 if (max < min) {
@@ -293,7 +294,7 @@
                 }).then((res) => {
                     if (res.status === 200) {
                         vm.modelList = res.data;
-                        if(self &&  vm.modelList.length !== 0 ) {
+                        if (self && vm.modelList.length !== 0) {
                             vm.params.equipment.equipmentId = vm.modelList[0].equipmentId;
                         }
                     }
@@ -409,11 +410,11 @@
                     groupId: null,
                     name: '',
                     equipment: {
-                        equipmentId:'',
+                        equipmentId: '',
                         maker: '',
                     },
                     state: {
-                        COMP_StartPre:'',
+                        COMP_StartPre: '',
                     },
                     schedule: {
                         dayOfWeeks: [],
@@ -434,9 +435,15 @@
             async updateModal(id) {
                 const vm = this;
                 vm.validation.reset();
-                axios.get(`/api/compressor/${id}`
-                ).then((res) => {
-                    if(res.status === 200) {
+                axios.get(`/api/compressor/${id}`, {
+                    params: {
+                        components: ["stateComponent"]
+
+                    }, paramsSerializer: params => {
+                        return qs.stringify(params)
+                    }
+                }).then((res) => {
+                    if (res.status === 200) {
                         vm.state = 'update';
                         vm.params = res.data;
                         vm.getDayOfWeek();
@@ -446,7 +453,7 @@
                                 vm.getGroupInfo(res.data.groupId);
                             }
                         }
-                    }else {
+                    } else {
                         vm.msgData.msg = res.error;
                     }
                 }).catch((error) => {
