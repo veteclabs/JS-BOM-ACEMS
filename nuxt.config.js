@@ -1,12 +1,12 @@
 const webpack = require('webpack');
-require('dotenv').config()
+require('dotenv').config();
 module.exports = {
   telemetry: false,
   /*
   ** Headers of the page
   */
   head: {
-    title: '정석엔지니어링 BOM-ACEMS',
+    title: 'BOM-ACEMS 공기압축기모니터링',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=equipment-width, initial-scale=1' },

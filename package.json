@@ -1,7 +1,7 @@
 {
-  "name": "JS-BOM-ACEMS",
+  "name": "js-bom-acems",
   "version": "1.0.0",
-  "description": "정석엔지니어링 공기압축기 모니터링",
+  "description": "공기압축기 모니터링",
   "author": "vetec",
   "private": true,
   "scripts": {
