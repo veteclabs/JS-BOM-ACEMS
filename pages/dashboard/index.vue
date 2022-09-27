@@ -348,16 +348,6 @@
                             this.basicUnit = res.data;
                         }
                     });
-
-                /*const flowMaxValue = 15; //option formatter랑 맞추기
-                const barMaxValue = 15;
-                if (this.tagVal !== '') {
-                    const Flow = this.tagVal.AIR_Flow;
-                    const bar = this.tagVal.AIR_PRE;
-                    this.totalFlow = (Flow * 100) / flowMaxValue;
-                    this.totalCompressorBar = (bar * 100) / barMaxValue;
-                }*/
-
             },
             async getTagValues() {
                 const vm = this;

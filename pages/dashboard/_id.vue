@@ -383,9 +383,11 @@
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                     vm.powerData = vm.airCompressor.devices.power;
-                    vm.chartSetting();
                     if(vm.powerData) {
                         vm.setLiveChart();
+                    }
+                    if(vm.airCompressor.tags.length !== 0) {
+                        vm.chartSetting();
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;

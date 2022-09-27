@@ -248,6 +248,7 @@
         watch: {
             'searchParams.tagType': async function() {
                 this.searchParams.usageType = 'Usage';
+                this.searchParams.deviceId =  'AU';
                 await this.getFilter();
                 this.refresh();
             },

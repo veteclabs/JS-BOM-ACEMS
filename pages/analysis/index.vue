@@ -134,7 +134,7 @@
                                             {{ item.value | numberFormat(5)}} <span>{{ item.unit }}</span>
                                         </h3>
                                         <h3 v-else>
-                                            {{ item.value | numberFormat(2)}} <span>{{ item.unit }}</span>
+                                            {{ item.value | currency(0)}} <span>{{ item.unit }}</span>
                                         </h3>
                                     </div>
                                 </div>
@@ -681,8 +681,7 @@
                     return 0;
                 }
                 if (typeof target === 'number') {
-                    return parseFloat(Number(target)
-                        .toFixed(limit));
+                    return parseFloat(Number(target).toFixed(limit));
                 }
                 return 0;
             },

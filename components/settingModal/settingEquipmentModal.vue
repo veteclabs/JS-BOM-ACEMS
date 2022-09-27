@@ -161,6 +161,8 @@
     import SimpleVueValidation from 'simple-vue-validator';
     import axios from 'axios';
     import flashModal from '~/components/flashmodal.vue';
+    import qs from 'qs';
+
 
     const {Validator} = SimpleVueValidation;
 
@@ -219,15 +221,12 @@
         },
         validators: {
             'params.name': function (value) {
-                console.log(value, 'name')
                 return Validator.value(value).required();
             },
             'params.equipment.maker': function (value) {
-                console.log(value, 'maker')
                 return Validator.value(value).required();
             },
             'params.equipment.equipmentId': function (value) {
-                console.log(value, 'equipmentId')
                 return Validator.value(value).required();
             },
             'params.schedule.min, params.schedule.max, params.state.COMP_StartPre': function (min, max, range) {
