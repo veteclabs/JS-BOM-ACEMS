@@ -53,7 +53,7 @@
                                 <h3>
                                     <div class="img-box">
                                         <img
-                                                :src="compressorImage"
+                                                :src="device.image"
                                                 @error="replaceImg"
                                                 :alt="device.equipmentId"
                                                 style="width:100%;"/>
@@ -177,7 +177,6 @@
                 settingModalData: {
                     show: false,
                 },
-                compressorImage: '',
                 tagVal: '',
                 liveChartData: [
                     {name: '실시간 유효전력', data: []},
@@ -403,7 +402,10 @@
                         }
                     }).then((res) => {
                     if(res.status === 200) {
-                        vm.airCompressorList = res.data
+                        vm.airCompressorList = res.data;
+                        vm.airCompressorList.forEach(item=>{
+                            item.image = require(`~/assets/images/equipment/${item.equipment.model}.png`);
+                        });
                     }
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;

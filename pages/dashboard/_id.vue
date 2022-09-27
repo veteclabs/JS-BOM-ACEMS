@@ -50,7 +50,7 @@
                     </div>
                     <div class="ibox-content">
                         <ul class="tag-box" v-if="airCompressor.tags">
-                            <li v-for="tag in airCompressor.tagByComponents.wholeInfoComponent" :key="airCompressor.tagByComponents.wholeInfoComponent">
+                            <li v-for="tag in airCompressor.tagByComponents.wholeInfoComponent" :key="tag.id">
                                 <div>
                                     {{tag.description}}
                                 </div>
@@ -127,7 +127,7 @@
                             </div>
                             <div class="ibox-content">
                                 <ul class="tag-box" v-if="airCompressor.tags">
-                                    <li v-for="tag in airCompressor.tagByComponents.importantInfoComponent" :key="airCompressor.tagByComponents.importantInfoComponent">
+                                    <li v-for="tag in airCompressor.tagByComponents.importantInfoComponent" :key="tag.id">
                                         <div>
                                             {{tag.description}}
                                         </div>
@@ -381,12 +381,12 @@
                     }
                 }).then((res) => {
                     vm.airCompressor = res.data;
+                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                     vm.powerData = vm.airCompressor.devices.power;
                     vm.chartSetting();
                     if(vm.powerData) {
                         vm.setLiveChart();
                     }
-                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
