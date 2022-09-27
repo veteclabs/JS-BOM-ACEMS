@@ -447,30 +447,10 @@
                         vm.params = res.data;
                         vm.getDayOfWeek();
                         vm.getModel();
-                        if (vm.params) {
-                            if (res.data.groupId !== null) {
-                                vm.getGroupInfo(res.data.groupId);
-                            }
-                        }
                     } else {
                         vm.msgData.msg = res.error;
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-                });
-            },
-            async getGroupInfo(id) {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: `/api/group/${id}`,
-                }).then((res) => {
-                    vm.groupScheduleActive = res.data.schedule.isActive;
-                    if (vm.groupScheduleActive) {
-                        vm.params.schedule.max = res.data.schedule.max;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
