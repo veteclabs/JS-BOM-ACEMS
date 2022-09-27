@@ -67,7 +67,7 @@
                     </div>
                     <div class="ibox-content">
                         <ul v-for="power in powerData" :key="power.id" class="tag-box">
-                            <li v-for="type in powerTagSet">
+                            <li v-for="type in powerTagSet" :key="type.id">
                                 <div v-if="power.tags[type] !== undefined">
                                     {{power.tags[type].description}}
                                 </div>
@@ -138,7 +138,7 @@
 
                                 </ul>
                                 <ul v-for="power in airCompressor.devices.power" :key="power.id" class="tag-box">
-                                    <li v-for="type in powerKeyTag">
+                                    <li v-for="type in powerKeyTag" :key="type.id">
                                         <div v-if="power.tags[type] !== undefined">
                                             {{power.tags[type].description}}
                                         </div>

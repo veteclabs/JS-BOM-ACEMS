@@ -95,7 +95,7 @@
                                 </ul>
                             </div>
                             <ul class="tag-box">
-                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="device.tagByComponents.mainInfoComponent.tagName">
+                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
                                     <div>
                                         {{tag.description}}
                                     </div>

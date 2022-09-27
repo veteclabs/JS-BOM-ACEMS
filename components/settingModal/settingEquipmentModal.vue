@@ -119,7 +119,7 @@
                         <td colspan="3">
                             <div class="td-label">Date</div>
                             <ul class="date-ul">
-                                <li v-for="item in dateList">
+                                <li v-for="item in dateList" :key="item.name">
                                     <label :class="{'disabled' :!item.selectable}">
                                         <input type="checkbox" :value="item" v-model="params.schedule.dayOfWeeks"
                                                :disabled="!params.schedule.isActive || !item.selectable"/>
