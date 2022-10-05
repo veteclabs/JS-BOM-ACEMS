@@ -161,6 +161,8 @@
     import SimpleVueValidation from 'simple-vue-validator';
     import axios from 'axios';
     import flashModal from '~/components/flashmodal.vue';
+    import qs from 'qs';
+
 
     const {Validator} = SimpleVueValidation;
 
@@ -219,15 +221,12 @@
         },
         validators: {
             'params.name': function (value) {
-                console.log(value, 'name')
                 return Validator.value(value).required();
             },
             'params.equipment.maker': function (value) {
-                console.log(value, 'maker')
                 return Validator.value(value).required();
             },
             'params.equipment.equipmentId': function (value) {
-                console.log(value, 'equipmentId')
                 return Validator.value(value).required();
             },
             'params.schedule.min, params.schedule.max, params.state.COMP_StartPre': function (min, max, range) {
@@ -448,30 +447,10 @@
                         vm.params = res.data;
                         vm.getDayOfWeek();
                         vm.getModel();
-                        if (vm.params) {
-                            if (res.data.groupId !== null) {
-                                vm.getGroupInfo(res.data.groupId);
-                            }
-                        }
                     } else {
                         vm.msgData.msg = res.error;
                     }
                 }).catch((error) => {
-                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-                });
-            },
-            async getGroupInfo(id) {
-                const vm = this;
-                axios({
-                    method: 'get',
-                    url: `/api/group/${id}`,
-                }).then((res) => {
-                    vm.groupScheduleActive = res.data.schedule.isActive;
-                    if (vm.groupScheduleActive) {
-                        vm.params.schedule.max = res.data.schedule.max;
-                    }
-                }).catch((error) => {
-                    vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
