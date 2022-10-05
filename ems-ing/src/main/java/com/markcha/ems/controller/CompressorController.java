@@ -80,7 +80,7 @@ public class CompressorController {
             if(!isNull(t.getSchedule())) {
                 ScheduleDto scheduleDto = t.getSchedule();
                 scheduleDto.setMin(isNull(t.getState().get("COMP_StartPre")) ? null : t.getState().get("COMP_StartPre").getValue());
-                scheduleDto.setMax(isNull(t.getState().get("COMP_StoptPre")) ? null : t.getState().get("COMP_StopPre").getValue());
+                scheduleDto.setMax(isNull(t.getState().get("COMP_StopPre")) ? null : t.getState().get("COMP_StopPre").getValue());
                 scheduleDto.setMinMax();
             }
         });
@@ -98,7 +98,7 @@ public class CompressorController {
             if(!isNull(t.getSchedule())) {
                 ScheduleDto scheduleDto = t.getSchedule();
                 scheduleDto.setMin(isNull(t.getState().get("COMP_StartPre")) ? null : t.getState().get("COMP_StartPre").getValue());
-                scheduleDto.setMax(isNull(t.getState().get("COMP_StoptPre")) ? null : t.getState().get("COMP_StopPre").getValue());
+                scheduleDto.setMax(isNull(t.getState().get("COMP_StopPre")) ? null : t.getState().get("COMP_StopPre").getValue());
                 scheduleDto.setMinMax();
             }
         });

@@ -95,7 +95,7 @@ public class TestController {
 
 
     @GetMapping(value="/specificalPower")
-    public Double specificalPower() {
+    public double specificalPower() {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
         List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
         groupSearchDto.setTagEqType(tag.type.eq("PWR_KWh"));
@@ -127,7 +127,7 @@ public class TestController {
                         return historyHour;
                     }
                 }).mapToDouble(k -> k).sum();
-        return pwr_kWh/air_flow;
+        return Math.round(pwr_kWh/air_flow);
 
     }
     @GetMapping(value="/totalValue2")

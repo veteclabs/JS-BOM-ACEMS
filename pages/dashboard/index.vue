@@ -13,7 +13,7 @@
             </div>-->
             <div class="col-lg-9">
                 <div class="ibox">
-                    <div class="ibox-title flex-ibox-title">실시간 전력(kW)/ 유량(Nm3/min)</div>
+                    <div class="ibox-title flex-ibox-title">실시간 전력(kW)/ 유량(m3/min)</div>
                     <div class="ibox-content">
                         <client-only>
                             <apexchart type="area" height="180" ref="liveChart" :options="liveChartOption"

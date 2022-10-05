@@ -8,7 +8,7 @@
                     </div>
                     <div class="profile-element-detail detail-info">
                         <p class="profile-title">BOM-ACEMS</p>
-                        <p class="profile-subtitle">정석엔지니어링</p>
+                        <p class="profile-subtitle">정석이엔지</p>
                     </div>
                 </li>
                 <li v-for="(item, index) in menus" :key="index"
