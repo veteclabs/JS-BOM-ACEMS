@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="copyright-box">
-            Copyrightⓒ 정석엔지니어링 Co., Ltd. All rights reserved.
+            Copyrightⓒ 정석이엔지 Co., Ltd. All rights reserved.
         </div>
         <flashModal v-bind:propsdata="modalMessage"/>
     </div>
