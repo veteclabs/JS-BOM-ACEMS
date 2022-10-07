@@ -155,7 +155,7 @@ sum(`USAGE`) `usage`,
 (SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
 </if>
 
-        (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> last_day(#{startDate})) s
+        (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> day(last_day(#{startDate}))) s
 
 
 
