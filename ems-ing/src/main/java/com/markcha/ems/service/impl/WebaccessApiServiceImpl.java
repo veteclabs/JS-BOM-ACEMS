@@ -3,9 +3,15 @@ package com.markcha.ems.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.markcha.ems.domain.Tag;
+import com.markcha.ems.domain.pattern.Pattern;
+import com.markcha.ems.domain.pattern.PatternList;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.dto.tag.response.ReciveTagSetDto;
 import com.markcha.ems.dto.tag.response.TagResultDto;
+import com.markcha.ems.repository.tag.intercept.impl.TagInterceptRepositoryImpl;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,12 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static java.util.Comparator.comparing;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class WebaccessApiServiceImpl {
@@ -166,6 +171,29 @@ public class WebaccessApiServiceImpl {
 
             return null;
         }
+    }
+    @Autowired
+    private TagInterceptRepositoryImpl tagInterceptRepository;
+
+    @SneakyThrows
+    public Boolean setTagValueV2(TagDto propertyDto) {
+        RestTemplate restTemplate = new RestTemplate();
+        PatternList patternList = tagInterceptRepository.getInputPattern(Arrays.asList(propertyDto.getTagName()), new Double(propertyDto.getValue().toString()));
+        if (!isNull(patternList)) {
+            for (Pattern pattern : patternList.getPatterns().stream()
+                    .sorted(comparing(t -> t.getOrder())).collect(toList())) {
+                Thread.sleep(pattern.getBeforeSleep());
+                Tag controlTag = pattern.getTagList().getTags().iterator().next();
+                setTagValue(TagDto.builder()
+                        .tagName(controlTag.getTagName())
+                        .value(pattern.getRequireValue())
+                        .build());
+                Thread.sleep(pattern.getAfterSleep());
+            }
+            return false;
+        }
+
+        return true;
     }
     public Integer getTagValuesV2Int(String tagNames) {
 

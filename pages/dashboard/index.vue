@@ -345,7 +345,7 @@
                         if(isNaN(res.data)) {
                             this.basicUnit = 0
                         }else {
-                            this.basicUnit = res.data;
+                            this.basicUnit = res.data.toFixed(2);
                         }
                     });
             },

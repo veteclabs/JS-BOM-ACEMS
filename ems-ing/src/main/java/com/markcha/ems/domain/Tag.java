@@ -49,6 +49,6 @@ public class Tag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="tag_list_id")
     private TagList tagList;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alarm> alarms = new ArrayList<>();
 }

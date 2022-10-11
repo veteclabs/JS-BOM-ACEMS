@@ -205,6 +205,13 @@ public class CompressorServiceImpl {
         Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipment().getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
+        List<Alarm> alarms = seletedDevice.getTags().stream()
+                .map(t -> t.getAlarms())
+                .collect(toList())
+                .stream().flatMap(List::stream)
+                .collect(toList());
+        alarms.forEach(t->t.setTag(null));
+        alarmDataRepository.saveAll(alarms);
         tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
         List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipment().getEquipmentId(), seletedDevice);
         seletedDevice.setTags(new HashSet<>(tags));
@@ -312,11 +319,8 @@ public class CompressorServiceImpl {
     }
     @Async
     public void controllPowerAsync(Integer intever, Map<String, TagDto> tagMap, Integer powerCode) throws InterruptedException {
-        tagMap.get("COMP_Local").setValue(1);
-        webaccessApiService.setTagValue(tagMap.get("COMP_Local"));
-        Thread.sleep(1000*intever);
         tagMap.get("COMP_Power").setValue(powerCode);
-        webaccessApiService.setTagValue(tagMap.get("COMP_Power"));
+        webaccessApiService.setTagValueV2(tagMap.get("COMP_Power"));
 
     }
 }

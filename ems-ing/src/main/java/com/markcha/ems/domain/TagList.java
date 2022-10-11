@@ -1,5 +1,6 @@
 package com.markcha.ems.domain;
 
+import com.markcha.ems.domain.pattern.PatternList;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,6 +51,8 @@ public class TagList {
     private Set<TagSetMapper> tagSetMappers = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList")
     private Set<Tag> tags = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList", cascade = CascadeType.ALL)
+    private Set<PatternList> patternList;
     private Double min;
     private Double max;
     private String testType;

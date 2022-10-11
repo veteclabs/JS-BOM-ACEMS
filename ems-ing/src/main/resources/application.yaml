@@ -22,7 +22,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none # none, create, create-drop
+      ddl-auto: update # none, create, create-drop
       use_aql_comments: true
     properties:
       hibernate:

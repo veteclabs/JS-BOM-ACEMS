@@ -7,9 +7,9 @@
         SELECT hr.`USAGE` `usage`
         FROM `tagdata`.history_hour hr
         WHERE hr.tagname = #{tagType}
-        and hour(hr.timestamp) = hour(now())
-        and date(hr.timestamp) = date(now())
+            and hour(hr.timestamp) = hour(now())
+          and date(hr.timestamp) = date(now())
         order by hr.timestamp desc
-        limit 1
+            limit 1
     </select>
 </mapper>

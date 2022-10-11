@@ -156,20 +156,14 @@ public class ScheduleTask extends TimerTask {
             Integer objectState = webaccessApiService.getTagValuesV2Int(powerTag.getTagName());
             for (int i = 0; i < 3; i++) {
                 if (powerState == 1) {
-                    localTag.setValue(1);
-                    webaccessApiService.setTagValue(localTag);
-                    Thread.sleep(intever * 1000);
                     powerTag.setValue(powerState);
-                    webaccessApiService.setTagValue(powerTag);
+                    webaccessApiService.setTagValueV2(powerTag);
                     if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName()) == powerState) {
                         return true;
                     }
                 } else if (powerState == 0) {
-                    localTag.setValue(1);
-                    webaccessApiService.setTagValue(localTag);
-                    Thread.sleep(intever * 1000);
                     powerTag.setValue(powerState);
-                    webaccessApiService.setTagValue(powerTag);
+                    webaccessApiService.setTagValueV2(powerTag);
                     if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName())  == powerState) {
                         return isGroup? false: true;
                     }

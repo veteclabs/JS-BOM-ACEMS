@@ -60,7 +60,7 @@ public class AirCompressorDto {
                         }
 
                         this.state = groupingTags.get("stateComponent").stream()
-                                .collect(Collectors.toMap(k -> k.getType(), k -> k));
+                                .collect(Collectors.toMap(k -> k.getType(), k -> k, (val1, val2) -> val1));
                         groupingTags.remove("stateComponent");
                         this.tagByComponents = groupingTags;
 

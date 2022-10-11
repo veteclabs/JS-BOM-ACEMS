@@ -3,6 +3,7 @@ package com.markcha.ems.controller;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.markcha.ems.domain.Group;
 import com.markcha.ems.domain.GroupType;
+import com.markcha.ems.domain.Tag;
 import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.mapper.analysis.HistorySearchDto;
 import com.markcha.ems.mapper.historyHour.HistoryHourMapper;
@@ -22,6 +23,7 @@ import com.sun.istack.Nullable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -42,14 +44,12 @@ public class TestController {
 
     @GetMapping(value="/totalValue")
     public Map<String, Double> totalValue() {
-        List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
         ResponseToTalValues result = new ResponseToTalValues();
         Map<String, Double> resultMap = new HashMap<>();
-        if (!rootGroupIds.isEmpty()) {
-            culcTotalRealTimeValue(rootGroupIds, result, "PWR_KW");
-            culcTotalRealTimeValue(rootGroupIds, result, "AIR_Flow");
-            culcTotalRealTimeValue(rootGroupIds, result, "AIR_PRE");
-        }
+        culcTotalRealTimeValue(result, "PWR_KW");
+        culcTotalRealTimeValue(result, "AIR_Flow");
+        culcTotalRealTimeValue(result, "AIR_PRE");
+
         result.getTypes().forEach((key,value) -> {
             resultMap.put(key, value.getValue());
         });
@@ -57,17 +57,11 @@ public class TestController {
         return resultMap;
 
     }
-    private void culcTotalRealTimeValue(List<Long> rootGroupIds, ResponseToTalValues result,String tagType) {
 
-        GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
-        groupSearchDto.setTagEqType(tag.type.eq(tagType));
-        List<Group> analysisLocations = new ArrayList<>();
-        analysisLocations.addAll(groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true));
-        List<String> tagNames = analysisLocations.stream()
-                .map(t -> {
-                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
-                    return groupQueryDto.getTagNames();
-                }).flatMap(List::stream)
+    private void culcTotalRealTimeValue(ResponseToTalValues result,String tagType) {
+
+        List<String> tagNames = tagDataRepository.findAllByType(tagType).stream()
+                .map(t->t.getTagName())
                 .collect(toList());
         result.getTypes().put(tagType, new Type(tagNames));
         result.getTypes().get(tagType).setUnits(webaccessApiService.getTagValuesV2(tagNames));
@@ -93,41 +87,36 @@ public class TestController {
         }
     }
 
-
+    @Autowired
+    private TagDataRepository tagDataRepository;
     @GetMapping(value="/specificalPower")
     public double specificalPower() {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
-        List<Long> rootGroupIds = groupDynamicRepository.getTypeIds(GroupType.GROUP);
-        groupSearchDto.setTagEqType(tag.type.eq("PWR_KWh"));
-        Double pwr_kWh = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
+        List<Tag> powerTags = tagDataRepository.findAllByType("PWR_KWh");
+        Double powerValue = powerTags.stream()
                 .map(t -> {
-                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
-                    return groupQueryDto.getTagNames();
-                }).flatMap(List::stream)
-                .map(t -> {
-                    Double historyHour = historyHourMapper.getHistoryHour(t);
-                    if(isNull(historyHour)) {
+                    String tagName = t.getTagName();
+                    Double historyHour = historyHourMapper.getHistoryHour(tagName);
+                    if (isNull(historyHour)) {
                         return 0.0;
                     } else {
                         return historyHour;
                     }
-                })
-                .mapToDouble(t -> t).sum();
-        groupSearchDto.setTagEqType(tag.type.eq("AIR_Con"));
-        Double air_flow = groupDynamicRepository.getAnalysisLocations(rootGroupIds, groupSearchDto, true).stream()
+                }).mapToDouble(t -> t).sum();
+        List<Tag> flowTags = tagDataRepository.findAllByType("PWR_KWh");
+        Double flowValue = flowTags.stream()
                 .map(t -> {
-                    GroupQueryDto groupQueryDto = new GroupQueryDto(t);
-                    return groupQueryDto.getTagNames();
-                }).flatMap(List::stream)
-                .map(t -> {
-                    Double historyHour = historyHourMapper.getHistoryHour(t);
-                    if(isNull(historyHour)) {
+                    String tagName = t.getTagName();
+                    Double historyHour = historyHourMapper.getHistoryHour(tagName);
+                    if (isNull(historyHour)) {
                         return 0.0;
                     } else {
                         return historyHour;
                     }
-                }).mapToDouble(k -> k).sum();
-        return Math.round(pwr_kWh/air_flow);
+                }).mapToDouble(t -> t).sum();
+
+
+        return Math.round(powerValue/flowValue);
 
     }
     @GetMapping(value="/totalValue2")
