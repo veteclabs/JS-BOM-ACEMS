@@ -365,7 +365,8 @@
         methods: {
             chartSetting() {
                 const barMaxValue = 15;
-                const bar = this.airCompressor.tags.COMP_SystemPre.value;
+                const bar = this.airCompressor.state.COMP_SystemPre.value;
+                
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },
             async getAirCompressor() {
@@ -383,10 +384,11 @@
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                     vm.powerData = vm.airCompressor.devices.power;
+                    
                     if(vm.powerData) {
                         vm.setLiveChart();
                     }
-                    if(vm.airCompressor.tags.length !== 0) {
+                    if(vm.airCompressor.state.COMP_SystemPre !== undefined) {
                         vm.chartSetting();
                     }
                 }).catch((error) => {
