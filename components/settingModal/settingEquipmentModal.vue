@@ -17,7 +17,7 @@
                         <td>
                             <div class="td-label">그룹</div>
                             <label class="input-100">
-                                <select v-model="params.groupId">
+                                <select v-model="params.groupId" @change="groupCheck">
                                     <option :value="null" selected>미지정</option>
                                     <option v-for="group in groupList" :value="group.id" :key="group.id"
                                             @change="getDayOfWeek">
@@ -110,6 +110,7 @@
                         <td class="right">
                             <label class="switch-box">
                                 <input type="checkbox" v-model="params.schedule.isActive"
+                                       @change="groupCheck"
                                        ref="scheduleCheck"/>
                                 <span class="slider round"></span>
                             </label>
@@ -345,20 +346,13 @@
                     vm.msgData.msg = error;
                 });
             },
-            /*groupCheck() {
+            groupCheck() {
                 const vm = this;
                 if (vm.params.groupId !== null) {
-                    this.getGroupInfo(vm.params.groupId);
-                    if (vm.params.schedule.isActive) {
-                        alert("그룹이 선택된 장비는 개별제어 설정이 불가합니다.");
-                        vm.params.schedule.isActive = false;
-                        vm.$refs.scheduleCheck.checked = false;
-                        return false;
-                    }
+                    return vm.getGroupInfo(vm.params.groupId);
                 }
-                return true;
-            },*/
-            submit() {
+            },
+            async submit() {
                 const vm = this;
                 const modal = this.$bvModal;
                 const {state} = this;
@@ -451,6 +445,28 @@
                         vm.msgData.msg = res.error;
                     }
                 }).catch((error) => {
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                });
+            },
+            async getGroupInfo(id) {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: `/api/group/${id}`,
+                }).then((res) => {
+                    if (res.status === 200) {
+                        vm.groupScheduleActive = res.data.schedule.isActive;
+                        if (vm.groupScheduleActive) {
+                            alert("그룹제어 중인 장비는 개별제어 설정이 불가합니다.");
+                            vm.params.schedule.isActive = false;
+                            vm.$refs.scheduleCheck.checked = false;
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }).catch((error) => {
+                    vm.msgData.show = true;
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
