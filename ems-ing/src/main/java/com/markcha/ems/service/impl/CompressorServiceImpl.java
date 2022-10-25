@@ -323,4 +323,5 @@ public class CompressorServiceImpl {
         webaccessApiService.setTagValueV2(tagMap.get("COMP_Power"));
 
     }
+
 }

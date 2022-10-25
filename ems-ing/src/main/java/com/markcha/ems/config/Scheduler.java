@@ -17,6 +17,8 @@ import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -212,4 +214,5 @@ public class Scheduler {
         // 첫 월요일 이전이면 회귀식으로 전 달 마지막 주차를 구함
         return getWeekNumber(date.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()));
     }
+
 }

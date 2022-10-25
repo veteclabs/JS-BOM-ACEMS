@@ -71,6 +71,10 @@ dependencies {
 	implementation('org.slf4j:jcl-over-slf4j')
 	implementation('ch.qos.logback:logback-classic')
 	implementation 'org.projectlombok:lombok'
+
+	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.5.0'
+
 }
 
 
