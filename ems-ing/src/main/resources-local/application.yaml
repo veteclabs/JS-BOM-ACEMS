@@ -2,8 +2,8 @@ server:
   port: 8031
 spring:
   webaccess:
-    host: http://7.136.233.205/WaWebService/Json/
-#    host: http://localhost:8031/WaWebService/Json/
+#    host: http://7.136.233.205/WaWebService/Json/
+    host: http://localhost:8031/WaWebService/Json/
     project: BOM
     node: BOM
   batch:
@@ -14,7 +14,7 @@ spring:
     jdbc:
       time_zone: UTC
     driver-class-name: org.mariadb.jdbc.Driver #$net.sf.log4jdbc.sql.jdbcapi.DriverSpy #
-    url: jdbc:mariadb://7.136.233.205:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
 #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 #    url: jdbc:log4jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
@@ -24,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # none, create, create-drop
+      ddl-auto: none # none, create, create-drop
       use_aql_comments: true
     properties:
       hibernate:
