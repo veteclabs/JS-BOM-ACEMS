@@ -51,6 +51,21 @@ public class Scheduler {
     private static Boolean alarmInsert = false;
 
     private static Map<Long, Timer> tasks = new HashMap<>();
+    @Async
+    @Transactional
+    @Scheduled(fixedDelay = 1000000000)
+    public void crawl2() {
+
+        List<Device> devices = deviceDslRepository.findAllDevices();
+
+            Timer timer = new Timer();
+
+        for (Device device : devices) {
+            Crawler crawler = new Crawler();
+            crawler.setDevice(device);
+            timer.schedule(crawler, 100, 100);
+        }
+    }
 
     @Scheduled(fixedDelay = 5000)
     public void scheduleFixedRateTask() {
@@ -212,4 +227,10 @@ public class Scheduler {
         return getWeekNumber(date.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()));
     }
 
+    public void crawl() {
+        List<Device> devices =  deviceDslRepository.findAllDevices();
+        for (Device device : devices) {
+            System.out.println(device);
+        }
+    }
 }

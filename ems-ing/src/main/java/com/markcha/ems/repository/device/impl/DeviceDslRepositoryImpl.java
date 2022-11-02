@@ -378,4 +378,14 @@ public class DeviceDslRepositoryImpl {
                 .leftJoin(tag.device, device).fetchJoin()
                 .where(deviceEqId, tagEqType).fetch();
     }
+
+    public List<Device> findAllDevices() {
+        return query.selectFrom(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(equipment.tagLists, tagList).fetchJoin()
+                .where(
+                        device.SerialNumber.isNotNull()
+                )
+                .fetch();
+    }
 }
