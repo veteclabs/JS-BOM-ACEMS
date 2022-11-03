@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -38,7 +39,7 @@ public class GroupDynamicRepositoryImpl {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-
+    @Transactional
     public List<Long> getLevelIds(Integer level) {
         return queryFactory.select(
                 Projections.constructor(
@@ -49,7 +50,7 @@ public class GroupDynamicRepositoryImpl {
                 .where(group.level.eq(level))
                 .fetch();
     }
-
+    @Transactional
     
     public List<Long> getTypeIds(GroupType type) {
         return queryFactory.select(
@@ -61,7 +62,7 @@ public class GroupDynamicRepositoryImpl {
                 .where(group.type.eq(type))
                 .fetch();
     }
-
+    @Transactional
     private List<Group> getLocations(BooleanExpression in) {
         return queryFactory.select(group)
                 .from(group)
@@ -70,7 +71,7 @@ public class GroupDynamicRepositoryImpl {
                 )
                 .fetch();
     }
-
+    @Transactional
     private List<Device> getDevices(List<Long> ids, GroupSearchDto locationSearchDto) {
         return queryFactory.select(device)
                 .from(device)
@@ -110,7 +111,7 @@ public class GroupDynamicRepositoryImpl {
         return locations;
     }
 
-    
+    @Transactional
     public List<Group> getAnalysisLocations(List<Long> locaionIds, GroupSearchDto locationSearchDto, Boolean deep) {
         List<Group> parentLocations = getLocationNode(
                 deep? group.id.in(locaionIds):group.parent.id.in(locaionIds),

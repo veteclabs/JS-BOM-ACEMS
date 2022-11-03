@@ -11,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -175,6 +176,7 @@ public class GroupDslRepositoryImpl{
                 .orderBy(group.id.asc())
                 .fetch();
     }
+    @Transactional
     public List<Group> findAllJoinScheduleByScheduleId(Long id) {
         List<Group> groups = query.selectFrom(group).distinct()
                 .leftJoin(group.schedule, schedule).fetchJoin()
@@ -222,7 +224,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                         device.group.id.in(groupIds)
-                        , tag.type.like("%Power")
+                        , tag.type.eq("COMP_Power")
                 ).fetch();
         groups.stream().forEach(t-> t.getDevices().addAll(devices2));
         return groups;
@@ -266,9 +268,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(tag.tagList, QTagList.tagList).fetchJoin()
                 .leftJoin(QTagList.tagList.tagSetMappers, QTagSetMapper.tagSetMapper).fetchJoin()
                 .leftJoin(QTagSetMapper.tagSetMapper.tagSet, QTagSet.tagSet).fetchJoin()
-                .where(
-                         tag.showAble.eq(true)
-                        ,device.id.in(deviceIds)
+                .where(device.id.in(deviceIds)
                         ,QTagSet.tagSet.nickname.eq("groupDashboardComponent"))
                 .fetch();
     }

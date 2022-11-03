@@ -35,8 +35,8 @@
                                   cell-template="blockGridTemplate"/>
                         <DxColumn data-field="schedule.isActive" caption="개별스케줄제어" alignment="center" :width="130"
                                   cell-template="ONOFFTemplate"/>
-                        <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" :width="50"/>
-                        <DxColumn data-field="schedule.max" caption="최대압력" alignment="center" :width="50"/>
+                        <!-- <DxColumn data-field="schedule.min" caption="최소압력" alignment="center" :width="50"/>
+                        <DxColumn data-field="schedule.max" caption="최대압력" alignment="center" :width="50"/> -->
                         <DxColumn data-field="schedule.dayOfWeeks" caption="요일" alignment="center"
                                   cell-template="dayOfWeeksTemplate" :width="260"/>
                         <DxColumn data-field="schedule.startTime" caption="시작시간" alignment="center" width="100"/>

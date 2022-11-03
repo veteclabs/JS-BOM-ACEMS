@@ -81,15 +81,16 @@
                                                 device.state.COMP_LoadFactor.value}}%</h3>
                                         </div>
                                     </li>
-                                    <li v-if="device.state['COMP_Trip'].value === 1">
+                                    <li v-if="device.state['COMP_Trip'] !== undefined && device.state['COMP_Trip'].value === 1">
                                         <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
                                         <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
                                     </li>
-                                    <li v-if="device.state['COMP_Warning'].value === 1">
+                                    
+                                    <li v-if="device.state['COMP_Warning'] !== undefined && device.state['COMP_Warning'].value === 1">
                                         <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
                                         <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
                                     </li>
-                                    <li v-if="device.state['COMP_Trip'].value !== 1 && device.state['COMP_Warning'].value !== 1">
+                                    <li v-if="device.state['COMP_Trip'] !== undefined && device.state['COMP_Warning'] !== undefined && device.state['COMP_Trip'].value !== 1 && device.state['COMP_Warning'].value !== 1">
                                         <div class="bom-badge green-bg-badge" style="margin:0 8px 0 0;">Normal</div>정상
                                     </li>
                                 </ul>
@@ -104,17 +105,18 @@
                                     </div>
                                 </li>
                             </ul>
-
-                            <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
-                                <li v-for="type in powerTagSet" :key="type.description">
-                                    <div v-if="power.tags[type] !== undefined">
-                                        {{power.tags[type].description}}
-                                    </div>
-                                    <div v-if="power.tags[type] !== undefined">
-                                        {{power.tags[type].value| valueFormat(2)}} {{power.tags[type].unit}}
-                                    </div>
-                                </li>
-                            </ul>
+                            <div v-if="device.devices.power !==undefined">
+                                <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
+                                    <li v-for="type in powerTagSet" :key="type.description">
+                                        <div v-if="power.tags[type] !== undefined">
+                                            {{power.tags[type].description}}
+                                        </div>
+                                        <div v-if="power.tags[type] !== undefined">
+                                            {{power.tags[type].value| valueFormat(2)}} {{power.tags[type].unit}}
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

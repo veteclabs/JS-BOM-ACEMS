@@ -3,6 +3,7 @@ package com.markcha.ems.repository.tag;
 import com.markcha.ems.domain.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class TagDslRepositoryIml {
                 ).fetchOne();
 
     }
+    @Transactional
     public Tag getOneById(Long id) {
         return query.selectFrom(tag)
                 .where(tag.id.eq(id))

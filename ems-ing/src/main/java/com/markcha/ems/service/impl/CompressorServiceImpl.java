@@ -212,7 +212,7 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연동
-        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipment().getEquipmentId());
+        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
         seletedDevice.setEquipment(selectedEquipoment);
         List<Alarm> alarms = seletedDevice.getTags().stream()
@@ -244,9 +244,9 @@ public class CompressorServiceImpl {
                     })
                     .collect(toList());
 
-            webaccessApiService.setTagValues(minMaxTag);
+            if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
         }
-        webaccessApiService.setTagValues(minMaxTag);
+        if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
         deviceDataRepository.save(seletedDevice);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceId(compressorInsertDto.getId());
         orderDataRepository.deleteAllInBatch(allByDeviceId);

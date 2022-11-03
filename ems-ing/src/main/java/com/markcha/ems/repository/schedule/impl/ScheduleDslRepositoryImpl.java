@@ -4,6 +4,7 @@ import com.markcha.ems.domain.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
@@ -40,12 +41,14 @@ public class ScheduleDslRepositoryImpl {
                 .where(schedule.isActive.eq(true))
                 .fetch();
     }
+    @Transactional
     public List<Schedule> findAllCoreSchedule() {
         return query.selectFrom(schedule)
                 .leftJoin(schedule.groups, group).fetchJoin()
                 .where(group.isNotNull(),schedule.isActive.eq(true))
                 .fetch();
     }
+    @Transactional
     public Group findRootGroupId(Long id) {
         return query.select(group)
                 .from(group).distinct()

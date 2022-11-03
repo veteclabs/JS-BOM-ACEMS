@@ -101,7 +101,7 @@ public class ScheduleTask extends TimerTask {
             if (powerState != 2) {
                 try {
                     if (schedule.getIsGroup()) {
-                        targetControl(null, powerState, schedule.getInterval(), false, schedule2.getDeviceSet().stream()
+                        targetControl(null, powerState, schedule.getInterval(), false, schedule2.getDevices().stream()
                                 .map(t->new DeviceConDto(t))
                                 .collect(toList()));
                         groupControl(schedule.getScheduleId(), weekNumber, powerState, schedule.getInterval());

@@ -5,6 +5,7 @@ import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -146,6 +147,7 @@ public class DeviceDslRepositoryImpl {
 
         return compressor;
     }
+    @Transactional
     public List<Tag> findAllAlarmTags() {
         List<Tag> tags = getAlarmTags();
 
