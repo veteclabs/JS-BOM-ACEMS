@@ -69,22 +69,25 @@ public class CompressorServiceImpl {
         Schedule newSchedule = new Schedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
-        newSchedule.setIsActive(compressorInsertDto.getSchedule().getIsActive());
+        newSchedule.setIsActive(isNull(scheduleDto) ? false : scheduleDto.getIsActive());
         newSchedule.setInterval(30);
         newSchedule.setType("interval");
-        newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
-        newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
-        newSchedule.setStartTime(scheduleDto.getStartTime());
-        newSchedule.setStopTime(scheduleDto.getStopTime());
+        if (!isNull(scheduleDto)) {
+            newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
+            newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
+            newSchedule.setStartTime(scheduleDto.getStartTime());
+            newSchedule.setStopTime(scheduleDto.getStopTime());
+        }
         newSchedule.setUpdated(LocalDateTime.now());
 
         // 요일 관계 생성
-        List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
+        List<Long> dayOfWeekIds = null;
+        if (!isNull(scheduleDto)) scheduleDto.getDayOfWeeks().stream()
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
         List<DayOfWeekMapper> newDayOfWeekMappers = new ArrayList<>();
-        for (DayOfWeek dayOfWeek: dayOfWeeks) {
+        for (DayOfWeek dayOfWeek : dayOfWeeks) {
             DayOfWeekMapper dayOfWeekMapper = new DayOfWeekMapper();
             dayOfWeekMapper.setDayOfWeek(dayOfWeek);
             dayOfWeekMapper.setSchedule(newSchedule);
@@ -99,7 +102,7 @@ public class CompressorServiceImpl {
 
         List<Week> weeks = weekDataRepository.findAllByIdIn(Arrays.asList(new Long[]{1L, 2L, 3L, 4L, 5L, 6L}));
 
-        for (Week week: weeks) {
+        for (Week week : weeks) {
             WeekMapper weekMapper = new WeekMapper();
             weekMapper.setWeek(week);
             weekMapper.setSchedule(newSchedule);
@@ -131,25 +134,29 @@ public class CompressorServiceImpl {
         newDevice.setGroup(newGroup);
 
         Device save = deviceDataRepository.save(newDevice);
-        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipment().getEquipmentId(), save);
+        List<Tag> tags = insertSampleData.createTags(isNull(compressorInsertDto.getEquipmentId()) ? compressorInsertDto.getEquipment().getEquipmentId() : compressorInsertDto.getEquipmentId(), save, compressorInsertDto.getUnitId());
 
         List<TagDto> tagDtos = tags.stream()
                 .map(TagDto::new)
                 .collect(toList());
-        List<TagDto> minMaxTag = tagDtos.stream()
-                .filter(t -> {
-                    boolean isMax = t.getType().equals("COMP_StopPre");
-                    boolean isMin = t.getType().equals("COMP_StartPre");
-                    if (isMax) {
-                        t.setValue(scheduleDto.getMax());
-                    }
-                    if (isMin) {
-                        t.setValue(scheduleDto.getMin());
-                    }
-                    return isMax || isMin;
-                })
-                .collect(toList());
-        webaccessApiService.setTagValues(minMaxTag);
+        List<TagDto> minMaxTag = null;
+        if (!isNull(scheduleDto)) {
+            tagDtos.stream()
+                    .filter(t -> {
+                        boolean isMax = t.getType().equals("COMP_StopPre");
+                        boolean isMin = t.getType().equals("COMP_StartPre");
+                        if (isMax) {
+                            t.setValue(scheduleDto.getMax());
+                        }
+                        if (isMin) {
+                            t.setValue(scheduleDto.getMin());
+                        }
+                        return isMax || isMin;
+                    })
+                    .collect(toList());
+
+            webaccessApiService.setTagValues(minMaxTag);
+        }
 
 
         newDevice.setTags(new HashSet<>(tags));
@@ -166,19 +173,22 @@ public class CompressorServiceImpl {
         Schedule newSchedule = seletedDevice.getGroup().getSchedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
-        newSchedule.setIsActive(scheduleDto.getIsActive());
+        newSchedule.setIsActive(isNull(scheduleDto)? false : scheduleDto.getIsActive());
         newSchedule.setInterval(5);
         newSchedule.setType("interval");
-        newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
-        newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
-        newSchedule.setStartTime(scheduleDto.getStartTime());
-        newSchedule.setStopTime(scheduleDto.getStopTime());
+        if(!isNull(scheduleDto)) {
+            newSchedule.setMax(new Double(scheduleDto.getMax().toString()));
+            newSchedule.setMin(new Double(scheduleDto.getMin().toString()));
+            newSchedule.setStartTime(scheduleDto.getStartTime());
+            newSchedule.setStopTime(scheduleDto.getStopTime());
+        }
         newSchedule.setUpdated(LocalDateTime.now());
 
 
 //        // 요일 관계 생성
         newSchedule.getDayOfWeekMappers().clear();
-        List<Long> dayOfWeekIds = scheduleDto.getDayOfWeeks().stream()
+        List<Long> dayOfWeekIds = null;
+        if(!isNull(scheduleDto)) scheduleDto.getDayOfWeeks().stream()
                 .map(DayOfWeekDto::getId)
                 .collect(toList());
         List<DayOfWeek> dayOfWeeks = dayOfWeekDataRepository.findAllByIdIn(dayOfWeekIds);
@@ -213,24 +223,29 @@ public class CompressorServiceImpl {
         alarms.forEach(t->t.setTag(null));
         alarmDataRepository.saveAll(alarms);
         tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
-        List<Tag> tags = insertSampleData.createTags(compressorInsertDto.getEquipment().getEquipmentId(), seletedDevice);
+        List<Tag> tags = insertSampleData.createTags(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId(), seletedDevice, compressorInsertDto.getUnitId());
         seletedDevice.setTags(new HashSet<>(tags));
         List<TagDto> tagsDto = tags.stream()
                 .map(TagDto::new)
                 .collect(toList());
-        List<TagDto> minMaxTag = tagsDto.stream()
-                .filter(t -> {
-                    boolean isMax = t.getType().equals("COMP_StopPre");
-                    boolean isMin = t.getType().equals("COMP_StartPre");
-                    if (isMax) {
-                        t.setValue(scheduleDto.getMax());
-                    }
-                    if (isMin) {
-                        t.setValue(scheduleDto.getMin());
-                    }
-                    return isMax || isMin;
-                })
-                .collect(toList());
+        List<TagDto> minMaxTag = null;
+        if (!isNull(scheduleDto)) {
+            tagsDto.stream()
+                    .filter(t -> {
+                        boolean isMax = t.getType().equals("COMP_StopPre");
+                        boolean isMin = t.getType().equals("COMP_StartPre");
+                        if (isMax) {
+                            t.setValue(scheduleDto.getMax());
+                        }
+                        if (isMin) {
+                            t.setValue(scheduleDto.getMin());
+                        }
+                        return isMax || isMin;
+                    })
+                    .collect(toList());
+
+            webaccessApiService.setTagValues(minMaxTag);
+        }
         webaccessApiService.setTagValues(minMaxTag);
         deviceDataRepository.save(seletedDevice);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceId(compressorInsertDto.getId());

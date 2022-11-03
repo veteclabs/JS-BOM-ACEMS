@@ -12,7 +12,8 @@ public enum EquipmentType {
     FLOW_METER("유량계", "flow"),
     THERMO_METER("온도계", "temperature"),
     HYGRO_METER("습도계", "humidity"),
-    THERMO_HYGROMETER("온습도계", "humtemperature");
+    THERMO_HYGROMETER("온습도계", "humtemperature"),
+    AIR_DRYER("에어 드라이어", "dirDryer");
     private String description;
     private String nickname;
 }

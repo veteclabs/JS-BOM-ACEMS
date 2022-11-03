@@ -54,7 +54,8 @@ public class DeviceServiceImpl implements DeviceService {
         newDevice.setPt(deviceInsert.getPt());
         newDevice.setVoltage(deviceInsert.getVoltage());
         Device save = deviceDataRepository.save(newDevice);
-        List<Tag> tags = insertSampleData.createTags(selectedEquipoment.getId(), save);
+        Long unitId = deviceInsert.getUnitId();
+        List<Tag> tags = insertSampleData.createTags(selectedEquipoment.getId(), save, unitId);
         newDevice.setTags(new HashSet<>(tags));
         deviceDataRepository.save(save);
         return true;

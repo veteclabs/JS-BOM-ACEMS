@@ -1,6 +1,7 @@
 package com.markcha.ems.controller.analysis;
 
 import com.markcha.ems.controller.GroupController.GroupSearchDto;
+import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.GroupType;
 import com.markcha.ems.dto.device.DeviceDto;
 import com.markcha.ems.mapper.alarm.AlarmMapDto;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+import static com.markcha.ems.domain.QDevice.device;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -85,7 +87,12 @@ public class DataAnalysisController {
         if(isDuo) {
             groupInsertDto.setTagType("PWR_KWh");
             groupInsertDto.setDeviceEqId(null);
-            historySearchDto.setSecondTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(groupInsertDto.getDeviceEqId(), groupInsertDto.getTagEqType()).stream()
+            List<Device> pawerDeviceById = deviceDslRepository.getPawerDeviceById(groupInsertDto.getDeviceIdT());
+            List<Long> ids = pawerDeviceById.stream()
+                    .map(t->t.getId())
+                    .collect(toList());
+            historySearchDto.setSecondTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(!isNull(ids)? device.id.in(ids): device.id.eq(-1L),
+                            groupInsertDto.getTagEqType()).stream()
                     .map(t->t.getTagName())
                     .collect(toList()));
         }
@@ -166,3 +173,5 @@ public class DataAnalysisController {
                 .collect(toList());
     }
 }
+
+

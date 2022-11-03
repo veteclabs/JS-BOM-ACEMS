@@ -51,7 +51,7 @@ public class CompressorDto {
         if (!isNull(device.getTags())) {
             this.tags = device.getTags().stream()
                     .map(t->new TagDto(t, true))
-                    .collect(Collectors.toMap(TagDto::getType, tagDto->tagDto));
+                    .collect(Collectors.toMap(TagDto::getType, tagDto->tagDto, (p1, p2)->p1));
         }
     }
 }

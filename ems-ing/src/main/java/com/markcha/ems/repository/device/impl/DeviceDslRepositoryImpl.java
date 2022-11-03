@@ -298,6 +298,22 @@ public class DeviceDslRepositoryImpl {
                         device.id.eq(id)
                 ).fetchOne();
     }
+    public List<Device> getPawerDeviceById(Long deviceId) {
+        QGroup childGroup = new QGroup("cg");
+        QDevice groupDevice = new QDevice("gd");
+        return query.select(device).distinct()
+                .from(device)
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.children, childGroup).fetchJoin()
+                .leftJoin(childGroup.deviceSet, groupDevice).fetchJoin()
+                .leftJoin(groupDevice.equipment, equipment).fetchJoin()
+                .leftJoin(groupDevice.tags, tag).fetchJoin()
+                .where(
+                        groupDevice.equipment.type.eq(POWER_METER)
+                        ,!isNull(deviceId)? device.id.eq(deviceId): null
+                ).fetch();
+
+    }
     public List<Device> getDeviceByGroupIds(List<Long> groupIds, List<String> tagSetName) {
         entityManager.clear();
         return query.selectFrom(device).distinct()

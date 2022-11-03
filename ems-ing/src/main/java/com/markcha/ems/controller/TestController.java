@@ -48,7 +48,7 @@ public class TestController {
         Map<String, Double> resultMap = new HashMap<>();
         culcTotalRealTimeValue(result, "PWR_KW");
         culcTotalRealTimeValue(result, "AIR_Flow");
-        culcTotalRealTimeValue(result, "AIR_PRE");
+        culcTotalRealTimeValue(result, "AIR_Pre");
 
         result.getTypes().forEach((key,value) -> {
             resultMap.put(key, value.getValue());
@@ -78,7 +78,7 @@ public class TestController {
             case "PWR_KW":
                 result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).sum());
                 break;
-            case "AIR_PRE":
+            case "AIR_Pre":
                 result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
                 break;
             case "AIR_Flow":

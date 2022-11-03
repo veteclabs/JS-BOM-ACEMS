@@ -4,6 +4,7 @@ package com.markcha.ems.config;
 import com.markcha.ems.config.dto.SchedulerDto;
 import com.markcha.ems.controller.GroupController;
 import com.markcha.ems.domain.Alarm;
+import com.markcha.ems.domain.Group;
 import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.dto.order.OrderDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 
@@ -66,12 +68,11 @@ public class ScheduleTask extends TimerTask {
         if (queue.size() > 10) {
             queue.remove(0);
         }
-        List<SchedulerDto> schedules = groupDslRepository.findAllJoinScheduleByScheduleId(this.id).stream()
-                .map(SchedulerDto::new)
-                .collect(toList());
+        List<Group> schedules = groupDslRepository.findAllJoinScheduleByScheduleId(this.id);
         LocalDate nowDate = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
-        schedules.forEach(schedule-> {
+        for (Group schedule2 : schedules) {
+            SchedulerDto schedule = new SchedulerDto(schedule2);
             int powerState = 0;
             Integer weekNumber = getWeekNumber(nowDate);
             schedule.getStartTime().plusMinutes(-1);
@@ -100,9 +101,12 @@ public class ScheduleTask extends TimerTask {
             if (powerState != 2) {
                 try {
                     if (schedule.getIsGroup()) {
+                        targetControl(null, powerState, schedule.getInterval(), false, schedule2.getDeviceSet().stream()
+                                .map(t->new DeviceConDto(t))
+                                .collect(toList()));
                         groupControl(schedule.getScheduleId(), weekNumber, powerState, schedule.getInterval());
                     } else {
-                        targetControl(schedule.getGroupId(), powerState, schedule.getInterval(), false);
+                        targetControl(schedule.getGroupId(), powerState, schedule.getInterval(), false, null);
                     }
                 }catch (InterruptedException e) {
                     e.printStackTrace();
@@ -110,7 +114,7 @@ public class ScheduleTask extends TimerTask {
             }
 
 
-        });
+        };
     }
     private boolean groupControl(Long scheduleId, Integer week, int powerState, Integer intever) throws InterruptedException {
         Long rootGroupId = scheduleDslRepository.findRootGroupId(scheduleId).getId();
@@ -129,14 +133,14 @@ public class ScheduleTask extends TimerTask {
                 .collect(toList());
 
         for (OrderDto order : orders) {
-            boolean controlResult = targetControl(order.getGroupId(), powerState, intever, true);
+            boolean controlResult = targetControl(order.getGroupId(), powerState, intever, true, null);
             if (controlResult) {
                 return true;
             }
         }
         return false;
     }
-    private boolean targetControl(Long groupId, int powerState, Integer intever, Boolean isGroup) throws InterruptedException {
+    private boolean targetControl(Long groupId, int powerState, Integer intever, Boolean isGroup, List<DeviceConDto> devices2) throws InterruptedException {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
         String powerType = "COMP_Power";
         String localType = "COMP_Local";
@@ -144,10 +148,16 @@ public class ScheduleTask extends TimerTask {
         groupSearchDto.setEquipmentType(AIR_COMPRESSOR);
         groupSearchDto.setDetail(false);
         List<DeviceConDto> devices = new ArrayList<>();
-        groupDynamicRepository.getAnalysisLocations(Arrays.asList(groupId), groupSearchDto, true).stream()
-                .map(t -> new GroupQueryDto(t, false))
-                .forEach(k->devices.addAll(k.getAllDevices().stream()
-                        .map(DeviceConDto::new).collect(toList())));
+        if (isNull(devices2)) {
+            List<DeviceConDto> finalDevices = new ArrayList<>();
+            groupDynamicRepository.getAnalysisLocations(Arrays.asList(groupId), groupSearchDto, true).stream()
+                    .map(t -> new GroupQueryDto(t, false))
+                    .forEach(k -> finalDevices.addAll(k.getAllDevices().stream()
+                            .map(DeviceConDto::new).collect(toList())));
+            devices.addAll(finalDevices);
+        } else {
+            devices.addAll(devices2);
+        }
         List<String> tagNames = new ArrayList<>();
 
         for (DeviceConDto device : devices) {
@@ -155,17 +165,18 @@ public class ScheduleTask extends TimerTask {
             TagDto powerTag = device.getTags().get(powerType);
             Integer objectState = webaccessApiService.getTagValuesV2Int(powerTag.getTagName());
             for (int i = 0; i < 3; i++) {
-                if (powerState == 1) {
+                if (powerState == 1 && objectState == 0) {
                     powerTag.setValue(powerState);
                     webaccessApiService.setTagValueV2(powerTag);
                     if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName()) == powerState) {
                         return true;
                     }
-                } else if (powerState == 0) {
+                } else if (powerState == 0 && objectState == 1) {
                     powerTag.setValue(powerState);
                     webaccessApiService.setTagValueV2(powerTag);
                     if(webaccessApiService.getTagValuesV2Int(powerTag.getTagName())  == powerState) {
-                        return isGroup? false: true;
+//                        return isGroup? false: true;      특정 압력에 도달하면 모든 컴프레셔 off 처리
+                        return true;  // 특정 압력에 도달하면 컴프레셔 하나씩 off
                     }
                 } else if (objectState == 0 && powerState == 0) {
                     return false;
@@ -213,3 +224,4 @@ public class ScheduleTask extends TimerTask {
         return weekNum;
     }
 }
+

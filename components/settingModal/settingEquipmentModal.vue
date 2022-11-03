@@ -65,7 +65,7 @@
                         </td>
                     </tr>
                 </table>
-                <h4 class="modal-h4-title">공기압축기 압력 제어 범위</h4>
+                <h4 class="modal-h4-title" v-if="params.state.COMP_StartPre">공기압축기 압력 제어 범위</h4>
                 <table class="bom-table">
                     <tr v-if="params.state.COMP_StartPre">
                         <td>
@@ -82,16 +82,6 @@
                                 <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"
                                        @change="settingMin"/>
                             </label>
-                        </td>
-                    </tr>
-                    <tr v-else>
-                        <td colspan="4">
-                            <div class="td-label">기준압력</div>
-                            <label class="input-100">
-                                <input type="number" v-model="params.schedule.max" class="input-100" placeholder="최대압력"
-                                       @change="settingMin"/>
-                            </label>
-                            <p class="td-label red">해당 장비는 최소, 최대 압력 설정이 불가능한 장비입니다.</p>
                         </td>
                     </tr>
                 </table>

@@ -114,6 +114,15 @@ public class CompressorController {
         compressorService.createCompressor(compressorInsertDto);
         return new ApiResponseDto(dbInsertMsg);
     }
+    @PostMapping(value="/compressors")
+    public ApiResponseDto creates(
+            @RequestBody List<CompressorInsertDto> compressorInsertDto
+    ) {
+        for (CompressorInsertDto insertDto : compressorInsertDto) {
+            compressorService.createCompressor(insertDto);
+        }
+        return new ApiResponseDto(dbInsertMsg);
+    }
 
     @PutMapping(value="/compressor/{compressorId}")
     public ApiResponseDto create(
@@ -153,10 +162,12 @@ public class CompressorController {
     public static class CompressorInsertDto {
         private Long id;
         private String name;
+        private Long unitId;
         private Long groupId;
         private ScheduleDto schedule;
         private List<String> dayOfWeeks;
         private List<String> weeks;
+        private Long equipmentId;
         private Equipment equipment;
     }
 

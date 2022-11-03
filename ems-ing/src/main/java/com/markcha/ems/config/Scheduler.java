@@ -118,7 +118,7 @@ public class Scheduler {
                     .filter(t -> new ArrayList<>(List.of(
                             "COMP_ActTripCode"
                             ,"COMP_ActWarCode"
-                            ,"COMP_SumpPre"
+                            ,"COMP_SystemPre"
                             ,"COMP_AirDisTemp"
                     )).contains(t.getType()))
                     .collect(toMap(Tag::getType, tag->tag));

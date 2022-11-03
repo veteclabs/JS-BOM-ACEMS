@@ -211,6 +211,7 @@ public class GroupController {
         private BooleanExpression tagEqIsUsage;
         @JsonIgnore
         private BooleanExpression deviceEqId;
+
         @JsonIgnore
         private BooleanExpression tagInTypes;
         public GroupSearchDto() {
