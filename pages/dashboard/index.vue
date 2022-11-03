@@ -123,6 +123,7 @@
         <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
                            v-if="equipmentList.temperature"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if=" equipmentList.flow"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.dirDryer" :title="'에어 드라이어'" v-if=" equipmentList.dirDryer"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
                                v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>

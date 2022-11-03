@@ -96,6 +96,16 @@ public class DeviceController {
         deviceService.createDevice(deviceInsert);
         return new ApiResponseDto(dbInsertMsg);
     }
+    @PostMapping(value="/etcss")
+    public ApiResponseDto etcCreate2(
+            @RequestBody List<DeviceInsertDto> deviceInsert
+    ) {
+        for (DeviceInsertDto deviceInsertDto : deviceInsert) {
+            deviceService.createDevice(deviceInsertDto);
+        }
+
+        return new ApiResponseDto(dbInsertMsg);
+    }
     @DeleteMapping(value="/etcs")
     public ApiResponseDto etcDeletes(
             @RequestBody List<Long> ids
@@ -148,6 +158,7 @@ public class DeviceController {
         private Long id;
         private String name;
         private Long groupId;
+        private Long unitId;
         private String type;
         private String model;
         private Double ct;

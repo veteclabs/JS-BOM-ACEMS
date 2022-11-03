@@ -15,8 +15,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.*;
 
-import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
-import static com.markcha.ems.domain.EquipmentType.PRESSURE_GAUGE;
+import static com.markcha.ems.domain.EquipmentType.*;
 import static com.markcha.ems.domain.GroupType.OBJECT;
 import static com.markcha.ems.domain.QDayOfWeek.dayOfWeek;
 import static com.markcha.ems.domain.QDayOfWeekMapper.dayOfWeekMapper;
@@ -195,7 +194,7 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .where(
                         device.group.id.in(groupIds)
-                        , tag.type.eq("AIR_PRE")
+                        , tag.type.eq("AIR_Pre")
                         ,equipment.type.eq(PRESSURE_GAUGE)
                 ).fetch();
         Device devices = null;
@@ -217,8 +216,15 @@ public class GroupDslRepositoryImpl{
             }
 
         }
-
-
+        List<Device> devices2 = query.selectFrom(device)
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .where(
+                        device.group.id.in(groupIds)
+                        , tag.type.like("%Power")
+                ).fetch();
+        groups.stream().forEach(t-> t.getDevices().addAll(devices2));
         return groups;
     }
     private Group getRootGroup(BooleanExpression findById) {
@@ -271,7 +277,7 @@ public class GroupDslRepositoryImpl{
                 .join(tag.device, device).fetchJoin()
                 .where(
                          tag.showAble.eq(true)
-                        ,tag.type.eq("AIR_PRE")
+                        ,tag.type.eq("AIR_Pre")
                         ,device.id.in(deviceIds))
                 .fetch();
     }

@@ -3,7 +3,7 @@ server:
 spring:
   webaccess:
     #    host: http://112.216.32.4/WaWebService/Json/
-    host: http://localhost:8031/WaWebService/Json/
+    host: http://7.136.233.205/WaWebService/Json/
     project: BOM
     node: BOM
   batch:
@@ -12,8 +12,8 @@ spring:
     name: scheduler
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
-    jdbc-url: jdbc:mariadb://ACEMS:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://7.136.233.205:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+#    jdbc-url: jdbc:mariadb://ACEMS:3721/tagdata?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:
@@ -22,13 +22,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # none, create, create-drop
+      ddl-auto: none # none, create, create-drop
       use_aql_comments: true
     properties:
       hibernate:
         default_batch_fetch_size: 1000
-        show_sql: true
-        format_sql: true
+        show_sql: false
+        format_sql: false
     defer-datasource-initialization: true
     generate-ddl: false
 

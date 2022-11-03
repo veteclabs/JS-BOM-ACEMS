@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -19,10 +20,10 @@ import static java.util.stream.Collectors.toList;
 public class InsertSampleData {
     private final TagValueDataRepository tagValueDataRepository;
     private final TagListDataRepository tagListDataRepository;
-    public List<Tag> createTags(Long equipmentId, Device device) {
+    public List<Tag> createTags(Long equipmentId, Device device, Long unitId) {
 
         List<Tag> tags = new ArrayList<>();
-        String deviceUnit = new String(String.format("U%03d", device.getId().intValue()) + "_");
+        String deviceUnit = new String(String.format("U%03d", isNull(unitId) ?device.getId().intValue(): unitId) + "_");
         List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipmentId(equipmentId);
 
 
@@ -71,3 +72,5 @@ public class InsertSampleData {
         return value;
     }
 }
+
+

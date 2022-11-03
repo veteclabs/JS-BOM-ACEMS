@@ -84,13 +84,13 @@
                     <div class="ibox" v-if="airCompressor.state['COMP_Trip'].value === 1">
                         <div class="ibox-content flex-box">
                             <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                            <div>{{TPCode[airCompressor.state['COMP_ActTripCode'].value.toString()]}}</div>
+                            <div>{{TPCode[device.state['COMP_ActTripCode'] === undefined? device.state['COMP_TripCode'].value.toString() : device.state['COMP_ActTripCode'].value.toString()]}}</div>
                         </div>
                     </div>
                     <div class="ibox" v-if="airCompressor.state['COMP_Warning'].value === 1">
                         <div class="ibox-content flex-box">
                             <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
-                            <div>{{TPCode[airCompressor.state['COMP_ActWarCode'].value.toString()]}}</div>
+                            <div>{{TPCode[device.state['COMP_ActWarCode'] === undefined? device.state['COMP_WarningCode'].value.toString() : device.state['COMP_ActWarCode'].value.toString()]}}</div>
                         </div>
                     </div>
                 </div>
