@@ -125,7 +125,7 @@ public class Crawler extends TimerTask {
 
             }
         } catch (Exception e) {
-            sysOut("로딩 에러 없음");
+            sysOut("로딩 에러 없음 -> 크롤링 시작");
         }
 
         // 로딩 페이지가 20초 이상 지속되면 페이지를 새로고침하고 로딩 시작 시간을 초기화한다.
