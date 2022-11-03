@@ -58,9 +58,8 @@ public class Scheduler {
 
         List<Device> devices = deviceDslRepository.findAllDevices();
 
-            Timer timer = new Timer();
-
         for (Device device : devices) {
+            Timer timer = new Timer();
             Crawler crawler = new Crawler();
             crawler.setDevice(device);
             timer.schedule(crawler, 100, 100);
