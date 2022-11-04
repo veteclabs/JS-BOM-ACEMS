@@ -383,6 +383,7 @@ public class DeviceDslRepositoryImpl {
         return query.selectFrom(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(equipment.tagLists, tagList).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(
                         device.SerialNumber.isNotNull()
                 )

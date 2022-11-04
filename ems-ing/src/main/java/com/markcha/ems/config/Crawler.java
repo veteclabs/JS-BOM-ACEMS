@@ -1,6 +1,7 @@
 package com.markcha.ems.config;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.dto.tag.TagDto;
+import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.openqa.selenium.By;
@@ -18,18 +19,9 @@ import static java.util.stream.Collectors.toList;
 @Getter
 public class Crawler extends TimerTask {
     private Device device;
-
     private long startTime;
-
-    private HashMap<String, Object> result;
-
-    public void setResult(String k, Object v) {
-        this.result.put(k, v);
-    }
-
-    public void initResult() {
-        this.result = new HashMap<String, Object>();
-    }
+    private List<TagDto> tagDtoList;
+    private WebaccessApiServiceImpl apiService;
 
     @Override
     public void run() {
@@ -50,10 +42,11 @@ public class Crawler extends TimerTask {
                     List<String> tagList = device.getEquipment().getTagLists().stream()
                             .map(t -> t.getNickname())
                             .collect(toList());
-                    getInfo_v2(driver, tagList);
 
-                    // sout -> 크롤링 정상 작동 테스트용 메서드
-                    System.out.println(getResult());
+                    tagDtoList = new ArrayList<>();
+                    getInfo_v2(driver, tagList);
+                    System.out.println(tagDtoList);
+                    apiService.setTagValues(tagDtoList);
 
                     sleep(5000);
                 }
@@ -84,7 +77,6 @@ public class Crawler extends TimerTask {
     }
 
     private void getInfo_v2(WebDriver driver, List<String> tagLists) {
-        initResult();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         List<WebElement> trList = driver.findElements(By.xpath("//tr"));
 
@@ -98,12 +90,12 @@ public class Crawler extends TimerTask {
                     if (val.equals("Load")) { val = 1; }
                     else if (val.equals("Unload")) { val = 0; }
                 }
-                // setResult -> 크롤링 정상 작동 여부 테스트용 메서드
-                this.setResult(target, val);
-                TagDto.builder()
+
+                TagDto tag = TagDto.builder()
                         .tagName(target)
                         .value(val)
                         .build();
+                tagDtoList.add(tag);
             }
         }
     }
