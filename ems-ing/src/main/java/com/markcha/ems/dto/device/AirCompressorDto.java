@@ -46,7 +46,7 @@ public class AirCompressorDto {
                     if (t.getEquipment().getType().equals(EquipmentType.AIR_COMPRESSOR)) {
                         this.equipment = new EquipmentDto(t.getEquipment());
                         Map<String, List<TagDto>> groupingTags = new HashMap<>();
-
+                        Set<Tag> tags1 = t.getTags();
                         for (Tag tag : t.getTags().stream()
                                     .sorted(Comparator.comparing(q->q.getTagList().getId()))
                                     .collect(Collectors.toList())) {

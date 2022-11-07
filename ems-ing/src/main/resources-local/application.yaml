@@ -3,9 +3,9 @@ server:
 spring:
   webaccess:
 #    host: http://7.136.233.205/WaWebService/Json/
-    host: http://localhost:90/WaWebService/Json/
-    project: BOM
-    node: BOM
+    host: http://127.0.0.1:90/WaWebService/Json/
+    project: ACEMS
+    node: ACEMS
   batch:
     initialize-schema=always:
   application:
@@ -56,3 +56,5 @@ response:
 #    audit: off
 #    resultset: off
 #    connection: off
+
+

@@ -382,8 +382,8 @@ public class DeviceDslRepositoryImpl {
     public List<Device> findAllDevices() {
         return query.selectFrom(device).distinct()
                 .leftJoin(device.equipment, equipment).fetchJoin()
-                .leftJoin(equipment.tagLists, tagList).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(tag.tagList, tagList).fetchJoin()
                 .where(
                         device.SerialNumber.isNotNull()
                 )

@@ -155,7 +155,7 @@ public class CompressorServiceImpl {
                     })
                     .collect(toList());
 
-            webaccessApiService.setTagValues(minMaxTag);
+            if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
         }
 
 

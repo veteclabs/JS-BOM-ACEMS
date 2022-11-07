@@ -4,6 +4,7 @@ package com.markcha.ems.config;
 
 import com.markcha.ems.controller.ScheduleController;
 import com.markcha.ems.domain.Alarm;
+import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Tag;
 import com.markcha.ems.domain.Trip;
 import com.markcha.ems.repository.AlarmDataRepository;
@@ -17,6 +18,9 @@ import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,6 +38,7 @@ import static java.util.stream.Collectors.*;
 @EnableAsync
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class Scheduler {
     private final ScheduleDslRepositoryImpl scheduleDslRepository;
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
@@ -51,20 +56,7 @@ public class Scheduler {
     private static Boolean alarmInsert = false;
 
     private static Map<Long, Timer> tasks = new HashMap<>();
-    @Async
-    @Transactional
-    @Scheduled(fixedDelay = 1000000000)
-    public void crawl2() {
 
-        List<Device> devices = deviceDslRepository.findAllDevices();
-
-        for (Device device : devices) {
-            Timer timer = new Timer();
-            Crawler crawler = new Crawler();
-            crawler.setDevice(device);
-            timer.schedule(crawler, 100, 100);
-        }
-    }
 
     @Scheduled(fixedDelay = 5000)
     public void scheduleFixedRateTask() {
