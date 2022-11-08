@@ -27,7 +27,7 @@ public class CrawlerRunner implements CommandLineRunner, ApplicationListener {
 
         for (Device device : devices) {
             Timer timer = new Timer();
-            Crawler crawler = new Crawler(webaccessApiService, logger);
+            Crawler crawler = new Crawler(webaccessApiService,logger);
             crawler.setDevice(device);
             timer.schedule(crawler, 100, 100);
             tasks.add(timer);
