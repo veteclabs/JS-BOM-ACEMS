@@ -5,20 +5,16 @@ import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Setter
@@ -36,8 +32,11 @@ public class Crawler extends TimerTask {
 
     @Override
     public void run() {
+
         WebDriver driver = createDriver();
+
         startTime =  System.currentTimeMillis();
+
         while (true) {
             String loading = driver.findElement(By.xpath("//td")).getText();
 
@@ -49,7 +48,6 @@ public class Crawler extends TimerTask {
 
             if (!loading.contains("INITIALISATION")) {
                 while (true) {
-
                     tagDtoList = new ArrayList<>();
                     List<TagDto> info_v2 = getInfo_v2(driver);
                     apiService.setTagValues(info_v2);
@@ -60,84 +58,31 @@ public class Crawler extends TimerTask {
         }
     }
 
+    private WebDriver createDriver() {
+        ChromeOptions options = new ChromeOptions();
+//        options.addArguments("headless");
+        String WEB_DRIVER_ID = "webdriver.chrome.driver";
+
+        String WEB_DRIVER_PATH = System.getProperty("user.dir") + "/ChromeDriverInstaller/chromedriver.exe";
+
+        System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+        WebDriver driver = new ChromeDriver(options);
+
+        String url = device.getSerialNumber();
+        driver.get(url);
+
+        return driver;
+    }
+
     private void chkStartStatus(String loading) {
         if(loading.contains("INITIALISATION")) sysOut("실행 중");
     }
 
     private void sysOut(String s) {
         String model = device.getEquipment().getModel();
-        logger.info(String.format("[Crawlering %13s]: %s", model, s));
+        logger.info(String.format("[Crawler%13s]: %s", model, s));
     }
 
-    private WebDriver createDriver() {
-        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("headless");
-        String WEB_DRIVER_ID = "webdriver.chrome.driver";
-        String WEB_DRIVER_PATH = System.getProperty("user.dir") + "\\chromedriver.exe";
-
-        System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
-        WebDriver driver = new ChromeDriver(options);
-
-
-
-
-        String url = device.getSerialNumber();
-        driver.get(url);
-        return driver;
-    }
-
-    private List<TagDto> getInfo_v2(WebDriver driver) {
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        List<WebElement> trList = driver.findElements(By.xpath("//tr"));
-        List<TagDto> tagDtos = new ArrayList<>();
-        for (WebElement tr : trList) {
-            String target = tr.findElement(By.xpath("./td[1]")).getText();
-            Map<String, Tag> nicknameSet = device.getTags().stream()
-                    .collect(toMap(t -> t.getTagList().getNickname(), k -> k, (p1, p2) -> p1));
-            if (nicknameSet.keySet().contains(target)) {
-                Tag tag = nicknameSet.get(target);
-                Object val = tr.findElement(By.xpath("./td[2]")).getText();
-                if (target.equals("Machine Status")) {
-                    if (val.equals("Load") || val.equals("Stopped")) { val = new Integer(1); }
-                    else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
-                }
-                try {
-                    if (val.toString().trim().contains(" ")) {
-                        if (val.toString().contains(".")) {
-                            val = new Double(val.toString().split(" ")[0]);
-                        } else {
-                            val = Integer.parseInt(val.toString().split(" ")[0]);
-                        }
-
-                    } else {
-                        if (val.toString().contains(".")) {
-                            val = new Double(val.toString().split(" ")[0]);
-                        } else if (isNumeric(val.toString())) {
-                            val = Integer.parseInt(val.toString().split(" ")[0]);
-                        }
-                    }
-                } catch  (NumberFormatException n) {
-                    driver.quit();
-                    driver.close();
-                }
-                TagDto tagDto = TagDto.builder()
-                        .tagName(tag.getTagName())
-                        .value(val)
-                        .build();
-                if(isNumeric(val.toString())) tagDtos.add(tagDto);
-            }
-        }
-        return tagDtos;
-    }
-
-    public static boolean isNumeric(String s) {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
     // 공압기 정보 페이지 로딩 과정에서 발생하는 문제를 처리하는 메서드
     private void chkAndRefresh(WebDriver driver, long start) {
         long endTime = System.currentTimeMillis();
@@ -171,6 +116,56 @@ public class Crawler extends TimerTask {
             Thread.sleep(millisec);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private List<TagDto> getInfo_v2(WebDriver driver) {
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        List<WebElement> trList = driver.findElements(By.xpath("//tr"));
+        List<TagDto> tagDtos = new ArrayList<>();
+
+        for (WebElement tr : trList) {
+            String target = tr.findElement(By.xpath("./td[1]")).getText();
+            Map<String, Tag> nicknameSet = device.getTags().stream()
+                    .collect(toMap(t -> t.getTagList().getNickname(), k -> k, (p1, p2) -> p1));
+
+            if (nicknameSet.keySet().contains(target)) {
+
+                Tag tag = nicknameSet.get(target);
+                Object val = tr.findElement(By.xpath("./td[2]")).getText();
+
+                if (target.equals("Machine Status")) {
+                    if (val.equals("Load") || val.equals("Stopped")) { val = new Integer(1); }
+                    else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
+                }
+                try {
+                    if (val.toString().trim().contains(" ")) {
+                        if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
+                        else { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                    } else {
+                        if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
+                        else if (isNumeric(val.toString())) { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                    }
+                } catch  (NumberFormatException n) {
+                    driver.quit();
+                    driver.close();
+                }
+                TagDto tagDto = TagDto.builder()
+                        .tagName(tag.getTagName())
+                        .value(val)
+                        .build();
+                if(isNumeric(val.toString())) tagDtos.add(tagDto);
+            }
+        }
+        return tagDtos;
+    }
+
+    public static boolean isNumeric(String s) {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 

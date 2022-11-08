@@ -14,30 +14,40 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class CrawlerRunner implements CommandLineRunner, ApplicationListener {
+public class CrawlerRunner implements CommandLineRunner {
     private static List<Timer> tasks = new ArrayList<>();
     @Autowired
     private DeviceDslRepositoryImpl deviceDslRepository;
     @Autowired
     private WebaccessApiServiceImpl webaccessApiService;
+
     @Override
     public void run(String... args) throws Exception {
         Logger logger = LoggerFactory.getLogger(Crawler.class);
         List<Device> devices = deviceDslRepository.findAllDevices();
 
+        downloadDriver();
+
         for (Device device : devices) {
             Timer timer = new Timer();
-            Crawler crawler = new Crawler(webaccessApiService,logger);
+            Crawler crawler = new Crawler(webaccessApiService, logger);
             crawler.setDevice(device);
             timer.schedule(crawler, 100, 100);
             tasks.add(timer);
         }
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        for (Timer task : tasks) {
-            task.cancel();
+    private void downloadDriver() {
+        Runtime rt = Runtime.getRuntime();
+        Process pr;
+        String chromeDriver = System.getProperty("user.dir") + "/ChromeDriverInstaller/ChromeDriverInstaller.exe";
+
+        try {
+            pr = rt.exec(chromeDriver);
+            pr.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 }
