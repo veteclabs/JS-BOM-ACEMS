@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -126,36 +127,49 @@ public class Crawler extends TimerTask {
 
         for (WebElement tr : trList) {
             String target = tr.findElement(By.xpath("./td[1]")).getText();
-            Map<String, Tag> nicknameSet = device.getTags().stream()
-                    .collect(toMap(t -> t.getTagList().getNickname(), k -> k, (p1, p2) -> p1));
+            Map<String, Tag> nickUnitSet = device.getTags().stream()
+                    .collect(toMap(t -> t.getTagList().getNickname()+t.getTagList().getUnit(), v -> v, (p1, p2) -> p1));
 
-            if (nicknameSet.keySet().contains(target)) {
+            Map<String, Tag> nickSet = device.getTags().stream()
+                    .collect(toMap(t -> t.getTagList().getNickname(), v -> v, (p1, p2) -> p1));
 
-                Tag tag = nicknameSet.get(target);
+            if (nickSet.keySet().contains(target)) {
                 Object val = tr.findElement(By.xpath("./td[2]")).getText();
 
-                if (target.equals("Machine Status")) {
-                    if (val.equals("Load") || val.equals("Stopped")) { val = new Integer(1); }
-                    else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
-                }
-                try {
-                    if (val.toString().trim().contains(" ")) {
-                        if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
-                        else { val = Integer.parseInt(val.toString().split(" ")[0]); }
-                    } else {
-                        if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
-                        else if (isNumeric(val.toString())) { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                String unit;
+                if (val.toString().split(" ").length >= 2) { unit = val.toString().split(" ")[1]; }
+                else { unit = null; }
+
+                if (nickUnitSet.keySet().contains(target+unit)) {
+                    Tag tag = nickUnitSet.get(target + unit);
+
+                    if (target.equals("Machine Status")) {
+                        if (val.equals("Load") || val.equals("Stopped")) { val = new Integer(1); }
+                        else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
                     }
-                } catch  (NumberFormatException n) {
-                    driver.quit();
-                    driver.close();
+
+                    try {
+                        if (val.toString().trim().contains(" ")) {
+                            if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
+                            else { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                        } else {
+                            if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
+                            else if (isNumeric(val.toString())) { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                        }
+                    } catch  (NumberFormatException n) {
+                        driver.quit();
+                        driver.close();
+                    }
+
+                    TagDto tagDto = TagDto.builder()
+                            .tagName(tag.getTagName())
+                            .value(val)
+                            .build();
+
+                    if(isNumeric(val.toString())) tagDtos.add(tagDto);
                 }
-                TagDto tagDto = TagDto.builder()
-                        .tagName(tag.getTagName())
-                        .value(val)
-                        .build();
-                if(isNumeric(val.toString())) tagDtos.add(tagDto);
             }
+
         }
         return tagDtos;
     }
