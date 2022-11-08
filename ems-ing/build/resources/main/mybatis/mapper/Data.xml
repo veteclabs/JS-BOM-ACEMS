@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.markcha.ems.mapper.analysis.DataMapper">
+    <select id="getHistoryHour" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
+        SELECT
+                if(s.h = 0, 24, s.h) AS #{timeType}
+            <if test="usageType.equals('Usage')">
+                ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+                <if test="isDuo.equals(true)">
+                    ,ifnull(`EY`.`USAGE`, 0)     AS     `kWh`
+                </if>
+                ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+                ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+            </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+        </if>
+
+            <if test="usageType.equals('TOE')">
+                , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
+                <if test="isDuo.equals(true)">
+                    ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
+                </if>
+                , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneDay}
+                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+
+            </if>
+
+            <if test="usageType.equals('tCo2')">
+                , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
+                <if test="isDuo.equals(true)">
+                    ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
+                </if>
+                , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneDay}
+                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+
+            </if>
+        FROM
+        <if test="isPF.equals(false)">
+(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+</if>
+        (SELECT logvalue AS h FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 0 AND logvalue <![CDATA[<=]]> 23) s
+        LEFT JOIN
+        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+        FROM `tagdata`.history_hour
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach> AND timestamp <![CDATA[>=]]> #{startDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endDate}
+        group by hour(`TIMESTAMP`)
+        ) shr ON shr.h = s.h
+        LEFT JOIN
+        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+        FROM `tagdata`.history_hour
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneDayBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneDayBeforeDate}
+        group by hour(`TIMESTAMP`)
+        ) `bf` ON `bf`.h = s.h
+        LEFT JOIN
+        (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+        FROM `tagdata`.history_hour
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneMomthBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneMomthBeforeDate}
+        group by hour(`TIMESTAMP`)
+        ) `LY` ON `LY`.h = s.h
+        <if test="isDuo.equals(true)">
+
+            LEFT JOIN
+            (SELECT HOUR(`TIMESTAMP` + INTERVAL 1 HOUR) h, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+            FROM `tagdata`.history_hour
+            WHERE tagname in
+            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                #{secondtagname}
+            </foreach>
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}
+            group by hour(`TIMESTAMP`)
+            ) `EY` ON `EY`.h = s.h
+        </if>
+        ORDER BY if(s.h = 0, 24, s.h)
+
+    </select>
+    <select id="getHistoryDay" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
+        SELECT
+        s.d AS #{timeType}
+        <if test="usageType.equals('Usage')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            <if test="isDuo.equals(true)">
+                ,ifnull(`EY`.`USAGE`, 0)     AS     `kWh`
+            </if>
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneMonth}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+
+        </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+        </if>
+        <if test="usageType.equals('TOE')">
+            , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
+            <if test="isDuo.equals(true)">
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
+            </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneMonth}
+            , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+
+        </if>
+
+        <if test="usageType.equals('tCo2')">
+            , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
+            <if test="isDuo.equals(true)">
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
+            </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneMonth}
+            , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+
+        </if>
+
+        FROM
+        <if test="isPF.equals(false)">
+(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+</if>
+
+        (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> day(last_day(#{startDate}))) s
+
+
+
+        LEFT JOIN
+        (SELECT day(`TIMESTAMP`) d, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+        FROM `tagdata`.history_day
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endDate}
+        group by day(`TIMESTAMP`)
+        ) shr ON shr.d = s.d
+
+
+
+
+        LEFT JOIN
+        (SELECT day(`TIMESTAMP`) d, <if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+        FROM `tagdata`.history_day
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneMomthBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneMomthBeforeDate}
+        group by day(`TIMESTAMP`)
+        ) `bf` ON `bf`.d = s.d
+
+
+
+
+        LEFT JOIN
+        (SELECT day(`TIMESTAMP`) d,<if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+        FROM `tagdata`.history_day
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneYearBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneYearBeforeDate}
+        group by day(`TIMESTAMP`)
+        ) `LY` ON `LY`.d = s.d
+
+
+
+
+        <if test="isDuo.equals(true)">
+            LEFT JOIN
+            (SELECT day(`TIMESTAMP`) d,<if test="isPF.equals(true)">
+avg(`USAGE`) `usage`,
+</if>
+<if test="isPF.equals(false)">
+sum(`USAGE`) `usage`,
+</if> TIMESTAMP, tagname
+            FROM `tagdata`.history_day
+            WHERE tagname in
+            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                #{secondtagname}
+            </foreach>
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}
+            group by hour(`TIMESTAMP`)
+            ) `EY` ON `EY`.d = s.d
+        </if>
+        ORDER BY if(s.d = 0, 24, s.d)
+
+    </select>
+    <select id="getHistoryMonth" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
+        SELECT
+        s.m AS #{timeType}
+        <if test="usageType.equals('Usage')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            <if test="isDuo.equals(true)">
+                ,ifnull(`EY`.`USAGE`, 0) AS         `kWh`
+            </if>
+            ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneYear}
+
+        </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
+            ,ifnull(`bf`.`USAGE`, 0)     AS     #{beforeOneYear}
+        </if>
+
+        <if test="usageType.equals('TOE')">
+            , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5) #{usageType}
+            <if test="isDuo.equals(true)">
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) kWh
+            </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+
+        </if>
+
+        <if test="usageType.equals('tCo2')">
+            , ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5) #{usageType}
+            <if test="isDuo.equals(true)">
+                ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) kWh
+            </if>
+            , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+
+        </if>
+
+        FROM
+        <if test="isPF.equals(false)">
+(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+</if>
+        (SELECT logvalue AS m FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> 12) s
+
+
+        LEFT JOIN
+        (SELECT
+        month(`TIMESTAMP`) m,
+        <if test="isPF.equals(true)">
+            avg(`USAGE`) `usage`
+        </if>
+        <if test="isPF.equals(false)">
+            sum(`USAGE`) `usage`
+        </if>
+        FROM `tagdata`.history_day
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endDate}
+        group by month(`TIMESTAMP`)
+        ) shr ON shr.m = s.m
+
+
+
+
+
+        LEFT JOIN
+        (SELECT
+        month(`TIMESTAMP`) m,
+        <if test="isPF.equals(true)">
+            avg(`USAGE`) `usage`
+        </if>
+        <if test="isPF.equals(false)">
+            sum(`USAGE`) `usage`
+        </if>
+        FROM `tagdata`.history_day
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startOneYearBeforeDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endOneYearBeforeDate}
+        group by month(`TIMESTAMP`)
+        ) `bf` ON `bf`.m = s.m
+
+
+
+
+        <if test="isDuo.equals(true)">
+            LEFT JOIN
+            (SELECT
+            month(`TIMESTAMP`) m,
+            <if test="isPF.equals(true)">
+                avg(`USAGE`) `usage`
+            </if>
+            <if test="isPF.equals(false)">
+                sum(`USAGE`) `usage`
+            </if>
+            FROM `tagdata`.history_day
+            WHERE tagname in
+            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                #{secondtagname}
+            </foreach>
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}
+            group by hour(`TIMESTAMP`)
+            ) `EY` ON `EY`.m = s.m
+        </if>
+        ORDER BY s.m ASC
+    </select>
+
+    <select id="getHistoryYear" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
+        SELECT year(shr.`timestamp`) y
+        <if test="usageType.equals('Usage')">
+            ,ifnull(sum(shr.`usage`), 0) #{usageType}
+
+            <if test="isDuo.equals(true)">
+                ,if(#{tagType} = 'PF', avg(`EY`.`usage`),sum(`EY`.`usage`)) kWh
+            </if>
+        </if>
+        <if test="usageType.equals('PF')">
+            ,ifnull(avg(shr.`usage`), 0) #{usageType}
+        </if>
+        <if test="usageType.equals('TOE')">
+            , ROUND(IFNULL((if(#{tagType} = "PF", avg(shr.`usage`),sum(shr.`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
+        </if>
+        <if test="usageType.equals('tCo2')">
+            , ROUND(IFNULL((if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
+        </if>
+        FROM
+        (SELECT `toe`,`tco2` FROM energy WHERE energy_id=#{energyId}) formula,
+        (select `usage`, `timestamp` from `tagdata`.history_day
+        where tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND `timestamp` <![CDATA[>]]> #{startDate}
+        AND `timestamp` <![CDATA[<=]]> #{endDate}) shr
+        <if test="isDuo.equals(true)">
+            LEFT JOIN
+            (SELECT `usage`, `timestamp` from `tagdata`.history_day
+            WHERE tagname in
+            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                #{secondtagname}
+            </foreach>
+            AND timestamp <![CDATA[>=]]> #{startDate}
+            AND TIMESTAMP <![CDATA[<]]> #{endDate}) `EY` ON year(`EY`.timestamp) = year(shr.timestamp)
+        </if>
+        group by year(shr.`timestamp`);
+    </select>
+
+    <select id="getHistoryMin" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
+
+        SELECT
+
+            if(s.f='00:00', '24:00:00',s.f) AS `H`
+            <if test="usageType.equals('Usage')">
+                , IFNULL(f.kWh,0) AS #{usageType}
+                , IFNULL(f.kW,0) AS `kW`
+                , IFNULL(b.kWh,0) AS #{beforeOneDay}
+                , IFNULL(b.kW,0) AS `beforekW`
+            </if>
+        <if test="usageType.equals('PF')">
+            , IFNULL(f.kWh,0) AS #{usageType}
+            , IFNULL(b.kWh,0) AS #{beforeOneDay}
+        </if>
+
+            <if test="usageType.equals('TOE')">
+                , ROUND(IFNULL(((`kWh` * 0.001) * (formula.TOE)), 0), 5) AS #{usageType}
+            </if>
+            <if test="usageType.equals('tCo2')">
+                , ROUND(IFNULL(((`kWh` * 0.001) * (formula.tCo2)), 0), 5) AS #{usageType}
+            </if>
+        FROM
+            (select logvalue as f from `tagdata`.sources_quarter_past) s
+        left join (SELECT time(from_unixtime(ceil(UNIX_TIMESTAMP(`timestamp`)/900)*900))t,tagname AS tagname,
+        <if test="usageType.equals('PF')">
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) AS kWh,
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)*4) AS kW
+        </if>
+        <if test="usageType.equals('Usage')">
+            SUM(`usage`) AS kWh, SUM(`usage`)*4 as kW
+        </if>
+        FROM `tagdata`.history
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+         AND
+        `timestamp` <![CDATA[>]]> #{startDate} AND
+        `timestamp` <![CDATA[<=]]> #{endDate}
+        group by t) f on s.f = f.t
+        left join (SELECT time(from_unixtime(ceil(UNIX_TIMESTAMP(`timestamp`)/900)*900))t,tagname AS tagname,
+        <if test="usageType.equals('PF')">
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) AS kWh,
+            if(#{tagType} = "PF", avg(`usage`),sum(`usage`)*4) AS kW
+        </if>
+        <if test="usageType.equals('Usage')">
+            SUM(`usage`) AS kWh, SUM(`usage`)*4 as kW
+        </if>
+        FROM `tagdata`.history
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+         AND
+        `timestamp` <![CDATA[>]]> #{startDate} AND
+        `timestamp` <![CDATA[<=]]> #{endDate}
+        group by t) b on s.f = b.t
+        ORDER BY `H`
+    </select>
+</mapper>

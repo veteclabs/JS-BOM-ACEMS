@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.markcha.ems.mapper.historyHour.HistoryHourMapper">
+    <select id="getHistoryHour" resultType="Double" parameterType="String">
+        SELECT hr.`USAGE` `usage`
+        FROM `tagdata`.history_hour hr
+        WHERE hr.tagname = #{tagType}
+            and hour(hr.timestamp) = hour(now())
+          and date(hr.timestamp) = date(now())
+        order by hr.timestamp desc
+            limit 1
+    </select>
+</mapper>
