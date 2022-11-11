@@ -316,17 +316,21 @@ public class DeviceDslRepositoryImpl {
                 ).fetch();
 
     }
-    public List<Device> getDeviceByGroupIds(List<Long> groupIds, List<String> tagSetName) {
+    public List<Device> getDeviceByGroupIds(List<Long> groupIds) {
         entityManager.clear();
         return query.selectFrom(device).distinct()
-//                .leftJoin(device.group, group).fetchJoin()
-                .leftJoin(device.tags, tag).fetchJoin()
+                .where(
+                        device.group.id.in(groupIds)
+                ).fetch();
+    }
+    public List<Tag> getDeviceByDeviceIds(List<Long> deviceId, List<String> tagSetName) {
+        return query.selectFrom(tag).distinct()
+                .leftJoin(tag.device, device).fetchJoin()
                 .leftJoin(tag.tagList, tagList).fetchJoin()
                 .leftJoin(tagList.tagSetMappers, tagSetMapper).fetchJoin()
                 .leftJoin(tagSetMapper.tagSet, tagSet).fetchJoin()
                 .where(
-//                        tag.showAble.eq(true)
-                        device.group.id.in(groupIds)
+                        tag.device.id.in(deviceId)
                         ,tagSet.nickname.in(tagSetName)
                 ).fetch();
     }

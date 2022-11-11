@@ -61,7 +61,7 @@ public class Crawler extends TimerTask {
 
     private WebDriver createDriver() {
         ChromeOptions options = new ChromeOptions();
-//        options.addArguments("headless");
+        options.addArguments("headless");
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
 
         String WEB_DRIVER_PATH = System.getProperty("user.dir") + "/ChromeDriverInstaller/chromedriver.exe";

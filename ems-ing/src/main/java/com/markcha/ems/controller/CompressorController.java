@@ -145,7 +145,7 @@ public class CompressorController {
         compressorService.controllPowerAsync(device.getGroup().getSchedule().getInterval(), tags, powerCode);
         Group group = groupDslRepository.findAllBroGroupByBroId(groupId);
         if(!isNull(group)) groupService.unActiveSchedule(group);
-        return new ApiResponseDto("제어명령이 성공적으로 실행되었습니다. 프로그램 통신 상 제어 명령 반응까지 몇 분이 소요될 수 도 있습니다.");
+        return new ApiResponseDto("제어명령이 성공적으로 실행되었습니다. 프로그램 통신 상 제어 명령 반응까지 몇 분이 소요될 수도 있습니다.");
     }
     @DeleteMapping(value="/compressors")
     public ApiResponseDto delete(

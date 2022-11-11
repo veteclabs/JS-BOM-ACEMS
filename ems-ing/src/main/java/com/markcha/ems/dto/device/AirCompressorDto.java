@@ -47,22 +47,24 @@ public class AirCompressorDto {
                         this.equipment = new EquipmentDto(t.getEquipment());
                         Map<String, List<TagDto>> groupingTags = new HashMap<>();
                         Set<Tag> tags1 = t.getTags();
-                        for (Tag tag : t.getTags().stream()
-                                    .sorted(Comparator.comparing(q->q.getTagList().getId()))
+                        if (!isNull(tags1) && !tags1.isEmpty()) {
+                            for (Tag tag : t.getTags().stream()
+                                    .sorted(Comparator.comparing(q -> q.getTagList().getId()))
                                     .collect(Collectors.toList())) {
-                            for (TagSetMapper tagSetMapper : tag.getTagList().getTagSetMappers()) {
-                                if(!groupingTags.containsKey(tagSetMapper.getTagSet().getNickname())) {
-                                    groupingTags.put(tagSetMapper.getTagSet().getNickname(), new ArrayList<>());
+                                for (TagSetMapper tagSetMapper : tag.getTagList().getTagSetMappers()) {
+                                    if (!groupingTags.containsKey(tagSetMapper.getTagSet().getNickname())) {
+                                        groupingTags.put(tagSetMapper.getTagSet().getNickname(), new ArrayList<>());
+                                    }
+                                    groupingTags.get(tagSetMapper.getTagSet().getNickname())
+                                            .add(TagDto.of(tag));
                                 }
-                                groupingTags.get(tagSetMapper.getTagSet().getNickname())
-                                        .add(TagDto.of(tag));
                             }
-                        }
 
-                        this.state = groupingTags.get("stateComponent").stream()
-                                .collect(Collectors.toMap(k -> k.getType(), k -> k, (val1, val2) -> val1));
-                        groupingTags.remove("stateComponent");
-                        this.tagByComponents = groupingTags;
+                            this.state = groupingTags.get("stateComponent").stream()
+                                    .collect(Collectors.toMap(k -> k.getType(), k -> k, (val1, val2) -> val1));
+                            groupingTags.remove("stateComponent");
+                            this.tagByComponents = groupingTags;
+                        }
 
                     }
                 }

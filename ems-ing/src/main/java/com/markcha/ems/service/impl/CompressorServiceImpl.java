@@ -32,8 +32,7 @@ import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -212,9 +211,9 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연동
-        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
+        Equipment selectedEquipment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
-        seletedDevice.setEquipment(selectedEquipoment);
+        seletedDevice.setEquipment(selectedEquipment);
         List<Alarm> alarms = seletedDevice.getTags().stream()
                 .map(t -> t.getAlarms())
                 .collect(toList())
@@ -307,14 +306,16 @@ public class CompressorServiceImpl {
         List<Long> compIds = compressors.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds, components.getComponents());
-        List<String> tagNames = new ArrayList<>();
-        devices.forEach(t->{
-            if(!isNull(t.getTags())) {
-                t.getTags().forEach(k->tagNames.add(k.getTagName()));
-
-            }
+        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds);
+        List<Tag> tags = deviceDslRepository.getDeviceByDeviceIds(devices.stream()
+                .map(t -> t.getId()).collect(toList()), components.getComponents());
+        Map<Long, Set<Tag>> grouppingTag = tags.stream()
+                .collect(groupingBy(t -> t.getDevice().getId(), toSet()));
+        devices.stream().forEach(t->{
+            t.setTags(grouppingTag.get(t.getId()));
         });
+        List<String> tagNames = tags.stream()
+                .map(t->t.getTagName()).collect(toList());
         Map<String, Object> tagValuesV2 = webaccessApiService.getTagValuesV2(tagNames);
         devices.forEach(t->{
             if(!isNull(t.getTags())) {
