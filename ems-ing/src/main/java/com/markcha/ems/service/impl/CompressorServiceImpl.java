@@ -32,7 +32,8 @@ import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -211,9 +212,9 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연동
-        Equipment selectedEquipment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipmentId());
+        Equipment selectedEquipoment = equipmentDslRepository.getOneById(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
-        seletedDevice.setEquipment(selectedEquipment);
+        seletedDevice.setEquipment(selectedEquipoment);
         List<Alarm> alarms = seletedDevice.getTags().stream()
                 .map(t -> t.getAlarms())
                 .collect(toList())

@@ -366,6 +366,7 @@
             chartSetting() {
                 const barMaxValue = 15;
                 const bar = this.airCompressor.state.COMP_SystemPre.value;
+                console.log(airCompressor.state.COMP_SystemPre);
                 
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },

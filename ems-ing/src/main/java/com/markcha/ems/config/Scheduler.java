@@ -58,7 +58,6 @@ public class Scheduler {
     private static Map<Long, Timer> tasks = new HashMap<>();
 
 
-    @Scheduled(fixedDelay = 5000)
     public void scheduleFixedRateTask() {
 
         List<ScheduleController.ScheduleSimpleDto> schedules = scheduleDslRepository.findAllCoreSchedule().stream()
@@ -94,7 +93,6 @@ public class Scheduler {
 
     }
 
-    @Scheduled(fixedDelay = 1000)
     public void alarmFixedRateTask() {
         List<Tag> tags = deviceDslRepository.findAllAlarmTags();
         Map<Integer, List<Trip>> tripMap = tripDataRepository.findAll().stream()
