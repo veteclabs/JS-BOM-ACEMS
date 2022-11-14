@@ -26,6 +26,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -162,6 +163,9 @@ public class CompressorServiceImpl {
         deviceDataRepository.save(save);
         return true;
     }
+
+    @Async
+    @Transactional
     public Boolean updateCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
         Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());

@@ -54,6 +54,7 @@ public class DeviceController {
                 .map(TemplcateDto::new)
                 .collect(Collectors.toList());
     }
+
     @GetMapping(value="/etcs")
     public Map<String, List<DeviceConDto>> etc2(
     ){
@@ -67,6 +68,7 @@ public class DeviceController {
                 .map(DeviceConDto::new)
                 .collect(Collectors.groupingBy(t->t.getEquipmentType().getNickname()));
     }
+
     @GetMapping(value="/device/groups")
     public List<GroupsSimpleDto> group(
     ) {
@@ -81,8 +83,6 @@ public class DeviceController {
                 .map(CompressorSimpleDto::new)
                 .collect(Collectors.toList());
     }
-
-
 
     @PostMapping(value="/etcs")
     public ApiResponseDto etcCreate(
