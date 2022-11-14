@@ -37,7 +37,7 @@ public class DeviceServiceImpl implements DeviceService {
     public Boolean createDevice(DeviceInsertDto deviceInsert) {
         Device newDevice = new Device();
 
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
+        Equipment selectedEquipment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel().equals("")? null : deviceInsert.getModel());
         if(!isNull(deviceInsert.getGroupId())) {
@@ -49,13 +49,13 @@ public class DeviceServiceImpl implements DeviceService {
         }
 
         newDevice.setName(deviceInsert.getName());
-        newDevice.setEquipment(selectedEquipoment);
+        newDevice.setEquipment(selectedEquipment);
         newDevice.setCt(deviceInsert.getCt());
         newDevice.setPt(deviceInsert.getPt());
         newDevice.setVoltage(deviceInsert.getVoltage());
         Device save = deviceDataRepository.save(newDevice);
         Long unitId = deviceInsert.getUnitId();
-        List<Tag> tags = insertSampleData.createTags(selectedEquipoment.getId(), save, unitId);
+        List<Tag> tags = insertSampleData.createTags(selectedEquipment.getId(), save, unitId);
         newDevice.setTags(new HashSet<>(tags));
         deviceDataRepository.save(save);
         return true;
@@ -72,14 +72,14 @@ public class DeviceServiceImpl implements DeviceService {
 
 
 
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByTypeAndModel(
+        Equipment selectedEquipment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
                 deviceInsert.getModel());
         Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
         seletedDevice.setGroup(seletedGroup);
 
         seletedDevice.setName(deviceInsert.getName());
-        seletedDevice.setEquipment(selectedEquipoment);
+        seletedDevice.setEquipment(selectedEquipment);
         seletedDevice.setCt(deviceInsert.getCt());
         seletedDevice.setPt(deviceInsert.getPt());
         seletedDevice.setVoltage(deviceInsert.getVoltage());

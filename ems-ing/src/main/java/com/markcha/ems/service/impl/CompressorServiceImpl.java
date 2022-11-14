@@ -32,8 +32,7 @@ import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -128,9 +127,9 @@ public class CompressorServiceImpl {
 
         // 디바이스 생성 및 그룹과 연동
         Device newDevice = new Device();
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
+        Equipment selectedEquipment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         newDevice.setName(compressorInsertDto.getName());
-        newDevice.setEquipment(selectedEquipoment);
+        newDevice.setEquipment(selectedEquipment);
         newDevice.setGroup(newGroup);
 
         Device save = deviceDataRepository.save(newDevice);
@@ -168,8 +167,8 @@ public class CompressorServiceImpl {
         Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());
 
 
-//        // 스케줄 생성 및 그룹과 연동
-//        // 스케줄 만 생성
+        // 스케줄 생성 및 그룹과 연동
+        // 스케줄 만 생성
         Schedule newSchedule = seletedDevice.getGroup().getSchedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
@@ -185,7 +184,7 @@ public class CompressorServiceImpl {
         newSchedule.setUpdated(LocalDateTime.now());
 
 
-//        // 요일 관계 생성
+        // 요일 관계 생성
         newSchedule.getDayOfWeekMappers().clear();
         List<Long> dayOfWeekIds = null;
         if(!isNull(scheduleDto)) scheduleDto.getDayOfWeeks().stream()
@@ -202,7 +201,7 @@ public class CompressorServiceImpl {
 
         scheduleDataRepository.save(newSchedule);
 
-//        // 그룹 생성 및 부모 그룹 세팅
+        // 그룹 생성 및 부모 그룹 세팅
         Group newGroup = seletedDevice.getGroup();
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
         newGroup.setParent(parentGroup);
@@ -212,9 +211,9 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연동
-        Equipment selectedEquipoment = equipmentDslRepository.getOneById(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId());
+        Equipment selectedEquipment = equipmentDslRepository.getOneById(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
-        seletedDevice.setEquipment(selectedEquipoment);
+        seletedDevice.setEquipment(selectedEquipment);
         List<Alarm> alarms = seletedDevice.getTags().stream()
                 .map(t -> t.getAlarms())
                 .collect(toList())

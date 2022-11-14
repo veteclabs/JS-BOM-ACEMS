@@ -45,7 +45,7 @@ public class DeviceDslRepositoryImpl {
         this.webaccessApiService = webaccessApiService;
     }
 
-    public List<Device> findAllTemplcates(EquipmentType typeName) {
+    public List<Device> findAllTemplates(EquipmentType typeName) {
         return query.select(device).distinct()
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()

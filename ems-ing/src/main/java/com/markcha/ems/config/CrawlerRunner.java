@@ -21,18 +21,18 @@ public class CrawlerRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Logger logger = LoggerFactory.getLogger(Crawler.class);
-        List<Device> devices = deviceDslRepository.findAllDevices();
-
-        downloadDriver();
-
-        for (Device device : devices) {
-            Timer timer = new Timer();
-            Crawler crawler = new Crawler(webaccessApiService, logger);
-            crawler.setDevice(device);
-            timer.schedule(crawler, 100, 100);
-            tasks.add(timer);
-        }
+//        Logger logger = LoggerFactory.getLogger(Crawler.class);
+//        List<Device> devices = deviceDslRepository.findAllDevices();
+//
+//        downloadDriver();
+//
+//        for (Device device : devices) {
+//            Timer timer = new Timer();
+//            Crawler crawler = new Crawler(webaccessApiService, logger);
+//            crawler.setDevice(device);
+//            timer.schedule(crawler, 100, 100);
+//            tasks.add(timer);
+//        }
     }
 
     private void downloadDriver() {
