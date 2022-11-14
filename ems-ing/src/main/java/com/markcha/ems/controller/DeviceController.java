@@ -57,13 +57,13 @@ public class DeviceController {
     @GetMapping(value="/etcs")
     public Map<String, List<DeviceConDto>> etc2(
     ){
-        List<Device> allTemplcates = deviceDslRepository.findAllTemplates(AIR_COMPRESSOR);
+        List<Device> allTemplates = deviceDslRepository.findAllTemplates(AIR_COMPRESSOR);
         List<String> tagNames = new ArrayList<>();
-        allTemplcates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
+        allTemplates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
 
         Map<String, Object> tagValuesV2 = webaccessApiService.getTagValuesV2(tagNames);
-        allTemplcates.forEach(t->t.getTags().forEach(tag->tag.setValue(tagValuesV2.get(tag.getTagName()))));
-        return allTemplcates.stream()
+        allTemplates.forEach(t->t.getTags().forEach(tag->tag.setValue(tagValuesV2.get(tag.getTagName()))));
+        return allTemplates.stream()
                 .map(DeviceConDto::new)
                 .collect(Collectors.groupingBy(t->t.getEquipmentType().getNickname()));
     }
