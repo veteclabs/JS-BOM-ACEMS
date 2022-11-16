@@ -6,7 +6,7 @@ export default ({store, app: {$axios}}) => {
   // if (process.env.NODE_ENV !== 'production') {
     axios.interceptors.request.use(config => {
       //config.baseURL = 'dd'
-      config.baseURL = "http://localhost:8031"; //원래는 여기가 cross-origin으로 막혀있음(spring boot에서 막아놨어) -> 그거 푸는 설정 추가해서 이거 추가 / 추가 안하면 nginx나 톰캣써서 두개 서버 연동 시켜야함
+      config.baseURL = "http://112.216.32.6:8031"; //원래는 여기가 cross-origin으로 막혀있음(spring boot에서 막아놨어) -> 그거 푸는 설정 추가해서 이거 추가 / 추가 안하면 nginx나 톰캣써서 두개 서버 연동 시켜야함
       return config;
     });
   // }

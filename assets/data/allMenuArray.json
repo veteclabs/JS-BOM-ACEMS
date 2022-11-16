@@ -60,6 +60,16 @@
           "menuName": "공기압축기 관리",
           "link": "/setting/aircompressor",
           "icon": "icn_setting_gear"
+        },
+        {
+          "menuName": "모델관리",
+          "link": "/setting/model",
+          "icon": "icn_setting_tool"
+        },
+        {
+          "menuName": "컴포넌트관리",
+          "link": "/setting/component",
+          "icon": "icn_setting_note"
         }
       ]
     }

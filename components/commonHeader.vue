@@ -127,6 +127,14 @@
                         title: '공기압축기관리',
                         pathList: ['설정', '공기압축기관리'],
                     },
+                    'setting-model': {
+                        title: '모델관리',
+                        pathList: ['설정', '모델관리'],
+                    },
+                    'setting-component': {
+                        title: '컴포넌트관리',
+                        pathList: ['설정', '컴포넌트관리'],
+                    },
                 };
                 this.routeName = menus[this.$route.name] ? menus[this.$route.name].title : '';
                 this.routeList = menus[this.$route.name] ? menus[this.$route.name].pathList : [];
