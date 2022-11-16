@@ -94,27 +94,29 @@
                                     </li>
                                 </ul>
                             </div>
-                            <ul class="tag-box">
-                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
-                                    <div>
-                                        {{tag.description}}
-                                    </div>
-                                    <div>
-                                        {{tag.value | valueFormat(2)}} {{tag.unit}}
-                                    </div>
-                                </li>
-                            </ul>
-                            <div v-if="device.devices.power !==undefined">
-                                <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
-                                    <li v-for="type in powerTagSet" :key="type.description">
-                                        <div v-if="power.tags[type] !== undefined">
-                                            {{power.tags[type].description}}
+                            <div v-if="device.tagByComponents !== null && device.tagByComponents.mainInfoComponent !== undefined">
+                                <ul v-if="device.tagByComponents !== null" class="tag-box">
+                                    <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
+                                        <div>
+                                            {{tag.description}}
                                         </div>
-                                        <div v-if="power.tags[type] !== undefined">
-                                            {{power.tags[type].value| valueFormat(2)}} {{power.tags[type].unit}}
+                                        <div>
+                                            {{tag.value | valueFormat(2)}} {{tag.unit}}
                                         </div>
                                     </li>
                                 </ul>
+                            </div>
+                            <div v-if="device.devices.power !==undefined">
+                            <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
+                                <li v-for="type in powerTagSet" :key="type.description">
+                                    <div v-if="power.tags[type] !== undefined">
+                                        {{power.tags[type].description}}
+                                    </div>
+                                    <div v-if="power.tags[type] !== undefined">
+                                        {{power.tags[type].value| valueFormat(2)}} {{power.tags[type].unit}}
+                                    </div>
+                                </li>
+                            </ul>
                             </div>
                         </div>
                     </div>

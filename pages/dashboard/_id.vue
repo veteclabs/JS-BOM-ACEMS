@@ -49,7 +49,7 @@
                         공기압축기 전체 정보
                     </div>
                     <div class="ibox-content">
-                        <ul class="tag-box" v-if="airCompressor.tags">
+                        <ul class="tag-box" v-if="airCompressor.tagByComponents != null">
                             <li v-for="tag in airCompressor.tagByComponents.wholeInfoComponent" :key="tag.id">
                                 <div>
                                     {{tag.description}}
@@ -81,13 +81,13 @@
             </div>
             <div class="col-lg-8">
                 <div v-if="airCompressor.state">
-                    <div class="ibox" v-if="airCompressor.state['COMP_Trip'].value === 1">
+                    <div class="ibox" v-if="airCompressor.state['COMP_Trip'] !== undefined && airCompressor.state['COMP_Trip'].value === 1">
                         <div class="ibox-content flex-box">
                             <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
                             <div>{{TPCode[device.state['COMP_ActTripCode'] === undefined? device.state['COMP_TripCode'].value.toString() : device.state['COMP_ActTripCode'].value.toString()]}}</div>
                         </div>
                     </div>
-                    <div class="ibox" v-if="airCompressor.state['COMP_Warning'].value === 1">
+                    <div class="ibox" v-if="airCompressor.state['COMP_Warning'] !== undefined && airCompressor.state['COMP_Warning'].value === 1">
                         <div class="ibox-content flex-box">
                             <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
                             <div>{{TPCode[device.state['COMP_ActWarCode'] === undefined? device.state['COMP_WarningCode'].value.toString() : device.state['COMP_ActWarCode'].value.toString()]}}</div>
@@ -126,7 +126,7 @@
                                 공기압축기 주요 정보
                             </div>
                             <div class="ibox-content">
-                                <ul class="tag-box" v-if="airCompressor.tags">
+                                <ul class="tag-box" v-if="airCompressor.tagByComponents != null">
                                     <li v-for="tag in airCompressor.tagByComponents.importantInfoComponent" :key="tag.id">
                                         <div>
                                             {{tag.description}}
@@ -366,6 +366,7 @@
             chartSetting() {
                 const barMaxValue = 15;
                 const bar = this.airCompressor.state.COMP_SystemPre.value;
+                console.log(airCompressor.state.COMP_SystemPre);
                 
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },

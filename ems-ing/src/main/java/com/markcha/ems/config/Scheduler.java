@@ -4,6 +4,7 @@ package com.markcha.ems.config;
 
 import com.markcha.ems.controller.ScheduleController;
 import com.markcha.ems.domain.Alarm;
+import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Tag;
 import com.markcha.ems.domain.Trip;
 import com.markcha.ems.repository.AlarmDataRepository;
@@ -17,8 +18,9 @@ import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,6 +38,7 @@ import static java.util.stream.Collectors.*;
 @EnableAsync
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class Scheduler {
     private final ScheduleDslRepositoryImpl scheduleDslRepository;
     private final GroupDynamicRepositoryImpl groupDynamicRepository;
@@ -53,10 +56,8 @@ public class Scheduler {
     private static Boolean alarmInsert = false;
 
     private static Map<Long, Timer> tasks = new HashMap<>();
-    @Async
-    @Transactional
 
-    @Scheduled(fixedDelay = 5000)
+
     public void scheduleFixedRateTask() {
 
         List<ScheduleController.ScheduleSimpleDto> schedules = scheduleDslRepository.findAllCoreSchedule().stream()
@@ -91,16 +92,14 @@ public class Scheduler {
         }
 
     }
-    @Async
-    @Transactional
-    @Scheduled(fixedDelay = 1000)
+
     public void alarmFixedRateTask() {
         List<Tag> tags = deviceDslRepository.findAllAlarmTags();
         Map<Integer, List<Trip>> tripMap = tripDataRepository.findAll().stream()
                 .collect(groupingBy(Trip::getCode, toList()));
         List<Alarm> newAlarms = new ArrayList<>();
         List<Tag> takenAlarmTags = tags.stream()
-                .filter(t -> t.getIsAlarm().equals(true))
+                .filter(t -> t.getTagList().equals(true))
                 .filter(t -> new Double(t.getValue().toString()).intValue() == 1)
                 .collect(toList());
 
@@ -112,6 +111,8 @@ public class Scheduler {
                     .collect(toList())
                     .contains(t.getId());
         });
+
+
         for (Tag newTag : newTags) {
             Alarm alarm = new Alarm();
             Map<String, Tag> alarmDataTagMap = newTag.getDevice().getTags().stream()
@@ -215,4 +216,10 @@ public class Scheduler {
         return getWeekNumber(date.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()));
     }
 
+    public void crawl() {
+        List<Device> devices =  deviceDslRepository.findAllDevices();
+        for (Device device : devices) {
+            System.out.println(device);
+        }
+    }
 }

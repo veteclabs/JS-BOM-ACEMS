@@ -26,14 +26,14 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -128,11 +128,11 @@ public class CompressorServiceImpl {
 
         // 디바이스 생성 및 그룹과 연동
         Device newDevice = new Device();
-        Equipment selectedEquipoment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
+        Equipment selectedEquipment = equipmentDslRepository.getOneByType(AIR_COMPRESSOR);
         newDevice.setName(compressorInsertDto.getName());
-        newDevice.setEquipment(selectedEquipoment);
+        newDevice.setEquipment(selectedEquipment);
         newDevice.setGroup(newGroup);
-
+        newDevice.setRemark(compressorInsertDto.getUnitId().toString());
         Device save = deviceDataRepository.save(newDevice);
         List<Tag> tags = insertSampleData.createTags(isNull(compressorInsertDto.getEquipmentId()) ? compressorInsertDto.getEquipment().getEquipmentId() : compressorInsertDto.getEquipmentId(), save, compressorInsertDto.getUnitId());
 
@@ -155,7 +155,7 @@ public class CompressorServiceImpl {
                     })
                     .collect(toList());
 
-            webaccessApiService.setTagValues(minMaxTag);
+            if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
         }
 
 
@@ -163,13 +163,16 @@ public class CompressorServiceImpl {
         deviceDataRepository.save(save);
         return true;
     }
+
+    @Async
+    @Transactional
     public Boolean updateCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
         Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());
 
 
-//        // 스케줄 생성 및 그룹과 연동
-//        // 스케줄 만 생성
+        // 스케줄 생성 및 그룹과 연동
+        // 스케줄 만 생성
         Schedule newSchedule = seletedDevice.getGroup().getSchedule();
         ScheduleDto scheduleDto = compressorInsertDto.getSchedule();
         newSchedule.setIsGroup(false);
@@ -185,7 +188,7 @@ public class CompressorServiceImpl {
         newSchedule.setUpdated(LocalDateTime.now());
 
 
-//        // 요일 관계 생성
+        // 요일 관계 생성
         newSchedule.getDayOfWeekMappers().clear();
         List<Long> dayOfWeekIds = null;
         if(!isNull(scheduleDto)) scheduleDto.getDayOfWeeks().stream()
@@ -202,7 +205,7 @@ public class CompressorServiceImpl {
 
         scheduleDataRepository.save(newSchedule);
 
-//        // 그룹 생성 및 부모 그룹 세팅
+        // 그룹 생성 및 부모 그룹 세팅
         Group newGroup = seletedDevice.getGroup();
         Group parentGroup = groupDslRepository.getOneById(compressorInsertDto.getGroupId());
         newGroup.setParent(parentGroup);
@@ -212,9 +215,9 @@ public class CompressorServiceImpl {
         groupDataRepository.save(newGroup);
 
         // 디바이스 생성 및 그룹과 연동
-        Equipment selectedEquipoment = equipmentDslRepository.getOneById(compressorInsertDto.getEquipment().getEquipmentId());
+        Equipment selectedEquipment = equipmentDslRepository.getOneById(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
-        seletedDevice.setEquipment(selectedEquipoment);
+        seletedDevice.setEquipment(selectedEquipment);
         List<Alarm> alarms = seletedDevice.getTags().stream()
                 .map(t -> t.getAlarms())
                 .collect(toList())
@@ -244,9 +247,9 @@ public class CompressorServiceImpl {
                     })
                     .collect(toList());
 
-            webaccessApiService.setTagValues(minMaxTag);
+            if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
         }
-        webaccessApiService.setTagValues(minMaxTag);
+        if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
         deviceDataRepository.save(seletedDevice);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceId(compressorInsertDto.getId());
         orderDataRepository.deleteAllInBatch(allByDeviceId);
@@ -307,14 +310,16 @@ public class CompressorServiceImpl {
         List<Long> compIds = compressors.stream()
                 .map(t -> t.getId())
                 .collect(toList());
-        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds, components.getComponents());
-        List<String> tagNames = new ArrayList<>();
-        devices.forEach(t->{
-            if(!isNull(t.getTags())) {
-                t.getTags().forEach(k->tagNames.add(k.getTagName()));
-
-            }
+        List<Device> devices = deviceDslRepository.getDeviceByGroupIds(compIds);
+        List<Tag> tags = deviceDslRepository.getDeviceByDeviceIds(devices.stream()
+                .map(t -> t.getId()).collect(toList()), components.getComponents());
+        Map<Long, Set<Tag>> grouppingTag = tags.stream()
+                .collect(groupingBy(t -> t.getDevice().getId(), toSet()));
+        devices.stream().forEach(t->{
+            t.setTags(grouppingTag.get(t.getId()));
         });
+        List<String> tagNames = tags.stream()
+                .map(t->t.getTagName()).collect(toList());
         Map<String, Object> tagValuesV2 = webaccessApiService.getTagValuesV2(tagNames);
         devices.forEach(t->{
             if(!isNull(t.getTags())) {

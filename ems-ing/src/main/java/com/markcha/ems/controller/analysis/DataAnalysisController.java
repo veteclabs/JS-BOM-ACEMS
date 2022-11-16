@@ -91,7 +91,7 @@ public class DataAnalysisController {
             List<Long> ids = pawerDeviceById.stream()
                     .map(t->t.getId())
                     .collect(toList());
-            historySearchDto.setSecondTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(!isNull(ids)? device.id.in(ids): device.id.eq(-1L),
+            historySearchDto.setSecondTagNames(deviceDslRepository.findAllByTagTypeAndIdsV2(!isNull(ids) || ids.size() > 0? device.id.in(ids): device.id.eq(-1L),
                             groupInsertDto.getTagEqType()).stream()
                     .map(t->t.getTagName())
                     .collect(toList()));

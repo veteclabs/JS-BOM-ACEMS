@@ -65,7 +65,7 @@
                         </td>
                     </tr>
                 </table>
-                <h4 class="modal-h4-title" v-if="params.state.COMP_StartPre">공기압축기 압력 제어 범위</h4>
+                <h4 v-if="params.state.COMP_StartPre" class="modal-h4-title">공기압축기 압력 제어 범위</h4>
                 <table class="bom-table">
                     <tr v-if="params.state.COMP_StartPre">
                         <td>
@@ -84,6 +84,7 @@
                             </label>
                         </td>
                     </tr>
+
                 </table>
                 <div class="err-message" v-if="validation !== undefined">
                     {{ validation.firstError('params.schedule.min') }}

@@ -37,7 +37,7 @@ public class DeviceDto {
             this.tags = device.getTags().stream()
                     .sorted(Comparator.comparing(k->k.getTagList().getId()))
                     .map(t->new TagDto(t,true))
-                    .collect(toMap(TagDto::getType, t -> t));
+                    .collect(toMap(TagDto::getType, t -> t, (p1,p2) -> p1));
         }
         if (!isNull(device.getGroup())) {
             this.groupId = device.getGroup().getId();

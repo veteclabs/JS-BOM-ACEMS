@@ -20,6 +20,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,9 @@ public class CompressorController {
                 scheduleDto.setMinMax();
             }
         });
-        return collect;
+        return collect.stream()
+                .sorted(Comparator.comparing(CompressorDto::getId))
+                .collect(toList());
     }
 
     @GetMapping(value="/compressors")
@@ -84,8 +87,11 @@ public class CompressorController {
                 scheduleDto.setMinMax();
             }
         });
-        return collect;
+        return collect.stream()
+                .sorted(Comparator.comparing(AirCompressorDto::getId))
+                .collect(toList());
     }
+
     @GetMapping(value="/compressor/{compressorId}")
     public AirCompressorDto compressor(
             @PathVariable("compressorId") Long compressorId,
@@ -107,6 +113,7 @@ public class CompressorController {
         }
         return null;
     }
+
     @PostMapping(value="/compressor")
     public ApiResponseDto create(
             @RequestBody CompressorInsertDto compressorInsertDto
@@ -114,6 +121,7 @@ public class CompressorController {
         compressorService.createCompressor(compressorInsertDto);
         return new ApiResponseDto(dbInsertMsg);
     }
+
     @PostMapping(value="/compressors")
     public ApiResponseDto creates(
             @RequestBody List<CompressorInsertDto> compressorInsertDto
@@ -133,6 +141,7 @@ public class CompressorController {
         compressorService.updateCompressor(compressorInsertDto);
         return new ApiResponseDto(dbUpdateMsg);
     }
+
     @PutMapping(value="/compressor/{groupId}/power/{powerCode}")
     public ApiResponseDto create2(
             @PathVariable("groupId") Long groupId,
@@ -145,8 +154,9 @@ public class CompressorController {
         compressorService.controllPowerAsync(device.getGroup().getSchedule().getInterval(), tags, powerCode);
         Group group = groupDslRepository.findAllBroGroupByBroId(groupId);
         if(!isNull(group)) groupService.unActiveSchedule(group);
-        return new ApiResponseDto("제어명령이 성공적으로 실행되었습니다. 프로그램 통신 상 제어 명령 반응까지 몇 분이 소요될 수 도 있습니다.");
+        return new ApiResponseDto("제어명령이 성공적으로 실행되었습니다. 프로그램 통신 상 제어 명령 반응까지 몇 분이 소요될 수도 있습니다.");
     }
+
     @DeleteMapping(value="/compressors")
     public ApiResponseDto delete(
             @RequestBody List<Long> ids
@@ -154,7 +164,6 @@ public class CompressorController {
         compressorService.deleteAllById(ids);
         return new ApiResponseDto(dbDeleteMsg);
     }
-
 
     @Getter
     @Setter

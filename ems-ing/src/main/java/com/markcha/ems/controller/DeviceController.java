@@ -11,7 +11,6 @@ import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.ScheduleDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
-import com.markcha.ems.repository.schedule.impl.ScheduleDslRepositoryImpl;
 import com.markcha.ems.service.impl.DeviceServiceImpl;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.*;
@@ -51,23 +50,25 @@ public class DeviceController {
     @GetMapping(value="/etcs",headers = "setting=true")
     public List<TemplcateDto> etc(
     ) throws Exception {
-        return deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR).stream()
+        return deviceDslRepository.findAllTemplates(AIR_COMPRESSOR).stream()
                 .map(TemplcateDto::new)
                 .collect(Collectors.toList());
     }
+
     @GetMapping(value="/etcs")
     public Map<String, List<DeviceConDto>> etc2(
     ){
-        List<Device> allTemplcates = deviceDslRepository.findAllTemplcates(AIR_COMPRESSOR);
+        List<Device> allTemplates = deviceDslRepository.findAllTemplates(AIR_COMPRESSOR);
         List<String> tagNames = new ArrayList<>();
-        allTemplcates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
+        allTemplates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
 
         Map<String, Object> tagValuesV2 = webaccessApiService.getTagValuesV2(tagNames);
-        allTemplcates.forEach(t->t.getTags().forEach(tag->tag.setValue(tagValuesV2.get(tag.getTagName()))));
-        return allTemplcates.stream()
+        allTemplates.forEach(t->t.getTags().forEach(tag->tag.setValue(tagValuesV2.get(tag.getTagName()))));
+        return allTemplates.stream()
                 .map(DeviceConDto::new)
                 .collect(Collectors.groupingBy(t->t.getEquipmentType().getNickname()));
     }
+
     @GetMapping(value="/device/groups")
     public List<GroupsSimpleDto> group(
     ) {
@@ -82,8 +83,6 @@ public class DeviceController {
                 .map(CompressorSimpleDto::new)
                 .collect(Collectors.toList());
     }
-
-
 
     @PostMapping(value="/etcs")
     public ApiResponseDto etcCreate(

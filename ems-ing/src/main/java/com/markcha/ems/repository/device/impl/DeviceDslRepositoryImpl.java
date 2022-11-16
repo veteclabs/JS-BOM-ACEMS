@@ -5,6 +5,7 @@ import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class DeviceDslRepositoryImpl {
         this.webaccessApiService = webaccessApiService;
     }
 
-    public List<Device> findAllTemplcates(EquipmentType typeName) {
+    public List<Device> findAllTemplates(EquipmentType typeName) {
         return query.select(device).distinct()
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()
@@ -146,6 +147,7 @@ public class DeviceDslRepositoryImpl {
 
         return compressor;
     }
+    @Transactional
     public List<Tag> findAllAlarmTags() {
         List<Tag> tags = getAlarmTags();
 
@@ -314,17 +316,21 @@ public class DeviceDslRepositoryImpl {
                 ).fetch();
 
     }
-    public List<Device> getDeviceByGroupIds(List<Long> groupIds, List<String> tagSetName) {
+    public List<Device> getDeviceByGroupIds(List<Long> groupIds) {
         entityManager.clear();
         return query.selectFrom(device).distinct()
-//                .leftJoin(device.group, group).fetchJoin()
-                .leftJoin(device.tags, tag).fetchJoin()
+                .where(
+                        device.group.id.in(groupIds)
+                ).fetch();
+    }
+    public List<Tag> getDeviceByDeviceIds(List<Long> deviceId, List<String> tagSetName) {
+        return query.selectFrom(tag).distinct()
+                .leftJoin(tag.device, device).fetchJoin()
                 .leftJoin(tag.tagList, tagList).fetchJoin()
                 .leftJoin(tagList.tagSetMappers, tagSetMapper).fetchJoin()
                 .leftJoin(tagSetMapper.tagSet, tagSet).fetchJoin()
                 .where(
-//                        tag.showAble.eq(true)
-                        device.group.id.in(groupIds)
+                        tag.device.id.in(deviceId)
                         ,tagSet.nickname.in(tagSetName)
                 ).fetch();
     }
@@ -375,5 +381,16 @@ public class DeviceDslRepositoryImpl {
                 .from(tag)
                 .leftJoin(tag.device, device).fetchJoin()
                 .where(deviceEqId, tagEqType).fetch();
+    }
+
+    public List<Device> findAllDevices() {
+        return query.selectFrom(device).distinct()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(tag.tagList, tagList).fetchJoin()
+                .where(
+                        device.SerialNumber.isNotNull()
+                )
+                .fetch();
     }
 }

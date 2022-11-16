@@ -28,6 +28,7 @@ public class OrderDslRepositoryImpl {
     public long deleteByIds(List<Long> ids) {
         return query.delete(order1).where(order1.id.in(ids)).execute();
     }
+    @Transactional
     public List<Order> findAllByRootGroupIdWeekId(Long rootId, Long weekId) {
         QGroup parentGroup = new QGroup("pg");
         return query.selectFrom(order1)
