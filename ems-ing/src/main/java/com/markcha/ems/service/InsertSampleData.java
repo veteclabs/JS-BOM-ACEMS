@@ -23,7 +23,7 @@ public class InsertSampleData {
     public List<Tag> createTags(Long equipmentId, Device device, Long unitId) {
 
         List<Tag> tags = new ArrayList<>();
-        String deviceUnit = new String(String.format("U%03d", isNull(unitId) ?device.getId().intValue(): unitId) + "_");
+        String deviceUnit = new String(String.format("U%03d", isNull(unitId) ?new Integer(device.getRemark()): unitId) + "_");
         List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipmentId(equipmentId);
 
 

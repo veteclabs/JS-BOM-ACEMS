@@ -49,7 +49,7 @@
                         공기압축기 전체 정보
                     </div>
                     <div class="ibox-content">
-                        <ul class="tag-box" v-if="airCompressor.tags">
+                        <ul class="tag-box" v-if="airCompressor.tagByComponents != null">
                             <li v-for="tag in airCompressor.tagByComponents.wholeInfoComponent" :key="tag.id">
                                 <div>
                                     {{tag.description}}
@@ -126,7 +126,7 @@
                                 공기압축기 주요 정보
                             </div>
                             <div class="ibox-content">
-                                <ul class="tag-box" v-if="airCompressor.tags">
+                                <ul class="tag-box" v-if="airCompressor.tagByComponents != null">
                                     <li v-for="tag in airCompressor.tagByComponents.importantInfoComponent" :key="tag.id">
                                         <div>
                                             {{tag.description}}

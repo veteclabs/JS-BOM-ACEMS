@@ -68,7 +68,7 @@
                         <div class="ibox-content">
                             <airCompressorState v-bind:propsdata="device"/>
                             <scheduleState v-bind:propsdata="device"/>
-                            <div v-if="device.state">
+                            <div v-if="device.state && device.state.COMP_LoadFactor !== undefined && device.state.COMP_Trip !== undefined && device.state.COMP_Warning !== undefined">
                                 <ul class="tag-box">
                                     <li v-if="device.state.COMP_LoadFactor">
                                         <div class="tagname">부하율</div>
@@ -95,16 +95,18 @@
                                     </li>
                                 </ul>
                             </div>
-                            <ul v-if="device.tagByComponents !== null" class="tag-box">
-                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
-                                    <div>
-                                        {{tag.description}}
-                                    </div>
-                                    <div>
-                                        {{tag.value | valueFormat(2)}} {{tag.unit}}
-                                    </div>
-                                </li>
-                            </ul>
+                            <div v-if="device.tagByComponents !== null && device.tagByComponents.mainInfoComponent !== undefined">
+                                <ul v-if="device.tagByComponents !== null" class="tag-box">
+                                    <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
+                                        <div>
+                                            {{tag.description}}
+                                        </div>
+                                        <div>
+                                            {{tag.value | valueFormat(2)}} {{tag.unit}}
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                             <div v-if="device.devices.power !==undefined">
                             <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
                                 <li v-for="type in powerTagSet" :key="type.description">

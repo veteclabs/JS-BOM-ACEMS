@@ -136,6 +136,10 @@ public class Crawler extends TimerTask {
             if (nickSet.keySet().contains(target)) {
                 Object val = tr.findElement(By.xpath("./td[2]")).getText();
 
+                if (target.equals("Flow")) {
+                    val = tr.findElement(By.xpath("./td[3]")).getText();
+                }
+
                 String unit;
                 if (val.toString().split(" ").length >= 2) { unit = val.toString().split(" ")[1]; }
                 else { unit = null; }
@@ -147,6 +151,7 @@ public class Crawler extends TimerTask {
                         if (val.equals("Load") || val.equals("Stopped")) { val = new Integer(1); }
                         else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
                     }
+
 
                     try {
                         if (val.toString().trim().contains(" ")) {

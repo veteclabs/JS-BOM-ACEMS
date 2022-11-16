@@ -132,7 +132,7 @@ public class CompressorServiceImpl {
         newDevice.setName(compressorInsertDto.getName());
         newDevice.setEquipment(selectedEquipment);
         newDevice.setGroup(newGroup);
-
+        newDevice.setRemark(compressorInsertDto.getUnitId().toString());
         Device save = deviceDataRepository.save(newDevice);
         List<Tag> tags = insertSampleData.createTags(isNull(compressorInsertDto.getEquipmentId()) ? compressorInsertDto.getEquipment().getEquipmentId() : compressorInsertDto.getEquipmentId(), save, compressorInsertDto.getUnitId());
 

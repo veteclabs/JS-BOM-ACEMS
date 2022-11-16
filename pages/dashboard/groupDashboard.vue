@@ -69,8 +69,8 @@
                                                 <div>
                                                     <span>상태</span>
                                                     <div class="flex-box">
-                                                        <div v-if="device.tags.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
-                                                        <div v-if="device.tags.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
+                                                        <div v-if="device.tags.COMP_Power !== undefined && device.tags.COMP_Power.value === 1" class="bom-badge blue-badge blue">RUN</div>
+                                                        <div v-if="device.tags.COMP_Power !== undefined &&  device.tags.COMP_Power.value === 0 " class="bom-badge red-badge red">STOP</div>
                                                     </div>
                                                 </div>
                                                 <div class="percent" v-if="device.tags.COMP_LoadFactor">

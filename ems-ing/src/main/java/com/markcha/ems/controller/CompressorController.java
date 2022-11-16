@@ -20,6 +20,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,9 @@ public class CompressorController {
                 scheduleDto.setMinMax();
             }
         });
-        return collect;
+        return collect.stream()
+                .sorted(Comparator.comparing(CompressorDto::getId))
+                .collect(toList());
     }
 
     @GetMapping(value="/compressors")
@@ -84,7 +87,9 @@ public class CompressorController {
                 scheduleDto.setMinMax();
             }
         });
-        return collect;
+        return collect.stream()
+                .sorted(Comparator.comparing(AirCompressorDto::getId))
+                .collect(toList());
     }
 
     @GetMapping(value="/compressor/{compressorId}")
