@@ -29,14 +29,17 @@
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
                         <DxSelection mode="multiple"/>
                         <DxColumn data-field="id" caption="id" alignment="center" :width="60"/>
-                        <DxColumn data-field="type" alignment="center"/>
+                        <DxColumn data-field="type" alignment="center" :visible="false"/>
+                        <DxColumn data-field="description" alignment="center"/>
                         <DxColumn data-field="maker" alignment="center"/>
                         <DxColumn data-field="model"/>
-                        <DxColumn data-field="tag" cell-template="tagListTemplate"/>
+                        <DxColumn data-field="tagList" alignment="center"cell-template="tagListTemplate"/>
                         <DxPaging :enabled="true" :page-size="20"/>
                         <DxPager :show-page-size-selector="true" :allowed-page-sizes="pageSizes" :show-info="true"/>
                         <template #tagListTemplate="{ data: cellData }">
-                            {{cellData.value.length}}
+                            <div v-if="cellData.value && typeof(cellData.value) === 'object'">
+                                <span class="badge" v-if="cellData.value">{{cellData.value.length}}</span>
+                            </div>
                         </template>
                     </DxDataGrid>
                 </div>
@@ -121,8 +124,7 @@
                 vm.LoadingData.show = true;
                 axios({
                     method: 'get',
-                    url: '/api/model',
-                    headers: {setting: true}
+                    url: '/api/equipments',
                 }).then((res) => {
                     vm.modelList = res.data
                 }).catch((error) => {

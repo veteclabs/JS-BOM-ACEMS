@@ -402,6 +402,8 @@
                         });
                     }
                 }).catch((error) => {
+
+
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;

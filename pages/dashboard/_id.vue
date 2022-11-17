@@ -367,7 +367,7 @@
                 const barMaxValue = 15;
                 const bar = this.airCompressor.state.COMP_SystemPre.value;
                 console.log(airCompressor.state.COMP_SystemPre);
-                
+
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },
             async getAirCompressor() {
@@ -385,7 +385,7 @@
                     vm.airCompressor = res.data;
                     vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                     vm.powerData = vm.airCompressor.devices.power;
-                    
+
                     if(vm.powerData) {
                         vm.setLiveChart();
                     }
