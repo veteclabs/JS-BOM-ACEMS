@@ -655,6 +655,9 @@
                 let format = '';
                 if (arg.seriesName.indexOf('사용량') !== -1) {
                     format = 'kWh';
+                    if (vm.params.tagType === 'FLOW') {
+                        format = `㎥`
+                    }
                 } else if (arg.seriesName.indexOf('최대수요') !== -1) {
                     format = 'kW';
                 } else {
