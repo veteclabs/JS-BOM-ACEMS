@@ -55,7 +55,7 @@ dependencies {
 	implementation group: 'org.bgee.log4jdbc-log4j2', name:'log4jdbc-log4j2-jdbc4.1', version: '1.16'
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.1'
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
-
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

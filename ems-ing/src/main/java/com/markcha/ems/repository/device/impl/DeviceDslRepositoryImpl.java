@@ -301,18 +301,18 @@ public class DeviceDslRepositoryImpl {
                 ).fetchOne();
     }
     public List<Device> getPawerDeviceById(Long deviceId) {
-        QGroup childGroup = new QGroup("cg");
+        QGroup parentGroup = new QGroup("cg");
         QDevice groupDevice = new QDevice("gd");
         return query.select(device).distinct()
                 .from(device)
                 .leftJoin(device.group, group).fetchJoin()
-                .leftJoin(group.children, childGroup).fetchJoin()
-                .leftJoin(childGroup.deviceSet, groupDevice).fetchJoin()
-                .leftJoin(groupDevice.equipment, equipment).fetchJoin()
-                .leftJoin(groupDevice.tags, tag).fetchJoin()
+                .leftJoin(group.parent, parentGroup).fetchJoin()
+                .leftJoin(parentGroup.deviceSet, groupDevice).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .leftJoin(device.tags, tag).fetchJoin()
                 .where(
-                        groupDevice.equipment.type.eq(POWER_METER)
-                        ,!isNull(deviceId)? device.id.eq(deviceId): null
+                        device.equipment.type.eq(POWER_METER)
+                        ,!isNull(deviceId)? groupDevice.id.eq(deviceId): null
                 ).fetch();
 
     }

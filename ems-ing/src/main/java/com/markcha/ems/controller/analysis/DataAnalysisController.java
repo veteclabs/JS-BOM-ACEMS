@@ -4,6 +4,7 @@ import com.markcha.ems.controller.GroupController.GroupSearchDto;
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.GroupType;
 import com.markcha.ems.dto.device.DeviceDto;
+import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.mapper.alarm.AlarmMapDto;
 import com.markcha.ems.mapper.alarm.AlarmMapper;
 import com.markcha.ems.mapper.analysis.DataMapper;
@@ -88,6 +89,9 @@ public class DataAnalysisController {
             groupInsertDto.setTagType("PWR_KWh");
             groupInsertDto.setDeviceEqId(null);
             List<Device> pawerDeviceById = deviceDslRepository.getPawerDeviceById(groupInsertDto.getDeviceIdT());
+            if(pawerDeviceById.isEmpty()) {
+                throw new MethodNotAllowedException("해당 유량계에 전력량계가 연결되어있지 않습니다.");
+            }
             List<Long> ids = pawerDeviceById.stream()
                     .map(t->t.getId())
                     .collect(toList());

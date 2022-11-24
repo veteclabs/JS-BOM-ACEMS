@@ -68,7 +68,7 @@
                         <div class="ibox-content">
                             <airCompressorState v-bind:propsdata="device"/>
                             <scheduleState v-bind:propsdata="device"/>
-                            <div v-if="device.state">
+                            <div v-if="device.state.COMP_LoadFactor !== undefined || device.state.COMP_Trip !== undefined || device.state.COMP_Warning !== undefined">
                                 <ul class="tag-box">
                                     <li v-if="device.state.COMP_LoadFactor">
                                         <div class="tagname">부하율</div>
@@ -81,15 +81,16 @@
                                                 device.state.COMP_LoadFactor.value}}%</h3>
                                         </div>
                                     </li>
-                                    <li v-if="device.state['COMP_Trip'].value === 1">
+                                    <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 1">
                                         <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                                        <div>{{TPCode[device.state['COMP_ActTripCode'].value.toString()]}}</div>
+                                        <div>{{TPCode[processUndefinedValue(device.state['COMP_ActTripCode']).toString()]}}</div>
                                     </li>
-                                    <li v-if="device.state['COMP_Warning'].value === 1">
-                                        <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
-                                        <div>{{TPCode[device.state['COMP_ActWarCode'].value.toString()]}}</div>
+                                    <li v-if="processUndefinedValue(device.state['COMP_Warning']) === 1">
+                                        <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                        <div>{{TPCode[processUndefinedValue(device.state['COMP_ActWarCode']).toString()]}}</div>
                                     </li>
-                                    <li v-if="device.state['COMP_Trip'].value !== 1 && device.state['COMP_Warning'].value !== 1">
+
+                                    <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 0 && processUndefinedValue(device.state['COMP_ActTripCode']) === 0">
                                         <div class="bom-badge green-bg-badge" style="margin:0 8px 0 0;">Normal</div>정상
                                     </li>
                                 </ul>
@@ -402,8 +403,6 @@
                         });
                     }
                 }).catch((error) => {
-
-
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
@@ -450,6 +449,15 @@
                     vm.$refs.liveChart.updateOptions({
                         "xaxis": {"categories": vm.timeCategories}
                     });
+                }
+            },
+            processUndefinedValue(type) {
+
+                if (type === undefined) {
+                    return 0;
+                } else {
+
+                    return type.value
                 }
             },
             resetInterval() {

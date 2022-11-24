@@ -4,6 +4,7 @@ import com.markcha.ems.domain.*;
 import com.markcha.ems.repository.TagListDataRepository;
 import com.markcha.ems.repository.TagValueDataRepository;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.min;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,13 @@ public class InsertSampleData {
     public List<Tag> createTags(Long equipmentId, Device device, Long unitId) {
 
         List<Tag> tags = new ArrayList<>();
-        String deviceUnit = new String(String.format("U%03d", isNull(unitId) ?new Integer(device.getRemark()): unitId) + "_");
+        String format = null;
+        if (!isNull(device.getRemark())) {
+            format = String.format("U%03d", isNull(unitId) ? new Integer(device.getRemark()) : unitId);
+        } else {
+            format = String.format("U%03d", isNull(unitId) ? device.getId() : unitId);
+        }
+        String deviceUnit = new String(format + "_");
         List<TagList> allByEquipment_type = tagListDataRepository.findAllByEquipmentId(equipmentId);
 
 
