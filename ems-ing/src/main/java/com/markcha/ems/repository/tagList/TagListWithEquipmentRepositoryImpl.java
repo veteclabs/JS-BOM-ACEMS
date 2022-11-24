@@ -10,6 +10,8 @@ import java.util.List;
 
 import static com.markcha.ems.domain.QEquipment.equipment;
 import static com.markcha.ems.domain.QTagList.tagList;
+import static com.markcha.ems.domain.QTagSet.tagSet;
+import static com.markcha.ems.domain.QTagSetMapper.tagSetMapper;
 
 @Repository
 public class TagListWithEquipmentRepositoryImpl implements TagListWithEquipmentRepository {
@@ -21,6 +23,16 @@ public class TagListWithEquipmentRepositoryImpl implements TagListWithEquipmentR
                 .leftJoin(tagList.equipment, equipment).fetchJoin()
                 .where(
                         tagList.equipment.id.eq(equipmentId)
+                ).fetch();
+    }
+    @Override
+    public List<TagList> findAllByAllEquipmentId(List<String> componentNames) {
+        return query.selectFrom(tagList)
+                .leftJoin(tagList.equipment, equipment).fetchJoin()
+                .leftJoin(tagList.tagSetMappers, tagSetMapper).fetchJoin()
+                .leftJoin(tagSetMapper.tagSet, tagSet).fetchJoin()
+                .where(
+                        tagSetMapper.tagSet.nickname.in(componentNames)
                 ).fetch();
     }
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TagListWithEquipmentRepository {
     List<TagList> findAllByEquipmentId(Long equipmentId);
+    List<TagList> findAllByAllEquipmentId(List<String> componentNames);
 }

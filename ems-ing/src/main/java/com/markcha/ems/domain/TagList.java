@@ -1,11 +1,14 @@
 package com.markcha.ems.domain;
 
+import com.markcha.ems.domain.pattern.Pattern;
 import com.markcha.ems.domain.pattern.PatternList;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -47,13 +50,29 @@ public class TagList {
     private Boolean showAble;
     @Column(length = 20)
     private String type;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList", cascade = CascadeType.ALL)
     private Set<TagSetMapper> tagSetMappers = new HashSet<>();
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList", cascade = CascadeType.ALL)
     private Set<Tag> tags = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList", cascade = CascadeType.ALL)
-    private Set<PatternList> patternList;
+    private Set<PatternList> patternList = new HashSet<>();
+
     private Double min;
     private Double max;
     private String testType;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        TagList tagList = (TagList) o;
+        return Objects.equals(this.isAlarm, tagList.isAlarm) &&
+                Objects.equals(this.isTrend, tagList.isTrend) &&
+                Objects.equals(this.loggingTime, tagList.loggingTime) &&
+                Objects.equals(this.nickname, tagList.nickname) &&
+                Objects.equals(this.tagDescription, tagList.tagDescription) &&
+                Objects.equals(this.isUsage, tagList.isUsage) &&
+                Objects.equals(this.type, tagList.type) &&
+                Objects.equals(this.unit, tagList.unit);
+    }
 }

@@ -12,6 +12,9 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.markcha.ems.domain.QEquipment.equipment;
+import static com.markcha.ems.domain.QTagList.tagList;
+import static com.markcha.ems.domain.QTagSet.tagSet;
+import static com.markcha.ems.domain.QTagSetMapper.tagSetMapper;
 import static com.querydsl.core.types.Projections.constructor;
 import static java.util.Objects.isNull;
 
@@ -48,6 +51,28 @@ public class EquipmentDslRepositoryImpl  {
                 .where(
                         equipment.id.eq(id))
                 .fetchOne();
+    }
+    public Equipment getOneByIdWithTagList(Long id) {
+        return queryFactory.select(equipment)
+                .from(equipment)
+                .leftJoin(equipment.tagLists, tagList).fetchJoin()
+                .where(
+                        equipment.id.eq(id))
+                .fetchOne();
+    }
+    public List<Equipment> findAllByIdWithTagList() {
+        return queryFactory.select(equipment).distinct()
+                .from(equipment)
+                .leftJoin(equipment.tagLists, tagList).fetchJoin()
+                .fetch();
+    }
+    public List<Equipment> findAllByIdWithTagListAndTagSetMapper() {
+        return queryFactory.select(equipment).distinct()
+                .from(equipment)
+                .leftJoin(equipment.tagLists, tagList).fetchJoin()
+                .leftJoin(tagList.tagSetMappers, tagSetMapper).fetchJoin()
+                .leftJoin(tagSetMapper.tagSet, tagSet).fetchJoin()
+                .fetch();
     }
     public Equipment getOneByType(EquipmentType type) {
         return queryFactory.select(equipment)

@@ -34,6 +34,6 @@ public class Equipment {
     @OneToMany(mappedBy="equipment",fetch = FetchType.LAZY)
     private Set<Device> devices = new HashSet<>();
 
-    @OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<TagList> tagLists = new HashSet<>();
 }
