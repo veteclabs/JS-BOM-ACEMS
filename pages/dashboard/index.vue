@@ -44,70 +44,74 @@
                 공기압축기
             </h2>
         </div>
-        <div class="dashboard-item-box">
-            <masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">
-                <div v-for="device in airCompressorList" :key="device.id">
-                    <div class="ibox">
-                        <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
-                            <nuxt-link :to="`/dashboard/${device.id}`">
-                                <h3>
-                                    <div class="img-box">
-                                        <img
-                                                :src="device.image"
-                                                @error="replaceImg"
-                                                :alt="device.equipmentId"
-                                                style="width:100%;"/>
+        <div class="dashboard-item-box" style="display:flex; flex-wrap:wrap;">
+            <!--<masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">-->
+            <div v-for="device in airCompressorList" :key="device.id" style="flex:0 0 20%; padding:15px;">
+                <div class="ibox" style="height:100%;">
+                    <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
+                        <nuxt-link :to="`/dashboard/${device.id}`">
+                            <h3>
+                                <div class="img-box">
+                                    <img
+                                            :src="device.image"
+                                            @error="replaceImg"
+                                            :alt="device.equipmentId"
+                                            style="width:100%;"/>
+                                </div>
+                                {{device.name}}
+                            </h3>
+                        </nuxt-link>
+                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                             class="setting-btn"
+                             @click="settingModalOpen(device.id)"/>
+                    </div>
+                    <div class="ibox-content">
+                        <airCompressorState v-bind:propsdata="device"/>
+                        <scheduleState v-bind:propsdata="device"/>
+                        <div v-if="device.state.COMP_LoadFactor !== undefined || device.state.COMP_Trip !== undefined || device.state.COMP_Warning !== undefined">
+                            <ul class="tag-box">
+                                <li v-if="device.state.COMP_LoadFactor">
+                                    <div class="tagname">부하율</div>
+                                    <div style="display:flex; flex:1; justify-content: end; align-items: center;">
+                                        <div class="progressbar">
+                                            <div class="inner-bar"
+                                                 :style="`width:${device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}%`"/>
+                                        </div>
+                                        <h3>{{device.state.COMP_LoadFactor.value === null ? 0 :
+                                            device.state.COMP_LoadFactor.value}}%</h3>
                                     </div>
-                                    {{device.name}}
-                                </h3>
-                            </nuxt-link>
-                            <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
-                                 class="setting-btn"
-                                 @click="settingModalOpen(device.id)"/>
-                        </div>
-                        <div class="ibox-content">
-                            <airCompressorState v-bind:propsdata="device"/>
-                            <scheduleState v-bind:propsdata="device"/>
-                            <div v-if="device.state.COMP_LoadFactor !== undefined || device.state.COMP_Trip !== undefined || device.state.COMP_Warning !== undefined">
-                                <ul class="tag-box">
-                                    <li v-if="device.state.COMP_LoadFactor">
-                                        <div class="tagname">부하율</div>
-                                        <div style="display:flex; flex:1; justify-content: end; align-items: center;">
-                                            <div class="progressbar">
-                                                <div class="inner-bar"
-                                                     :style="`width:${device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}%`"/>
-                                            </div>
-                                            <h3>{{device.state.COMP_LoadFactor.value === null ? 0 :
-                                                device.state.COMP_LoadFactor.value}}%</h3>
-                                        </div>
-                                    </li>
-                                    <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 1">
-                                        <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                                        <div>{{TPCode[processUndefinedValue(device.state['COMP_ActTripCode']).toString()]}}</div>
-                                    </li>
-                                    <li v-if="processUndefinedValue(device.state['COMP_Warning']) === 1">
-                                        <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                                        <div>{{TPCode[processUndefinedValue(device.state['COMP_ActWarCode']).toString()]}}</div>
-                                    </li>
+                                </li>
+                                <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 1">
+                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                    <div>
+                                        {{TPCode[processUndefinedValue(device.state['COMP_ActTripCode']).toString()]}}
+                                    </div>
+                                </li>
+                                <li v-if="processUndefinedValue(device.state['COMP_Warning']) === 1">
+                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                    <div>{{TPCode[processUndefinedValue(device.state['COMP_ActWarCode']).toString()]}}
+                                    </div>
+                                </li>
 
-                                    <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 0 && processUndefinedValue(device.state['COMP_ActTripCode']) === 0">
-                                        <div class="bom-badge green-bg-badge" style="margin:0 8px 0 0;">Normal</div>정상
-                                    </li>
-                                </ul>
-                            </div>
-                            <div v-if="device.tagByComponents !== null && device.tagByComponents.mainInfoComponent !== undefined">
-                                <ul v-if="device.tagByComponents !== null" class="tag-box">
-                                    <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
-                                        <div>
-                                            {{tag.description}}
-                                        </div>
-                                        <div>
-                                            {{tag.value | valueFormat(2)}} {{tag.unit}}
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div v-if="device.devices.power !==undefined">
+                                <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 0 && processUndefinedValue(device.state['COMP_ActTripCode']) === 0">
+                                    <div class="bom-badge green-bg-badge" style="margin:0 8px 0 0;">Normal</div>
+                                    정상
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-if="device.tagByComponents !== null && device.tagByComponents.mainInfoComponent !== undefined">
+                            <ul v-if="device.tagByComponents !== null" class="tag-box">
+                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
+                                    <div>
+                                        {{tag.description}}
+                                    </div>
+                                    <div>
+                                        {{tag.value | valueFormat(2)}} {{tag.unit}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-if="device.devices.power !==undefined">
                             <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
                                 <li v-for="type in powerTagSet" :key="type.description">
                                     <div v-if="power.tags[type] !== undefined">
@@ -118,11 +122,11 @@
                                     </div>
                                 </li>
                             </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
-            </masonry>
+            </div>
+            <!--</masonry>-->
         </div>
         <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
                            v-if="equipmentList.temperature"/>
@@ -220,10 +224,10 @@
                             show: true,
                             formatter: function (val, target) {
                                 let unit = '';
-                                if(target.seriesIndex === 0) {
+                                if (target.seriesIndex === 0) {
                                     unit = 'kW'
                                 }
-                                if(target.seriesIndex === 1) {
+                                if (target.seriesIndex === 1) {
                                     unit = 'N㎥/min'
                                 }
                                 return val + unit
@@ -347,9 +351,9 @@
             chartSetting() {
                 axios.get('/api/specificalPower')
                     .then((res) => {
-                        if(isNaN(res.data)) {
+                        if (isNaN(res.data)) {
                             this.basicUnit = 0
-                        }else {
+                        } else {
                             this.basicUnit = res.data.toFixed(2);
                         }
                     });
@@ -359,7 +363,7 @@
 
                 axios.get('/api/totalValue')
                     .then((res) => {
-                        if(res.status === 200) {
+                        if (res.status === 200) {
                             vm.tagVal = res.data;
                             vm.setLiveChart();
                             vm.chartSetting();
@@ -396,9 +400,10 @@
                             return qs.stringify(params)
                         }
                     }).then((res) => {
-                    if(res.status === 200) {
+                    if (res.status === 200) {
                         vm.airCompressorList = res.data;
-                        vm.airCompressorList.forEach(item=>{
+                        vm.airCompressorList.forEach(item => {
+                            console.log(item.equipment.model)
                             item.image = require(`~/assets/images/equipment/${item.equipment.model}.png`);
                         });
                     }
@@ -486,9 +491,9 @@
                 value = parseFloat(value);
                 if (!value) {
                     return '0';
-                }else if(value <= -101 && value >= -113) {
+                } else if (value <= -101 && value >= -113) {
                     return '-'
-                }else {
+                } else {
                     return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
                 }
             },
