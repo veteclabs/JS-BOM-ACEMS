@@ -51,7 +51,14 @@ public class Crawler extends TimerTask {
                 while (true) {
                     tagDtoList = new ArrayList<>();
                     List<TagDto> info_v2 = getInfo_v2(driver);
-                    apiService.setTagValues(info_v2);
+                    try {
+                        apiService.setTagValues(info_v2);
+                    } catch (Exception e) {
+                        driver.close();
+                        driver.quit();
+                        driver = createDriver();
+                        throw new RuntimeException(e);
+                    }
 
                     sleep(5000);
                 }

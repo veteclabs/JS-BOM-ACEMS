@@ -9,7 +9,6 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
-@Data
 @Setter
 @Getter
 @NoArgsConstructor

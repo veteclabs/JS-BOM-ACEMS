@@ -155,7 +155,13 @@ public class CompressorServiceImpl {
                     })
                     .collect(toList());
 
-            if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
+            if(!isNull(minMaxTag)) {
+                try {
+                    webaccessApiService.setTagValues(minMaxTag);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
 
@@ -247,9 +253,21 @@ public class CompressorServiceImpl {
                     })
                     .collect(toList());
 
-            if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
+            if(!isNull(minMaxTag)) {
+                try {
+                    webaccessApiService.setTagValues(minMaxTag);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
-        if(!isNull(minMaxTag)) webaccessApiService.setTagValues(minMaxTag);
+        if(!isNull(minMaxTag)) {
+            try {
+                webaccessApiService.setTagValues(minMaxTag);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         deviceDataRepository.save(seletedDevice);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceId(compressorInsertDto.getId());
         orderDataRepository.deleteAllInBatch(allByDeviceId);

@@ -3,11 +3,11 @@ package com.markcha.ems.service.impl;
 import com.markcha.ems.controller.CompressorController;
 import com.markcha.ems.controller.DeviceController.DeviceInsertDto;
 import com.markcha.ems.domain.*;
+import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.EquipmentDataRepository;
 import com.markcha.ems.repository.TagListDataRepository;
-import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -37,9 +38,13 @@ public class DeviceServiceImpl implements DeviceService {
     public Boolean createDevice(DeviceInsertDto deviceInsert) {
         Device newDevice = new Device();
 
+        String model = null;
+        if (!isNull(deviceInsert.getModel())) {
+            model = deviceInsert.getModel().equals("") ? null : deviceInsert.getModel();
+        }
         Equipment selectedEquipment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
-                deviceInsert.getModel().equals("")? null : deviceInsert.getModel());
+                model);
         if(!isNull(deviceInsert.getGroupId())) {
             Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
             newDevice.setGroup(seletedGroup);
@@ -60,6 +65,8 @@ public class DeviceServiceImpl implements DeviceService {
         deviceDataRepository.save(save);
         return true;
     }
+
+
 
     @Override
     public Boolean updateDevice(DeviceInsertDto deviceInsert) {
@@ -95,5 +102,13 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Boolean updateCompressor(CompressorController.CompressorInsertDto compressorInsertDto) {
         return null;
+    }
+
+    @Override
+    public List<DeviceConDto> getAllDryers(List<String> tagSetNames) {
+        List<Device> dryers = deviceDslRepository.findAllDeviceGroupByTagSet(tagSetNames);
+        return dryers.stream()
+                .map(DeviceConDto::of)
+                .collect(Collectors.toList());
     }
 }

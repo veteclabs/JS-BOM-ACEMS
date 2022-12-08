@@ -239,7 +239,11 @@ public class GroupServiceImpl {
                     return tag;
                 })
                 .collect(toList()));
-        webaccessApiService.setTagValues(minMaxTags);
+        try {
+            webaccessApiService.setTagValues(minMaxTags);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
     public Boolean updateGroups(List<GroupDto> groupDtos) {

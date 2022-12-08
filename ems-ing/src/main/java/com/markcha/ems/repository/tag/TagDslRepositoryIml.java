@@ -35,7 +35,21 @@ public class TagDslRepositoryIml {
                 .where(
                          group.id.eq(id)
                         ,equipment.type.eq(EquipmentType.AIR_COMPRESSOR)
-                        ,tag.type.in(new ArrayList<>(List.of("COMP_Power", "COMP_Local")))
+                        ,tag.type.in(new ArrayList<>(List.of("COMP_Power")))
+                ).fetchOne();
+
+    }
+    public Device findAllByDeviceId(Long id){
+
+        return query.selectFrom(device)
+                .leftJoin(device.tags, tag).fetchJoin()
+                .leftJoin(device.group, group).fetchJoin()
+                .leftJoin(group.schedule, schedule).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .where(
+                        device.id.eq(id)
+                        ,equipment.type.eq(EquipmentType.AIR_DRYER)
+                        ,tag.type.in(new ArrayList<>(List.of("COMP_Power")))
                 ).fetchOne();
 
     }
