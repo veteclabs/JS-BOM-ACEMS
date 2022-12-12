@@ -8,10 +8,7 @@ import com.markcha.ems.domain.TagSetMapper;
 import com.markcha.ems.dto.tag.TagDto;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -49,7 +46,9 @@ public class DeviceConDto {
                 .equipmentType(!isNull(device.getEquipment()) ? device.getEquipment().getType() : null)
                 .build();
         Map<String, List<TagDto>> tagByComponents = new HashMap<>();
-        for (Tag tag : device.getTags()) {
+        for (Tag tag : device.getTags().stream()
+            .sorted(Comparator.comparing(t->t.getTagList().getId()))
+            .collect(Collectors.toList())) {
             for (TagSetMapper tagSetMapper : tag.getTagList().getTagSetMappers()) {
                 if (isNull(tagByComponents.get(tagSetMapper.getTagSet().getNickname()))) {
                     tagByComponents.put(tagSetMapper.getTagSet().getNickname(), new ArrayList<>());

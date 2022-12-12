@@ -281,11 +281,6 @@
                 const vm = this;
                 const max = vm.params.schedule.max;
                 const min = vm.params.schedule.min;
-                if ((max - min) < 0.7) {
-                    let gap = vm.params.schedule.max - 0.7;
-                    gap = gap.toFixed(1);
-                    vm.params.schedule.min = gap;
-                }
             },
             getDayOfWeek() {
                 const vm = this;

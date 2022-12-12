@@ -239,7 +239,7 @@ public class CompressorServiceImpl {
                 .collect(toList());
         List<TagDto> minMaxTag = null;
         if (!isNull(scheduleDto)) {
-            tagsDto.stream()
+            minMaxTag = tagsDto.stream()
                     .filter(t -> {
                         boolean isMax = t.getType().equals("COMP_StopPre");
                         boolean isMin = t.getType().equals("COMP_StartPre");
