@@ -49,8 +49,6 @@ export default {
       value = parseFloat(value);
       if (!value) {
         return '0';
-      } else if (value <= -101 && value >= -113) {
-        return '-'
       } else {
         return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
       }

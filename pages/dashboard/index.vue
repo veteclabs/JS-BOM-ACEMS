@@ -498,6 +498,7 @@
                     vm.getTagValues();
                     vm.getAirCompressor();
                     vm.getEquipment();
+                    vm.getAirDryers();
                 }, vm.intervalTime);
             },
             removeInterval() {

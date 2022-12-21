@@ -80,20 +80,6 @@
                 </div>
             </div>
             <div class="col-lg-8">
-                <div v-if="airCompressor.state !== undefined && airCompressor.equipment.model !== 'Turbo'">
-                    <div class="ibox" v-if="processUndefinedValue(airCompressor.state['COMP_Trip'], null) === 1">
-                        <div class="ibox-content flex-box">
-                            <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                            <div>{{processUndefinedValue(airCompressor.state['COMP_TripCode'], airCompressor.state['COMP_ActTripCode'])}}</div>
-                        </div>
-                    </div>
-                    <div class="ibox" v-if="processUndefinedValue(airCompressor.state['COMP_Warning'], null) === 1">
-                        <div class="ibox-content flex-box">
-                            <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
-                            <div>{{processUndefinedValue(airCompressor.state['COMP_WarningCode'], airCompressor.state['COMP_ActWarCode'])}}</div>
-                        </div>
-                    </div>
-                </div>
                 <div class="ibox">
                     <div class="ibox-title flex-ibox-title">
                         실시간 전력(kW)

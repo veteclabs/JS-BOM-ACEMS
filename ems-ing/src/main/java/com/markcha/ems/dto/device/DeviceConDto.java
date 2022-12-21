@@ -33,7 +33,7 @@ public class DeviceConDto {
         if (!isNull(device.getTags())) {
             this.tags = device.getTags().stream()
                     .map(t->new TagDto(t, true))
-                    .collect(toMap(TagDto::getType, t->t));
+                    .collect(toMap(TagDto::getType, t->t, (v1, v2) -> v1));
         }
         if (!isNull(device.getEquipment())) {
             this.equipmentType = device.getEquipment().getType();

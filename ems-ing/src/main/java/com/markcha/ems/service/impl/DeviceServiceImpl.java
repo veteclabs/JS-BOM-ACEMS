@@ -7,6 +7,7 @@ import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.EquipmentDataRepository;
+import com.markcha.ems.repository.TagDataRepository;
 import com.markcha.ems.repository.TagListDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
@@ -14,6 +15,7 @@ import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.DeviceService;
 import com.markcha.ems.service.InsertSampleData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -68,6 +70,8 @@ public class DeviceServiceImpl implements DeviceService {
 
 
 
+    @Autowired
+    private TagDataRepository tagDataRepository;
     @Override
     public Boolean updateDevice(DeviceInsertDto deviceInsert) {
         Device seletedDevice = deviceDslRepository.getOneById(deviceInsert.getId());
@@ -89,8 +93,16 @@ public class DeviceServiceImpl implements DeviceService {
         seletedDevice.setEquipment(selectedEquipment);
         seletedDevice.setCt(deviceInsert.getCt());
         seletedDevice.setPt(deviceInsert.getPt());
+
         seletedDevice.setVoltage(deviceInsert.getVoltage());
         deviceDataRepository.save(seletedDevice);
+        tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
+        List<Tag> tags = insertSampleData.createTags(selectedEquipment.getId(), seletedDevice, null);
+        tags.stream()
+                .forEach(t->{
+                    t.setDevice(seletedDevice);
+                });
+        tagDataRepository.saveAll(tags);
         return true;
     }
 
