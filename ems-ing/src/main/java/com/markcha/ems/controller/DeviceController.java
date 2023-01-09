@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
-import static com.markcha.ems.domain.EquipmentType.PRESSURE_GAUGE;
+import static com.markcha.ems.domain.EquipmentType.*;
 import static java.util.Objects.isNull;
 
 @RestController
@@ -50,7 +49,7 @@ public class DeviceController {
     @GetMapping(value="/etcs",headers = "setting=true")
     public List<TemplcateDto> etc(
     ) throws Exception {
-        return deviceDslRepository.findAllTemplates(AIR_COMPRESSOR).stream()
+        return deviceDslRepository.findAllTemplates(List.of(AIR_COMPRESSOR)).stream()
                 .map(TemplcateDto::new)
                 .collect(Collectors.toList());
     }
@@ -58,7 +57,7 @@ public class DeviceController {
     @GetMapping(value="/etcs")
     public Map<String, List<DeviceConDto>> etc2(
     ){
-        List<Device> allTemplates = deviceDslRepository.findAllTemplates(AIR_COMPRESSOR);
+        List<Device> allTemplates = deviceDslRepository.findAllTemplates(List.of(AIR_COMPRESSOR, AIR_DRYER));
         List<String> tagNames = new ArrayList<>();
         allTemplates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
 

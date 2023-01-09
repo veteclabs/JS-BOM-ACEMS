@@ -80,20 +80,6 @@
                 </div>
             </div>
             <div class="col-lg-8">
-                <div v-if="airCompressor.state">
-                    <div class="ibox" v-if="airCompressor.state['COMP_Trip'] !== undefined && airCompressor.state['COMP_Trip'].value === 1">
-                        <div class="ibox-content flex-box">
-                            <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
-                            <div>{{TPCode[device.state['COMP_ActTripCode'] === undefined? device.state['COMP_TripCode'].value.toString() : device.state['COMP_ActTripCode'].value.toString()]}}</div>
-                        </div>
-                    </div>
-                    <div class="ibox" v-if="airCompressor.state['COMP_Warning'] !== undefined && airCompressor.state['COMP_Warning'].value === 1">
-                        <div class="ibox-content flex-box">
-                            <div class="bom-badge orange-bg-badge" style="margin:0 8px 0 0;">warning</div>
-                            <div>{{TPCode[device.state['COMP_ActWarCode'] === undefined? device.state['COMP_WarningCode'].value.toString() : device.state['COMP_ActWarCode'].value.toString()]}}</div>
-                        </div>
-                    </div>
-                </div>
                 <div class="ibox">
                     <div class="ibox-title flex-ibox-title">
                         실시간 전력(kW)
@@ -366,7 +352,7 @@
             chartSetting() {
                 const barMaxValue = 15;
                 const bar = this.airCompressor.state.COMP_SystemPre.value;
-                console.log(airCompressor.state.COMP_SystemPre);
+                console.log(this.airCompressor.state.COMP_SystemPre);
 
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },
@@ -413,6 +399,19 @@
             settingModalOpen(device) {
                 this.$refs.settingEquipmentModal.updateModal(device);
                 this.settingModalData.show = true;
+            },
+            processUndefinedValue(type, type2) {
+
+                if (type === undefined && type2 === undefined) {
+                    return 0;
+                } else {
+                    if (type === undefined) {
+                        return type2.value;
+                    } else {
+
+                        return type.value
+                    }
+                }
             },
             setLiveChart: function () {
                 const vm = this;

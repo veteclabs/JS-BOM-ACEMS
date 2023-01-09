@@ -59,10 +59,11 @@ public class AirCompressorDto {
                                             .add(TagDto.of(tag));
                                 }
                             }
-
-                            this.state = groupingTags.get("stateComponent").stream()
-                                    .collect(Collectors.toMap(k -> k.getType(), k -> k, (val1, val2) -> val1));
-                            groupingTags.remove("stateComponent");
+                            if (!isNull(groupingTags.get("stateComponent"))) {
+                                this.state = groupingTags.get("stateComponent").stream()
+                                        .collect(Collectors.toMap(k -> k.getType(), k -> k, (val1, val2) -> val1));
+                                groupingTags.remove("stateComponent");
+                            }
                             this.tagByComponents = groupingTags;
                         }
 

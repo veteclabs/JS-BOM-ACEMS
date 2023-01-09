@@ -7,8 +7,9 @@ import java.beans.Transient;
 import java.util.List;
 
 public interface DeviceRepository {
-    public List<Device> findAllTemplcates(String typeName);
-    public List<Device> findAllCompressors(String typeName);
-    public Device getOneById(Long id);
-    public Device getOneByIdJoinGroupSchedule(Long id);
+    List<Device> findAllTemplcates(String typeName);
+    List<Device> findAllCompressors(String typeName);
+    Device getOneById(Long id);
+    Device getOneByIdJoinGroupSchedule(Long id);
+    List<Device> findAllDeviceGroupByTagSet();
 }

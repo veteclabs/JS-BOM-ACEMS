@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.markcha.ems.domain.EquipmentType.*;
 import static com.markcha.ems.domain.GroupType.GROUP;
@@ -29,8 +26,7 @@ import static com.markcha.ems.domain.QTagSetMapper.tagSetMapper;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 
 @Repository
@@ -45,13 +41,13 @@ public class DeviceDslRepositoryImpl {
         this.webaccessApiService = webaccessApiService;
     }
 
-    public List<Device> findAllTemplates(EquipmentType typeName) {
+    public List<Device> findAllTemplates(List<EquipmentType> typeNames) {
         return query.select(device).distinct()
                 .from(device)
                 .join(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()
                 .leftJoin(device.tags, tag).fetchJoin()
-                .where(equipment.type.ne(typeName))
+                .where(equipment.type.notIn(typeNames))
                 .orderBy(device.id.desc())
                 .fetch();
     }
@@ -392,5 +388,34 @@ public class DeviceDslRepositoryImpl {
                         device.SerialNumber.isNotNull()
                 )
                 .fetch();
+    }
+    public List<Device> findAllDeviceGroupByTagSet(List<String> tagSetNames) {
+        List<Device> dryers = query.select(device).distinct()
+                .from(device)
+                .join(device.equipment, equipment).fetchJoin()
+                .where(
+                        equipment.type.eq(AIR_DRYER)
+                ).fetch();
+        List<Tag> tags = query.select(tag).distinct()
+                .from(tag)
+                .join(tag.tagList, tagList).fetchJoin()
+                .leftJoin(tagList.tagSetMappers, tagSetMapper).fetchJoin()
+                .join(tagSetMapper.tagSet, tagSet).fetchJoin()
+                .where(
+                        tag.device.id.in(dryers.stream()
+                                .map(t->t.getId())
+                                .collect(toList()))
+                        ,tagSet.nickname.in(tagSetNames)
+                ).fetch();
+        Map<String, Object> tagValueMap = webaccessApiService.getTagValuesV2(tags.stream()
+                .map(t->t.getTagName())
+                .collect(toList()));
+        tags.stream()
+                .forEach(t->t.setValue(tagValueMap.get(t.getTagName())));
+        Map<Long, Set<Tag>> grouppingTags = tags.stream()
+                .collect(groupingBy(t->t.getDevice().getId(), toSet()));
+        dryers.stream()
+                .forEach(t->t.setTags(grouppingTags.get(t.getId())));
+        return dryers;
     }
 }

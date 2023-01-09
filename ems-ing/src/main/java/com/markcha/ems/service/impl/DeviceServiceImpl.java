@@ -3,21 +3,24 @@ package com.markcha.ems.service.impl;
 import com.markcha.ems.controller.CompressorController;
 import com.markcha.ems.controller.DeviceController.DeviceInsertDto;
 import com.markcha.ems.domain.*;
+import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.exception.custom.MethodNotAllowedException;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.EquipmentDataRepository;
+import com.markcha.ems.repository.TagDataRepository;
 import com.markcha.ems.repository.TagListDataRepository;
-import com.markcha.ems.repository.device.DeviceRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.service.DeviceService;
 import com.markcha.ems.service.InsertSampleData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -37,9 +40,13 @@ public class DeviceServiceImpl implements DeviceService {
     public Boolean createDevice(DeviceInsertDto deviceInsert) {
         Device newDevice = new Device();
 
+        String model = null;
+        if (!isNull(deviceInsert.getModel())) {
+            model = deviceInsert.getModel().equals("") ? null : deviceInsert.getModel();
+        }
         Equipment selectedEquipment = equipmentDslRepository.getOneByTypeAndModel(
                 deviceInsert.getType(),
-                deviceInsert.getModel().equals("")? null : deviceInsert.getModel());
+                model);
         if(!isNull(deviceInsert.getGroupId())) {
             Group seletedGroup = groupDslRepository.getOneById(deviceInsert.getGroupId());
             newDevice.setGroup(seletedGroup);
@@ -61,6 +68,10 @@ public class DeviceServiceImpl implements DeviceService {
         return true;
     }
 
+
+
+    @Autowired
+    private TagDataRepository tagDataRepository;
     @Override
     public Boolean updateDevice(DeviceInsertDto deviceInsert) {
         Device seletedDevice = deviceDslRepository.getOneById(deviceInsert.getId());
@@ -82,8 +93,16 @@ public class DeviceServiceImpl implements DeviceService {
         seletedDevice.setEquipment(selectedEquipment);
         seletedDevice.setCt(deviceInsert.getCt());
         seletedDevice.setPt(deviceInsert.getPt());
+
         seletedDevice.setVoltage(deviceInsert.getVoltage());
         deviceDataRepository.save(seletedDevice);
+        tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
+        List<Tag> tags = insertSampleData.createTags(selectedEquipment.getId(), seletedDevice, null);
+        tags.stream()
+                .forEach(t->{
+                    t.setDevice(seletedDevice);
+                });
+        tagDataRepository.saveAll(tags);
         return true;
     }
 
@@ -95,5 +114,13 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Boolean updateCompressor(CompressorController.CompressorInsertDto compressorInsertDto) {
         return null;
+    }
+
+    @Override
+    public List<DeviceConDto> getAllDryers(List<String> tagSetNames) {
+        List<Device> dryers = deviceDslRepository.findAllDeviceGroupByTagSet(tagSetNames);
+        return dryers.stream()
+                .map(DeviceConDto::of)
+                .collect(Collectors.toList());
     }
 }

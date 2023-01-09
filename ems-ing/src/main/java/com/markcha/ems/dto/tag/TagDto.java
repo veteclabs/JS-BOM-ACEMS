@@ -9,7 +9,6 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
-@Data
 @Setter
 @Getter
 @NoArgsConstructor
@@ -48,7 +47,7 @@ public class TagDto {
         return TagDto.builder()
                 .id(tag.getId())
                 .tagName(tag.getTagName())
-                .description(tag.getTagDescription())
+                .description(tag.getTagList().getTagDescription())
                 .type(tag.getType())
                 .value(tag.getValue())
                 .unit(tag.getUnit())

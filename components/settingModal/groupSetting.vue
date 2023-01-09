@@ -169,19 +169,6 @@
             'groupData.name'(value) {
                 return Validator.value(value).required();
             },
-            'groupData.schedule.min, groupData.schedule.max': function (min, max) {
-                return Validator.value(min).required().custom(function () {
-                    if ((min !== null && max !== null)) {
-                        if (max < min) {
-                            return 'Max 값을 더 높게 설정해주세요.'
-                        } else if (min === max) {
-                            return 'Min, Max 값을 다르게 설정해주세요.'
-                        } else if(((max-min).toFixed(1)) < 0.7)  {
-                            return `Min, Max값의 차이는 0.7 이상 필요합니다. Min값을 ${(max-0.7).toFixed(1)} 이하로 설정해주세요.`
-                        }
-                    }
-                });
-            },
             'groupData.schedule.isActive, groupData.schedule.dayOfWeeks, groupData.schedule.startTime, groupData.schedule.stopTime':
                 function (active, day, start, stop) {
                     return Validator.value(active).required().custom(function () {
@@ -204,11 +191,6 @@
                 const vm = this;
                 const max = vm.groupData.schedule.max;
                 const min = vm.groupData.schedule.min;
-                if((max-min) < 0.7) {
-                    let gap  = vm.groupData.schedule.max -0.7;
-                    gap = gap.toFixed(1);
-                    vm.groupData.schedule.min = gap;
-                }
             },
             getDayOfWeek() {
                 const vm = this;

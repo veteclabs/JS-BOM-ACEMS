@@ -141,7 +141,7 @@
                     {id: 2, name: '온도계'},
                     {id: 3, name: '압력계'},
                     {id: 4, name: '유량계'},
-                    {id: 4, name: '에어 드라이어'},
+                    {id: 5, name: '에어 드라이어'},
                 ],
                 modelList: [
                     {id: 1, type: '전력', name: 'Accura'},

@@ -4,6 +4,7 @@ import com.markcha.ems.domain.*;
 import com.markcha.ems.dto.device.ComponentsDto;
 import com.markcha.ems.dto.device.AirCompressorDto;
 import com.markcha.ems.dto.device.CompressorDto;
+import com.markcha.ems.dto.device.DeviceConDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
@@ -13,11 +14,14 @@ import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
+import com.markcha.ems.service.DeviceService;
 import com.markcha.ems.service.impl.CompressorServiceImpl;
 import com.markcha.ems.service.impl.GroupServiceImpl;
 import com.markcha.ems.service.impl.WebaccessApiServiceImpl;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
@@ -92,6 +96,15 @@ public class CompressorController {
                 .collect(toList());
     }
 
+    @Autowired
+    private DeviceService deviceService;
+    @GetMapping(value="/airDryers")
+    public ResponseEntity<?> airDryers(
+            ComponentsDto components
+    ) {
+        return ResponseEntity.ok(deviceService.getAllDryers(components.getComponents()));
+    }
+
     @GetMapping(value="/compressor/{compressorId}")
     public AirCompressorDto compressor(
             @PathVariable("compressorId") Long compressorId,
@@ -154,6 +167,18 @@ public class CompressorController {
         compressorService.controllPowerAsync(device.getGroup().getSchedule().getInterval(), tags, powerCode);
         Group group = groupDslRepository.findAllBroGroupByBroId(groupId);
         if(!isNull(group)) groupService.unActiveSchedule(group);
+        return new ApiResponseDto("제어명령이 성공적으로 실행되었습니다. 프로그램 통신 상 제어 명령 반응까지 몇 분이 소요될 수도 있습니다.");
+    }
+    @PutMapping(value="/airDryer/{deviceId}/power/{powerCode}")
+    public ApiResponseDto powerCtl(
+            @PathVariable("deviceId") Long deviceId,
+            @PathVariable("powerCode") Integer powerCode
+    ) throws InterruptedException {
+        Device device = tagDslRepositoryIml.findAllByDeviceId(deviceId);
+        Map<String, TagDto> tags = device.getTags().stream()
+                .map(TagDto::new)
+                .collect(toMap(TagDto::getType, t->t, (k1, k2) -> k1));
+        compressorService.controllPowerAsync(device.getGroup().getSchedule().getInterval(), tags, powerCode);
         return new ApiResponseDto("제어명령이 성공적으로 실행되었습니다. 프로그램 통신 상 제어 명령 반응까지 몇 분이 소요될 수도 있습니다.");
     }
 

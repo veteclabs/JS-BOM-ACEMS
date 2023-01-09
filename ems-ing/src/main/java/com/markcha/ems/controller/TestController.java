@@ -103,7 +103,7 @@ public class TestController {
                         return historyHour;
                     }
                 }).mapToDouble(t -> t).sum();
-        List<Tag> flowTags = tagDataRepository.findAllByType("PWR_KWh");
+        List<Tag> flowTags = tagDataRepository.findAllByType("AIR_Con");
         Double flowValue = flowTags.stream()
                 .map(t -> {
                     String tagName = t.getTagName();

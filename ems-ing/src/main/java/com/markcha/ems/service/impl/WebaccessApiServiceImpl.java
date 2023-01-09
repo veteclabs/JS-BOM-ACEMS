@@ -231,7 +231,7 @@ public class WebaccessApiServiceImpl {
             return null;
         }
     }
-    public Boolean setTagValues(List<TagDto> propertyDtos) {
+    public Boolean setTagValues(List<TagDto> propertyDtos) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic YWRtaW46dmV0ZWMx"); //YWRtaW46dmV0ZWMx

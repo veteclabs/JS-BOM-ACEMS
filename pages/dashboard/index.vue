@@ -130,8 +130,8 @@
         </div>
         <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
                            v-if="equipmentList.temperature"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if=" equipmentList.flow"/>
-        <equipmentTagGroup v-bind:propsdata="equipmentList.dirDryer" :title="'에어 드라이어'" v-if=" equipmentList.dirDryer"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if="equipmentList.flow"/>
+        <airDryerTagGroup v-bind:propsdata="airDryerList" :title="'에어 드라이어'" v-if="airDryerList"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
                                v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
@@ -150,6 +150,7 @@
     import airCompressorState from '~/components/dashboard/airCompressorState.vue';
     import scheduleState from '~/components/dashboard/scheduleState.vue';
     import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
+    import airDryerTagGroup from '~/components/dashboard/airDryerTagGroup.vue';
     import waTagSet from '~/assets/data/tagSet.json';
     import qs from "qs";
 
@@ -168,7 +169,8 @@
             settingEquipmentModal,
             airCompressorState,
             scheduleState,
-            equipmentTagGroup
+            equipmentTagGroup,
+            airDryerTagGroup
         },
         data() {
             return {
@@ -328,6 +330,7 @@
                 },
                 basicUnit: 0,
                 airCompressorList: [],
+                airDryerList: [],
                 equipmentList: [],
                 timeCategories: [],
                 Interval1M: '',
@@ -341,6 +344,7 @@
             this.resetInterval();
             this.getAirCompressor();
             this.getEquipment();
+            this.getAirDryers();
             this.getTrip();
             this.loadingData.show = true;
         },
@@ -348,15 +352,35 @@
             this.removeInterval();
         },
         methods: {
+          getAirDryers() {
+            const vm = this;
+            axios.get('/api/airDryers', {
+              params: {
+                components: ["stateComponent", "mainInfoComponent"]
+
+              }, paramsSerializer: params => {
+                return qs.stringify(params)
+              }
+            })
+                .then((res) => {
+                  if (res.status === 200) {
+                    vm.airDryerList = res.data;
+                  }
+                }).catch((error) => {
+              vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+            }).finally(() => {
+              vm.loadingData.show = false;
+            });
+          },
             chartSetting() {
-                axios.get('/api/specificalPower')
-                    .then((res) => {
-                        if (isNaN(res.data)) {
-                            this.basicUnit = 0
-                        } else {
-                            this.basicUnit = res.data.toFixed(2);
-                        }
-                    });
+              axios.get('/api/specificalPower')
+                  .then((res) => {
+                    if (isNaN(res.data)) {
+                      this.basicUnit = 0
+                    } else {
+                      this.basicUnit = res.data.toFixed(2);
+                    }
+                  });
             },
             async getTagValues() {
                 const vm = this;
@@ -474,6 +498,7 @@
                     vm.getTagValues();
                     vm.getAirCompressor();
                     vm.getEquipment();
+                    vm.getAirDryers();
                 }, vm.intervalTime);
             },
             removeInterval() {

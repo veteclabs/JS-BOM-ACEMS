@@ -234,7 +234,7 @@ sum(`USAGE`) `usage`,
             </foreach>
             AND timestamp <![CDATA[>=]]> #{startDate}
             AND TIMESTAMP <![CDATA[<]]> #{endDate}
-            group by hour(`TIMESTAMP`)
+            group by day(`TIMESTAMP`)
             ) `EY` ON `EY`.d = s.d
         </if>
         ORDER BY if(s.d = 0, 24, s.d)

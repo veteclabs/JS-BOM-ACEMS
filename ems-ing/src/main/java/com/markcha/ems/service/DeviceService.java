@@ -1,15 +1,18 @@
 package com.markcha.ems.service;
 
 
-import com.markcha.ems.controller.CompressorController;
 import com.markcha.ems.controller.CompressorController.CompressorInsertDto;
-import com.markcha.ems.controller.DeviceController;
 import com.markcha.ems.controller.DeviceController.DeviceInsertDto;
-import com.markcha.ems.domain.Device;
+import com.markcha.ems.dto.device.DeviceConDto;
+
+import java.util.List;
 
 public interface DeviceService {
-    public Boolean createDevice(DeviceInsertDto deviceInsert);
-    public Boolean updateDevice(DeviceInsertDto deviceInsert);
-    public Boolean createCompressor(CompressorInsertDto compressorInsertDto);
-    public Boolean updateCompressor(CompressorInsertDto compressorInsertDto);
+    Boolean createDevice(DeviceInsertDto deviceInsert);
+    Boolean updateDevice(DeviceInsertDto deviceInsert);
+    Boolean createCompressor(CompressorInsertDto compressorInsertDto);
+    Boolean updateCompressor(CompressorInsertDto compressorInsertDto);
+
+
+    List<DeviceConDto> getAllDryers(List<String> tagSetNames);
 }
