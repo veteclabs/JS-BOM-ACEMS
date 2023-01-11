@@ -64,6 +64,10 @@ public class TestController {
                 .map(t->t.getTagName())
                 .collect(toList());
         result.getTypes().put(tagType, new Type(tagNames));
+        if (isNull(tagNames)) {
+            result.getTypes().get(tagType).setValue(0.0);
+            return;
+        }
         result.getTypes().get(tagType).setUnits(webaccessApiService.getTagValuesV2(tagNames));
         Stream<Double> objectStream = result.getTypes().get(tagType).getUnits().values().stream()
                 .filter(t -> {
@@ -93,29 +97,30 @@ public class TestController {
     public double specificalPower() {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
         List<Tag> powerTags = tagDataRepository.findAllByType("PWR_KWh");
-        Double powerValue = powerTags.stream()
-                .map(t -> {
-                    String tagName = t.getTagName();
-                    Double historyHour = historyHourMapper.getHistoryHour(tagName);
-                    if (isNull(historyHour)) {
-                        return 0.0;
-                    } else {
-                        return historyHour;
-                    }
-                }).mapToDouble(t -> t).sum();
+        List<String> tagNames = new ArrayList<>();
+        tagNames.addAll(powerTags.stream()
+                .map(t->t.getTagName())
+                .collect(toList()));
+        Double powerValue = historyHourMapper.getHistoryHour(HistoryHourSearchDto.builder()
+                        .tagNames(tagNames)
+                .build());
         List<Tag> flowTags = tagDataRepository.findAllByType("AIR_Con");
-        Double flowValue = flowTags.stream()
-                .map(t -> {
-                    String tagName = t.getTagName();
-                    Double historyHour = historyHourMapper.getHistoryHour(tagName);
-                    if (isNull(historyHour)) {
-                        return 0.0;
-                    } else {
-                        return historyHour;
-                    }
-                }).mapToDouble(t -> t).sum();
-
-
+        tagNames.clear();
+        tagNames.addAll(flowTags.stream()
+                .map(t->t.getTagName())
+                .collect(toList()));
+        Double flowValue = historyHourMapper.getHistoryHour(HistoryHourSearchDto.builder()
+                .tagNames(tagNames)
+                .build());
+        if (isNull(powerValue) || isNull(flowValue)) {
+            return 0.0;
+        }
+        if (powerValue == 0.0) {
+            return 0.0;
+        }
+        if (flowValue == 0.0) {
+            return 0.0;
+        }
         return Math.round(powerValue/flowValue);
 
     }

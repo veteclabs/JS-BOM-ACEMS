@@ -26,10 +26,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.markcha.ems.domain.EquipmentType.AIR_COMPRESSOR;
 import static java.util.Objects.isNull;
@@ -171,7 +173,7 @@ public class CompressorServiceImpl {
     }
 
     @Async
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, NullPointerException.class})
     public Boolean updateCompressor(CompressorInsertDto compressorInsertDto) {
         String typeName = "compressor";
         Device seletedDevice = deviceDslRepository.getOneByIdJoinGroupSchedule(compressorInsertDto.getId());
@@ -223,17 +225,26 @@ public class CompressorServiceImpl {
         // 디바이스 생성 및 그룹과 연동
         Equipment selectedEquipment = equipmentDslRepository.getOneById(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId());
         seletedDevice.setName(compressorInsertDto.getName());
-        seletedDevice.setEquipment(selectedEquipment);
-        List<Alarm> alarms = seletedDevice.getTags().stream()
-                .map(t -> t.getAlarms())
-                .collect(toList())
-                .stream().flatMap(List::stream)
-                .collect(toList());
-        alarms.forEach(t->t.setTag(null));
-        alarmDataRepository.saveAll(alarms);
-        tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
-        List<Tag> tags = insertSampleData.createTags(isNull(compressorInsertDto.getEquipmentId()) ?  compressorInsertDto.getEquipment().getEquipmentId(): compressorInsertDto.getEquipmentId(), seletedDevice, compressorInsertDto.getUnitId());
-        seletedDevice.setTags(new HashSet<>(tags));
+
+        List<Tag> tags = new ArrayList<>();
+        if (selectedEquipment.getId() != seletedDevice.getEquipment().getId()) {
+            seletedDevice.setEquipment(selectedEquipment);
+            List<Alarm> alarms = seletedDevice.getTags().stream()
+                    .map(t -> t.getAlarms())
+                    .flatMap(List::stream)
+                    .collect(toList());
+            alarms.forEach(t -> t.setTag(null));
+            alarmDataRepository.saveAll(alarms);
+            alarmDataRepository.deleteAllInBatch(alarmDataRepository.findAllByDeviceId(seletedDevice.getId()));
+            tagDataRepository.deleteAllInBatch(seletedDevice.getTags());
+            List<Tag> newTags = insertSampleData.createTags(isNull(compressorInsertDto.getEquipmentId()) ? compressorInsertDto.getEquipment().getEquipmentId() : compressorInsertDto.getEquipmentId(), seletedDevice, compressorInsertDto.getUnitId());
+            tags.addAll(newTags);
+//            seletedDevice.getTags().clear();
+            seletedDevice.setTags(new HashSet<>(tags));
+        } else {
+            tags.addAll(seletedDevice.getTags());
+        }
+
         List<TagDto> tagsDto = tags.stream()
                 .map(TagDto::new)
                 .collect(toList());
@@ -261,19 +272,11 @@ public class CompressorServiceImpl {
                 }
             }
         }
-        if(!isNull(minMaxTag)) {
-            try {
-                webaccessApiService.setTagValues(minMaxTag);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
         deviceDataRepository.save(seletedDevice);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceId(compressorInsertDto.getId());
         orderDataRepository.deleteAllInBatch(allByDeviceId);
         return true;
     }
-
     public void deleteAllById(List<Long> ids) {
         List<Device> compressors = deviceDslRepository.findAllCompressorsByIds(AIR_COMPRESSOR, ids);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceIds(ids);

@@ -12,12 +12,12 @@
                     ,ifnull(`EY`.`USAGE`, 0)     AS     `kWh`
                 </if>
                 ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
-                ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+                ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneMonth}
             </if>
         <if test="usageType.equals('PF')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
             ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneDay}
-            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneYear}
+            ,ifnull(`LY`.`USAGE`, 0)     AS     #{beforeOneMonth}
         </if>
 
             <if test="usageType.equals('TOE')">
@@ -26,7 +26,7 @@
                     ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{kWh}
                 </if>
                 , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneDay}
-                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneYear}
+                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.TOE)), 0), 5) #{beforeOneMonth}
 
             </if>
 
@@ -36,12 +36,12 @@
                     ,ROUND(IFNULL(((`EY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{kWh}
                 </if>
                 , ROUND(IFNULL(((`bf`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneDay}
-                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneYear}
+                , ROUND(IFNULL(((`LY`.`usage` * 0.001) * (formula.tCo2)), 0), 5) #{beforeOneMonth}
 
             </if>
         FROM
         <if test="isPF.equals(false)">
-(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+(SELECT `toe`,`tco2`, `usage` FROM `ing`.energy WHERE energy_id=#{energyId}) formula,
 </if>
         (SELECT logvalue AS h FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 0 AND logvalue <![CDATA[<=]]> 23) s
         LEFT JOIN
@@ -52,10 +52,17 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
         FROM `tagdata`.history_hour
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach> AND timestamp <![CDATA[>=]]> #{startDate}
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
+            AND timestamp <![CDATA[>=]]> #{startDate}
         AND TIMESTAMP <![CDATA[<]]> #{endDate}
         group by hour(`TIMESTAMP`)
         ) shr ON shr.h = s.h
@@ -67,10 +74,16 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
         FROM `tagdata`.history_hour
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND timestamp <![CDATA[>=]]> #{startOneDayBeforeDate}
         AND TIMESTAMP <![CDATA[<]]> #{endOneDayBeforeDate}
         group by hour(`TIMESTAMP`)
@@ -83,10 +96,17 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
         FROM `tagdata`.history_hour
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND timestamp <![CDATA[>=]]> #{startOneMomthBeforeDate}
         AND TIMESTAMP <![CDATA[<]]> #{endOneMomthBeforeDate}
         group by hour(`TIMESTAMP`)
@@ -101,10 +121,17 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
             FROM `tagdata`.history_hour
-            WHERE tagname in
-            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
-                #{secondtagname}
-            </foreach>
+            WHERE true
+            <if test="secondTagNames.isEmpty() == false">
+                and tagname in
+                <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                    #{secondtagname}
+                </foreach>
+            </if>
+            <if test="secondTagNames.isEmpty() == true">
+                and tagname = "-1"
+            </if>
+
             AND timestamp <![CDATA[>=]]> #{startDate}
             AND TIMESTAMP <![CDATA[<]]> #{endDate}
             group by hour(`TIMESTAMP`)
@@ -152,7 +179,7 @@ sum(`USAGE`) `usage`,
 
         FROM
         <if test="isPF.equals(false)">
-(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+(SELECT `toe`,`tco2`, `usage` FROM `ing`.energy WHERE energy_id=#{energyId}) formula,
 </if>
 
         (SELECT logvalue AS d FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> day(last_day(#{startDate}))) s
@@ -167,10 +194,16 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
         FROM `tagdata`.history_day
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND timestamp <![CDATA[>=]]> #{startDate}
         AND TIMESTAMP <![CDATA[<]]> #{endDate}
         group by day(`TIMESTAMP`)
@@ -187,10 +220,16 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
         FROM `tagdata`.history_day
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND timestamp <![CDATA[>=]]> #{startOneMomthBeforeDate}
         AND TIMESTAMP <![CDATA[<]]> #{endOneMomthBeforeDate}
         group by day(`TIMESTAMP`)
@@ -207,10 +246,16 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
         FROM `tagdata`.history_day
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND timestamp <![CDATA[>=]]> #{startOneYearBeforeDate}
         AND TIMESTAMP <![CDATA[<]]> #{endOneYearBeforeDate}
         group by day(`TIMESTAMP`)
@@ -228,10 +273,17 @@ avg(`USAGE`) `usage`,
 sum(`USAGE`) `usage`,
 </if> TIMESTAMP, tagname
             FROM `tagdata`.history_day
-            WHERE tagname in
-            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
-                #{secondtagname}
-            </foreach>
+            WHERE true
+            <if test="secondTagNames.isEmpty() == false">
+                and tagname in
+                <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                    #{secondtagname}
+                </foreach>
+            </if>
+            <if test="secondTagNames.isEmpty() == true">
+                and tagname = "-1"
+            </if>
+
             AND timestamp <![CDATA[>=]]> #{startDate}
             AND TIMESTAMP <![CDATA[<]]> #{endDate}
             group by day(`TIMESTAMP`)
@@ -249,7 +301,6 @@ sum(`USAGE`) `usage`,
                 ,ifnull(`EY`.`USAGE`, 0) AS         `kWh`
             </if>
             ,ifnull(`bf`.`USAGE`, 0) AS         #{beforeOneYear}
-
         </if>
         <if test="usageType.equals('PF')">
             ,ifnull(shr.`USAGE`, 0)        AS     #{usageType}
@@ -276,7 +327,7 @@ sum(`USAGE`) `usage`,
 
         FROM
         <if test="isPF.equals(false)">
-(SELECT `toe`,`tco2`, `usage` FROM energy WHERE energy_id=#{energyId}) formula,
+(SELECT `toe`,`tco2`, `usage` FROM `ing`.energy WHERE energy_id=#{energyId}) formula,
 </if>
         (SELECT logvalue AS m FROM `tagdata`.sources_hour_with_day WHERE logvalue <![CDATA[>=]]> 1 AND logvalue <![CDATA[<=]]> 12) s
 
@@ -291,19 +342,22 @@ sum(`USAGE`) `usage`,
             sum(`USAGE`) `usage`
         </if>
         FROM `tagdata`.history_day
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
+
         AND timestamp <![CDATA[>=]]> #{startDate}
         AND TIMESTAMP <![CDATA[<]]> #{endDate}
         group by month(`TIMESTAMP`)
         ) shr ON shr.m = s.m
-
-
-
-
-
         LEFT JOIN
         (SELECT
         month(`TIMESTAMP`) m,
@@ -314,10 +368,16 @@ sum(`USAGE`) `usage`,
             sum(`USAGE`) `usage`
         </if>
         FROM `tagdata`.history_day
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND timestamp <![CDATA[>=]]> #{startOneYearBeforeDate}
         AND TIMESTAMP <![CDATA[<]]> #{endOneYearBeforeDate}
         group by month(`TIMESTAMP`)
@@ -337,10 +397,16 @@ sum(`USAGE`) `usage`,
                 sum(`USAGE`) `usage`
             </if>
             FROM `tagdata`.history_day
-            WHERE tagname in
-            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
-                #{secondtagname}
-            </foreach>
+            WHERE true
+            <if test="secondTagNames.isEmpty() == false">
+                and tagname in
+                <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                    #{secondtagname}
+                </foreach>
+            </if>
+            <if test="secondTagNames.isEmpty() == true">
+                and tagname = "-1"
+            </if>
             AND timestamp <![CDATA[>=]]> #{startDate}
             AND TIMESTAMP <![CDATA[<]]> #{endDate}
             group by hour(`TIMESTAMP`)
@@ -368,21 +434,33 @@ sum(`USAGE`) `usage`,
             , ROUND(IFNULL((if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) * 0.001) * (formula.tCo2, 0), 5) AS #{usageType}
         </if>
         FROM
-        (SELECT `toe`,`tco2` FROM energy WHERE energy_id=#{energyId}) formula,
+        (SELECT `toe`,`tco2` FROM `ing`.energy WHERE energy_id=#{energyId}) formula,
         (select `usage`, `timestamp` from `tagdata`.history_day
-        where tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        where true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
         AND `timestamp` <![CDATA[>]]> #{startDate}
         AND `timestamp` <![CDATA[<=]]> #{endDate}) shr
         <if test="isDuo.equals(true)">
             LEFT JOIN
             (SELECT `usage`, `timestamp` from `tagdata`.history_day
-            WHERE tagname in
-            <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
-                #{secondtagname}
-            </foreach>
+            WHERE true
+            <if test="secondTagNames.isEmpty() == false">
+                and tagname in
+                <foreach collection="secondTagNames" item="secondtagname" index="index" separator="," open="(" close=")">
+                    #{secondtagname}
+                </foreach>
+            </if>
+            <if test="secondTagNames.isEmpty() == true">
+                and tagname = "-1"
+            </if>
             AND timestamp <![CDATA[>=]]> #{startDate}
             AND TIMESTAMP <![CDATA[<]]> #{endDate}) `EY` ON year(`EY`.timestamp) = year(shr.timestamp)
         </if>
@@ -392,7 +470,6 @@ sum(`USAGE`) `usage`,
     <select id="getHistoryMin" resultType="java.util.LinkedHashMap" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
 
         SELECT
-
             if(s.f='00:00', '24:00:00',s.f) AS `H`
             <if test="usageType.equals('Usage')">
                 , IFNULL(f.kWh,0) AS #{usageType}
@@ -412,7 +489,10 @@ sum(`USAGE`) `usage`,
                 , ROUND(IFNULL(((`kWh` * 0.001) * (formula.tCo2)), 0), 5) AS #{usageType}
             </if>
         FROM
-            (select logvalue as f from `tagdata`.sources_quarter_past) s
+            (select logvalue
+        as f
+        from `tagdata`.sources_five_minute
+        WHERE ((logvalue + 0) % 10000 ) % 15 = 0) s
         left join (SELECT time(from_unixtime(ceil(UNIX_TIMESTAMP(`timestamp`)/900)*900))t,tagname AS tagname,
         <if test="usageType.equals('PF')">
             if(#{tagType} = "PF", avg(`usage`),sum(`usage`)) AS kWh,
@@ -422,10 +502,16 @@ sum(`USAGE`) `usage`,
             SUM(`usage`) AS kWh, SUM(`usage`)*4 as kW
         </if>
         FROM `tagdata`.history
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
          AND
         `timestamp` <![CDATA[>]]> #{startDate} AND
         `timestamp` <![CDATA[<=]]> #{endDate}
@@ -439,13 +525,19 @@ sum(`USAGE`) `usage`,
             SUM(`usage`) AS kWh, SUM(`usage`)*4 as kW
         </if>
         FROM `tagdata`.history
-        WHERE tagname in
-        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
-            #{tagname}
-        </foreach>
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
          AND
-        `timestamp` <![CDATA[>]]> #{startDate} AND
-        `timestamp` <![CDATA[<=]]> #{endDate}
+        `timestamp` <![CDATA[>]]> #{startOneDayBeforeDate} AND
+        `timestamp` <![CDATA[<=]]> #{endOneDayBeforeDate}
         group by t) b on s.f = b.t
         ORDER BY `H`
     </select>
