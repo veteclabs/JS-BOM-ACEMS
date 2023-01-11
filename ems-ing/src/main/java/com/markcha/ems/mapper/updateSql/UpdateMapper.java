@@ -14,5 +14,7 @@ public interface UpdateMapper {
     void deleteTagSetMapperDuplicate();
     void deleteSroucesHourWithDay();
     void insertSroucesHourWithDay();
+    void deleteSourcesFiveMinute();
+    void insertSourcesFiveMinute();
 
 }

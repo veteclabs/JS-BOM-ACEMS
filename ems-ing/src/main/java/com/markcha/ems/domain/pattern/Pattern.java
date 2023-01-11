@@ -1,11 +1,15 @@
 package com.markcha.ems.domain.pattern;
 
 import com.markcha.ems.domain.TagList;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class Pattern {
     @Id

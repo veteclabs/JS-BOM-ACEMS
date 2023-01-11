@@ -3,13 +3,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.markcha.ems.mapper.historyHour.HistoryHourMapper">
-    <select id="getHistoryHour" resultType="Double" parameterType="String">
-        SELECT hr.`USAGE` `usage`
+    <select id="getHistoryHour" resultType="Double" parameterType="com.markcha.ems.mapper.historyHour.HistoryHourSearchDto">
+        SELECT sum(hr.`USAGE`) `usage`
         FROM `tagdata`.history_hour hr
-        WHERE hr.tagname = #{tagType}
+        WHERE true
+        <if test="tagNames.isEmpty() == false">
+            and tagname in
+            <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+                #{tagname}
+            </foreach>
+        </if>
+        <if test="tagNames.isEmpty() == true">
+            and tagname = "-1"
+        </if>
             and hour(hr.timestamp) = hour(now())
           and date(hr.timestamp) = date(now())
-        order by hr.timestamp desc
-            limit 1
     </select>
 </mapper>

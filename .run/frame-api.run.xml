@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="frame-api" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-    <option name="ACTIVE_PROFILES" value="-profile=prod" />
+    <option name="ACTIVE_PROFILES" value="-profile=local" />
     <module name="ems.main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.markcha.ems.EmsApplication" />
     <method v="2">

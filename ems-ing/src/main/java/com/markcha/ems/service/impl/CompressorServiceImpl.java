@@ -277,7 +277,6 @@ public class CompressorServiceImpl {
         orderDataRepository.deleteAllInBatch(allByDeviceId);
         return true;
     }
-
     public void deleteAllById(List<Long> ids) {
         List<Device> compressors = deviceDslRepository.findAllCompressorsByIds(AIR_COMPRESSOR, ids);
         List<Order> allByDeviceId = orderDslRepository.findAllByDeviceIds(ids);

@@ -89,9 +89,9 @@ public class DataAnalysisController {
             groupInsertDto.setTagType("PWR_KWh");
             groupInsertDto.setDeviceEqId(null);
             List<Device> pawerDeviceById = deviceDslRepository.getPawerDeviceById(groupInsertDto.getDeviceIdT());
-            if(pawerDeviceById.isEmpty()) {
-                throw new MethodNotAllowedException("해당 유량계에 전력량계가 연결되어있지 않습니다.");
-            }
+//            if(pawerDeviceById.isEmpty()) {
+//                throw new MethodNotAllowedException("해당 유량계에 전력량계가 연결되어있지 않습니다.");
+//            }
             List<Long> ids = pawerDeviceById.stream()
                     .map(t->t.getId())
                     .collect(toList());
