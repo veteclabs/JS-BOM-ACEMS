@@ -111,12 +111,16 @@ bootJar {
 		into "../bin"
 	}
 }
+tasks {
 
+	processResources {
+		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+	}
+}
 // 리소스 디렉토리 추가
 compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -124,13 +128,3 @@ configurations {
 	querydsl.extendsFrom compileClasspath
 }
 
-docker {
-	name 'vetec/ems'
-	tag 'Dockerhub', "vetec/ems:${project.version}"
-	dockerfile file('Dockerfile')
-	files tasks.bootJar.outputs.files
-	buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
-	labels(['key': 'value'])
-	pull true
-	noCache true
-}

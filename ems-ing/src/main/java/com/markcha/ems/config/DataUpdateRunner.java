@@ -33,7 +33,7 @@ public class DataUpdateRunner implements CommandLineRunner {
     private String profile;
     @Override
     public void run(String... args) throws Exception {
-        if (profile.equals("local")) {
+        if (profile.equals("prod")) {
             updateMapper.updateStateComponent();
             updateMapper.updateMainPageComponent();
             updateMapper.updateDetailPageComponent();
