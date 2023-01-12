@@ -44,9 +44,9 @@
                 공기압축기
             </h2>
         </div>
-        <div class="dashboard-item-box" style="display:flex; flex-wrap:wrap;">
+        <div class="dashboard-item-box row">
             <!--<masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">-->
-            <div v-for="device in airCompressorList" :key="device.id" style="flex:0 0 20%; padding:15px;">
+            <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
                 <div class="ibox" style="height:100%;">
                     <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                         <nuxt-link :to="`/dashboard/${device.id}`">
@@ -131,7 +131,7 @@
         <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
                            v-if="equipmentList.temperature"/>
         <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if="equipmentList.flow"/>
-        <airDryerTagGroup v-bind:propsdata="airDryerList" :title="'에어 드라이어'" v-if="airDryerList"/>
+        <airDryerTagGroup v-bind:propsdata="airDryerList" :title="'에어 드라이어'" v-if="airDryerList && airDryerList.length !== 0"/>
         <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
                                v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
@@ -335,7 +335,7 @@
                 timeCategories: [],
                 Interval1M: '',
                 interval: '',
-                intervalTime: 30 * 1000,
+                intervalTime: 10 * 1000,
             };
         },
         mounted() {

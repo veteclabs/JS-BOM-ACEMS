@@ -336,7 +336,7 @@
                 powerData: '',
                 Interval1M: '',
                 interval: '',
-                intervalTime: 30 * 1000,
+                intervalTime: 10 * 1000,
             };
         },
         mounted() {
@@ -352,8 +352,6 @@
             chartSetting() {
                 const barMaxValue = 15;
                 const bar = this.airCompressor.state.COMP_SystemPre.value;
-                console.log(this.airCompressor.state.COMP_SystemPre);
-
                 this.airCompressorBar = (bar * 100) / barMaxValue;
             },
             async getAirCompressor() {
