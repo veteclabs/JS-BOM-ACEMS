@@ -427,7 +427,6 @@
                     if (res.status === 200) {
                         vm.airCompressorList = res.data;
                         vm.airCompressorList.forEach(item => {
-                            console.log(item.equipment.model)
                             item.image = require(`~/assets/images/equipment/${item.equipment.model}.png`);
                         });
                     }
@@ -537,3 +536,4 @@
         },
     };
 </script>
+

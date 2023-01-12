@@ -73,7 +73,6 @@ export default {
       const vm = this;
 
       const confirmResult = confirm(`해당 컴프레셔 상태를 ${this.powerState[stateValue]}으로 변경합니다. 수동제어 명령 진행 시 스케줄 제어는 모두 해제 됩니다.진행하시겠습니까?`);
-      console.log(id, " : ", stateValue)
       if (confirmResult) {
         vm.loadingData.show = true;
         axios.put(`/api/airDryer/${id}/power/${stateValue}`)

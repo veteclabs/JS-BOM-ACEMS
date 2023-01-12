@@ -18,7 +18,6 @@ export default ({store, app: {$axios}}) => {
     let now = new Date();
      let curnSec = Number(now.getTime().toString().substr(0, 10));
        if (tokenExpiresIn <= curnSec-10) {
-         console.log("aaa")
            store.commit('SET_REFESH_TOKEN', null);
            store.commit('SET_TOKEN', null);
            //return redirect('/login');
