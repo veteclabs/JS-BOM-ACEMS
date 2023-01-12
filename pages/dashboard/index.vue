@@ -44,9 +44,9 @@
                 공기압축기
             </h2>
         </div>
-        <div class="dashboard-item-box row">
+        <div class="dashboard-item-box comp-item-box" style="display:flex; flex-wrap:wrap;">
             <!--<masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">-->
-            <div v-for="device in airCompressorList" :key="device.id" class="col-lg-3">
+            <div v-for="device in airCompressorList" :key="device.id" style="">
                 <div class="ibox" style="height:100%;">
                     <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
                         <nuxt-link :to="`/dashboard/${device.id}`">

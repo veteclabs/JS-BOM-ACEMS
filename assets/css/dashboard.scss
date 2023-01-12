@@ -7,6 +7,16 @@
   }
 }
 
+.dashboard-item-box.comp-item-box > div{
+    flex:0 0 20%; padding:15px;
+  @include desktop() {
+    flex:0 0 50%;
+  }
+  @include desktop-lg-mid() {
+    flex:0 0 33.3333333333%;
+  }
+}
+
 .aircompressor-ibox-title {
   h3 {
     display: flex;
