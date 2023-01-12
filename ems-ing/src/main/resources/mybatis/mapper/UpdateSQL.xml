@@ -70,7 +70,7 @@
         SELECT tag_list_id,
                7 AS `tag_set_id`
         FROM tag_list tl
-        WHERE tl.`type` NOT IN (
+        WHERE tl.`type` IN (
                         "COMP_SystemPre") on duplicate key
         UPDATE
             tag_list_id =
