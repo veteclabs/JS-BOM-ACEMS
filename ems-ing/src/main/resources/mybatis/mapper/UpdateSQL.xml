@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="sample.mybatis">
+<mapper namespace="com.markcha.ems.mapper.updateSql.UpdateMapper">
     <insert id="updateStateComponent">
         insert into tag_set_mapper (tag_list_id, tag_set_id)
         SELECT tag_list_id,
@@ -15,6 +15,7 @@
                             "COMP_StartPre",
                             "COMP_StopPre",
                             "COMP_ActTripCode",
+
                             "COMP_ActWarCode",
                             "COMP_Trip",
                             "COMP_Warning",
@@ -106,13 +107,13 @@
         FROM `tagdata`.sources_hour_with_day
     </delete>
     <insert id="insertSroucesHourWithDay">
-        insert into sources_hour_with_day (`logvalue`)
+        insert into `tagdata`.sources_hour_with_day (`logvalue`)
         values (0),(1),(2),(3),(4),(5),(6),(7),
                (8),(9),(10),(11),(12),(13),(14),
                (15),(16),(17),(18),(19),(20),(21),
                (22),(23),(24),(25),(26),(27),(28),
                (29),(30),(31),(32)
-        on duplicate keyUPDATE
+        on duplicate key UPDATE
             `logvalue` =
         VALUES (`logvalue`);
     </insert>

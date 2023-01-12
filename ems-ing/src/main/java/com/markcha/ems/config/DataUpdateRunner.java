@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Timer;
 
 
 @Component
@@ -31,20 +32,18 @@ public class DataUpdateRunner implements CommandLineRunner {
     @Value("${MyConfig.profile}")
     private String profile;
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void run(String... args) throws Exception {
         if (profile.equals("prod")) {
             updateMapper.updateStateComponent();
             updateMapper.updateMainPageComponent();
             updateMapper.updateDetailPageComponent();
-            updateMapper.updateImportantComponent();
+        updateMapper.updateImportantComponent();
 //        updateMapper.updateGroupPageComponent();
-            updateMapper.deleteTagSetMapperDuplicate();
-            updateMapper.deleteSroucesHourWithDay();
-            updateMapper.insertSroucesHourWithDay();
-            updateMapper.deleteSourcesFiveMinute();
-            updateMapper.insertSourcesFiveMinute();
-
+        updateMapper.deleteTagSetMapperDuplicate();
+        updateMapper.deleteSroucesHourWithDay();
+        updateMapper.insertSroucesHourWithDay();
+        updateMapper.deleteSourcesFiveMinute();
+//        updateMapper.insertSourcesFiveMinute();
         }
 //        insertActionVariable();
     }

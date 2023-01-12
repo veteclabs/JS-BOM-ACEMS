@@ -7,6 +7,7 @@ import com.markcha.ems.dto.device.TemplcateDto;
 import com.markcha.ems.dto.group.GroupsSimpleDto;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.exception.custom.MethodNotAllowedException;
+import com.markcha.ems.mapper.updateSql.UpdateMapper;
 import com.markcha.ems.repository.DeviceDataRepository;
 import com.markcha.ems.repository.ScheduleDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
@@ -37,7 +38,7 @@ public class DeviceController {
     private String dbDeleteMsg;
     @Value("${response.jpa.DB_ERROR_MSG}")
     private String dbErrorMsg;
-
+    private final UpdateMapper updateMapper;
     private final DeviceDslRepositoryImpl deviceDslRepository;
     private final GroupDslRepositoryImpl groupDslRepository;
     private final DeviceServiceImpl deviceService;
@@ -57,6 +58,8 @@ public class DeviceController {
     @GetMapping(value="/etcs")
     public Map<String, List<DeviceConDto>> etc2(
     ){
+
+//        updateMapper.updateStateComponent();
         List<Device> allTemplates = deviceDslRepository.findAllTemplates(List.of(AIR_COMPRESSOR, AIR_DRYER));
         List<String> tagNames = new ArrayList<>();
         allTemplates.forEach(t->t.getTags().forEach(k->tagNames.add(k.getTagName())));
