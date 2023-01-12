@@ -122,7 +122,7 @@
         FROM `tagdata`.sources_five_minute
     </delete>
     <insert id="insertSourcesFiveMinute">
-        insert into sources_five_minute (`value`)
+        insert into `tagdata`.sources_five_minute (`logvalue`)
         values ('00:00:00'),('00:05:00'),('00:10:00'),('00:15:00'),('00:20:00'),('00:25:00'),
                ('00:30:00'),('00:35:00'),('00:40:00'),('00:45:00'),('00:50:00'),('00:55:00'),
                ('01:00:00'),('01:05:00'),('01:10:00'),('01:15:00'),('01:20:00'),('01:25:00'),
@@ -173,8 +173,8 @@
                ('23:30:00'),('23:35:00'),('23:40:00'),('23:45:00'),('23:50:00'),('23:55:00')
                on duplicate key
         UPDATE
-            `value` =
-        VALUES (`value`);
+            `logvalue` =
+        VALUES (`logvalue`);
     </insert>
 </mapper>
 

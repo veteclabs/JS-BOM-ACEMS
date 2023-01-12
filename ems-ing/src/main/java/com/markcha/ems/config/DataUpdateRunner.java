@@ -33,7 +33,7 @@ public class DataUpdateRunner implements CommandLineRunner {
     private String profile;
     @Override
     public void run(String... args) throws Exception {
-        if (profile.equals("prod")) {
+        if (profile.equals("local")) {
             updateMapper.updateStateComponent();
             updateMapper.updateMainPageComponent();
             updateMapper.updateDetailPageComponent();
@@ -43,7 +43,7 @@ public class DataUpdateRunner implements CommandLineRunner {
         updateMapper.deleteSroucesHourWithDay();
         updateMapper.insertSroucesHourWithDay();
         updateMapper.deleteSourcesFiveMinute();
-//        updateMapper.insertSourcesFiveMinute();
+        updateMapper.insertSourcesFiveMinute();
         }
 //        insertActionVariable();
     }
@@ -77,3 +77,6 @@ public class DataUpdateRunner implements CommandLineRunner {
 
     }
 }
+
+
+
