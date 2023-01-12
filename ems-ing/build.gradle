@@ -111,12 +111,7 @@ bootJar {
 		into "../bin"
 	}
 }
-tasks {
 
-	processResources {
-		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
-	}
-}
 // 리소스 디렉토리 추가
 compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
