@@ -61,6 +61,7 @@
     "save": "^2.4.0",
     "sequelize": "^6.16.1",
     "simple-vue-validator": "^0.16.0",
+    "swagger": "^0.7.5",
     "v-calendar": "^2.4.1",
     "vue": "^2.7.10",
     "vue-apexcharts": "^1.4.0",
