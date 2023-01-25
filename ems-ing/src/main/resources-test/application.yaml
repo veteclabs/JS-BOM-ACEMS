@@ -42,6 +42,8 @@ response:
     DB_UPDATE_MSG: successfully saved!
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
+MyConfig:
+  profile: local
 #logging.level:
 #  org:
 #    hibernate:

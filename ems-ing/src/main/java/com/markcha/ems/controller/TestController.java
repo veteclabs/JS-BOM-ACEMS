@@ -64,8 +64,12 @@ public class TestController {
                 .map(t->t.getTagName())
                 .collect(toList());
         result.getTypes().put(tagType, new Type(tagNames));
+        if (isNull(tagNames)) {
+            result.getTypes().get(tagType).setValue(0.0);
+            return;
+        }
         result.getTypes().get(tagType).setUnits(webaccessApiService.getTagValuesV2(tagNames));
-        Stream<Double> objectStream = result.getTypes().get(tagType).getUnits().values().stream()
+        List<Double> objectStreamList = result.getTypes().get(tagType).getUnits().values().stream()
                 .filter(t -> {
                     Double aDouble = new Double(t.toString());
                     if (!(-113 <= aDouble && aDouble <= -100)) {
@@ -73,16 +77,45 @@ public class TestController {
                     } else {
                         return false;
                     }
-                }).map(t->new Double(t.toString()));
+                }).map(t->new Double(t.toString()))
+                .collect(toList());
         switch(tagType) {
             case "PWR_KW":
-                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).sum());
+                List<Double> objectStream = new ArrayList<>(objectStreamList);
+                if (!isNull(result.getTypes().get(tagType))) {
+                    if (!objectStream.isEmpty()) {
+                        result.getTypes().get(tagType).setValue(objectStream.stream().mapToDouble(a->a).sum());
+                    } else {
+                        result.getTypes().get(tagType).setValue(0.0);
+                    }
+                } else {
+                    result.getTypes().get(tagType).setValue(0.0);
+                }
                 break;
             case "AIR_Pre":
-                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
+                List<Double> objectStream2 = new ArrayList<>(objectStreamList);
+                if (!isNull(result.getTypes().get(tagType))) {
+                    if (!objectStream2.isEmpty()) {
+                        result.getTypes().get(tagType).setValue(objectStream2.stream().mapToDouble(a->a).average().getAsDouble());
+                    } else {
+                        result.getTypes().get(tagType).setValue(0.0);
+                    }
+                } else {
+                    result.getTypes().get(tagType).setValue(0.0);
+                }
                 break;
             case "AIR_Flow":
-                result.getTypes().get(tagType).setValue(objectStream.mapToDouble(a->a).average().getAsDouble());
+                List<Double> objectStream3 = new ArrayList<>(objectStreamList);
+                if (!isNull(result.getTypes().get(tagType))) {
+                    if (!objectStream3.isEmpty()) {
+                        result.getTypes().get(tagType).setValue(objectStream3.stream().mapToDouble(a -> a).average().getAsDouble());
+                    } else {
+                        result.getTypes().get(tagType).setValue(0.0);
+                    }
+                } else {
+                    result.getTypes().get(tagType).setValue(0.0);
+                }
+
                 break;
         }
     }
@@ -93,29 +126,30 @@ public class TestController {
     public double specificalPower() {
         GroupController.GroupSearchDto groupSearchDto = new GroupController.GroupSearchDto();
         List<Tag> powerTags = tagDataRepository.findAllByType("PWR_KWh");
-        Double powerValue = powerTags.stream()
-                .map(t -> {
-                    String tagName = t.getTagName();
-                    Double historyHour = historyHourMapper.getHistoryHour(tagName);
-                    if (isNull(historyHour)) {
-                        return 0.0;
-                    } else {
-                        return historyHour;
-                    }
-                }).mapToDouble(t -> t).sum();
+        List<String> tagNames = new ArrayList<>();
+        tagNames.addAll(powerTags.stream()
+                .map(t->t.getTagName())
+                .collect(toList()));
+        Double powerValue = historyHourMapper.getHistoryHour(HistoryHourSearchDto.builder()
+                        .tagNames(tagNames)
+                .build());
         List<Tag> flowTags = tagDataRepository.findAllByType("AIR_Con");
-        Double flowValue = flowTags.stream()
-                .map(t -> {
-                    String tagName = t.getTagName();
-                    Double historyHour = historyHourMapper.getHistoryHour(tagName);
-                    if (isNull(historyHour)) {
-                        return 0.0;
-                    } else {
-                        return historyHour;
-                    }
-                }).mapToDouble(t -> t).sum();
-
-
+        tagNames.clear();
+        tagNames.addAll(flowTags.stream()
+                .map(t->t.getTagName())
+                .collect(toList()));
+        Double flowValue = historyHourMapper.getHistoryHour(HistoryHourSearchDto.builder()
+                .tagNames(tagNames)
+                .build());
+        if (isNull(powerValue) || isNull(flowValue)) {
+            return 0.0;
+        }
+        if (powerValue == 0.0) {
+            return 0.0;
+        }
+        if (flowValue == 0.0) {
+            return 0.0;
+        }
         return Math.round(powerValue/flowValue);
 
     }

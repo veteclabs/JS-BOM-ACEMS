@@ -3,20 +3,22 @@ server:
 spring:
   webaccess:
 #    host: http://7.136.233.205/WaWebService/Json/
-    host: http://localhost:90/WaWebService/Json/
-    project: BOM
-    node: BOM
+    host: http://127.0.0.1:90/WaWebService/Json/
+    project: EnMS
+    node: EnMS
   batch:
     initialize-schema=always:
+    job:
+      enabled: false
   application:
     name: ems-ing
   datasource:
     jdbc:
       time_zone: UTC
-    driver-class-name: org.mariadb.jdbc.Driver #$net.sf.log4jdbc.sql.jdbcapi.DriverSpy #
+    driver-class-name: org.mariadb.jdbc.Driver #net.sf.log4jdbc.sql.jdbcapi.DriverSpy #$
 #    url: jdbc:mariadb://127.0.0.1:37211/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
 #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:mariadb://localhost:37211/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://127.0.0.1:37212/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:
@@ -44,6 +46,9 @@ response:
     DB_UPDATE_MSG: successfully saved!
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
+
+MyConfig:
+  profile: local
 #logging.level:
 #  org:
 #    hibernate:

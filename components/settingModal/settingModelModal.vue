@@ -93,14 +93,12 @@
     import SimpleVueValidation from 'simple-vue-validator';
 
     const {Validator} = SimpleVueValidation;
-    import {XlsxRead, XlsxTable, XlsxSheets, XlsxJson, XlsxWorkbook, XlsxSheet, XlsxDownload} from "vue-xlsx"
 
     export default {
         props: ['propsdata'],
         components: {
             axios,
             flashModal,
-            XlsxRead, XlsxTable, XlsxSheets, XlsxJson, XlsxWorkbook, XlsxSheet, XlsxDownload
         },
         data: function () {
             return {

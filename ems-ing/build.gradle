@@ -9,7 +9,6 @@ plugins {
 	id 'org.springframework.boot' version '2.6.6'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
-//
 	id 'java'
 
 	id 'com.palantir.docker' version '0.22.1'
@@ -118,7 +117,6 @@ bootJar {
 compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -126,13 +124,3 @@ configurations {
 	querydsl.extendsFrom compileClasspath
 }
 
-docker {
-	name 'vetec/ems'
-	tag 'Dockerhub', "vetec/ems:${project.version}"
-	dockerfile file('Dockerfile')
-	files tasks.bootJar.outputs.files
-	buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
-	labels(['key': 'value'])
-	pull true
-	noCache true
-}

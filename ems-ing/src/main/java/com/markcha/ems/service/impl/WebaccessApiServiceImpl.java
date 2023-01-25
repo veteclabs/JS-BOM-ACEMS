@@ -67,11 +67,13 @@ public class WebaccessApiServiceImpl {
             throw var4;
         }
     }
+    @Autowired
+    private RestTemplate restTemplate;
     public Map<String, Object> getTagValuesV2(List<String> tagNames) {
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic YWRtaW46dmV0ZWMx"); //YWRtaW46dmV0ZWMx
+        headers.add("Content-Type", "application/json");
 
         Map<String, Object> body = new HashMap<>();
 
@@ -83,6 +85,7 @@ public class WebaccessApiServiceImpl {
             );
             tagObject.add(tagSet);
         }
+
 
         body.put("Tags", tagObject);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);

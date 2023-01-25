@@ -2,7 +2,7 @@ package com.markcha.ems.domain.pattern;
 
 
 import com.markcha.ems.domain.TagList;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -10,7 +10,11 @@ import java.util.Set;
 
 import static java.util.Objects.isNull;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class PatternList {
     @Id

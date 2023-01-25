@@ -1,8 +1,7 @@
 package com.markcha.ems.mapper.analysis;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Data
 @Setter
+@Data
 public class HistorySearchDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime startDate;
@@ -40,6 +39,7 @@ public class HistorySearchDto {
     private String tagType;
     private String date;
     private List<String> tagNames = new ArrayList<>();
+    private List<String> tagname = new ArrayList<>();
     private List<String> secondTagNames = new ArrayList<>();
     private String timeType;
     private String usageType;
@@ -65,7 +65,14 @@ public class HistorySearchDto {
         Object obj = new JSONParser().parse(date);
         JSONObject jsonObj = (JSONObject) obj;
         String start = jsonObj.get("start").toString();
+
         String end =  jsonObj.get("end").toString();
+        if (timeType.equals("M")) {
+            String substring = start;
+            int nextYear = Integer.parseInt(substring) + 1;
+            end = Integer.toString(nextYear);
+
+        }
         this.startDate = convertStringToDate(start);
         this.endDate = convertStringToDate(end);
         if (timeType.equals("D")) {

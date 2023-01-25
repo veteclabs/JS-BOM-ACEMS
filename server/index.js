@@ -11,7 +11,6 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const config = require('../nuxt.config.js');
 config.dev = !(process.env.NODE_ENV === 'production');
-const { swaggerUi, specs } = require('../lib/swagger');
 
 
 const dbConfig = require('../config/dbConfig.js');
@@ -45,7 +44,6 @@ async function start() {
 
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs,{ explorer: true }));
 
   app.use((req, res, next) => {
     app.locals.isLogin = req.isAuthenticated();

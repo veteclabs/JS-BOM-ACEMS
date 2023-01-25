@@ -13,9 +13,6 @@ import SimpleVueValidation from 'simple-vue-validator';
 import VueFilter from 'vue-filter';
 
 // 스크롤바
-import Vuebar from 'vuebar';
-
-import VCalendar from 'v-calendar';
 import Dayjs from 'vue-dayjs';
 
 Vue.use(datePicker);
@@ -35,12 +32,9 @@ SimpleVueValidation.extendTemplates({
     url:'url 형식으로 입력해주세요.'
 });
 Vue.use(VueFilter);
-Vue.use(Vuebar);
 
 // 쿠키
 Vue.use(require('vue-cookies'));
-
-Vue.use(VCalendar);
 
 Vue.use(Dayjs);
 
