@@ -159,7 +159,6 @@ public class Crawler extends TimerTask {
                         else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
                     }
 
-
                     try {
                         if (val.toString().trim().contains(" ")) {
                             if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }

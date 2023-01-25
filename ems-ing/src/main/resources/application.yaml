@@ -3,7 +3,7 @@ server:
 spring:
   webaccess:
     #    host: http://7.136.233.205/WaWebService/Json/
-    host: http://localhost:8031/WaWebService/Json/
+    host: http://localhost:90/WaWebService/Json/
     project: BOM
     node: BOM
   batch:
@@ -14,7 +14,7 @@ spring:
     jdbc:
       time_zone: UTC
     driver-class-name: org.mariadb.jdbc.Driver #$net.sf.log4jdbc.sql.jdbcapi.DriverSpy #
-    url: jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://localhost:37211/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     #    url: jdbc:log4jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
