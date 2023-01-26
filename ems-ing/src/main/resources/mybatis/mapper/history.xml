@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.markcha.ems.mapper.HistoryMapper">
+    <select id="getHistory" resultType="double" parameterType="com.markcha.ems.mapper.analysis.HistorySearchDto">
+        SELECT
+        <if test="usageType.equals('Usage')">
+            sum(ifnull(shr.`USAGE`, 0))       AS     #{usageType}
+        </if>
+        <if test="usageType.equals('TOE')">
+            sum(ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.TOE)), 0), 5)) #{usageType}
+        </if>
+        <if test="usageType.equals('tCo2')">
+            sum(ROUND(IFNULL(((`shr`.`usage` * 0.001) *(formula.tCo2)), 0), 5)) #{usageType}
+        </if>
+        FROM
+        (SELECT `toe`,`tco2`, `usage` FROM `jpa`.energy WHERE energy_id=#{energyId}) formula,
+        (SELECT sum(`USAGE`) `usage`
+        FROM `tagdata`.history_hour
+        WHERE tagname in
+        <foreach collection="tagNames" item="tagname" index="index" separator="," open="(" close=")">
+            #{tagname}
+        </foreach>
+        AND timestamp <![CDATA[>=]]> #{startDate}
+        AND TIMESTAMP <![CDATA[<]]> #{endDate}
+        group by hour(`TIMESTAMP`)
+        ) shr
+    </select>
+</mapper>

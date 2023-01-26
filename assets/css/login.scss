@@ -1,178 +1,124 @@
 #loginWrap {
-  background-color: $gray-1;
-  width:100%;
+  background-color:$gray-4;
+  width: 100%;
 
-  #login{
-    width:100%;
-    min-height:100vh;
-    display:flex;
-    @include tabletAndMobile() {
-      display:block;
-    }
+  .logo {
+    position: absolute;
+    top:44px;
+    left:40px;
   }
-  .login-img {
-    flex:1;
-    padding:40px;
-    min-height:100vh;
+  .login-bg {
+    position: absolute;
+    top:0;
+    left:0;
+    display: block;
+    width: 100%;
+    height: 100vh;
     background-image:url("~assets/images/login/img_login_bg.png");
-    background-repeat:no-repeat;
-    background-position:center;
-    background-size:48.1250vw;
-    @include tabletAndMobile() {
-      min-height:100px;
-      height:100px;
-      background-position:top;
-    }
+    background-size:auto 100%;
+    opacity:0.04;
+    z-index:1;
   }
-  .login-box {
-    background:#fff;
-    flex: 0 0 632px;
-    padding:0 80px;
-    min-height:100vh;
-    display:flex;
+
+  #login {
+    z-index:10;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    @include tabletAndMobile() {
-      flex:0 0 100%;
-      min-height:calc(100vh - 100px);
-      width:100%;
-      align-items: flex-start;
-      padding:80px;
-    }
+    padding: 40px;
+  }
+
+  .login-box {
+    background: $gray-1;
+    max-width: 542px;
+    padding: 80px 40px;
+    border-radius: 16px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    color: $gray-7;
+    z-index:999;
     @include mobile() {
-      padding:40px 24px;
+      padding: 40px 24px;
     }
-    >div.center-box {
-      width:100%;
+
+    > div.center-box {
+      width: 100%;
     }
   }
+
   .login-text-box {
-    text-align:center;
-    margin:0 0 40px 0;
+    text-align: center;
+    margin: 0 0 40px 0;
+
     h2 {
-      font-weight:900;
-      margin:0 0 24px 0;
+      font-weight: bold;
+      margin: 0 0 16px 0;
     }
+
     p {
-      color:$gray-6;
-      margin:0;
+      color: $gray-6;
+      margin: 0;
     }
   }
-  .login-form{
-    padding:0 0 80px 0;
+
+  .login-form {
 
     label {
-      width:100%;
-      margin:0 0 16px 0;
-    }
-    input, a {
-      display:block;
-      width:100%;
-      height:48px;
-      border-radius: 8px;
-    }
-    input {
-      padding: 0 50px;
-      background-size:20px;
-      background-repeat:no-repeat;
-      background-position:center left 18px;
-    }
-    input::placeholder {
-      color:$gray-4;
-    }
-    .id_input {
-      background-image:url("~assets/images/login/icn_login_id.svg");
-    }
-    .password_input {
-      background-image:url("~assets/images/login/icn_login_password.svg");
+      width: 100%;
+      margin: 0 0 16px 0;
     }
 
-    .login-btn{
-      margin:32px 0 0 0;
-      height:48px;
-      line-height:48px;
-      text-align:center;
+    input, a {
+      display: block;
+      width: 100%;
+      height: 48px;
+      border-radius: 8px;
+    }
+
+    input {
+      padding: 0 50px;
+      background-size: 20px;
+      background-repeat: no-repeat;
+      background-position: center left 18px;
+    }
+
+    input::placeholder {
+      color: $gray-4;
+    }
+
+    .id_input {
+      background-image: url("~assets/images/login/icn_login_id.svg");
+    }
+
+    .password_input {
+      background-image: url("~assets/images/login/icn_login_password.svg");
+    }
+
+    .login-btn {
+      margin: 32px 0 0 0;
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
       color:#fff;
-      @extend .font18;
+      @extend .font-18;
       background-color: $blue-0;
       transition: all .3s ease;
+
       &:hover {
-        background-color: $bomblue-0;
+        background-color: $bom-blue;
       }
     }
   }
 }
 
 
-
 .copyright-box {
-  border-top:2px solid $gray-2;
-  padding: 24px 0;
-  display: flex;
-  justify-content: space-between;
-  @include mobile() {
-    display: block;
-    margin: 50px auto 0;
-    padding: 10px 0;
-  }
-
-  .vetec {
-    img {
-      margin: 0 10px 0 0;
-    }
-
-    span {
-      font-size: 11px;
-      color: $gray-4;
-    }
-
-    @include mobile() {
-      text-align: center;
-      font-size: 10px;
-      img {
-        display: none;
-      }
-    }
-  }
-
-  .copyright-btn-box {
-    display: flex;
-
-    @include mobile() {
-      justify-content: center;
-      margin: 10px 0 0 0;
-    }
-
-    a {
-      display: block;
-      width: 24px;
-      height: 24px;
-      margin: 0 0 0 10px;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    a.bom {
-      background-image: url("~assets/images/login/icn_login_home.svg");
-
-      &:hover {
-        background-image: url("~assets/images/login/icn_login_home_hover.svg");
-      }
-    }
-
-    a.youtube {
-      background-image: url("~assets/images/login/icn_login_youtube.svg");
-
-      &:hover {
-        background-image: url("~assets/images/login/icn_login_youtube_hover.svg");
-      }
-    }
-
-    a.kakao {
-      background-image: url("~assets/images/login/icn_login_kakaotalk.svg");
-
-      &:hover {
-        background-image: url("~assets/images/login/icn_login_kakaotalk_hover.svg");
-      }
-    }
-  }
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  text-align: center;
+  color: $gray-6;
 }

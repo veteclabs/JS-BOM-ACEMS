@@ -1,53 +1,103 @@
 <template>
     <div>
-        <b-modal v-model="propsdata.show" id="createmodal" title="계측기 관리" hide-footer>
+        <b-modal v-model="propsdata.show" id="createmodal" title="장비 관리" hide-footer>
             <table class="bom-table">
-                <caption>
-                    계측기관리 정보를 입력합니다.
-                </caption>
+                <caption>장비 정보를 입력합니다.</caption>
                 <colgroup>
-                    <col style="width: 100px"/>
-                    <col style="width: auto"/>
+                    <col style="width:100px;"/>
+                    <col style="width:auto;"/>
                 </colgroup>
                 <tbody>
                 <tr>
-                    <td>에너지</td>
-                    <td>
-                        <label class="radio-box" v-for="item in energyList" :key="item.id">
-                            <input type="radio" v-model="energy" v-bind:value="item.id"/>
-                            <div class="radio-circle">
-                                <div class="inner-circle"/>
-                            </div>
-                            <div class="radio-label">{{ item.name }}</div>
-                        </label>
-                        <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('energy') }}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>계측기장비명</td>
-                    <td>
+                    <th>Type</th>
+                    <td colspan="2">
                         <label class="input-100">
-                            <select v-model="equipmentName" class="input-100">
-                                <option v-for="item in equipmentNameList" v-bind:value="item.name" :key="item.name">
-                                    {{ item.name }}
+                            <select v-model="params.type" class="input-100">
+                                <option v-for="list in typeList" v-bind:value="list.name" :key="list.id">
+                                    {{list.name}}
                                 </option>
                             </select>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('equipmentName') }}
+                            {{ validation.firstError('params.type') }}
+                        </div>
+                    </td>
+                </tr>
+                <tr v-if="params.type === '전력'">
+                    <th>Model</th>
+                    <td colspan="2">
+                        <label class="input-100">
+                            <select v-model="params.model" class="input-100">
+                                <option v-for="list in modelList" v-bind:value="list.name" :key="list.id"
+                                        v-if="list.type === params.type">
+                                    {{list.name}}
+                                </option>
+                            </select>
+                        </label>
+                    </td>
+                </tr>
+                <tr v-if="params.type === '전력' && params.model === '남전사'">
+                    <th>전압</th>
+                    <td colspan="2">
+                        <label class="radio-box" v-for="list in voltageList" :key="list.id">
+                            <input type="radio" v-model="params.voltage" :value="list.id"/>
+                            <div class="radio-circle">
+                                <div class="inner-circle"/>
+                            </div>
+                            <div class="radio-label">{{ list.name }}</div>
+                        </label>
+                    </td>
+                </tr>
+                <tr v-if="params.type === '전력' && params.model === '남전사'">
+                    <th>비율</th>
+                    <td>
+                        <div class="td-label">CT비</div>
+                        <label class="input-100">
+                            <input type="number" v-model="params.ct" class="input-100" placeholder="CT비"/>
+                        </label>
+                    </td>
+                    <td>
+                        <div class="td-label">PT비</div>
+                        <label class="input-100">
+                            <input type="number" v-model="params.pt" class="input-100" placeholder="PT비"/>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <div v-if="params.type === '전력'">공기압축기</div>
+                        <div v-else>그룹</div>
+                    </th>
+                    <td>
+                        <label class="input-100" v-if="params.type === '전력'">
+                            <select v-model="params.groupId">
+                                <option v-for="group in airCompressorList" :value="group.id" :key="group.id">
+                                    {{group.name}}
+                                </option>
+                            </select>
+                        </label>
+                        <label class="input-100" v-else>
+                            <select v-model="params.groupId">
+                                <option :value="null" selected>미지정</option>
+                                <option v-for="group in groupList" :value="group.id" :key="group.id">
+                                    {{group.name}}
+                                </option>
+                            </select>
+                        </label>
+                        <div class="err-message" v-if="validation !== undefined">
+                            {{ validation.firstError('params.groupId') }}
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>계측기명</td>
-                    <td>
+                    <th>장비명</th>
+                    <td colspan="2">
                         <label class="input-100">
-                            <input type="text" v-model="name" placeholder="계측기 이름을 입력해주세요" class="input-100"/>
+                            <input type="text" v-model="params.name" class="input-100"
+                                   placeholder="장비명을 입력해주세요 "/>
                         </label>
                         <div class="err-message" v-if="validation !== undefined">
-                            {{ validation.firstError('name') }}
+                            {{ validation.firstError('params.name') }}
                         </div>
                     </td>
                 </tr>
@@ -58,164 +108,166 @@
                 <button type="button" class="button submit-button" @click="submit">등록</button>
             </div>
         </b-modal>
-        <flashModal v-bind:propsdata="MsgData"/>
+        <flashModal v-bind:propsdata="msgData"/>
     </div>
 </template>
 
 <script>
-    import axios from 'axios';
     import SimpleVueValidation from 'simple-vue-validator';
+    import axios from 'axios';
     import flashModal from '~/components/flashmodal.vue';
 
     const {Validator} = SimpleVueValidation;
 
-    SimpleVueValidation.extendTemplates({
-        required: '필수 입력 항목입니다.',
-        length: '길이가 {0} 이어야 합니다.',
-        minLength: '{0} 글자 이상이어야 합니다.',
-        maxLength: '{0} 글자 이하여야 합니다.',
-        digit: '숫자만 입력해주세요.',
-    });
-
     export default {
+
         props: ['propsdata'],
         components: {
             axios,
             flashModal,
             SimpleVueValidation,
         },
-        data() {
+        data: function () {
             return {
-                MsgData: {
-                    // 알람모달
+                msgData: { // 알람모달
                     msg: '',
                     show: false,
                     e: '',
                 },
                 state: 'new',
-                id: '', //계측기 아이디
-                location: '',
-                locationList: [],
-                subLocation: '',
-                subLocationTempList: [],
-                subLocationList: [],
-                energy: '',
-                energyList: [],
-                equipmentName: '',
-                equipmentNameList: [],
-                energyPurpose: '',
-                energyPurposeList: [],
-                name: '',
-            };
+                params: {},
+                typeList: [
+                    {id: 1, name: '전력'},
+                    {id: 2, name: '온도계'},
+                    {id: 3, name: '압력계'},
+                    {id: 4, name: '유량계'},
+                    {id: 5, name: '에어 드라이어'},
+                ],
+                modelList: [
+                    {id: 1, type: '전력', name: 'Accura'},
+                    {id: 2, type: '전력', name: '남전사'},
+                ],
+                voltageList: [
+                    {id: 'HIGH', name: '고압'},
+                    {id: 'LOW', name: '저압'}
+                ],
+                groupList: [],
+                airCompressorList: [],
+            }
         },
         validators: {
-            energy(value) {
+            'params.type': function (value) {
                 return Validator.value(value).required();
             },
-            equipmentName(value) {
-                return Validator.value(value).required();
+            'params.groupId': function (value) {
+                const vm = this;
+                return Validator.value(value).custom(function () {
+                    if (vm.params.type === '전력') {
+                        if (value === null || value === '' || value === undefined) {
+                            return '필수 입력 항목입니다.'
+                        }
+                    }
+                })
             },
-            name(value) {
+            'params.name': function (value) {
                 return Validator.value(value).required();
             },
         },
         mounted() {
-            this.getEquipmentFilter();
+            this.getGroup();
+            this.getCompressor();
         },
         methods: {
-            async getEquipmentFilter() {
+            getGroup() {
                 const vm = this;
                 axios({
                     method: 'get',
-                    url: '/api/common/getFilter',
+                    url: '/api/device/groups',
                 }).then((res) => {
-                    if (res.data.code === 1) {
-                        vm.energyList = res.data.energyValue;
-                        vm.equipmentNameList = res.data.equipmentValue;
-
-                        if (vm.energyList.length !== 0) {
-                            vm.energy = vm.energyList[0].id;
-                        }
-
-                        if (vm.equipmentNameList.length !== 0) {
-                            vm.equipmentName = vm.equipmentNameList[0].name;
-                        }
-                    }
+                    vm.groupList = res.data
                 }).catch((error) => {
-                    vm.MsgData.show = true;
-                    vm.MsgData.msg = error;
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                });
+            },
+            getCompressor() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/device/compressors',
+                }).then((res) => {
+                    vm.airCompressorList = res.data
+                }).catch((error) => {
+                    vm.msgData.show = true;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 });
             },
             submit() {
                 const vm = this;
                 const modal = this.$bvModal;
                 const {state} = this;
-                let url;
-                const params = {
-                    id: vm.id,
-                    energyId: vm.energy,
-                    equipmentName: vm.equipmentName,
-                    name: vm.name,
-                };
+                let url, method;
+
+
                 if (state === 'new') {
-                    url = '/api/setting/equipment/create';
+                    url = `/api/etcs`;
+                    method = 'post';
                 } else if (state === 'update') {
-                    url = '/api/setting/equipment/update';
-                    if (!vm.id) {
-                        vm.MsgData.show = true;
-                        vm.MsgData.msg = '오류가 발생했습니다. 새로고침 후 다시 시도해주세요';
+                    url = `/api/etc/${vm.params.id}`;
+                    method = 'put';
+                    if (!vm.params.id) {
+                        vm.msgData.show = true;
+                        vm.msgData.msg = '에러가 발생했습니다. 새로고침 후 다시 시도해주세요';
                         return;
                     }
                 }
+
                 this.$validate()
                     .then((success) => {
                         if (success) {
-                            axios
-                                .post(url, params)
-                                .then((res) => {
-                                    if (res.data.code === 1) {
-                                        // 등록완료시 모달 닫고 초기화 안내메시지 보여주기
-                                        modal.hide('createmodal');
-                                        vm.Reset();
-                                        vm.$emit('send-message', 1);
-                                        vm.$emit('callSearch');
-                                    }
-                                    vm.MsgData.show = true;
-                                    vm.MsgData.msg = res.data.message;
-                                }).catch((error) => {
-                                vm.MsgData.show = true;
-                                vm.MsgData.msg = error;
+                            axios({
+                                method: method,
+                                url: url,
+                                data: vm.params
+                            }).then((res) => {
+                                // 등록완료시 모달 닫고 초기화 안내메시지 일여주기
+                                modal.hide('createmodal');
+                                vm.msgData.show = true;
+                                vm.msgData.msg = res.data.message;
+                                vm.$emit('send-message', 1);
+                                vm.$emit('callSearch');
+                            }).catch((error) => {
+                                vm.msgData.show = true;
+                                vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                             });
                         }
                     });
             },
             cancel() {
                 this.$bvModal.hide('createmodal');
+                this.reset();
             },
-            Reset() {
-                if (this.energyList.length !== 0) {
-                    this.energy = this.energyList[0].id;
-                } else {
-                    this.energy = '';
-                }
-                if (this.equipmentNameList.length !== 0) {
-                    this.equipmentName = this.equipmentNameList[0].name;
-                } else {
-                    this.equipmentName = '';
-                }
-                this.id = '';
-                this.name = '';
+            reset() {
+                this.params = {
+                    groupId: null,
+                    name: null,
+                    model: null,
+                    type: null,
+                    maker: null,
+                    ct: null,
+                    pt: null,
+                    voltage: null
+                };
+                this.validation.reset();
             },
             createdModal() {
                 this.state = 'new';
-                this.Reset();
+                this.reset();
             },
-            updateModal(target) {
+            updateModal(e) {
+                this.validation.reset();
                 this.state = 'update';
-                this.id = target.id;
-                this.equipmentName = target.equipmentName;
-                this.energy = target.energy;
-                this.name = target.name;
+                this.params = JSON.parse(JSON.stringify(e));
             },
         },
     };

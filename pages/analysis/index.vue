@@ -1,14 +1,11 @@
 <template>
     <div class="analysisEnergy">
-        <div class="header-title">
-            <h2>데이터 조회</h2>
-        </div>
         <div class="wrapper animated fadeInRight">
             <div class="row">
                 <div class="col-lg-7">
                     <div class="ibox">
                         <div class="ibox-title ibox-normal-title ibox-noborder-title">
-                            Chart
+                            차트
                         </div>
                         <div class="ibox-content">
                             <DxChart
@@ -62,7 +59,7 @@
                     </div>
                     <div class="ibox">
                         <div class="ibox-title ibox-normal-title ibox-noborder-title">
-                            Grid
+                            데이터 값
                         </div>
                         <div class="ibox-content">
                             <dx-data-grid
@@ -114,7 +111,7 @@
                 <div class="col-lg-5">
                     <div class="ibox summary">
                         <div class="ibox-title ibox-normal-title ibox-noborder-title">
-                            Summary
+                            요약
                         </div>
                         <div class="ibox-content">
                             <div v-for="item in searchResult" :key="item.name">
@@ -126,21 +123,19 @@
                                     <div class="flex-box">
                                         <div :class="[ item.value - item.beforeValue > 0 ? 'warning' : 'normal']"
                                              v-show="params.timeType !== 'Y' && params.timeType !== 'R'">
-                                            <p v-show="params.usageType ==='Usage'">
-                                                {{ (item.value - item.beforeValue) | currencyAbs(0) }}
-                                            </p>
-                                            <p v-show="params.usageType !=='Usage'">
+                                            <p v-if="params.usageType ==='TOE' || params.usageType==='tCo2'">
                                                 {{ (item.value - item.beforeValue) | numberFormat(5) }}
                                             </p>
-                                            <div class="bom-badge">
-                                                {{ (((item.value - item.beforeValue) / item.value) * 100) | currency(2)
-                                                }}%
-                                            </div>
+                                            <p v-else>
+                                                {{ (item.value - item.beforeValue) | currencyAbs(0) }}</p>
+                                            <div class="bom-badge">{{ (((item.value - item.beforeValue) / item.value) * 100) | currency(2) }}%</div>
                                         </div>
-                                        <h1 v-show="params.usageType ==='Usage'">
-                                            {{ item.value | currency(0) }}{{unitArray[params.energy]}}
-                                        </h1>
-                                        <h1 v-show="params.usageType !=='Usage'">{{ item.value | numberFormat(5) }}</h1>
+                                        <h3 v-if="params.usageType ==='TOE' || params.usageType==='tCo2'">
+                                            {{ item.value | numberFormat(5)}} <span>{{ item.unit }}</span>
+                                        </h3>
+                                        <h3 v-else>
+                                            {{ item.value | currency(0)}} <span>{{ item.unit }}</span>
+                                        </h3>
                                     </div>
                                 </div>
                             </div>
@@ -244,8 +239,9 @@
                         ],
                     },
                     date: {show: true,},
+                    tagType: {show: true,},
                     usageType: {show: true,},
-                    location: {show: true, type: 'select'},
+                    deviceId: {show: true, type: 'select'},
                 },
                 id: '',
                 LoadingData: {
@@ -317,27 +313,28 @@
             async getSearch(params) {
                 const vm = this;
                 this.LoadingData.show = true;
-                vm.params = params
+                vm.params = params;
                 axios({
                     method: 'get',
                     url: '/api/analysis/data',
-                    params:params,
+                    headers: {
+                        "X-API-VERSION": 1
+                    },
+                    params: params,
                 }).then((res) => {
-                        if (res.data.code === 1) {
-                            vm.chartData = [];
-                            vm.chartSeries = [];
-                            vm.gridDataColumn = [];
+                    vm.chartData = [];
+                    vm.chartSeries = [];
+                    vm.gridDataColumn = [];
 
-                            const chartDataArray = res.data.value;
+                    const chartDataArray = res.data;
 
-                            if (chartDataArray.length !== 0) {
-                                vm.drawDefaultChart(chartDataArray);
-                                vm.keywordCalc(chartDataArray);
-                            }
-                        }
-                    }).catch((error) => {
+                    if (chartDataArray.length !== 0) {
+                        vm.drawDefaultChart(chartDataArray);
+                        vm.keywordCalc(chartDataArray);
+                    }
+                }).catch((error) => {
                     vm.msgData.show = true;
-                    vm.msgData.msg = error;
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.LoadingData.show = false;
                 });
@@ -378,13 +375,16 @@
                     } else {
                         valueName = valueNameTarget[0].name;
                     }
-
                     if (vm.params.usageType === 'Usage') {
                         if (valueFieldValue === 'kW' || valueFieldValue === 'beforekW') {
                             vm.DevNumberFormat = `#,##0.## kW`
-                        } else {
-                            vm.DevNumberFormat = `#,##0.## ${this.unitArray[vm.params.usageType]}`;
+                        }else if (valueFieldValue === 'kWh') {
+                            vm.DevNumberFormat = `#,##0.## kWh`
+                        }else {
+                            vm.DevNumberFormat = `#,##0.## ${this.unitArray[vm.params.usageType][vm.params.tagType]}`;
                         }
+                    } else if (vm.params.usageType === 'PF') {
+                        vm.DevNumberFormat = `#,##0.##'%'`
                     } else {
                         vm.DevNumberFormat = `#,##0.#####`;
                     }
@@ -511,6 +511,7 @@
                 vm.max = Math.max.apply(null, Object.keys(chartDataArray)
                     .map((key) => chartDataArray[key][keyword]));
 
+
                 // min 값구하기
                 vm.min = 9999999999999;
                 for (let i = 0; i < chartDataArray.length; i += 1) {
@@ -570,11 +571,7 @@
                 vm.searchResult.avg.beforeValue = parseFloat(Number(vm.beforeAvg).toFixed(5));
                 vm.searchResult.sum.beforeValue = parseFloat(Number(vm.beforeSum).toFixed(5));
 
-                if (vm.params.usageType === "PF") {
-                    vm.searchResult.sum.show = false;
-                } else {
-                    vm.searchResult.sum.show = true;
-                }
+                vm.searchResult.sum.show = !(vm.params.usageType === "PF" || vm.params.usageType === 'kW');
 
             },
             customizePoint(arg) {
@@ -583,7 +580,7 @@
                     let {min} = this;
                     let {max} = this;
                     let format;
-                    if (vm.params.usageType === 'Usage') {
+                    if (vm.params.usageType === 'Usage' || vm.params.usageType === 'PF') {
                         vm.DevNumberFormat = 0;
                         format = '#,##0.##';
                     } else {
@@ -617,7 +614,7 @@
                     let {min} = this;
                     let {max} = this;
                     let format;
-                    if (vm.params.usageType === 'Usage') {
+                    if (vm.params.usageType === 'Usage' || vm.params.usageType === 'PF') {
                         vm.DevNumberFormat = 0;
                         format = '#,##0.##';
                     } else {
@@ -658,6 +655,9 @@
                 let format = '';
                 if (arg.seriesName.indexOf('사용량') !== -1) {
                     format = 'kWh';
+                    if (vm.params.tagType === 'FLOW') {
+                        format = `㎥`
+                    }
                 } else if (arg.seriesName.indexOf('최대수요') !== -1) {
                     format = 'kW';
                 } else {
@@ -684,8 +684,7 @@
                     return 0;
                 }
                 if (typeof target === 'number') {
-                    return parseFloat(Number(target)
-                        .toFixed(limit));
+                    return parseFloat(Number(target).toFixed(limit));
                 }
                 return 0;
             },
@@ -721,12 +720,5 @@
                 return Value;
             },
         },
-        watch: {
-            radialOption: {
-                deep: true,
-                handler(val) {
-                }
-            },
-        }
     };
 </script>

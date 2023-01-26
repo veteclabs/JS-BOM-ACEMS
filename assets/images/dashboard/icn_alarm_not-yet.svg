@@ -1,0 +1,18 @@
+<svg id="icn_alarm_not-yet" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #d92f47;
+      }
+    </style>
+  </defs>
+  <rect id="사각형_16741" data-name="사각형 16741" class="cls-1" width="24" height="24"/>
+  <g id="close_black_24dp_4_" data-name="close_black_24dp (4)" transform="translate(2 2)">
+    <path id="패스_820" data-name="패스 820" class="cls-1" d="M0,0H20V20H0Z"/>
+    <path id="패스_821" data-name="패스 821" class="cls-2" d="M16.151,5.66a.83.83,0,0,0-1.175,0L10.9,9.726,6.826,5.651A.831.831,0,0,0,5.651,6.826L9.726,10.9,5.651,14.976a.831.831,0,0,0,1.175,1.175L10.9,12.076l4.075,4.075a.831.831,0,0,0,1.175-1.175L12.076,10.9l4.075-4.075A.835.835,0,0,0,16.151,5.66Z" transform="translate(-0.901 -0.901)"/>
+  </g>
+</svg>

@@ -1,0 +1,92 @@
+{
+  "list": {
+    "10":  "Sensor Failure 2ATT",
+    
+    "11":  "Sensor Failure 4ATT",
+    
+    "12":  "Sensor Failure T4 (Spare)",
+    
+    "13":  "Sensor Failure 5DTT",
+    
+    "14":  "Sensor Failure 6DTT",
+    
+    "15":  "Sensor Failure T7 (Spare)",
+    
+    "16":  "Sensor Failure T8 (Spare)",
+    
+    "17":  "High Inlet Vacuum",
+    
+    "18":  "Motor Overload (Main)",
+    
+    "19":  "Fan Motor Overload",
+    
+    "22":  "Check Motor Rotation",
+    
+    "25":  "Remote Stop Failure",
+    
+    "26":  "Remote Start Failure",
+    
+    "28":  "Low Sump Pressure",
+    
+    "29":  "High Air Pressure",
+    
+    "30":  "High Coolant Filter Pressure Drop",
+    
+    "31":  "High A/E Discharge Temperature",
+    
+    "32":  "Emergency Stop",
+    
+    "33":  "Change Inlet Filter",
+    
+    "34":  "Change Separator Element",
+    
+    "35":  "Change Coolant Filter",
+    
+    "36":  "Sensor Error (Calibration)",
+    
+    "39":  "100 Hours To Service Service Required",
+    
+    "40":  "Alarm - Service Required",
+    
+    "41":  "Auxiliary 2",
+    
+    "42":  "Auxiliary 1",
+    
+    "43":  "Condensate Drain Error",
+    
+    "48":  "Unit Too Cold To Start",
+    
+    "49":  "High Sump Pressure",
+    
+    "50":  "High Interstage Pressure",
+    
+    "51":  "Dryer High Pressure",
+    
+    "52":  "Dryer Freeze Warning",
+    
+    "53":  "Condenser Low (Dryer)",
+    
+    "54":  "Condenser High (Dryer)",
+    
+    "55":  "Change HE Filter (Dryer)",
+    
+    "200":  "Check SD Card",
+    
+    "2":  "Sensor Failure 3 APT",
+    
+    "3":  "Sensor Failure 4APT",
+    
+    "4":  "Sensor Failure 5CPT",
+    
+    "5":  "Sensor Failure 6CPT",
+    
+    "6":  "Sensor Failure 10APT (Remote)",
+    
+    "7":  "Sensor Failure 2APT",
+    
+    "8":  "Sensor Failure 7APT",
+    
+    "9":  "Sensor Failure 2CTT"
+    }
+
+}

@@ -5,6 +5,7 @@
     {"value": "M" , "name": "월"} ,
     {"value": "Y" , "name": "년도"} ,
     {"value": "kW" , "name": "최대수요(kW)"} ,
+    {"value": "kWh" , "name": "전력사용량(kWh)"} ,
     {"value": "beforekW" , "name": "전일최대수요(kW)"} ,
     {"value": "Usage" , "name": "사용량"} ,
     {"value": "beforeDayUsage" , "name": "전일사용량"} ,

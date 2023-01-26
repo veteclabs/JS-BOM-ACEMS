@@ -11,8 +11,12 @@
       "iconSelect": "",
       "subMenu": [
         {
-          "menuName": "전체",
+          "menuName": "전체대시보드",
           "link": "/dashboard"
+        },
+        {
+          "menuName": "그룹별대시보드",
+          "link": "/dashboard/groupDashboard"
         }
       ]
     },
@@ -29,39 +33,13 @@
         {
           "menuName": "데이터 조회",
           "link": "/analysis"
-        },
-        {
-          "menuName": "부서별 분석",
-          "link": "/analysis/department"
-        },
-        {
-          "menuName": "공정별 분석",
-          "link": "/analysis/process"
-        },
-        {
-          "menuName": "시설별 분석",
-          "link": "/analysis/location"
-        }
-      ]
-    },
-    {
-      "title": "알람",
-      "class": "alarm",
-      "link": "/alarm",
-      "icon": "",
-      "iconNormal": "",
-      "iconHover": "",
-      "subMenu": [
-        {
-          "menuName": "알람",
-          "link": "/alarm"
         }
       ]
     },
     {
       "title": "설정",
       "class": "setting",
-      "link": "/setting/location",
+      "link": "/setting/equipment",
       "icon": "",
       "iconNormal": "",
       "iconHover": "",
@@ -69,29 +47,19 @@
       "iconSelect": "",
       "subMenu": [
         {
-          "menuName": "시설관리",
-          "link": "/setting/location",
+          "menuName": "장비관리",
+          "link": "/setting/equipment",
           "icon": "icn_setting_factory"
         },
         {
-          "menuName": "기준정보",
-          "link": "/setting/energystandard",
-          "icon": "icn_setting_note"
-        },
-        {
-          "menuName": "공정관리",
-          "link": "/setting/process",
-          "icon": "icn_setting_tool"
-        },
-        {
-          "menuName": "부서관리",
-          "link": "/setting/department",
+          "menuName": "그룹관리",
+          "link": "/setting/group",
           "icon": "icn_setting_folder"
         },
         {
-          "menuName": "구성원관리",
-          "link": "/setting/user",
-          "icon": "icn_setting_handshake"
+          "menuName": "공기압축기 관리",
+          "link": "/setting/aircompressor",
+          "icon": "icn_setting_gear"
         }
       ]
     }

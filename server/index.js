@@ -10,9 +10,7 @@ const session = require('express-session');
 // Import and Set Nuxt.js options
 const MySQLStore = require('express-mysql-session')(session);
 const config = require('../nuxt.config.js');
-
 config.dev = !(process.env.NODE_ENV === 'production');
-const { swaggerUi, specs } = require('../lib/swagger');
 
 
 const dbConfig = require('../config/dbConfig.js');
@@ -22,7 +20,7 @@ async function start() {
   const nuxt = new Nuxt(config);
 
   const { host } = nuxt.options.server;
-  const port2 = 3015;
+  const port2 = 3016;
   // Build only in dev mode
   if (config.dev) {
     const builder = new Builder(nuxt);
@@ -46,7 +44,6 @@ async function start() {
 
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs,{ explorer: true }));
 
   app.use((req, res, next) => {
     app.locals.isLogin = req.isAuthenticated();

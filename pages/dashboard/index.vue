@@ -1,130 +1,159 @@
 <template>
     <div id="SubContentWrap">
         <div class="row">
-            <div class="col-lg-12 flex-box header-title">
-                <h2>전체</h2>
-                <h2>{{todayTime}}</h2>
+            <!--<div class="col-lg-3">
+                <div class="ibox">
+                    <div class="ibox-title flex-ibox-title">실시간 유량</div>
+                    <div class="ibox-content">
+                        <apexchart type="radialBar" height="240" ref="flowRadialBar"
+                                   :options="flowRadialChartOptions"
+                                   :series="[totalFlow]"/>
+                    </div>
+                </div>
+            </div>-->
+            <div class="col-lg-9">
+                <div class="ibox">
+                    <div class="ibox-title flex-ibox-title">실시간 전력(kW)/ 유량(m3/min)</div>
+                    <div class="ibox-content">
+                        <client-only>
+                            <apexchart type="area" height="180" ref="liveChart" :options="liveChartOption"
+                                       :series="liveChartData"/>
+                        </client-only>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-12">
-                <div class="blueprint-box">
-                    <div class="blueprint">
-                        <div class="address">
-                            <h2>
-                                <img src="~assets/images/common/icn_menu_factory.png" alt="공장" width="18"/>
-                                정석엔지니어링
-                            </h2>
-                            <p>17118 경기도 용인시 처인구 남사면 경기동로 227 (남사면 북리 124)</p>
-                        </div>
-                        <div class="dot-list">
-                            <div :class="`location location-${item.id}`" v-for="item in locationList" :key="item.id">
-                                <span/>
-                                <h1>{{item.locationName}}</h1>
-                            </div>
-                            <div :class="`dot dot-main`">
-                                <span/>
-                                <h1>한국전력</h1>
-                            </div>
-                            <div :class="`dot dot-${item}`" v-for="item in 5" :key="item.id">
-                                <span/>
-                                <h1>{{item}} 변전실</h1>
-                            </div>
-                        </div>
-                        <div class="state-box-list">
-                            <div v-for="item in substationList" :key="item.id"
-                                 :class="`state-box state-box-${item.id}`">
-                                <div class="ibox">
-                                    <div class="ibox-title">
-                                        <nuxt-link :to="`/dashboard/substationDashboard?id=${item.id}`"
-                                                   v-if="item.id === 216">
-                                            {{item.name}}
-                                        </nuxt-link>
-                                        <div v-else>{{item.name}}</div>
-                                    </div>
-                                    <div class="ibox-content ibox-no-padding-content">
-                                        <ul class="tag-list">
-                                            <li v-for="tag in mainTagList" :key="tag.id" v-if="item.name === '한국전력'">
-                                                <div>{{tag.name}}</div>
-                                                <div>
-                                                    {{tagVal | pickTagValue(`${tag.tagName}`)| numberFormat(2) }}
-                                                    {{tag.unit}}
-                                                </div>
-                                            </li>
-                                            <li v-for="tag in tagList" :key="tag.id" v-if="item.name !== '한국전력'">
-                                                <div>{{tag.name}}</div>
-                                                <div>
-                                                    {{tagVal | pickTagValue(`${item.id}_${tag.tagName}`)|
-                                                    numberFormat(2) }}
-                                                    {{tag.unit}}
-                                                </div>
-                                            </li>
-                                            <li v-if="item.name !== '한국전력'">
-                                                <div>상한치 알람</div>
-                                                <div>
-                                                    <div v-if="$options.filters.pickValue( alarmList, 'substationId', item.id, 'isAlarm') === true"
-                                                         class="bom-badge red-bg-badge">Alarm
-                                                    </div>
-                                                    <div v-else-if="$options.filters.pickValue( alarmList, 'substationId', item.id, 'isAlarm') === false"
-                                                         class="bom-badge green-bg-badge">Normal
-                                                    </div>
-                                                    <div v-else class="bom-badge">연결중</div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="214" height="221.999" class="line main-line">
-                            <defs>
-                                <linearGradient id="a" x1="1" y1=".021" x2=".017" y2="1"
-                                                gradientUnits="objectBoundingBox">
-                                    <stop offset="0" stop-color="#ffa100"/>
-                                    <stop offset="1" stop-color="#ff3a55"/>
-                                </linearGradient>
-                            </defs>
-                            <g style="fill:none;">
-                                <path
-                                        d="M0-3142v-202a15.9 15.9 0 0 1 4.686-11.314A15.893 15.893 0 0 1 16-3360h194a4 4 0 0 1 4 4 4 4 0 0 1-4 4H16a8.01 8.01 0 0 0-8 8v202a4 4 0 0 1-4 4 4 4 0 0 1-4-4Z"
-                                        transform="translate(0 3360)" style="fill:url(#a)"/>
-                                <path d="M0 218V14A14 14 0 0 1 14 0h196a1 1 0 0 1 0"
-                                      transform="translate(3.5 4)" class="white-line"/>
-                            </g>
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="617" height="8" class="line line-1">
-                            <path d="M0 0h609" transform="translate(4 4)" class="orange-line"/>
-                            <path d="M0 0h609" transform="translate(4 4)" class="white-line"/>
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="203.876" height="117.876" class="line line-2">
-                            <path d="M193 0 0 107" transform="translate(5.438 5.438)" class="orange-line"/>
-                            <path d="M193 0 0 107" transform="translate(5.438 5.438)" class="white-line"/>
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="41.903" height="120.903" class="line line-3">
-                            <path d="m0 0 32 111" transform="translate(4.952 4.952)" class="orange-line"/>
-                            <path d="m0 0 32 111" transform="translate(4.952 4.952)" class="white-line"/>
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="204.127" height="75.127" class="line line-4">
-                            <path d="m0 0 194 65" transform="translate(5.064 5.064)" class="orange-line"/>
-                            <path d="m0 0 194 65" transform="translate(5.064 5.064)" class="white-line"/>
-                        </svg>
+            <div class="col-lg-3">
+                <div class="ibox">
+                    <div class="ibox-title flex-ibox-title">Specific Power - Air Cooled</div>
+                    <div class="ibox-content">
+                        <client-only>
+                            <apexchart type="radialBar" height="240" ref="barRadialBar"
+                                       :options="basicUnitOptions"
+                                       :series="[basicUnit]"/>
+                        </client-only>
                     </div>
                 </div>
             </div>
         </div>
+
+        <equipmentTagGroup v-bind:propsdata="equipmentList.pressure" :title="'압력계'"
+                           v-if=" equipmentList.pressure"/>
+        <div class="title-box flex-box">
+            <h2>
+                <img src="~assets/images/dashboard/icn_dashboard_aircompressor.png" alt="aircompressor"/>
+                공기압축기
+            </h2>
+        </div>
+        <div class="dashboard-item-box comp-item-box" style="display:flex; flex-wrap:wrap;">
+            <!--<masonry :cols="{default: 4, 1700: 3, 1400: 2, 970: 1}" :gutter="30">-->
+            <div v-for="device in airCompressorList" :key="device.id" style="">
+                <div class="ibox" style="height:100%;">
+                    <div class="ibox-title aircompressor-ibox-title flex-ibox-title">
+                        <nuxt-link :to="`/dashboard/${device.id}`">
+                            <h3>
+                                <div class="img-box">
+                                    <img
+                                            :src="device.image"
+                                            @error="replaceImg"
+                                            :alt="device.equipmentId"
+                                            style="width:100%;"/>
+                                </div>
+                                {{device.name}}
+                            </h3>
+                        </nuxt-link>
+                        <img src="~assets/images/dashboard/icn_dashboard_setting.svg" alt="setting"
+                             class="setting-btn"
+                             @click="settingModalOpen(device.id)"/>
+                    </div>
+                    <div class="ibox-content">
+                        <airCompressorState v-bind:propsdata="device"/>
+                        <scheduleState v-bind:propsdata="device"/>
+                        <div v-if="device.state.COMP_LoadFactor !== undefined || device.state.COMP_Trip !== undefined || device.state.COMP_Warning !== undefined">
+                            <ul class="tag-box">
+                                <li v-if="device.state.COMP_LoadFactor">
+                                    <div class="tagname">부하율</div>
+                                    <div style="display:flex; flex:1; justify-content: end; align-items: center;">
+                                        <div class="progressbar">
+                                            <div class="inner-bar"
+                                                 :style="`width:${device.state.COMP_LoadFactor.value === null ? 0 : device.state.COMP_LoadFactor.value}%`"/>
+                                        </div>
+                                        <h3>{{device.state.COMP_LoadFactor.value === null ? 0 :
+                                            device.state.COMP_LoadFactor.value}}%</h3>
+                                    </div>
+                                </li>
+                                <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 1">
+                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                    <div>
+                                        {{TPCode[processUndefinedValue(device.state['COMP_ActTripCode']).toString()]}}
+                                    </div>
+                                </li>
+                                <li v-if="processUndefinedValue(device.state['COMP_Warning']) === 1">
+                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                    <div>{{TPCode[processUndefinedValue(device.state['COMP_ActWarCode']).toString()]}}
+                                    </div>
+                                </li>
+
+                                <li v-if="processUndefinedValue(device.state['COMP_Trip']) === 0 && processUndefinedValue(device.state['COMP_ActTripCode']) === 0">
+                                    <div class="bom-badge green-bg-badge" style="margin:0 8px 0 0;">Normal</div>
+                                    정상
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-if="device.tagByComponents !== null && device.tagByComponents.mainInfoComponent !== undefined">
+                            <ul v-if="device.tagByComponents !== null" class="tag-box">
+                                <li v-for="tag in device.tagByComponents.mainInfoComponent" :key="tag.id">
+                                    <div>
+                                        {{tag.description}}
+                                    </div>
+                                    <div>
+                                        {{tag.value | valueFormat(2)}} {{tag.unit}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-if="device.devices.power !==undefined">
+                            <ul v-for="power in device.devices.power" :key="power.tagName" class="tag-box">
+                                <li v-for="type in powerTagSet" :key="type.description">
+                                    <div v-if="power.tags[type] !== undefined">
+                                        {{power.tags[type].description}}
+                                    </div>
+                                    <div v-if="power.tags[type] !== undefined">
+                                        {{power.tags[type].value| valueFormat(2)}} {{power.tags[type].unit}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--</masonry>-->
+        </div>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.temperature" :title="'온도계'"
+                           v-if="equipmentList.temperature"/>
+        <equipmentTagGroup v-bind:propsdata="equipmentList.flow" :title="'유량계'" v-if="equipmentList.flow"/>
+        <airDryerTagGroup v-bind:propsdata="airDryerList" :title="'에어 드라이어'" v-if="airDryerList && airDryerList.length !== 0"/>
+        <settingEquipmentModal ref="settingEquipmentModal" v-bind:propsdata="settingModalData"
+                               v-on:callSearch="getAirCompressor"/>
         <Loading v-bind:propsdata="loadingData"/>
     </div>
 </template>
 <script>
     import dayjs from 'dayjs';
+    import 'dayjs/locale/ko';
+
+
+    dayjs.locale('ko');
+
     import axios from 'axios';
     import Loading from '~/components/loading.vue';
-    import DxPieChart, {
-        DxLabel,
-        DxLegend,
-        DxSeries,
-        DxTooltip,
-        DxMargin,
-        DxSize, DxConnector
-    } from 'devextreme-vue/pie-chart';
+    import settingEquipmentModal from '~/components/settingModal/settingEquipmentModal.vue';
+    import airCompressorState from '~/components/dashboard/airCompressorState.vue';
+    import scheduleState from '~/components/dashboard/scheduleState.vue';
+    import equipmentTagGroup from '~/components/dashboard/equipmentTagGroup.vue';
+    import airDryerTagGroup from '~/components/dashboard/airDryerTagGroup.vue';
+    import waTagSet from '~/assets/data/tagSet.json';
+    import qs from "qs";
+
 
     export default {
         fetch({store, redirect}) {
@@ -137,18 +166,18 @@
         components: {
             dayjs,
             Loading,
-            DxPieChart,
-            DxLabel,
-            DxLegend,
-            DxSeries,
-            DxTooltip,
-            DxMargin,
-            DxSize, DxConnector
+            settingEquipmentModal,
+            airCompressorState,
+            scheduleState,
+            equipmentTagGroup,
+            airDryerTagGroup
         },
         data() {
             return {
+                TPCode: '',
+                compTagSet: waTagSet.airCompressorGroupDeshboardSet.tags,
+                powerTagSet: waTagSet.dashboardAccuraSet.tags,
                 msgData: {
-                    // 알람모달
                     msg: '',
                     show: false,
                     e: '',
@@ -156,108 +185,319 @@
                 loadingData: {
                     show: false,
                 },
+                settingModalData: {
+                    show: false,
+                },
                 tagVal: '',
-                todayTime: '',
-                locationList: [
-                    {id: 1, locationId: 1, locationName: '가동'},
-                    {id: 2, locationId: 2, locationName: '나동'},
-                    {id: 3, locationId: 3, locationName: '다동'},
-                    {id: 4, locationId: 7, locationName: '바동'},
-                    {id: 5, locationId: 7, locationName: '아동'},
-                    {id: 6, locationId: 8, locationName: '자동'},
-                    {id: 7, locationId: 9, locationName: '차동'},
+                liveChartData: [
+                    {name: '실시간 유효전력', data: []},
+                    {name: '실시간 유량', data: []}
                 ],
-                alarmList: [],
-                substationList: [
-                    {id: 216, name: '한국전력'},
-                    {id: 5, name: '5변전실'},
-                    {id: 4, name: '4변전실'},
-                    {id: 3, name: '3변전실'},
-                    {id: 2, name: '2변전실'},
-                    {id: 1, name: '1변젼실'},
-                ],
-                tagList: [
-                    {id: 11, name: '유효전력량', tagName: 'PWR_KWh', unit: 'kWh'},
-                    {id: 12, name: '유효전력', tagName: 'PWR_kW', unit: 'kW'},
-                ],
-                mainTagList: [
-                    {id: 1, name: '유효전력량', tagName: 'U216_PWR_KWh', unit: 'kWh'},
-                    {id: 2, name: '유효전력', tagName: 'U216_PWR_kW', unit: 'kW'},
-                    {id: 3, name: '무효전력', tagName: 'U216_PWR_kVar', unit: 'Kvar'},
-                    {id: 5, name: '피상전력', tagName: 'U216_PWR_kVa', unit: 'kVa'},
-                    {id: 7, name: '전압', tagName: 'U216_PWR_V', unit: 'V'},
-                    {id: 8, name: '전류', tagName: 'U216_PWR_A', unit: 'A'},
-                    {id: 9, name: '역률', tagName: 'U216_PWR_PF', unit: '%'},
-                    {id: 10, name: '주파수', tagName: 'U216_PWR_PF', unit: 'Hz'},
-                ],
+                liveChartOption: { //차트옵션 변수
+                    chart: {
+                        toolbar: {
+                            tools: {
+                                download: true,
+                                selection: false,
+                                zoom: false,
+                                zoomin: false,
+                                zoomout: false,
+                                pan: false,
+                            }
+                        }
+                    },
+                    dataLabels: {enabled: false},
+                    colors: ['#FFA100', '#3363FF'],
+                    grid: {borderColor: '#e4e9f1'},
+                    stroke: {curve: 'smooth', width: 3},
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.3,
+                            opacityTo: 0,
+                            stops: [0, 100]
+                        }
+                    },
+                    tooltip: {
+                        style: {fontFamily: 'BOM-font'},
+                        x: {show: true},
+                        y: {
+                            show: true,
+                            formatter: function (val, target) {
+                                let unit = '';
+                                if (target.seriesIndex === 0) {
+                                    unit = 'kW'
+                                }
+                                if (target.seriesIndex === 1) {
+                                    unit = 'N㎥/min'
+                                }
+                                return val + unit
+                            }
+                        }
+                    },
+                    xaxis: {
+                        categories: [],
+                        labels: {show: false, style: {color: ['#667082'], fontFamily: 'BOM-font', fontSize: '10px'}}
+                    },
+                    yaxis: {
+                        forceNiceScale: true,
+                        labels: {
+                            style: {colors: ['#667082'], fontFamily: 'BOM-font', fontSize: '10px'},
+                            formatter: (value) => {
+                                return value.toFixed(1)
+                            }
+                        }
+                    },
+                    legend: {show: true, fontSize: '10px', fontFamily: 'BOM-font', offsetY: -5}
+                },
+                basicUnitOptions: {
+                    chart: {
+                        type: 'radialBar',
+                        toolbar: {
+                            show: true
+                        },
+                        offsetY: -10,
+                        animations: {
+                            enabled: false,
+                        }
+                    },
+                    plotOptions: {
+                        radialBar: {
+                            startAngle: -135,
+                            endAngle: 135,
+                            hollow: {
+                                margin: 0,
+                                size: '70%',
+                                background: '#fff',
+                                position: 'front',
+                                dropShadow: {
+                                    enabled: true,
+                                    top: -3,
+                                    left: 0,
+                                    blur: 4,
+                                    opacity: 0.05
+                                }
+                            },
+                            track: {
+                                background: '#f5f5f5',
+                                strokeWidth: '67%',
+                                margin: 0,
+                            },
+                            dataLabels: {
+                                show: true,
+                                name: {
+                                    offsetY: 40,
+                                    show: true,
+                                    color: '#6c6c6c',
+                                    fontSize: '18px',
+                                    fontWeight: 500,
+                                    fontFamily: 'BOM-font", Sans-serif',
+                                },
+                                value: {
+                                    formatter: function (val) {
+                                        let origValue = (val / 100) * 15;
+                                        return origValue.toFixed(2)
+                                    },
+                                    offsetY: -10,
+                                    color: '#1b1b1b',
+                                    fontSize: '40px',
+                                    fontWeight: 600,
+                                    fontFamily: 'BOM-font", Sans-serif',
+                                    show: true,
+                                }
+                            }
+                        }
+                    },
+                    fill: {
+                        type: 'gradient',
+                        colors: ['#c24285'],
+                        gradient: {
+                            shade: 'dark',
+                            type: 'horizontal',
+                            shadeIntensity: 0.5,
+                            gradientToColors: ['#3363ff'],
+                            inverseColors: true,
+                            opacityFrom: 1,
+                            opacityTo: 1,
+                            stops: [0, 100]
+                        }
+                    },
+                    stroke: {
+                        lineCap: 'round'
+                    },
+                    labels: ['kW/m3/min'],
+                },
+                basicUnit: 0,
+                airCompressorList: [],
+                airDryerList: [],
+                equipmentList: [],
+                timeCategories: [],
                 Interval1M: '',
                 interval: '',
-                intervalTime: 5 * 1000,
+                intervalTime: 10 * 1000,
             };
         },
-        computed: {
-            collapseState: function () {
-                return this.$store.getters.collapseMenu;
-            },
-        },
         mounted() {
-            this.timer();
-            this.WaLogin();
+            this.chartSetting();
             this.getTagValues();
             this.resetInterval();
-            this.getSubstationAlarm();
+            this.getAirCompressor();
+            this.getEquipment();
+            this.getAirDryers();
+            this.getTrip();
             this.loadingData.show = true;
         },
         beforeDestroy() {
             this.removeInterval();
         },
         methods: {
-            timer() {
-                this.todayTime = dayjs().format('YYYY-MM-DD ddd A hh:mm');
-            },
-            async WaLogin() {
-                const vm = this;
-                axios.get('/api/WaLogin')
-                    .catch((error) => {
-                        vm.msgData.msg = error;
-                    });
-            },
-            async getSubstationAlarm() {
-                const vm = this;
-                axios.get('/api/substation/alarm')
-                    .then((res) => {
-                        if (res.data.code === 1) {
-                            vm.alarmList = res.data.value;
-                        }
-                    }).catch((error) => {
-                    vm.msgData.msg = error;
-                }).finally(() => {
-                    vm.loadingData.show = false;
-                });
+          getAirDryers() {
+            const vm = this;
+            axios.get('/api/airDryers', {
+              params: {
+                components: ["stateComponent", "mainInfoComponent"]
+
+              }, paramsSerializer: params => {
+                return qs.stringify(params)
+              }
+            })
+                .then((res) => {
+                  if (res.status === 200) {
+                    vm.airDryerList = res.data;
+                  }
+                }).catch((error) => {
+              vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+            }).finally(() => {
+              vm.loadingData.show = false;
+            });
+          },
+            chartSetting() {
+              axios.get('/api/specificalPower')
+                  .then((res) => {
+                    if (isNaN(res.data)) {
+                      this.basicUnit = 0
+                    } else {
+                      this.basicUnit = res.data.toFixed(2);
+                    }
+                  });
             },
             async getTagValues() {
                 const vm = this;
-                axios.post('/api/dashboard/port/getTagValue', {
-                    portId: [-2, 33],
-                }, {
-                    timeout: vm.intervalTime,
-                }).then((res) => {
-                    if (res.data.Result.Total > 0) {
-                        vm.tagVal = res.data.Values;
-                        vm.todayTime = dayjs().format('YYYY-MM-DD ddd A hh:mm');
-                    }
-                }).catch((error) => {
-                    vm.msgData.msg = error;
+
+                axios.get('/api/totalValue')
+                    .then((res) => {
+                        if (res.status === 200) {
+                            vm.tagVal = res.data;
+                            vm.setLiveChart();
+                            vm.chartSetting();
+                        }
+                    }).catch((error) => {
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
                     vm.loadingData.show = false;
                 });
+            },
+            getNowTime: function () {
+                this.nowTime = dayjs(new Date().toISOString()).format('HH:mm:ss');
+            },
+            replaceImg(e) {
+                e.target.src = require(`~/assets/images/equipment/default.png`);
+            },
+            async getTrip() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/trip'
+                }).then((res) => {
+                    vm.TPCode = res.data
+                })
+            },
+            async getAirCompressor() {
+                const vm = this;
+                axios.get('/api/compressors',
+                    {
+                        params: {
+                            components: ["stateComponent", "mainInfoComponent"]
+
+                        }, paramsSerializer: params => {
+                            return qs.stringify(params)
+                        }
+                    }).then((res) => {
+                    if (res.status === 200) {
+                        vm.airCompressorList = res.data;
+                        vm.airCompressorList.forEach(item => {
+                            item.image = require(`~/assets/images/equipment/${item.equipment.model}.png`);
+                        });
+                    }
+                }).catch((error) => {
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
+            async getEquipment() {
+                const vm = this;
+                axios({
+                    method: 'get',
+                    url: '/api/etcs'
+                }).then((res) => {
+                    vm.equipmentList = res.data;
+                }).catch((error) => {
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
+            settingModalOpen(device) {
+                this.$refs.settingEquipmentModal.updateModal(device);
+                this.settingModalData.show = true;
+            },
+            setLiveChart: function () {
+                const vm = this;
+                if (this.tagVal !== '') {
+                    vm.getNowTime();
+                    let liveChartXcount = this.liveChartData[0].data.length;
+                    let maxCount = 150;
+
+                    if (liveChartXcount > maxCount) {
+                        vm.timeCategories.shift();
+                        vm.liveChartData[0].data.shift();
+                        vm.liveChartData[1].data.shift();
+                    }
+                    vm.timeCategories.push(vm.nowTime);
+
+                    let kWData = vm.tagVal.PWR_KW;
+                    vm.liveChartData[0].data.push(kWData.toFixed(2));
+
+
+                    let flowData = vm.tagVal.AIR_Flow;
+                    vm.liveChartData[1].data.push(flowData.toFixed(2));
+
+                    vm.$refs.liveChart.updateOptions({
+                        "xaxis": {"categories": vm.timeCategories}
+                    });
+                }
+            },
+            processUndefinedValue(type) {
+
+                if (type === undefined) {
+                    return 0;
+                } else {
+
+                    return type.value
+                }
             },
             resetInterval() {
                 const vm = this;
                 clearInterval(this.interval);
                 vm.interval = null;
                 vm.interval = setInterval(() => {
+                    this.chartSetting();
                     vm.getTagValues();
+                    vm.getAirCompressor();
+                    vm.getEquipment();
+                    vm.getAirDryers();
                 }, vm.intervalTime);
             },
             removeInterval() {
@@ -271,25 +511,23 @@
                 if (!value) return '0';
                 return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
             },
-            pickTagValue: function (object, tag) {
-                if (object === undefined || object === null || object === "") {
-                    return -1;
+            valueFormat: (value, numFix) => {
+                value = parseFloat(value);
+                if (!value) {
+                    return '0';
+                } else if (value <= -101 && value >= -113) {
+                    return '-'
                 } else {
-                    let target = object.filter(object => object.Name === tag);
-                    if (target.length === 0) {
-                        return -100;
-                    } else {
-                        return target[0].Value;
-                    }
+                    return value.toLocaleString('ko-KR', {maximumFractionDigits: numFix});
                 }
             },
             pickValue: function (object, property, value, returnValue) {
                 if (object === undefined || object === null || object === "") {
-                    return -1;
+                    return '-';
                 } else {
                     let target = object.filter(object => object[property] === value);
                     if (target.length === 0) {
-                        return -100;
+                        return '-';
                     } else {
                         return target[0][returnValue];
                     }
@@ -298,3 +536,4 @@
         },
     };
 </script>
+

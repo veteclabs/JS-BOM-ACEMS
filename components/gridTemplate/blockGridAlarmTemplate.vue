@@ -1,6 +1,6 @@
 <template>
     <div>
-        <span :class='`bom-badge ${colorType}`'>{{ text }}</span>
+        <span :class='`${colorType}`'>{{ text }}</span>
     </div>
 </template>
 
@@ -20,11 +20,16 @@
             };
         },
         mounted() {
-            if(this.cellData.value === 1) {
-                this.colorType = 'blue-badge blue';
-                this.text = 'ON'
-            }else {
-                this.text ='OFF'
+            if(this.cellData.value === 'trip') {
+                this.colorType = 'bom-badge red-bg-badge';
+                this.text = this.cellData.value
+            }else if(this.cellData.value === 'warning') {
+                this.colorType = 'bom-badge orange-bg-badge';
+                this.text = this.cellData.value
+            }
+            else {
+                this.colorType = 'red';
+                this.text =this.cellData.value
             }
         },
     };

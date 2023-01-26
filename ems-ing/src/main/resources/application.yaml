@@ -1,0 +1,61 @@
+server:
+  port: 8031
+spring:
+  webaccess:
+    #    host: http://7.136.233.205/WaWebService/Json/
+    host: http://localhost:90/WaWebService/Json/
+    project: BOM
+    node: BOM
+  batch:
+    initialize-schema=always:
+  application:
+    name: ems-ing
+  datasource:
+    jdbc:
+      time_zone: UTC
+    driver-class-name: org.mariadb.jdbc.Driver #$net.sf.log4jdbc.sql.jdbcapi.DriverSpy #
+    url: jdbc:mariadb://localhost:37211/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    #    url: jdbc:log4jdbc:mariadb://112.216.32.4:3721/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    username: root
+    password: vetec3721
+    initialization-mode:
+      - always
+
+  jpa:
+    hibernate:
+      ddl-auto: none # none, create, create-drop
+      use_aql_comments: true
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        #        show_sql: true
+        format_sql: true
+    defer-datasource-initialization: true
+    generate-ddl: false
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+
+mybatis:
+  type-aliases-package: com.markcha.ems.mapper
+  mapper-locations: mybatis/mapper/**/*.xml
+
+response:
+  jpa:
+    DB_INSERT_MSG: successfully created!3
+    DB_UPDATE_MSG: successfully saved!
+    DB_DELETE_MSG: successfully deleted!
+    DB_ERROR_MSG: An unexpected error occurred.
+#logging.level:
+#  org:
+#    hibernate:
+#      SQL: debug
+#      type: trace
+#  jdbc:
+#    sqlonly: off
+#    sqltiming: info
+#    resultsettable: info
+#    audit: off
+#    resultset: off
+#    connection: off
+
+

@@ -1,0 +1,103 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+
+	id 'java'
+
+	id 'com.palantir.docker' version '0.22.1'
+
+}
+ext.projectName = "scheduler"
+group = 'com.markcha'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//querydsl 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+	implementation 'org.springframework.session:spring-session-core'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'org.apache.clerezza.ext', name: 'org.json.simple', version: '0.4'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile
+sourceSets {
+	main.java.srcDir querydslDir
+	println profile
+	main {
+		resources {
+			srcDirs "src/main/resources", "src/main/resources-${profile}"
+		}
+	}
+}
+bootJar {
+	archiveBaseName = "${projectName}-${project.version}-${profile}"
+	archiveFileName = "${projectName}-${project.version}-${profile}.jar"
+	delete fileTree('../bin') {
+		include "${projectName}-${project.version}-${profile}.jar.jar"
+	}
+	copy {
+		from "$buildDir/libs/${projectName}-${project.version}-${profile}.jar"
+		into "../bin"
+
+
+	}
+}
+docker {
+	name 'vetec/ems'
+	tag 'Dockerhub', "vetec/ems:${project.version}"
+	dockerfile file('Dockerfile')
+	files tasks.bootJar.outputs.files
+	buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
+	labels(['key': 'value'])
+	pull true
+	noCache true
+}
