@@ -12,7 +12,7 @@ spring:
     name: ems-ing
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:372231/ing?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://localhost:3721/ing?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:

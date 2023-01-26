@@ -66,16 +66,15 @@ public class Crawler {
     }
 
     private WebDriver createDriver() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("headless");
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
-
         String WEB_DRIVER_PATH = System.getProperty("user.dir") + "/ChromeDriverInstaller/chromedriver.exe";
+        String url = device.getSerialNumber();
 
         System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
-        WebDriver driver = new ChromeDriver(options);
 
-        String url = device.getSerialNumber();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("headless");
+        WebDriver driver = new ChromeDriver(options);
         driver.get(url);
 
         return driver;
