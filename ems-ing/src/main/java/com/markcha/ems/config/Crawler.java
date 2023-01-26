@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toMap;
 
 @Setter
 @Getter
-public class Crawler extends TimerTask {
+public class Crawler {
     private Device device;
     private long startTime;
     private List<TagDto> tagDtoList;
@@ -31,8 +31,7 @@ public class Crawler extends TimerTask {
         this.logger = logger;
     }
 
-    @Override
-    public void run() {
+    public void crawl() {
 
         WebDriver driver = createDriver();
 

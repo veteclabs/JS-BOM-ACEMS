@@ -18,7 +18,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver #net.sf.log4jdbc.sql.jdbcapi.DriverSpy #$
 #    url: jdbc:mariadb://127.0.0.1:37211/ing?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
 #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:mariadb://127.0.0.1:37212/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    url: jdbc:mariadb://127.0.0.1:37211/ing?serverTimezone=Asia/Seoul&useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password: vetec3721
     initialization-mode:

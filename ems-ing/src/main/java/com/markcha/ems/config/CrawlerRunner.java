@@ -15,7 +15,6 @@ import java.util.concurrent.*;
 
 @Component
 public class CrawlerRunner implements CommandLineRunner {
-//    private static List<Timer> tasks = new ArrayList<>();
     @Autowired
     private DeviceDslRepositoryImpl deviceDslRepository;
     @Autowired
@@ -29,22 +28,15 @@ public class CrawlerRunner implements CommandLineRunner {
         List<Device> devices = deviceDslRepository.findAllDevices();
         downloadDriver();
 
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(devices.size());
 
         for (Device device : devices) {
             Runnable runnable = () -> {
                 Crawler crawler = new Crawler(webaccessApiService, logger);
                 crawler.setDevice(device);
-                System.out.println(String.format("Runnable task: %s-%s", device.getName(), LocalTime.now()));
+                crawler.crawl();
             };
-            System.out.println(String.format("Scheduled task: %s-%s", device.getName(), LocalTime.now()));
             executor.schedule(runnable, delay, TimeUnit.SECONDS);
-
-//            Timer timer = new Timer();
-//            Crawler crawler = new Crawler(webaccessApiService, logger);
-//            crawler.setDevice(device);
-//            timer.schedule(crawler, 100, 100);
-//            tasks.add(timer);
         }
     }
 
