@@ -20,7 +20,7 @@ public class CrawlerRunner implements CommandLineRunner {
     private WebaccessApiServiceImpl webaccessApiService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         int delay = 0;
 
         Logger logger = LoggerFactory.getLogger(Crawler.class);
@@ -30,12 +30,20 @@ public class CrawlerRunner implements CommandLineRunner {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(devices.size());
 
         for (Device device : devices) {
-            Runnable runnable = () -> {
-                Crawler crawler = new Crawler(webaccessApiService, logger);
-                crawler.setDevice(device);
-                crawler.crawl();
-            };
-            executor.schedule(runnable, delay, TimeUnit.SECONDS);
+            try {
+                Runnable runnable = () -> {
+                    Crawler crawler = new Crawler(webaccessApiService, logger);
+                    crawler.setDevice(device);
+                    try {
+                        crawler.crawl();
+                    } catch (Exception e) {
+                       e.printStackTrace();
+                    }
+                };
+                executor.submit(runnable);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -128,15 +128,16 @@ public class Crawler {
     private List<TagDto> getInfo_v2(WebDriver driver) {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         List<WebElement> trList = driver.findElements(By.xpath("//tr"));
+
+        Map<String, Tag> nickUnitSet = device.getTags().stream()
+                .collect(toMap(t -> t.getTagList().getNickname()+t.getTagList().getUnit(), v -> v, (p1, p2) -> p1));
+        Map<String, Tag> nickSet = device.getTags().stream()
+                .collect(toMap(t -> t.getTagList().getNickname(), v -> v, (p1, p2) -> p1));
         List<TagDto> tagDtos = new ArrayList<>();
+
 
         for (WebElement tr : trList) {
             String target = tr.findElement(By.xpath("./td[1]")).getText();
-            Map<String, Tag> nickUnitSet = device.getTags().stream()
-                    .collect(toMap(t -> t.getTagList().getNickname()+t.getTagList().getUnit(), v -> v, (p1, p2) -> p1));
-
-            Map<String, Tag> nickSet = device.getTags().stream()
-                    .collect(toMap(t -> t.getTagList().getNickname(), v -> v, (p1, p2) -> p1));
 
             if (nickSet.keySet().contains(target)) {
                 Object val = tr.findElement(By.xpath("./td[2]")).getText();
