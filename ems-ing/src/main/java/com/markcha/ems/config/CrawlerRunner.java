@@ -37,14 +37,19 @@ public class CrawlerRunner implements CommandLineRunner {
                     try {
                         crawler.crawl();
                     } catch (Exception e) {
+                        // driver.findElement(By.xpath("//td")).getText(); -> 예외 발생 -> crawl을 재호출해야하나
+                        // 크롤링을 위해 생성한 크롬 브라우저 프로세스만 죽일 방법이 없음
+                        System.out.println("[크롤러 스레드 꺼짐 상태]: " + executor.isShutdown());
                        e.printStackTrace();
                     }
                 };
                 executor.submit(runnable);
+                Thread.sleep(100);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
     }
 
     private void downloadDriver() {

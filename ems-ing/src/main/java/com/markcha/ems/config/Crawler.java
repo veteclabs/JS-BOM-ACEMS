@@ -1,4 +1,5 @@
 package com.markcha.ems.config;
+
 import com.markcha.ems.domain.Device;
 import com.markcha.ems.domain.Tag;
 import com.markcha.ems.dto.tag.TagDto;
@@ -26,18 +27,19 @@ public class Crawler {
     private List<TagDto> tagDtoList;
     private WebaccessApiServiceImpl apiService;
     private Logger logger;
-    public Crawler(WebaccessApiServiceImpl webaccessApiService,Logger logger) {
+
+    public Crawler(WebaccessApiServiceImpl webaccessApiService, Logger logger) {
         apiService = webaccessApiService;
         this.logger = logger;
     }
 
-    public void crawl() {
+    public void crawl() throws Exception {
+        startTime = System.currentTimeMillis();
 
         WebDriver driver = createDriver();
 
-        startTime =  System.currentTimeMillis();
-
         while (true) {
+
             String loading = driver.findElement(By.xpath("//td")).getText();
 
             chkStartStatus(loading);
@@ -49,14 +51,13 @@ public class Crawler {
             if (!loading.contains("INITIALISATION")) {
                 while (true) {
                     tagDtoList = new ArrayList<>();
-                    List<TagDto> info_v2 = getInfo_v2(driver);
                     try {
+                        List<TagDto> info_v2 = getInfo_v2(driver);
                         apiService.setTagValues(info_v2);
                     } catch (Exception e) {
                         driver.close();
                         driver.quit();
                         driver = createDriver();
-                        throw new RuntimeException(e);
                     }
 
                     sleep(5000);
@@ -65,7 +66,7 @@ public class Crawler {
         }
     }
 
-    private WebDriver createDriver() {
+    private WebDriver createDriver() throws Exception {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
         String WEB_DRIVER_PATH = System.getProperty("user.dir") + "/ChromeDriverInstaller/chromedriver.exe";
         String url = device.getSerialNumber();
@@ -81,7 +82,7 @@ public class Crawler {
     }
 
     private void chkStartStatus(String loading) {
-        if(loading.contains("INITIALISATION")) sysOut("실행 중");
+        if (loading.contains("INITIALISATION")) sysOut("실행 중");
     }
 
     private void sysOut(String s) {
@@ -90,29 +91,25 @@ public class Crawler {
     }
 
     // 공압기 정보 페이지 로딩 과정에서 발생하는 문제를 처리하는 메서드
-    private void chkAndRefresh(WebDriver driver, long start) {
+    private void chkAndRefresh(WebDriver driver, long start) throws Exception {
         long endTime = System.currentTimeMillis();
         long diff = (endTime - start) / 1000;
 
         // 로딩 중 에러가 발생하면 페이지를 새로고침한다.
-        try {
             String errorBox = driver.findElement(By.xpath("//td[@id='step2comment']")).getCssValue("visibility");
             if (errorBox.equals("visible")) {
                 sysOut("로딩 중 에러 발생 -> 새로고침");
-
                 sleep(2000);
                 driver.navigate().refresh();
-                startTime =  System.currentTimeMillis();
-
+                startTime = System.currentTimeMillis();
+            } else {
+                sysOut("로딩 에러 없음 -> 크롤링 시작");
             }
-        } catch (Exception e) {
-            sysOut("로딩 에러 없음 -> 크롤링 시작");
-        }
 
         // 로딩 페이지가 20초 이상 지속되면 페이지를 새로고침하고 로딩 시작 시간을 초기화한다.
         if (diff >= 20) {
             driver.navigate().refresh();
-            startTime =  System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
             sysOut("대기 시간 만료 -> 새로고침");
         }
     }
@@ -125,12 +122,12 @@ public class Crawler {
         }
     }
 
-    private List<TagDto> getInfo_v2(WebDriver driver) {
+    private List<TagDto> getInfo_v2(WebDriver driver) throws Exception {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         List<WebElement> trList = driver.findElements(By.xpath("//tr"));
 
         Map<String, Tag> nickUnitSet = device.getTags().stream()
-                .collect(toMap(t -> t.getTagList().getNickname()+t.getTagList().getUnit(), v -> v, (p1, p2) -> p1));
+                .collect(toMap(t -> t.getTagList().getNickname() + t.getTagList().getUnit(), v -> v, (p1, p2) -> p1));
         Map<String, Tag> nickSet = device.getTags().stream()
                 .collect(toMap(t -> t.getTagList().getNickname(), v -> v, (p1, p2) -> p1));
         List<TagDto> tagDtos = new ArrayList<>();
@@ -147,26 +144,38 @@ public class Crawler {
                 }
 
                 String unit;
-                if (val.toString().split(" ").length >= 2) { unit = val.toString().split(" ")[1]; }
-                else { unit = null; }
+                if (val.toString().split(" ").length >= 2) {
+                    unit = val.toString().split(" ")[1];
+                } else {
+                    unit = null;
+                }
 
-                if (nickUnitSet.keySet().contains(target+unit)) {
+                if (nickUnitSet.keySet().contains(target + unit)) {
                     Tag tag = nickUnitSet.get(target + unit);
 
                     if (target.equals("Machine Status")) {
-                        if (val.equals("Load") || val.equals("Stopped")) { val = new Integer(1); }
-                        else if (val.equals("Unload")|| val.equals("Started")) { val = new Integer(0); }
+                        if (val.equals("Load") || val.equals("Stopped")) {
+                            val = new Integer(1);
+                        } else if (val.equals("Unload") || val.equals("Started")) {
+                            val = new Integer(0);
+                        }
                     }
 
                     try {
                         if (val.toString().trim().contains(" ")) {
-                            if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
-                            else { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                            if (val.toString().contains(".")) {
+                                val = new Double(val.toString().split(" ")[0]);
+                            } else {
+                                val = Integer.parseInt(val.toString().split(" ")[0]);
+                            }
                         } else {
-                            if (val.toString().contains(".")) { val = new Double(val.toString().split(" ")[0]); }
-                            else if (isNumeric(val.toString())) { val = Integer.parseInt(val.toString().split(" ")[0]); }
+                            if (val.toString().contains(".")) {
+                                val = new Double(val.toString().split(" ")[0]);
+                            } else if (isNumeric(val.toString())) {
+                                val = Integer.parseInt(val.toString().split(" ")[0]);
+                            }
                         }
-                    } catch  (NumberFormatException n) {
+                    } catch (NumberFormatException n) {
                         driver.quit();
                         driver.close();
                     }
@@ -176,7 +185,7 @@ public class Crawler {
                             .value(val)
                             .build();
 
-                    if(isNumeric(val.toString())) tagDtos.add(tagDto);
+                    if (isNumeric(val.toString())) tagDtos.add(tagDto);
                 }
             }
 
