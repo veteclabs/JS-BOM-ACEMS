@@ -25,4 +25,7 @@ public class Trip {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="equipment_id")
     private Equipment equipment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="tag_list_id")
+    private TagList tagList;
 }

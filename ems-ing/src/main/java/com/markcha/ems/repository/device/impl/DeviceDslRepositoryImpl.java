@@ -143,15 +143,12 @@ public class DeviceDslRepositoryImpl {
 
         return compressor;
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Tag> findAllAlarmTags() {
         List<Tag> tags = getAlarmTags();
 
         Map<Long, List<Device>> alarmGroupDevices = getAlarmGroupDevices(tags.stream()
-                .map(t -> {
-
-                    return t.getDevice().getGroup().getId();
-                })
+                .map(t -> t.getDevice().getGroup().getId())
                 .collect(toList())).stream()
                 .collect(groupingBy(t->t.getGroup().getId(), toList()));
         tags.forEach(t->{
@@ -188,6 +185,7 @@ public class DeviceDslRepositoryImpl {
         QTag compTags = new QTag("compTags");
         return query.selectFrom(tag).distinct()
                 .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(tag.tagList, tagList).fetchJoin()
                 .leftJoin(device.tags, compTags).fetchJoin()
                 .leftJoin(device.equipment, equipment).fetchJoin()
                 .leftJoin(device.group, group).fetchJoin()

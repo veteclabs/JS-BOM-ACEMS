@@ -3,98 +3,107 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.markcha.ems.mapper.updateSql.UpdateMapper">
-    <insert id="updateStateComponent">
+    <insert id="updateStateComponent" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into tag_set_mapper (tag_list_id, tag_set_id)
         SELECT tag_list_id,
                4 AS `tag_set_id`
         FROM tag_list tl
-        WHERE tl.`type` IN (
-                            "COMP_Power",
-                            "COMP_SystemPre",
-                            "COMP_AutoStop",
-                            "COMP_StartPre",
-                            "COMP_StopPre",
-                            "COMP_ActTripCode",
-
-                            "COMP_ActWarCode",
-                            "COMP_Trip",
-                            "COMP_Warning",
-                            "COMP_LoadFactor") on duplicate key
-        UPDATE
-            tag_list_id =
-        VALUES (`tag_list_id`),
-            tag_set_id =
-        VALUES (`tag_set_id`);
-
+        WHERE true
+        <if test="systemTagTypes.isEmpty() == false">
+            AND tl.`type` IN
+            <foreach collection="systemTagTypes" item="systemTagType" index="index" separator="," open="(" close=")">
+                #{systemTagType}
+            </foreach>
+        </if>
+        <if test="systemTagTypes.isEmpty() == true">
+            and tl.`type` = "-1"
+        </if>
+        on duplicate key UPDATE
+            tag_list_id = VALUES (`tag_list_id`),
+            tag_set_id  = VALUES (`tag_set_id`);
     </insert>
-    <insert id="updateMainPageComponent">
+    <insert id="updateMainPageComponent" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into tag_set_mapper (tag_list_id, tag_set_id)
         SELECT tag_list_id,
                5 AS `tag_set_id`
         FROM tag_list tl
-        WHERE tl.`type` IN (
-                            "COMP_SystemPre") on duplicate key
-        UPDATE
-            tag_list_id =
-        VALUES (`tag_list_id`),
-            tag_set_id =
-        VALUES (`tag_set_id`);
+        WHERE true
+        <if test="mainTagTypes.isEmpty() == false">
+            AND tl.`type` IN
+            <foreach collection="mainTagTypes" item="mainTagType" index="index" separator="," open="(" close=")">
+                #{mainTagType}
+            </foreach>
+        </if>
+        <if test="mainTagTypes.isEmpty() == true">
+            and tl.`type` = "-1"
+        </if>
+        on duplicate key UPDATE
+             tag_list_id = VALUES (`tag_list_id`),
+             tag_set_id  = VALUES (`tag_set_id`);
 
     </insert>
-    <insert id="updateDetailPageComponent">
+    <insert id="updateDetailPageComponent" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into tag_set_mapper (tag_list_id, tag_set_id)
         SELECT tag_list_id,
                6 AS `tag_set_id`
         FROM tag_list tl
-        WHERE tl.`type` NOT IN (
-                            "COMP_Power",
-                            "COMP_SystemPre",
-                            "COMP_AutoStop",
-                            "COMP_StartPre",
-                            "COMP_StopPre",
-                            "COMP_ActTripCode",
-                            "COMP_ActWarCode",
-                            "COMP_Trip",
-                            "COMP_Warning",
-                            "COMP_LoadFactor") on duplicate key
-        UPDATE
-            tag_list_id =
-        VALUES (`tag_list_id`),
-            tag_set_id =
-        VALUES (`tag_set_id`);
+        WHERE true
+        <if test="detailTagTypes.isEmpty() == false">
+            AND tl.`type` NOT IN
+            <foreach collection="detailTagTypes" item="detailTagType" index="index" separator="," open="(" close=")">
+                #{detailTagType}
+            </foreach>
+        </if>
+        <if test="detailTagTypes.isEmpty() == true">
+            and tl.`type` = "-1"
+        </if>
+        on duplicate key UPDATE
+        tag_list_id = VALUES (`tag_list_id`),
+        tag_set_id  = VALUES (`tag_set_id`);
 
     </insert>
 
-    <insert id="updateImportantComponent">
+    <insert id="updateImportantComponent" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into tag_set_mapper (tag_list_id, tag_set_id)
         SELECT tag_list_id,
                7 AS `tag_set_id`
         FROM tag_list tl
-        WHERE tl.`type` IN (
-                        "COMP_SystemPre") on duplicate key
-        UPDATE
-            tag_list_id =
-        VALUES (`tag_list_id`),
-            tag_set_id =
-        VALUES (`tag_set_id`);
+        WHERE true
+        <if test="mainTagTypes.isEmpty() == false">
+            AND tl.`type` IN
+            <foreach collection="mainTagTypes" item="mainTagType" index="index" separator="," open="(" close=")">
+                #{mainTagType}
+            </foreach>
+        </if>
+        <if test="mainTagTypes.isEmpty() == true">
+            and tl.`type` = "-1"
+        </if>
+        on duplicate key UPDATE
+        tag_list_id = VALUES (`tag_list_id`),
+        tag_set_id  = VALUES (`tag_set_id`);
 
     </insert>
-    <insert id="updateGroupPageComponent">
+    <insert id="updateGroupPageComponent" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into tag_set_mapper (tag_list_id, tag_set_id)
         SELECT tag_list_id,
                8 AS `tag_set_id`
         FROM tag_list tl
-        WHERE tl.`type` NOT IN (
-                                "COMP_Power",
-                                "COMP_SystemPre") on duplicate key
-        UPDATE
-            tag_list_id =
-        VALUES (`tag_list_id`),
-            tag_set_id =
-        VALUES (`tag_set_id`);
+        WHERE true
+        <if test="groupTagTypes.isEmpty() == false">
+            AND tl.`type` IN
+            <foreach collection="groupTagTypes" item="groupTagType" index="index" separator="," open="(" close=")">
+                #{groupTagType}
+            </foreach>
+        </if>
+        <if test="groupTagTypes.isEmpty() == true">
+            and tl.`type` = "-1"
+        </if>
+        on duplicate key UPDATE
+        tag_list_id = VALUES (`tag_list_id`),
+        tag_set_id  = VALUES (`tag_set_id`);
 
     </insert>
-    <delete id="deleteTagSetMapperDuplicate">
+    <delete id="deleteTagSetMapperDuplicate" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         DELETE
         FROM tag_set_mapper
         WHERE tag_set_mapper_id IN
@@ -102,11 +111,11 @@
                   SELECT tag_set_mapper_id FROM (SELECT tag_set_mapper_id FROM tag_set_mapper GROUP BY tag_list_id, tag_set_id HAVING count(*) > 1) temp_table
               );
     </delete>
-    <delete id="deleteSroucesHourWithDay">
+    <delete id="deleteSroucesHourWithDay" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         DELETE
         FROM `tagdata`.sources_hour_with_day
     </delete>
-    <insert id="insertSroucesHourWithDay">
+    <insert id="insertSroucesHourWithDay" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into `tagdata`.sources_hour_with_day (`logvalue`)
         values (0),(1),(2),(3),(4),(5),(6),(7),
                (8),(9),(10),(11),(12),(13),(14),
@@ -117,11 +126,11 @@
             `logvalue` =
         VALUES (`logvalue`);
     </insert>
-    <delete id="deleteSourcesFiveMinute">
+    <delete id="deleteSourcesFiveMinute" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         DELETE
         FROM `tagdata`.sources_five_minute
     </delete>
-    <insert id="insertSourcesFiveMinute">
+    <insert id="insertSourcesFiveMinute" parameterType="com.markcha.ems.mapper.updateSql.UpdateQueryDto">
         insert into `tagdata`.sources_five_minute (`logvalue`)
         values ('00:00:00'),('00:05:00'),('00:10:00'),('00:15:00'),('00:20:00'),('00:25:00'),
                ('00:30:00'),('00:35:00'),('00:40:00'),('00:45:00'),('00:50:00'),('00:55:00'),

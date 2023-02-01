@@ -58,6 +58,7 @@ public class Scheduler {
     private static Map<Long, Timer> tasks = new HashMap<>();
 
 
+    @Scheduled(cron="*/5 * * * * *")
     public void scheduleFixedRateTask() {
 
         List<ScheduleController.ScheduleSimpleDto> schedules = scheduleDslRepository.findAllCoreSchedule().stream()
@@ -92,14 +93,14 @@ public class Scheduler {
         }
 
     }
-
+    @Scheduled(cron="*/1 * * * * *")
     public void alarmFixedRateTask() {
         List<Tag> tags = deviceDslRepository.findAllAlarmTags();
         Map<Integer, List<Trip>> tripMap = tripDataRepository.findAll().stream()
                 .collect(groupingBy(Trip::getCode, toList()));
         List<Alarm> newAlarms = new ArrayList<>();
         List<Tag> takenAlarmTags = tags.stream()
-                .filter(t -> t.getTagList().equals(true))
+                .filter(t -> t.getTagList().getIsAlarm() == true)
                 .filter(t -> new Double(t.getValue().toString()).intValue() == 1)
                 .collect(toList());
 

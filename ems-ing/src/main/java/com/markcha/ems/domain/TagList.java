@@ -56,6 +56,8 @@ public class TagList {
     private Set<Tag> tags = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList", cascade = CascadeType.ALL)
     private Set<PatternList> patternList = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tagList", cascade = CascadeType.ALL)
+    private Set<Trip> trips = new HashSet<>();
 
     private Double min;
     private Double max;

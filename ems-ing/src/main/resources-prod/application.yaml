@@ -43,8 +43,7 @@ response:
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
 
-MyConfig:
-  profile: prod
+profile: local
 #logging.level:
 #  org:
 #    hibernate:
