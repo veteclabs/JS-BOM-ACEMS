@@ -1,13 +1,15 @@
 package com.markcha.ems.domain;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@Builder
 @Entity
 @NoArgsConstructor
 public class Trip {
@@ -25,4 +27,7 @@ public class Trip {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="equipment_id")
     private Equipment equipment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="tag_list_id")
+    private TagList tagList;
 }

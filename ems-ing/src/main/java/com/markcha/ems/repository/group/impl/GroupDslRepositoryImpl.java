@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.markcha.ems.domain.EquipmentType.*;
 import static com.markcha.ems.domain.GroupType.OBJECT;
@@ -26,6 +27,8 @@ import static com.markcha.ems.domain.QGroup.group;
 import static com.markcha.ems.domain.QOrder.order1;
 import static com.markcha.ems.domain.QSchedule.schedule;
 import static com.markcha.ems.domain.QTag.tag;
+import static com.markcha.ems.domain.QTagList.tagList;
+import static com.markcha.ems.domain.QTrip.trip;
 import static com.markcha.ems.domain.QWeek.week;
 import static com.markcha.ems.domain.QWeekMapper.weekMapper;
 import static java.util.Comparator.comparing;
@@ -52,6 +55,53 @@ public class GroupDslRepositoryImpl{
                 .leftJoin(weekMapper.orders, order1).fetchJoin()
                 .where(groupEqId)
                 .fetchOne();
+    }
+
+    public List<Group> findAllAllarmGroups(List<String> tagTypes) {
+
+        List<Group> groups = query.select(group).distinct()
+                .from(group)
+                .leftJoin(group.deviceSet, device).fetchJoin()
+                .leftJoin(device.equipment, equipment).fetchJoin()
+                .where(
+                        group.type.eq(OBJECT)
+                ).fetch();
+        List<Long> deviceIds = groups.stream()
+                .flatMap(t->t.getDeviceSet().stream())
+                .map(t->t.getId())
+                .collect(toList());
+
+        List<Tag> tags = query.select(tag).distinct()
+                .from(tag)
+                .leftJoin(tag.device, device).fetchJoin()
+                .leftJoin(tag.tagList, tagList).fetchJoin()
+                .leftJoin(tagList.trips, trip).fetchJoin()
+                .where (
+                        device.id.in(deviceIds),
+                        tag.type.in(
+                                tagTypes
+                        )
+                ).fetch();
+        List<String> tagNames = tags.stream()
+                .map(t->t.getTagName())
+                .collect(toList());
+        Map<String, Object> tagValues = webaccessApiService.getTagValuesV2(tagNames);
+        tags.stream().forEach(t->{
+            t.setValue(tagValues.get(t.getTagName()));
+        });
+        Map<Long, List<Tag>> grouppingTags = tags.stream()
+                .collect(groupingBy(t -> t.getDevice().getId(), toList()));
+        groups.stream().forEach(t->{
+            t.getDeviceSet().stream().forEach(k->{
+                List<Tag> childTags = grouppingTags.get(k.getId());
+                if (!isNull(childTags)) {
+                    k.setTags(new HashSet<>(childTags));
+                } else {
+                    k.setTags(new HashSet<>());
+                }
+            });
+        });
+        return groups;
     }
     public GroupDslRepositoryImpl(EntityManager entityManager, WebaccessApiServiceImpl webaccessApiService) {
         this.entityManager = entityManager;
@@ -265,8 +315,8 @@ public class GroupDslRepositoryImpl{
     public List<Tag> getTagsByDeviceIds(List<Long> deviceIds) {
         return query.selectFrom(tag).distinct()
                 .leftJoin(tag.device, device).fetchJoin()
-                .leftJoin(tag.tagList, QTagList.tagList).fetchJoin()
-                .leftJoin(QTagList.tagList.tagSetMappers, QTagSetMapper.tagSetMapper).fetchJoin()
+                .leftJoin(tag.tagList, tagList).fetchJoin()
+                .leftJoin(tagList.tagSetMappers, QTagSetMapper.tagSetMapper).fetchJoin()
                 .leftJoin(QTagSetMapper.tagSetMapper.tagSet, QTagSet.tagSet).fetchJoin()
                 .where(device.id.in(deviceIds)
                         ,QTagSet.tagSet.nickname.eq("groupDashboardComponent"))

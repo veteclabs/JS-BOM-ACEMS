@@ -99,7 +99,7 @@
                             </div>
                             <div class="ibox-content">
                                 <client-only>
-                                    <apexchart type="radialBar" height="285" ref="liveCTLineChart"
+                                    <apexchart type="radialBar" height="285" ref="liveLineChart"
                                                :options="radialChartOptions"
                                                :series="[airCompressorBar]"/>
                                 </client-only>
@@ -207,7 +207,7 @@
                     chart: {
                         toolbar: {
                             tools: {
-                                download: true,
+                                download: false,
                                 selection: false,
                                 zoom: false,
                                 zoomin: false,
@@ -258,7 +258,7 @@
                     chart: {
                         type: 'radialBar',
                         toolbar: {
-                            show: true
+                            show: false
                         },
                         offsetY: -10,
                         animations: {

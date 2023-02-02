@@ -1,14 +1,16 @@
 package com.markcha.ems.domain;
 
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
 @Entity
 @NoArgsConstructor
 public class Alarm {

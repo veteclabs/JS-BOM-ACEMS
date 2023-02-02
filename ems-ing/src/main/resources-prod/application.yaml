@@ -22,7 +22,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # none, create, create-drop
+      ddl-auto: none # none, create, create-drop, update
       use_aql_comments: true
     properties:
       hibernate:
@@ -43,8 +43,7 @@ response:
     DB_DELETE_MSG: successfully deleted!
     DB_ERROR_MSG: An unexpected error occurred.
 
-MyConfig:
-  profile: prod
+profile: local
 #logging.level:
 #  org:
 #    hibernate:

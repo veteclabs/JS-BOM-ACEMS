@@ -1,16 +1,15 @@
 package com.markcha.ems.controller;
 
 import com.markcha.ems.domain.*;
-import com.markcha.ems.dto.device.ComponentsDto;
-import com.markcha.ems.dto.device.AirCompressorDto;
-import com.markcha.ems.dto.device.CompressorDto;
-import com.markcha.ems.dto.device.DeviceConDto;
+import com.markcha.ems.dto.device.*;
 import com.markcha.ems.dto.response.ApiResponseDto;
 import com.markcha.ems.dto.schedule.ScheduleDto;
 import com.markcha.ems.dto.tag.TagDto;
 import com.markcha.ems.repository.DeviceDataRepository;
+import com.markcha.ems.repository.EquipmentDataRepository;
 import com.markcha.ems.repository.GroupDataRepository;
 import com.markcha.ems.repository.device.impl.DeviceDslRepositoryImpl;
+import com.markcha.ems.repository.equipment.impl.EquipmentDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDslRepositoryImpl;
 import com.markcha.ems.repository.group.impl.GroupDynamicRepositoryImpl;
 import com.markcha.ems.repository.tag.TagDslRepositoryIml;
@@ -24,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -204,7 +204,17 @@ public class CompressorController {
         private Long equipmentId;
         private Equipment equipment;
     }
-
+    @Autowired
+    private EquipmentDslRepositoryImpl equipmentDataRepository;
+    @GetMapping("/compressor/model")
+    public ResponseEntity<?> getModels(String maker) {
+        if(isNull(maker)) {
+            List<String> emptyArray = new ArrayList<>();
+            return ResponseEntity.ok(emptyArray);
+        }
+        List<CompressorModelDto> models = equipmentDataRepository.getModels(maker);
+        return ResponseEntity.ok(models);
+    }
     @Data
     @NoArgsConstructor
     public static class Equipment {

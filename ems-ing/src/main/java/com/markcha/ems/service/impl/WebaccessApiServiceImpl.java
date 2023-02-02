@@ -41,9 +41,9 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, String >> tagObject = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> tagObject = new ArrayList<Map<String, String>>();
 
-        for (String name: tagNames) {
+        for (String name : tagNames) {
             Map<String, String> tagSet = Map.of(
                     "Name", name
             );
@@ -67,8 +67,10 @@ public class WebaccessApiServiceImpl {
             throw var4;
         }
     }
+
     @Autowired
     private RestTemplate restTemplate;
+
     public Map<String, Object> getTagValuesV2(List<String> tagNames) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -77,9 +79,9 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, String >> tagObject = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> tagObject = new ArrayList<Map<String, String>>();
 
-        for (String name: tagNames) {
+        for (String name : tagNames) {
             Map<String, String> tagSet = Map.of(
                     "Name", name
             );
@@ -96,13 +98,14 @@ public class WebaccessApiServiceImpl {
         );
         List<TagResultDto> tagValues = response.getBody().getValues();
         Map<String, Object> tagValueMap = new HashMap<>();
-        tagValues.forEach(t->{
+        tagValues.forEach(t -> {
             tagValueMap.put(t.getName(), t.getValue());
 
         });
 
         return tagValueMap;
     }
+
     public Object getTagValuesV2(String tagNames) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -111,7 +114,7 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, String >> tagObject = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> tagObject = new ArrayList<Map<String, String>>();
 
         Map<String, String> tagSet = Map.of(
                 "Name", tagNames
@@ -128,17 +131,18 @@ public class WebaccessApiServiceImpl {
         );
         List<TagResultDto> tagValues = response.getBody().getValues();
         Map<String, Object> tagValueMap = new HashMap<>();
-        tagValues.forEach(t->{
+        tagValues.forEach(t -> {
             tagValueMap.put(t.getName(), t.getValue());
 
         });
-        if(!isNull(tagValues) && tagValues.size() == 1) {
+        if (!isNull(tagValues) && tagValues.size() == 1) {
             return tagValues.get(0).getValue();
         } else {
 
             return null;
         }
     }
+
     public Double getTagValuesV2Double(String tagNames) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -147,7 +151,7 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, String >> tagObject = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> tagObject = new ArrayList<Map<String, String>>();
 
         Map<String, String> tagSet = Map.of(
                 "Name", tagNames
@@ -164,17 +168,18 @@ public class WebaccessApiServiceImpl {
         );
         List<TagResultDto> tagValues = response.getBody().getValues();
         Map<String, Object> tagValueMap = new HashMap<>();
-        tagValues.forEach(t->{
+        tagValues.forEach(t -> {
             tagValueMap.put(t.getName(), t.getValue());
 
         });
-        if(!isNull(tagValues) && tagValues.size() == 1) {
+        if (!isNull(tagValues) && tagValues.size() == 1) {
             return new Double(tagValues.get(0).getValue().toString());
         } else {
 
             return null;
         }
     }
+
     @Autowired
     private TagInterceptRepositoryImpl tagInterceptRepository;
 
@@ -198,6 +203,7 @@ public class WebaccessApiServiceImpl {
 
         return true;
     }
+
     public Integer getTagValuesV2Int(String tagNames) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -206,7 +212,7 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, String >> tagObject = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> tagObject = new ArrayList<Map<String, String>>();
 
         Map<String, String> tagSet = Map.of(
                 "Name", tagNames
@@ -223,17 +229,18 @@ public class WebaccessApiServiceImpl {
         );
         List<TagResultDto> tagValues = response.getBody().getValues();
         Map<String, Object> tagValueMap = new HashMap<>();
-        tagValues.forEach(t->{
+        tagValues.forEach(t -> {
             tagValueMap.put(t.getName(), t.getValue());
 
         });
-        if(!isNull(tagValues) && tagValues.size() == 1) {
+        if (!isNull(tagValues) && tagValues.size() == 1) {
             return new Double(tagValues.get(0).getValue().toString()).intValue();
         } else {
 
             return null;
         }
     }
+
     public Boolean setTagValues(List<TagDto> propertyDtos) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -241,16 +248,12 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, Object >> tagObject = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> tagObject = new ArrayList<Map<String, Object>>();
 
-        for (TagDto propertyDto: propertyDtos) {
+        for (TagDto propertyDto : propertyDtos) {
             Map<String, Object> tagSet = new HashMap<>();
-            tagSet.put(
-                    "Name", propertyDto.getTagName()
-            );
-            tagSet.put(
-                    "Value", propertyDto.getValue()
-            );
+            tagSet.put("Name", propertyDto.getTagName());
+            tagSet.put("Value", propertyDto.getValue());
             tagObject.add(tagSet);
         }
 
@@ -264,6 +267,7 @@ public class WebaccessApiServiceImpl {
         );
         return true;
     }
+
     public Boolean setTagValue(TagDto propertyDto) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -271,7 +275,7 @@ public class WebaccessApiServiceImpl {
 
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, Object >> tagObject = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> tagObject = new ArrayList<Map<String, Object>>();
 
 
         Map<String, Object> tagSet = new HashMap<>();
