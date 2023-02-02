@@ -36,6 +36,9 @@ public class Tag {
     private Boolean isTrend;
     @Transient
     private Object value;
+    @Transient
+    private Group group;
+
     @Column(name = "logging_time")
     private Integer loggingTime;
     @Column(name = "nickname", length = 50)

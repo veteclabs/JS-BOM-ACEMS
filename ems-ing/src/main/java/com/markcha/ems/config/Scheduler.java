@@ -3,10 +3,7 @@ package com.markcha.ems.config;
 
 
 import com.markcha.ems.controller.ScheduleController;
-import com.markcha.ems.domain.Alarm;
-import com.markcha.ems.domain.Device;
-import com.markcha.ems.domain.Tag;
-import com.markcha.ems.domain.Trip;
+import com.markcha.ems.domain.*;
 import com.markcha.ems.repository.AlarmDataRepository;
 import com.markcha.ems.repository.DayOfWeekDataRepository;
 import com.markcha.ems.repository.TripDataRepository;
@@ -52,12 +49,14 @@ public class Scheduler {
     private final GroupDslRepositoryImpl groupDslRepository;
 
 
-    private static List<Tag> savedTags = null;
+    private static Set<Tag> savedTags = null;
     private static Boolean alarmInsert = false;
 
     private static Map<Long, Timer> tasks = new HashMap<>();
 
-
+    private final static List<String> actTripCode = List.of(
+            "COMP_ActTripCode", "COMP_ActWarCode",
+            "COMP_TripCode", "COMP_WarningCode");
     @Scheduled(cron="*/5 * * * * *")
     public void scheduleFixedRateTask() {
 
@@ -93,18 +92,58 @@ public class Scheduler {
         }
 
     }
+
+    private Map<Tag, Map<String, Object>> takeGroupTagMap(List<Group> groups) {
+
+
+        Map<Tag, Map<String, Object>> alarmTagMap = new HashMap<>();
+        for (Group group : groups) {
+            List<Tag> alarmTags = new ArrayList<>();
+            Map<String, Object> tagMap = new HashMap<>();
+            for (Device device : group.getDeviceSet()) {
+                for (Tag tag : device.getTags()) {
+                    if(tag.getTagList().getIsAlarm()) {
+                        alarmTags.add(tag);
+                    }
+                    if (actTripCode.contains(tag.getType())) {
+                        Map<Integer, String> tripCodeMap = tag.getTagList().getTrips().stream()
+                                .collect(toMap(t -> t.getCode(), k -> k.getMessage()));
+                        tag.setValue(tripCodeMap.get(new Integer(tag.getValue().toString())));
+                    }
+                    tagMap.put(tag.getType(), tag.getValue());
+                }
+            }
+            for (Tag alarmId : alarmTags) {
+                alarmTagMap.put(alarmId, tagMap);
+            }
+        }
+        return alarmTagMap;
+    }
+
     @Scheduled(cron="*/1 * * * * *")
     public void alarmFixedRateTask() {
-        List<Tag> tags = deviceDslRepository.findAllAlarmTags();
-        Map<Integer, List<Trip>> tripMap = tripDataRepository.findAll().stream()
-                .collect(groupingBy(Trip::getCode, toList()));
-        List<Alarm> newAlarms = new ArrayList<>();
-        List<Tag> takenAlarmTags = tags.stream()
-                .filter(t -> t.getTagList().getIsAlarm() == true)
-                .filter(t -> new Double(t.getValue().toString()).intValue() == 1)
-                .collect(toList());
 
-        List<Tag> newTags = new ArrayList<>();
+
+        List<Group> groups = groupDslRepository.findAllAllarmGroups(
+                List.of(
+                        "COMP_Trip", "COMP_Warning",
+                        "PWR_KW",
+                        "COMP_ActTripCode", "COMP_ActWarCode",
+                        "COMP_TripCode", "COMP_WarningCode",
+                        "COMP_ActTripCode"
+                        ,"COMP_ActWarCode"
+                        ,"COMP_SystemPre"
+                        ,"COMP_AirDisTemp"
+                )
+        );
+        Map<Tag, Map<String, Object>> alarmTagMap = takeGroupTagMap(groups);
+        Set<Tag> tags = alarmTagMap.keySet();
+        List<Alarm> newAlarms = new ArrayList<>();
+        Set<Tag> takenAlarmTags = tags.stream()
+                .filter(t -> new Integer(t.getValue().toString()) == 1)
+                .collect(toSet());
+
+        Set<Tag> newTags = new HashSet<>();
         newTags.addAll(takenAlarmTags);
         if(!isNull(savedTags)) newTags.removeIf(t->{
             return savedTags.stream()
@@ -115,80 +154,40 @@ public class Scheduler {
 
 
         for (Tag newTag : newTags) {
-            Alarm alarm = new Alarm();
-            Map<String, Tag> alarmDataTagMap = newTag.getDevice().getTags().stream()
-                    .filter(t -> new ArrayList<>(List.of(
-                            "COMP_ActTripCode"
-                            ,"COMP_ActWarCode"
-                            ,"COMP_SystemPre"
-                            ,"COMP_AirDisTemp"
-                    )).contains(t.getType()))
-                    .collect(toMap(Tag::getType, tag->tag));
-            if (!isNull(newTag.getDevice().getGroup().getDevices())) {
-                Map<String, List<Tag>> powerTagMap = new ArrayList<>(newTag.getDevice().getGroup().getDevices()).stream()
-                        .map(t->{
-                            return t.getTags().stream()
-                                    .filter(k->k.getType().equals("PWR_KWh"))
-                                    .collect(toList());
-                        })
-                        .flatMap(List::stream)
-                        .collect(groupingBy(t->t.getType()));
-                if(!isNull(powerTagMap.get("PWR_KWh"))) {
-                    double pwr_kWhSum = powerTagMap.get("PWR_KWh").stream().mapToDouble(i -> new Double(i.getValue().toString())).sum();
-                    if(!isNull(powerTagMap.get("PWR_KWh"))) {
-                        Tag pwr_kWh = powerTagMap.get("PWR_KWh").get(0);
-                        pwr_kWh.setValue(pwr_kWhSum);
-                        alarmDataTagMap.put("PWR_KWh", pwr_kWh);
-                    }
+            Map<String, Object> insertAlarmValues = alarmTagMap.get(newTag);
+            System.out.println(insertAlarmValues.toString());
+            String message = null;
+            for (String code : actTripCode) {
+
+                if (!isNull(insertAlarmValues.get(code))) {
+                    message = insertAlarmValues.get(code).toString();
                 }
-            } else {
-                alarmDataTagMap.put("PWR_KWh", null);
             }
 
-            if(newTag.getType().equals("COMP_Trip")) {
-                if (!isNull(alarmDataTagMap.get("COMP_ActTripCode"))) {
-                    int actTripCode = new Double(alarmDataTagMap.get("COMP_ActTripCode").getValue().toString()).intValue();
-                    Trip trip = tripMap.get(actTripCode).stream().filter(t -> t.getEquipment().getId() == newTag.getDevice().getEquipment().getId()).findFirst().get();
-                    alarm.setTrip(trip);
-                    alarm.setMessage(trip.getMessage());
-                    alarm.setType("trip");
-                }
-            }
-            if(newTag.getType().equals("COMP_Warning")) {
-                if (!isNull(alarmDataTagMap.get("COMP_ActWarCode"))) {
-                    int actWarningCode = new Double(alarmDataTagMap.get("COMP_ActWarCode").getValue().toString()).intValue();
-                    Trip trip = tripMap.get(actWarningCode).stream().filter(t -> t.getEquipment().getId() == newTag.getDevice().getEquipment().getId()).findFirst().get();
-                    alarm.setTrip(trip);
-                    alarm.setMessage(trip.getMessage());
-                    alarm.setType("warning");
-                }
-            }
-            if (!isNull(alarmDataTagMap.get("PWR_KWh"))) {
-                Double kwhValue = new Double(alarmDataTagMap.get("PWR_KWh").getValue().toString());
-                alarm.setKwhValue(kwhValue);
-            }
-            if (!isNull(alarmDataTagMap.get("COMP_SumpPre"))) {
-                Double kwhValue = new Double(alarmDataTagMap.get("COMP_SumpPre").getValue().toString());
-                alarm.setPrssValue(kwhValue);
-            }
-            if (!isNull(alarmDataTagMap.get("COMP_AirDisTemp"))) {
-                Double kwhValue = new Double(alarmDataTagMap.get("COMP_AirDisTemp").getValue().toString());
-                alarm.setTempValue(kwhValue);
-            }
-            alarm.setEventDate(LocalDate.now());
-            alarm.setCheckIn(false);
-            alarm.setOccurrenceTime(LocalTime.now());
-            alarm.setTag(newTag);
-            newAlarms.add(alarm);
+            Optional<Object> comp_airDisTemp = Optional.ofNullable(insertAlarmValues.get("COMP_AirDisTemp"));
+            Optional<Object> comp_systemPre = Optional.ofNullable(insertAlarmValues.get("COMP_SystemPre"));
+            Optional<Object> pwr_kw = Optional.ofNullable(insertAlarmValues.get("PWR_KW").toString());
+            newAlarms.add(Alarm.builder()
+                            .kwhValue(new Double(pwr_kw.orElse((Object) new String("-110.0")).toString()))
+                            .type(newTag.getType().equals("COMP_Trip")? "trip": "warning")
+                            .checkIn(false)
+                            .eventDate(LocalDate.now())
+                            .message(message)
+                            .occurrenceTime(LocalTime.now())
+                            .tempValue(new Double(comp_airDisTemp.orElse((Object) new String("-110.0")).toString()))
+                            .prssValue(new Double(comp_systemPre.orElse((Object) new String("-110.0")).toString()))
+                            .recoverDate(null)
+                            .recoverTime(null)
+                    .build());
         }
 
         if(alarmInsert) alarmDataRepository.saveAll(newAlarms);
 
         if(isNull(savedTags)){
-            savedTags = new ArrayList<>(takenAlarmTags);
+            savedTags = new HashSet<>(takenAlarmTags);
             alarmInsert = true;
         } else {
-            savedTags = new ArrayList<>();
+            savedTags = new HashSet<>();
             savedTags.addAll(takenAlarmTags);
         }
 
