@@ -37,9 +37,10 @@ public class AlarmController {
     @GetMapping(value="/trip")
     public Map<Integer, String> etc(
     ) {
-        return tripDataRepository.findAll().stream()
+        Map<Integer, String> collect = tripDataRepository.findAll().stream()
                 .map(TripDto::new)
-                .collect(toMap(TripDto::getCode, t->t.getMessage()));
+                .collect(toMap(TripDto::getCode, t -> t.getMessage(), (k1, k2) -> k1));
+        return collect;
     }
     @GetMapping(value="/alarms/{groupId}")
     public List<AlarmDto> alarm(

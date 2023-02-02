@@ -3,7 +3,7 @@ server:
 spring:
   webaccess:
 #    host: http://7.136.233.205/WaWebService/Json/
-    host: http://127.0.0.1:8099/WaWebService/Json/
+    host: http://127.0.0.1:8090/WaWebService/Json/
     project: EnMS
     node: EnMS
   batch:

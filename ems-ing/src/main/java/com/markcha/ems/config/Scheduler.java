@@ -107,7 +107,7 @@ public class Scheduler {
                     }
                     if (actTripCode.contains(tag.getType())) {
                         Map<Integer, String> tripCodeMap = tag.getTagList().getTrips().stream()
-                                .collect(toMap(t -> t.getCode(), k -> k.getMessage()));
+                                .collect(toMap(t -> t.getCode(), k -> k.getMessage(), (k1, k2) -> k1));
                         tag.setValue(tripCodeMap.get(new Integer(tag.getValue().toString())));
                     }
                     tagMap.put(tag.getType(), tag.getValue());
@@ -173,6 +173,8 @@ public class Scheduler {
                             .checkIn(false)
                             .eventDate(LocalDate.now())
                             .message(message)
+
+                            .tag(newTag)
                             .occurrenceTime(LocalTime.now())
                             .tempValue(new Double(comp_airDisTemp.orElse((Object) new String("-110.0")).toString()))
                             .prssValue(new Double(comp_systemPre.orElse((Object) new String("-110.0")).toString()))
@@ -181,7 +183,7 @@ public class Scheduler {
                     .build());
         }
 
-        if(alarmInsert) alarmDataRepository.saveAll(newAlarms);
+        if(!alarmInsert) alarmDataRepository.saveAll(newAlarms);
 
         if(isNull(savedTags)){
             savedTags = new HashSet<>(takenAlarmTags);
