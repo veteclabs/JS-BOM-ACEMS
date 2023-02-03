@@ -3,7 +3,7 @@ server:
 spring:
   webaccess:
 #    host: http://7.136.233.205/WaWebService/Json/
-    host: http://127.0.0.1/WaWebService/Json/
+    host: http://127.0.0.1:8090/WaWebService/Json/
     project: EnMS
     node: EnMS
   batch:
@@ -26,7 +26,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none # none, create, create-drop
+      ddl-auto: update # none, create, create-drop
       use_aql_comments: true
     properties:
       hibernate:

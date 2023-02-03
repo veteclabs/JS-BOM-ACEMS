@@ -88,7 +88,7 @@
                                     </div>
                                 </li>
                                 <li v-if="processUndefinedValue(device.state['COMP_Warning']) === 1">
-                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Trip</div>
+                                    <div class="bom-badge red-bg-badge" style="margin:0 8px 0 0;">Warning</div>
                                     <div>{{TPCode[processUndefinedValue(device.state['COMP_ActWarCode']).toString()]}}
                                     </div>
                                 </li>
@@ -197,7 +197,7 @@
                     chart: {
                         toolbar: {
                             tools: {
-                                download: true,
+                                download: false,
                                 selection: false,
                                 zoom: false,
                                 zoomin: false,
@@ -255,7 +255,7 @@
                     chart: {
                         type: 'radialBar',
                         toolbar: {
-                            show: true
+                            show: false,
                         },
                         offsetY: -10,
                         animations: {
