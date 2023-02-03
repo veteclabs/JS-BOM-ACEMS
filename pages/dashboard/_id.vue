@@ -367,7 +367,6 @@
                     }
                 }).then((res) => {
                     vm.airCompressor = res.data;
-                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                     vm.powerData = vm.airCompressor.devices.power;
 
                     if(vm.powerData) {
@@ -376,6 +375,7 @@
                     if(vm.airCompressor.state.COMP_SystemPre !== undefined) {
                         vm.chartSetting();
                     }
+                    vm.compressorImage = require(`~/assets/images/equipment/${vm.airCompressor.equipment.model}.png`);
                 }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
                 }).finally(() => {
