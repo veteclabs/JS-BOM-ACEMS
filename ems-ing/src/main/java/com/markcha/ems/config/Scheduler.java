@@ -122,8 +122,6 @@ public class Scheduler {
 
     @Scheduled(cron="*/1 * * * * *")
     public void alarmFixedRateTask() {
-
-
         List<Group> groups = groupDslRepository.findAllAllarmGroups(
                 List.of(
                         "COMP_Trip", "COMP_Warning",
@@ -151,8 +149,6 @@ public class Scheduler {
                     .collect(toList())
                     .contains(t.getId());
         });
-
-
         for (Tag newTag : newTags) {
             Map<String, Object> insertAlarmValues = alarmTagMap.get(newTag);
             System.out.println(insertAlarmValues.toString());
@@ -183,7 +179,7 @@ public class Scheduler {
                     .build());
         }
 
-        if(!alarmInsert) alarmDataRepository.saveAll(newAlarms);
+        if(alarmInsert) alarmDataRepository.saveAll(newAlarms);
 
         if(isNull(savedTags)){
             savedTags = new HashSet<>(takenAlarmTags);
