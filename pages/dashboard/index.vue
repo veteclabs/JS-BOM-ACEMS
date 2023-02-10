@@ -296,7 +296,7 @@
                                 },
                                 value: {
                                     formatter: function (val) {
-                                        let origValue = (val / 100) * 15;
+                                        let origValue = val;
                                         return origValue.toFixed(2)
                                     },
                                     offsetY: -10,
@@ -339,7 +339,7 @@
             };
         },
         mounted() {
-            this.chartSetting();
+            //this.chartSetting();
             this.getTagValues();
             this.resetInterval();
             this.getAirCompressor();
@@ -352,45 +352,44 @@
             this.removeInterval();
         },
         methods: {
-          getAirDryers() {
-            const vm = this;
-            axios.get('/api/airDryers', {
-              params: {
-                components: ["stateComponent", "mainInfoComponent"]
+            getAirDryers() {
+                const vm = this;
+                axios.get('/api/airDryers', {
+                    params: {
+                        components: ["stateComponent", "mainInfoComponent"]
 
-              }, paramsSerializer: params => {
-                return qs.stringify(params)
-              }
-            })
-                .then((res) => {
-                  if (res.status === 200) {
-                    vm.airDryerList = res.data;
-                  }
-                }).catch((error) => {
-              vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
-            }).finally(() => {
-              vm.loadingData.show = false;
-            });
-          },
-            chartSetting() {
-              axios.get('/api/specificalPower')
-                  .then((res) => {
-                    if (isNaN(res.data)) {
-                      this.basicUnit = 0
-                    } else {
-                      this.basicUnit = res.data.toFixed(2);
+                    }, paramsSerializer: params => {
+                        return qs.stringify(params)
                     }
-                  });
+                })
+                    .then((res) => {
+                        if (res.status === 200) {
+                            vm.airDryerList = res.data;
+                        }
+                    }).catch((error) => {
+                    vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
+                }).finally(() => {
+                    vm.loadingData.show = false;
+                });
+            },
+            chartSetting() {
+                axios.get('/api/specificalPower')
+                    .then((res) => {
+                        if (isNaN(res.data)) {
+                            this.basicUnit = 0
+                        } else {
+                            this.basicUnit = res.data.toFixed(2);
+                        }
+                    });
             },
             async getTagValues() {
                 const vm = this;
-
                 axios.get('/api/totalValue')
                     .then((res) => {
                         if (res.status === 200) {
                             vm.tagVal = res.data;
                             vm.setLiveChart();
-                            vm.chartSetting();
+                            //vm.chartSetting();
                         }
                     }).catch((error) => {
                     vm.msgData.msg = error.response.data.message ? error.response.data.message : error;
@@ -477,6 +476,9 @@
                     vm.$refs.liveChart.updateOptions({
                         "xaxis": {"categories": vm.timeCategories}
                     });
+
+                    let basicUnitValue = kWData/flowData;
+                    vm.basicUnit = basicUnitValue === Infinity ? 0 : basicUnitValue;
                 }
             },
             processUndefinedValue(type) {
@@ -493,7 +495,7 @@
                 clearInterval(this.interval);
                 vm.interval = null;
                 vm.interval = setInterval(() => {
-                    this.chartSetting();
+                    //this.chartSetting();
                     vm.getTagValues();
                     vm.getAirCompressor();
                     vm.getEquipment();
