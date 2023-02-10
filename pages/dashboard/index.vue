@@ -477,7 +477,7 @@
                         "xaxis": {"categories": vm.timeCategories}
                     });
 
-                    let basicUnitValue = kWData/flowData;
+                    let basicUnitValue = kWData.toFixed(2)/flowData.toFixed(2);
                     vm.basicUnit = basicUnitValue === Infinity ? 0 : basicUnitValue;
                 }
             },
