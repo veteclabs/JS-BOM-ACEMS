@@ -75,7 +75,7 @@ public class GroupDslRepositoryImpl{
                 .from(tag)
                 .leftJoin(tag.device, device).fetchJoin()
                 .leftJoin(tag.tagList, tagList).fetchJoin()
-                .leftJoin(tagList.trips, trip).fetchJoin()
+                .leftJoin(tagList.trips, trip).fetchJoin() //TODO: 해당 코드로 인해 에러 발생
                 .where (
                         device.id.in(deviceIds),
                         tag.type.in(

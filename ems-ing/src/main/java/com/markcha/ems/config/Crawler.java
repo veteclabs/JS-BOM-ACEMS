@@ -48,7 +48,7 @@ public class Crawler {
 
             sleep(2000);
 
-            if (!loading.contains("INITIALISATION")) {
+                if (!loading.contains("INITIALISATION")) {
                 while (true) {
                     tagDtoList = new ArrayList<>();
                     try {
@@ -59,7 +59,6 @@ public class Crawler {
                         driver.quit();
                         driver = createDriver();
                     }
-
                     sleep(5000);
                 }
             }
@@ -68,9 +67,8 @@ public class Crawler {
 
     private WebDriver createDriver() throws Exception {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
-        String WEB_DRIVER_PATH = System.getProperty("user.dir") + "/ChromeDriverInstaller/chromedriver.exe";
+        String WEB_DRIVER_PATH = System.getProperty("user.dir") + "/chromedriver-win64/chromedriver.exe";
         String url = device.getSerialNumber();
-
         System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 
         ChromeOptions options = new ChromeOptions();
