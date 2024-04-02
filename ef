@@ -1,0 +1,96 @@
+sudo apt -y update
+sudo apt -y upgrade
+
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+sudo tee /etc/modules-load.d/containerd.conf <<EOF
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+
+sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+
+sudo sysctl --system
+
+
+sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+
+
+yes | sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
+yes | sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+
+
+sudo apt-get -y update
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+
+
+
+containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+
+mkdir /etc/docker
+cat > /etc/docker/daemon.json <<EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}
+EOF
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+
+sudo apt -y update
+sudo apt install -y kubeadm=1.28.1-1.1 kubelet=1.28.1-1.1 kubectl=1.28.1-1.1
+sudo apt-mark hold kubelet kubeadm kubectl
+
+sudo systemctl enable kubelet.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now docker
+sudo systemctl enable --now kubelet
+sudo ufw disable
+
+
+
+sudo echo "alias k='kubectl'" | tee -a ~/.bashrc
+source ~/.bashrc
+
+mkdir -p $HOME/.kube
+sudo -E cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo -E chown $(id -u):$(id -g) $HOME/.kube/config
+
+sudo kubeadm config images pull
+sudo kubeadm upgrade node
+wget https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f kube-flannel.yml
+kubectl taint nodes platek8s-master-node node-role.kubernetes.io/control-plane:NoSchedule-
+
+sudo snap install helm --classic
+
+sudo mkdir /volumes
+sudo chmod 777 /volumes 
